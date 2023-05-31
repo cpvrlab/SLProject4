@@ -323,6 +323,8 @@ add_library(${META_PROJECT_NAME}::${target}
         ${target}
         )
 
+enable_warnings(${target})
+
 set_target_properties(${target}
         PROPERTIES
         ${DEFAULT_PROJECT_OPTIONS}

@@ -10,12 +10,13 @@ function(set_policy POL VAL)
     endif()
 endfunction(set_policy)
 #------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
 # Define function "source_group_by_path with three mandatory arguments
 # (PARENT_PATH, REGEX, GROUP, ...) to group source files in folders
 # (e.g. for MSVC solutions).
 #
 # Example: source_group_by_path("${CMAKE_CURRENT_SOURCE_DIR}/src" "\\\\.h$|\\\\.inl$|\\\\.cpp$|\\\\.c$|\\\\.ui$|\\\\.qrc$" "Source Files" ${sources})
-
 function(source_group_by_path PARENT_PATH REGEX GROUP)
 
     foreach (FILENAME ${ARGN})
@@ -31,6 +32,7 @@ function(source_group_by_path PARENT_PATH REGEX GROUP)
     endforeach()
 
 endfunction(source_group_by_path)
+#------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
 # Function that extract entries matching a given regex from a list.
@@ -47,14 +49,29 @@ function(list_extract OUTPUT REGEX)
 
 endfunction(list_extract)
 #------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
 function(add_3rdparty_library name file)
     #message(STATUS "adding 3rdpary library with name ${name} at location ${file}")
     add_library(${name} SHARED IMPORTED)
     set_target_properties(${name} PROPERTIES IMPORTED_LOCATION ${file})
 endfunction()
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+# Enable warnings for a target.
+function(enable_warnings TARGET)
+    if (MSVC)
+        target_compile_options(${TARGET} PRIVATE /W3)
+    else ()
+        target_compile_options(${TARGET} PRIVATE -Wall)
+    endif ()
+endfunction()
+#------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
 # This little macro lets you set any XCode specific property
 macro (set_xcode_property TARGET XCODE_PROPERTY XCODE_VALUE)
     set_property (TARGET ${TARGET} PROPERTY XCODE_ATTRIBUTE_${XCODE_PROPERTY} ${XCODE_VALUE})
 endmacro (set_xcode_property)
+#------------------------------------------------------------------------------

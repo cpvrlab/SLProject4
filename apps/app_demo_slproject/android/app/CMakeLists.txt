@@ -31,6 +31,8 @@ add_library(${target}
     ${headers}
     )
 
+enable_warnings(${target})
+
 target_include_directories(
     ${target}
     PRIVATE

@@ -101,14 +101,13 @@ set(DEFAULT_COMPILE_OPTIONS)
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "MSVC")
     set(DEFAULT_COMPILE_OPTIONS ${DEFAULT_COMPILE_OPTIONS}
         	/MP         # -> build with multiple processes
-        	/W3         # -> warning level 3
         	/wd4251     # -> disable warning: 'identifier': class 'type' needs to have dll-interface to be used by clients of class 'type2'
         	/wd4592     # -> disable warning: 'identifier': symbol will be dynamically initialized (implementation limitation)
         	/wd4804     # -> disable warning: unsichere Verwendung des Typs "bool" in einer Operation	C:\Users\hsm4\Documents\GitHub\SLProject	C:\Users\hsm4\Documents\GitHub\SLProject\lib-SLProject\include\SLMaterial.h	88
         	/wd26495	# -> disable warning: C26495 MEMBER_UNINIT
 			/wd26812	# -> disable warning: C26812: ' enum class ' vor ' ENUM ' bevorzugen (Enum. 3)
 			/wd26451    # -> disable warning: C26451: Aritmetic overflow
-			/bigobj
+        	/bigobj
 
         $<$<CONFIG:Release>:
         /Gw           # -> whole program global optimization
@@ -137,7 +136,6 @@ endif ()
 # GCC and Clang compiler options
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     set(DEFAULT_COMPILE_OPTIONS ${DEFAULT_COMPILE_OPTIONS}
-            -Werror=return-type
             -Wno-c++98-compat
             -Wno-c++98-compat-pedantic
             -Wno-covered-switch-default
@@ -166,10 +164,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCH
 			-Wno-invalid-noreturn
 
             $<$<CXX_COMPILER_ID:GNU>:
-                -Wmaybe-uninitialized
-                $<$<VERSION_GREATER:$<CXX_COMPILER_VERSION>,4.8>:
-                    -Wreturn-local-addr
-                >
             >
 
             $<$<CXX_COMPILER_ID:Clang>:
@@ -241,6 +235,19 @@ endif()
 #			)
 #	endif ()
 #endif ()
+
+# Disable -Wdeprecated-non-prototype GLOBALLY!
+# Clang enables this warning by default and causes zlib compilation to flood the terminal with warnings.
+# We can remove this as soon as the new zlib release fixes this problem.
+# See: https://github.com/madler/zlib/issues/633
+if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+	add_compile_options(-Wno-deprecated-non-prototype)
+endif ()
+
+# Disable CRT warnings GLOBALLY
+if (MSVC)
+	add_compile_definitions(_CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_WARNINGS _WINSOCK_DEPRECATED_NO_WARNINGS)
+endif ()
 
 #
 # Options for Emscripten

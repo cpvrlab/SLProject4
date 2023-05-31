@@ -116,6 +116,8 @@ add_executable(
 		${RESOURCES}
     )
 
+enable_warnings(${target})
+
 set_target_properties(
         ${target}
         PROPERTIES

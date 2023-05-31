@@ -16,7 +16,7 @@ file(GLOB sources
     ${CMAKE_CURRENT_SOURCE_DIR}/fbow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/vocabulary_creator.cpp
     )
-	
+
 # ----------------------------------------------------------------------------
 #   Program Optimization and debug (Extracted from OpenCV)
 # ----------------------------------------------------------------------------
@@ -67,15 +67,10 @@ IF(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
     set(USE_AVX OFF CACHE BOOL "Enable AVX for GCC")
 
 
-    set(EXTRA_C_FLAGS "${EXTRA_C_FLAGS} -Wall")
+    set(EXTRA_C_FLAGS "${EXTRA_C_FLAGS}")
 
     if(WARNINGS_ARE_ERRORS)
-        set(EXTRA_C_FLAGS "${EXTRA_C_FLAGS} -Werror")
-    endif()
-
-    # The -Wno-long-long is required in 64bit systems when including sytem headers.
-    if(${CMAKE_SYSTEM_PROCESSOR} MATCHES x86_64* OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES amd64*)
-		set(EXTRA_C_FLAGS "${EXTRA_C_FLAGS} -Wno-long-long")
+        set(EXTRA_C_FLAGS "${EXTRA_C_FLAGS}")
     endif()
 
     # Whole program optimization
@@ -140,9 +135,9 @@ IF(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
     ENDIF()
 
 
-    set(CMAKE_CXX_FLAGS_RELEASE "${VECTORIAL_INSTRUCTIONS} ${EXTRA_C_FLAGS_RELEASE}  -O3  -std=c++11 -Wall -DNDEBUG")
-    set(CMAKE_CXX_FLAGS_DEBUG "${VECTORIAL_INSTRUCTIONS}  -g3  -DDEBUG -D_DEBUG   -std=c++11 -Wall")
-    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${VECTORIAL_INSTRUCTIONS} -O2 -g3  -DDEBUG -D_DEBUG  -std=c++11 -Wall")
+    set(CMAKE_CXX_FLAGS_RELEASE "${VECTORIAL_INSTRUCTIONS} ${EXTRA_C_FLAGS_RELEASE}  -O3  -std=c++11 -DNDEBUG")
+    set(CMAKE_CXX_FLAGS_DEBUG "${VECTORIAL_INSTRUCTIONS}  -g3  -DDEBUG -D_DEBUG   -std=c++11")
+    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${VECTORIAL_INSTRUCTIONS} -O2 -g3  -DDEBUG -D_DEBUG  -std=c++11")
 
     message(STATUS "vec=${VECTORIAL_INSTRUCTIONS}")
     MESSAGE( STATUS "-------------------------------------------------------------------------------" )
@@ -224,3 +219,8 @@ target_link_libraries(${target}
 
     INTERFACE
     )
+
+# Disable a Clang warning
+if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    target_compile_options(${target} PRIVATE -Wno-implicit-const-int-float-conversion)
+endif ()

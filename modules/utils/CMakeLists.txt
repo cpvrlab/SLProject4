@@ -13,10 +13,7 @@ set(UTILS_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
 include(${SL_PROJECT_ROOT}/cmake/CompileOptions.cmake)
 include(${SL_PROJECT_ROOT}/cmake/PlatformLinkLibs.cmake)
 
-if(NOT "${SYSTEM_NAME_UPPER}" STREQUAL "IOS" AND NOT "${SYSTEM_NAME_UPPER}" STREQUAL "EMSCRIPTEN")
-	add_subdirectory(externals/zlib)
-endif()
-
+add_subdirectory(externals)
 add_subdirectory(tests)
 
 #
@@ -63,7 +60,6 @@ set(headers
         ${CMAKE_CURRENT_SOURCE_DIR}/source/io/SLIOLocalStorage.h
         ${CMAKE_CURRENT_SOURCE_DIR}/source/io/SLIOMemory.h
 #		${CMAKE_CURRENT_SOURCE_DIR}/source/CoordSystemConversions.h
-		${UTILS_ROOT}/externals/ftplibpp/ftplib.h
     )
 set(sources
         ${sources}
@@ -90,7 +86,6 @@ set(sources
 if(NOT "${SYSTEM_NAME_UPPER}" STREQUAL "EMSCRIPTEN")
     set(sources
         ${sources}
-        ${UTILS_ROOT}/externals/ftplibpp/ftplib.cpp
         ${UTILS_ROOT}/externals/zlib/contrib/minizip/ioapi.c
         ${UTILS_ROOT}/externals/zlib/contrib/minizip/unzip.c
         ${UTILS_ROOT}/externals/zlib/contrib/minizip/zip.c
@@ -131,6 +126,8 @@ add_library(${target}
 
 add_library(${META_PROJECT_NAME}::${target} ALIAS ${target})
 
+enable_warnings(${target})
+
 set_target_properties(${target}
     PROPERTIES
     ${DEFAULT_PROJECT_OPTIONS}
@@ -145,7 +142,6 @@ target_include_directories(${target}
     ${CMAKE_CURRENT_SOURCE_DIR}/source/io
     ${platform_specific_include_dirs}
     ${UTILS_ROOT}/externals/asio/include
-    ${UTILS_ROOT}/externals/ftplibpp
 	${UTILS_ROOT}/externals/zlib/contrib
     ${openssl_INCLUDE_DIR}
     INTERFACE
@@ -161,7 +157,7 @@ if (NOT "${SYSTEM_NAME_UPPER}" STREQUAL "EMSCRIPTEN")
 endif()
 
 target_compile_definitions(${target}
-  PRIVATE
+    PRIVATE
 
     PUBLIC
     ${compile_definitions}
@@ -188,6 +184,7 @@ target_link_libraries(${target}
     ${PlatformLinkLibs}
     ${DEFAULT_LINKER_OPTIONS}
     ${openssl_LIBS}
+    sl_ftplib
 
     INTERFACE
     )

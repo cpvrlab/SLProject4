@@ -75,7 +75,6 @@ source_group_by_path("${CMAKE_CURRENT_SOURCE_DIR}/source" "\\\\.h$|\\\\.hpp$" "H
 source_group_by_path("${CMAKE_CURRENT_SOURCE_DIR}/source" "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$" "Source Files" ${sources})
 
 add_library(${target}
-#SHARED
     ${headers}
     ${sources}
     )
@@ -84,6 +83,8 @@ add_library(${META_PROJECT_NAME}::${target}
     ALIAS
     ${target}
     )
+
+enable_warnings(${target})
 
 set_target_properties(${target}
     PROPERTIES

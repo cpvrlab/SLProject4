@@ -30,6 +30,8 @@ add_executable(${target}
         ${sources}
         )
 
+enable_warnings(${target})
+
 set_target_properties(${target}
         PROPERTIES
         ${DEFAULT_PROJECT_OPTIONS}

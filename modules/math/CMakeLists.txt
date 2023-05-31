@@ -44,6 +44,8 @@ add_library(${META_PROJECT_NAME}::${target}
         ${target}
         )
 
+enable_warnings(${target})
+
 set_target_properties(${target}
         PROPERTIES
         ${DEFAULT_PROJECT_OPTIONS}
@@ -54,12 +56,17 @@ target_include_directories(${target}
 
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/source
-	${CMAKE_CURRENT_SOURCE_DIR}/externals
-        ${SL_PROJECT_ROOT}/externals/eigen
-        ${SL_PROJECT_ROOT}/externals/libigl/include
         ${DEFAULT_INCLUDE_DIRECTORIES}
 
         INTERFACE
+        )
+
+target_include_directories(${target}
+        SYSTEM  # Sets these include directories to system includes to disable warnings
+        PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/externals
+        ${SL_PROJECT_ROOT}/externals/eigen
+        ${SL_PROJECT_ROOT}/externals/libigl/include
         )
 
 target_compile_definitions(${target}

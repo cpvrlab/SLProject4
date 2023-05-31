@@ -29,6 +29,8 @@ add_executable(
         ${sources}
 )
 
+enable_warnings(${target})
+
 target_include_directories(
         ${target}
         PRIVATE
