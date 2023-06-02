@@ -13,16 +13,11 @@ jobs:
       uses: mymindstorm/setup-emsdk@v11
 
     - name: Configure CMake
-      run: emcmake cmake -B ${{ github.workspace }}/build -DSL_BUILD_WAI=OFF -DSL_BUILD_WITH_OPENSSL=OFF -DSL_DOWNLOAD_DATA=OFF -DCMAKE_BUILD_TYPE=Release
+      run: emcmake cmake -B ${{ github.workspace }}/build -DSL_BUILD_WAI=OFF -DSL_BUILD_WITH_OPENSSL=OFF -DSL_DOWNLOAD_DATA=OFF -DCMAKE_BUILD_TYPE=Debug
 
     - name: Build
       run: cmake --build ${{ github.workspace }}/build --target app-Demo-SLProject
 
     - name: Upload
-      uses: appleboy/scp-action@v0.1.4
-      with:
-        host: pallas.ti.bfh.ch
-        username: github
-        password: ${{ secrets.EMSCRIPTEN_DEPLOY_PASSWORD }}
-        source: "${{ github.workspace }}/build/app-Demo-SLProject.*"
-        target: "."
+      working-directory: ${{ github.workspace }}/build
+      run: sshpass -p "${{ secrets.EMSCRIPTEN_DEPLOY_PASSWORD }}" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null app-Demo-SLProject.* github@pallas.ti.bfh.ch:.
