@@ -13,7 +13,7 @@ EulerAngles Eul_(float ai, float aj, float ah, int order)
 }
 /* Construct quaternion from Euler angles (in radians). */
 #pragma warning(disable:4552)
-#pragma warning( disable:4244)
+#pragma warning(disable:4244)
 Quat Eul_ToQuat(EulerAngles ea)
 {
     Quat qu;

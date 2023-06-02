@@ -252,10 +252,10 @@ bool CVCalibrationEstimator::calcCalibration(CVSize&            imageSize,
 
     ////////////////////////////////////////////////
     // Find intrinsic and extrinsic camera parameters
+#if 0
     int iFixedPoint = -1;
     if (useReleaseObjectMethod)
         iFixedPoint = boardSize.width - 1;
-#if 0
     double rms = cv::calibrateCameraRO(objectPoints,
                                        imagePoints,
                                        imageSize,

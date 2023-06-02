@@ -50,8 +50,6 @@ public:
     };
 
     socklen_t addrlen;
-    bool      inUse;
-    int       ipv;
 #    ifdef _WINDOWS
     static WSADATA wsadata;
     static bool    initialized;
@@ -59,9 +57,8 @@ public:
 
     static bool SocketEnable()
     {
-        int ret;
-
 #    ifdef _WINDOWS
+        int ret;
         if (!initialized)
         {
             ret = WSAStartup(MAKEWORD(2, 2), &wsadata);
@@ -86,6 +83,7 @@ public:
     }
 
     Socket() { reset(); }
+    virtual ~Socket() = default;
 
     virtual void reset();
     virtual int  connectTo(string ip, int port);
@@ -105,12 +103,10 @@ public:
     SecureSocket()
     {
         ssl   = nullptr;
-        sslfd = -1;
         Socket::reset();
     }
 
     SSL* ssl;
-    int  sslfd;
 
     virtual int  connectTo(string ip, int port);
     virtual int  sendData(const char* data, size_t size);
@@ -147,7 +143,6 @@ public:
     string headers;
     string version;
     string status;
-    int    statusCode;
     string contentType;
     size_t contentLength;
 
@@ -173,7 +168,7 @@ public:
 //! HTTPUtils::download provides download function for https/http with/without auth.
 
 // Download a file chunk by chunk of 1kB.
-// download is interrupt if any of the callback return non zero value.
+// download is interrupt if any of the callback return non-zero value.
 /*!
  * @param url            url to the file / listing to download
  * @param processFile    A callback which is called when a new file will be downloaded.

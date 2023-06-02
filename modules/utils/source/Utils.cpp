@@ -661,11 +661,9 @@ vector<string> getDirNamesInDir(const string& dirName, bool fullPath)
     if (dir)
     {
         struct dirent* dirContent = nullptr;
-        int            i          = 0;
 
         while ((dirContent = readdir(dir)) != nullptr)
         {
-            i++;
             string name(dirContent->d_name);
 
             if (name != "." && name != "..")
@@ -716,11 +714,9 @@ vector<string> getAllNamesInDir(const string& dirName, bool fullPath)
     if (dir)
     {
         struct dirent* dirContent = nullptr;
-        int            i          = 0;
 
         while ((dirContent = readdir(dir)) != nullptr)
         {
-            i++;
             string name(dirContent->d_name);
             if (name != "." && name != "..")
             {
@@ -765,11 +761,9 @@ vector<string> getFileNamesInDir(const string& dirName, bool fullPath)
     if (dir)
     {
         struct dirent* dirContent = nullptr;
-        int            i          = 0;
 
         while ((dirContent = readdir(dir)) != nullptr)
         {
-            i++;
             string name(dirContent->d_name);
             if (name != "." && name != "..")
             {

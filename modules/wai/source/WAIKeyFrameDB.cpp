@@ -328,7 +328,6 @@ std::vector<WAIKeyFrame*> WAIKeyFrameDB::DetectRelocalizationCandidates(WAIFrame
         /*We group those keyframes that are connected in the covisibility graph and caluculate an accumulated score.
             We return all keyframe matches whose scores are higher than the 75 % of the best score.*/
         std::list<std::pair<float, WAIKeyFrame*>> lScoreAndMatch;
-        int                                       nscores = 0;
 
         // Compute similarity score.
         for (std::list<WAIKeyFrame*>::iterator lit = lKFsSharingWords.begin(), lend = lKFsSharingWords.end(); lit != lend; lit++)
@@ -337,7 +336,6 @@ std::vector<WAIKeyFrame*> WAIKeyFrameDB::DetectRelocalizationCandidates(WAIFrame
 
             if (pKFi->mnRelocWords > minCommonWords)
             {
-                nscores++;
                 float si = (float)mpVoc->score(F->mBowVec, pKFi->mBowVec);
                 //std::cout << "si: " << si << std::endl;
                 pKFi->mRelocScore = si;
@@ -351,7 +349,7 @@ std::vector<WAIKeyFrame*> WAIKeyFrameDB::DetectRelocalizationCandidates(WAIFrame
         std::list<std::pair<float, WAIKeyFrame*>> lAccScoreAndMatch;
         float                                     bestAccScore = 0;
 
-        // Lets now accumulate score by covisibility
+        // Let's now accumulate score by co-visibility
         for (std::list<std::pair<float, WAIKeyFrame*>>::iterator it = lScoreAndMatch.begin(), itend = lScoreAndMatch.end(); it != itend; it++)
         {
             WAIKeyFrame*              pKFi     = it->second;
@@ -360,7 +358,6 @@ std::vector<WAIKeyFrame*> WAIKeyFrameDB::DetectRelocalizationCandidates(WAIFrame
             float        bestScore = it->first;
             float        accScore  = bestScore;
             WAIKeyFrame* pBestKF   = pKFi;
-            //std::cout << "vpNeighs: " << vpNeighs.size() << std::endl;
             for (std::vector<WAIKeyFrame*>::iterator vit = vpNeighs.begin(), vend = vpNeighs.end(); vit != vend; vit++)
             {
                 WAIKeyFrame* pKF2 = *vit;

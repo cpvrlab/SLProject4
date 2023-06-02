@@ -117,7 +117,6 @@ void SLTexFont::create(SLstring fontFilename)
     }
 
     // find width and position of each character
-    SLint w = 0;
     SLint x0[224], y0[224], x1[224], y1[224];
     SLint ch = 32;
     SLint start;
@@ -135,7 +134,6 @@ void SLTexFont::create(SLstring fontFilename)
                     x1[ch - 32] = x;
                     y0[ch - 32] = r * (h + 1);
                     y1[ch - 32] = r * (h + 1) + h - 1;
-                    w += x - start + 1;
                     start = x + 1;
                 }
                 ++ch;
@@ -279,7 +277,6 @@ SLVstring SLTexFont::wrapTextToLines(SLstring text, // text to wrap
                                      SLfloat  maxW)  // max. width in pixels
 {
     SLVstring lines;
-    SLint     numLines   = 1;
     SLfloat   curX       = 0.0f;
     SLfloat   maxX       = FLT_MIN;
     SLfloat   xBlank     = 0.0f;
@@ -297,7 +294,6 @@ SLVstring SLTexFont::wrapTextToLines(SLstring text, // text to wrap
             i++;
             if (curX > maxX) maxX = curX;
             lines.push_back(text.substr(iLineStart, i - iLineStart - 1) + "  ");
-            numLines++;
             iLineStart = i + 1;
             curX       = 0.0f;
         }
@@ -316,7 +312,8 @@ SLVstring SLTexFont::wrapTextToLines(SLstring text, // text to wrap
             if (curX > maxW)
             {     // wrap at last blank
                 if (xBlank > 0.0f)
-                { // keep greatest line width
+                {
+                    // keep largest line width
                     if (xBlank > maxX) maxX = xBlank;
                     curX = curX - xBlank - chars[(SLuint)' '].width;
                     lines.push_back(text.substr(iLineStart, iBlank - iLineStart + 1));
@@ -330,7 +327,6 @@ SLVstring SLTexFont::wrapTextToLines(SLstring text, // text to wrap
                     curX       = chars[(SLuint)c].width;
                     iLineStart = i + 1;
                 }
-                numLines++;
             }
         }
     }
