@@ -40,7 +40,7 @@ SLPoints::SLPoints(SLAssetManager* assetMgr,
 
     _primitive = PT_points;
 
-    if (points.size() > UINT_MAX)
+    if ((ULONG)points.size() > (ULONG)UINT_MAX)
         SL_EXIT_MSG("SLPoints supports max. 2^32 vertices.");
     if (points.size() != normals.size())
         SL_EXIT_MSG("SLPoints: different size of points and normals vector.");
@@ -59,7 +59,7 @@ SLPoints::SLPoints(SLAssetManager* assetMgr,
                    SLMaterial*     material) : SLMesh(assetMgr, name)
 {
     assert(!name.empty() && "No name provided in SLPoints!");
-    assert(nPoints <= UINT_MAX && "SLPoints supports max. 2^32 vertices!");
+    assert((ULONG)nPoints <= (ULONG)UINT_MAX && "SLPoints supports max. 2^32 vertices!");
 
     _primitive = PT_points;
 

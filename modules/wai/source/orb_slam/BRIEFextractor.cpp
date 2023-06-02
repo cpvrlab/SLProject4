@@ -242,15 +242,11 @@ vector<cv::KeyPoint> BRIEFextractor::DistributeOctTree(const vector<cv::KeyPoint
 
     bool bFinish = false;
 
-    int iteration = 0;
-
     vector<pair<int, ExtractorNode*>> vSizeAndPointerToNode;
     vSizeAndPointerToNode.reserve(lNodes.size() * 4);
 
     while (!bFinish)
     {
-        iteration++;
-
         int prevSize = (int)lNodes.size();
 
         lit = lNodes.begin();
