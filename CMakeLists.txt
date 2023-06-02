@@ -40,6 +40,7 @@ else ()
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 endif ()
 
+option(SL_DOWNLOAD_DATA "Specifies if the data ZIP file should be downloaded" ON)
 option(SL_DOWNLOAD_PREBUILTS "Specifies if prebuilt libraries should be downloaded" ON)
 option(SL_BUILD_WAI "Specifies if the WAI library should be built" ON)
 option(SL_BUILD_APPS "Specifies if sample apps should be built" ON)
@@ -66,7 +67,10 @@ message(STATUS "LIBIGL_USE_STATIC_LIBRARY: ${LIBIGL_USE_STATIC_LIBRARY}")
 
 include(cmake/SetGitBranchNameAndCommitID.cmake)
 include(cmake/CompileOptions.cmake)
-include(cmake/DownloadData.cmake)
+
+if (SL_DOWNLOAD_DATA)
+    include(cmake/DownloadData.cmake)
+endif ()
 
 if (SL_DOWNLOAD_PREBUILTS)
     include(cmake/DownloadPrebuilts.cmake)
