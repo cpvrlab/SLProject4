@@ -13,7 +13,7 @@ jobs:
       uses: mymindstorm/setup-emsdk@v11
 
     - name: Configure CMake
-      run: cmake -B ${{ github.workspace }}/build -DSL_BUILD_WAI=OFF -DSL_BUILD_WITH_OPENSSL=OFF -DSL_DOWNLOAD_DATA=OFF
+      run: emcmake cmake -B ${{ github.workspace }}/build -DSL_BUILD_WAI=OFF -DSL_BUILD_WITH_OPENSSL=OFF -DSL_DOWNLOAD_DATA=OFF
 
     - name: Build
       run: cmake --build ${{ github.workspace }}/build --target app-Demo-SLProject
