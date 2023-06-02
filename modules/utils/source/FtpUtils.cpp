@@ -7,11 +7,13 @@
 //             Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
 
-#include <sstream>
-#include <algorithm>
-#include <ftplib.h>
-#include <FtpUtils.h>
-#include <Utils.h>
+#ifndef __EMSCRIPTEN__
+
+#    include <sstream>
+#    include <algorithm>
+#    include <ftplib.h>
+#    include <FtpUtils.h>
+#    include <Utils.h>
 
 using namespace std;
 
@@ -597,3 +599,5 @@ int getVersionInFilename(const string& filename)
 //     return xfered ? 1 : 0;
 // }
 };
+
+#endif

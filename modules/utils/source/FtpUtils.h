@@ -10,8 +10,10 @@
 #ifndef CPLVRLAB_FTPUTILS_H
 #define CPLVRLAB_FTPUTILS_H
 
-#include <string>
-#include <vector>
+#ifndef __EMSCRIPTEN__
+
+#    include <string>
+#    include <vector>
 
 class ftplib;
 
@@ -72,4 +74,7 @@ string getLatestFilename(ftplib&       ftp,
 
 int getVersionInFilename(const string& filename);
 };
+
+#endif
+
 #endif

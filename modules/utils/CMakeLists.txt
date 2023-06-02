@@ -184,14 +184,13 @@ target_link_libraries(${target}
     ${PlatformLinkLibs}
     ${DEFAULT_LINKER_OPTIONS}
     ${openssl_LIBS}
-    sl_ftplib
 
     INTERFACE
     )
 
-# Emscripten provides its own implementation of zlib
+# Emscripten provides its own implementation of zlib and does not support FTP
 if (NOT "${SYSTEM_NAME_UPPER}" STREQUAL "EMSCRIPTEN")
-    target_link_libraries(${target} PUBLIC zlib)
+    target_link_libraries(${target} PUBLIC sl_ftplib zlib)
 else()
     target_compile_options(${target} PUBLIC "-sUSE_ZLIB=1")
     target_link_options(${target} PUBLIC "-sUSE_ZLIB=1")
