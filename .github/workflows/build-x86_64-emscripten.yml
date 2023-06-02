@@ -1,0 +1,19 @@
+name: Build Emscripten
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Emscripten
+      uses: mymindstorm/setup-emsdk@v11
+
+    - name: Configure CMake
+      run: cmake -B ${{ github.workspace }}/build -DSL_BUILD_WAI=OFF -DSL_BUILD_WITH_OPENSSL=OFF -DSL_DOWNLOAD_DATA=OFF
+
+    - name: Build
+      run: cmake --build ${{ github.workspace }}/build --target app-Demo-SLProject
