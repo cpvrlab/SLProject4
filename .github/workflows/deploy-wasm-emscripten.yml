@@ -24,5 +24,6 @@ jobs:
         host: pallas.ti.bfh.ch
         username: github
         password: ${{ secrets.EMSCRIPTEN_DEPLOY_PASSWORD }}
-        source: "${{ github.workspace }}/build/app-Demo-SLProject.*"
+        source: "${{ github.workspace }}/build/app-Demo-SLProject.html,${{ github.workspace }}/build/app-Demo-SLProject.js,${{ github.workspace }}/build/app-Demo-SLProject.wasm,${{ github.workspace }}/build/app-Demo-SLProject.worker.js"
         target: "."
+        overwrite: true
