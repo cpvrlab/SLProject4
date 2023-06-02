@@ -20,10 +20,11 @@ jobs:
 
     - name: Upload
       uses: appleboy/scp-action@v0.1.4
+      working-directory: ${{ github.workspace }}/build
       with:
         host: pallas.ti.bfh.ch
         username: github
         password: ${{ secrets.EMSCRIPTEN_DEPLOY_PASSWORD }}
-        source: "${{ github.workspace }}/build/app-Demo-SLProject.html,${{ github.workspace }}/build/app-Demo-SLProject.js,${{ github.workspace }}/build/app-Demo-SLProject.wasm,${{ github.workspace }}/build/app-Demo-SLProject.worker.js"
+        source: "app-Demo-SLProject.html,app-Demo-SLProject.js,app-Demo-SLProject.wasm,app-Demo-SLProject.worker.js"
         target: "."
         overwrite: true
