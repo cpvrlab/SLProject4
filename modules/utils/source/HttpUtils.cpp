@@ -26,7 +26,6 @@
 void Socket::reset()
 {
     fd    = 0;
-    inUse = false;
     memset(&sa, 0, sizeof(sa));
 }
 //-----------------------------------------------------------------------------
@@ -49,7 +48,6 @@ int Socket::connectTo(string ip,
 
     if (res->ai_family == AF_INET)
     {
-        ipv = 4;
         memset(&sa, 0, sizeof(sa));
         sa.sin_family = AF_INET;
         sa.sin_addr   = (((struct sockaddr_in*)res->ai_addr))->sin_addr;
@@ -58,7 +56,6 @@ int Socket::connectTo(string ip,
     }
     else if (res->ai_family == AF_INET6)
     {
-        ipv = 6;
         memset(&sa6, 0, sizeof(sa6));
         sa6.sin6_family = AF_INET6;
         sa6.sin6_addr   = (((struct sockaddr_in6*)res->ai_addr))->sin6_addr;
@@ -93,7 +90,6 @@ int Socket::connectTo(string ip,
         Utils::log("Socket  ", "Error connecting to server.\n");
         return -1;
     }
-    inUse = true;
     return 0;
 }
 //-----------------------------------------------------------------------------
@@ -202,8 +198,7 @@ int SecureSocket::connectTo(string ip, int port)
         Utils::log("SecureSocket", "Error creating SSL");
         return -1;
     }
-    sslfd = SSL_get_fd(ssl);
-
+    SSL_get_fd(ssl);
     SSL_set_fd(ssl, fd);
     int err = SSL_connect(ssl);
     if (err <= 0)
@@ -315,7 +310,7 @@ DNSRequest::DNSRequest(string host)
 {
     char             s[250];
     int              maxlen = 249;
-    struct hostent*  h;
+    struct hostent*  h = nullptr;
     struct addrinfo* res = NULL;
     int              ret = getaddrinfo(host.c_str(), NULL, NULL, &res);
 
@@ -606,7 +601,7 @@ int HttpUtils::GetRequest::processHttpHeaders(std::vector<char>& data)
 
         size_t endCodeIdx = str.find(" ", codeIdx);
 
-        statusCode = stoi(str.substr(codeIdx, endCodeIdx - codeIdx));
+        stoi(str.substr(codeIdx, endCodeIdx - codeIdx));
         status     = str.substr(endCodeIdx);
         status     = Utils::trimString(status, " ");
     }

@@ -195,7 +195,6 @@ SLstring SLGLShader::removeComments(SLstring src)
     SLstring dst;
     SLuint   len    = (SLuint)src.length();
     SLuint   i      = 0;
-    SLint    line   = 0;
     SLint    column = 0;
 
     while (i < len)
@@ -220,10 +219,7 @@ SLstring SLGLShader::removeComments(SLstring src)
         else
         {
             if (src[i] == '\n')
-            {
-                line++;
                 column = 0;
-            }
             else
                 column++;
 

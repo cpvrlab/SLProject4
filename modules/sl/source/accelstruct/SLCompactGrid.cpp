@@ -210,7 +210,6 @@ void SLCompactGrid::draw(SLSceneView* sv)
         if (!_vao.vaoID())
         {
             SLuint   x, y, z;
-            SLuint   curVoxel = 0;
             SLVec3f  v;
             SLVVec3f P;
 
@@ -255,7 +254,6 @@ void SLCompactGrid::draw(SLSceneView* sv)
                             P.push_back(SLVec3f(v.x, v.y, v.z + _voxelSize.z));
                             P.push_back(SLVec3f(v.x, v.y + _voxelSize.y, v.z + _voxelSize.z));
                         }
-                        curVoxel++;
                     }
                 }
             }

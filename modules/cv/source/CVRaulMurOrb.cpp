@@ -513,8 +513,6 @@ CVVKeyPoint CVRaulMurOrb::DistributeOctTree(const CVVKeyPoint& vToDistributeKeys
 
     while (!bFinish)
     {
-        iteration++;
-
         int prevSize = (int)lNodes.size();
 
         lit = lNodes.begin();
@@ -537,7 +535,7 @@ CVVKeyPoint CVRaulMurOrb::DistributeOctTree(const CVVKeyPoint& vToDistributeKeys
                 CVRaulMurExtNode n1, n2, n3, n4;
                 lit->DivideNode(n1, n2, n3, n4);
 
-                // Add childs if they contain points
+                // Add children if they contain points
                 if (!n1.vKeys.empty())
                 {
                     lNodes.push_front(n1);
@@ -842,15 +840,12 @@ void CVRaulMurOrb::detectAndCompute(CVInputArray  _image,
         //! generate the same descriptors from the same keypoints.
         KeyPointsFilter::runByImageBorder(_keypoints, _image.size(), 31);
         nkeypoints     = (int)_keypoints.size();
-        int last_index = 0;
         int last_level = 0;
         for (uint index = 0; index < _keypoints.size(); index++)
         {
             if (_keypoints[index].octave > last_level)
-            {
-                last_index = (int)index;
                 last_level = _keypoints[index].octave;
-            }
+
             _keypoints[index].pt /= mvScaleFactor[(uint)_keypoints[index].octave];
             allKeypoints[(uint)_keypoints[index].octave].push_back(_keypoints[index]);
         }

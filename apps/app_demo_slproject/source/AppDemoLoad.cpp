@@ -6543,7 +6543,7 @@ resolution shadows near the camera and lower resolution shadows further away.");
             SLint  size;
             if (sceneID == SID_Benchmark5_ColumnsNoLOD)
             {
-                size = 10;
+                size = 25;
                 snprintf(name, sizeof(name), "%d corinthian columns without LOD", size * size);
                 s->name(name);
             }

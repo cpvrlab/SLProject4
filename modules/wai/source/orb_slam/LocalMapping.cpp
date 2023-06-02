@@ -302,34 +302,28 @@ void LocalMapping::MapPointCulling(WAIKeyFrame* kf)
 
     const int cnThObs = nThObs;
 
-    int mapPointsCulled = 0;
-
     while (lit != mlpRecentAddedMapPoints.end())
     {
         WAIMapPoint* pMP = *lit;
         if (pMP->isBad())
         {
             lit = mlpRecentAddedMapPoints.erase(lit);
-            mapPointsCulled++;
         }
         else if (pMP->GetFoundRatio() < 0.25f)
         {
             pMP->SetBadFlag();
             lit = mlpRecentAddedMapPoints.erase(lit);
             mpMap->EraseMapPoint(pMP);
-            mapPointsCulled++;
         }
         else if (((int)nCurrentKFid - (int)pMP->mnFirstKFid) >= 2 && pMP->Observations() <= cnThObs)
         {
             pMP->SetBadFlag();
             lit = mlpRecentAddedMapPoints.erase(lit);
             mpMap->EraseMapPoint(pMP);
-            mapPointsCulled++;
         }
         else if (((int)nCurrentKFid - (int)pMP->mnFirstKFid) >= 3)
         {
             lit = mlpRecentAddedMapPoints.erase(lit);
-            mapPointsCulled++;
         }
         else
             lit++;
