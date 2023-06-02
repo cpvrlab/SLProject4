@@ -1339,7 +1339,7 @@ std::string ComputerInfos::get()
     osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
     GetVersionEx(&osInfo);
     char osVersion[50];
-    sprintf(osVersion, "%u.%u", osInfo.dwMajorVersion, osInfo.dwMinorVersion);
+    sprintf(osVersion, "%lu.%lu", osInfo.dwMajorVersion, osInfo.dwMinorVersion);
     osVer = string(osVersion);
 
     brand = "BRAND?";

@@ -394,7 +394,7 @@ void WAIMapPoint::ComputeDistinctiveDescriptors()
 #ifdef _WINDOWS
     for (size_t i = 0; i < N; ++i)
         delete Distances[i];
-    delete Distances;
+    delete[] Distances;
 #endif
 
     {

@@ -358,8 +358,6 @@ void LocalMapping::CreateNewMapPoints(WAIKeyFrame* kf)
 
     const float ratioFactor = 1.5f * kf->mfScaleFactor;
 
-    int nnew = 0;
-
     // Search matches with epipolar restriction and triangulate
     for (size_t i = 0; i < vpNeighKFs.size(); i++)
     {
@@ -574,8 +572,6 @@ void LocalMapping::CreateNewMapPoints(WAIKeyFrame* kf)
 
             mpMap->AddMapPoint(pMP);
             mlpRecentAddedMapPoints.push_back(pMP);
-
-            nnew++;
         }
     }
 }
