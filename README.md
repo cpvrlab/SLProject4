@@ -1,7 +1,10 @@
-### Welcome to the SLProject4
+# Welcome to the SLProject4
+
+[![Build Windows](https://github.com/cpvrlab/SLProject4/actions/workflows/build-x86_64-windows.yml/badge.svg)](https://github.com/cpvrlab/SLProject4/actions/workflows/build-x86_64-windows.yml)
+
 SL stands for Scene Library. It is developed at the Berne University of Applied Sciences (BFH) in Switzerland and is used for student projects in the cpvrLab. The various applications show what you can learn in three semesters about 3D computer graphics in real time rendering and ray tracing. The framework is built in C++ and OpenGL ES and can be built for Windows, Linux, MacOS (Intel & arm64), Android, Apple iOS and for Webassembly enabled browsers. The framework can render alternatively with Ray Tracing and Path Tracing which provides in addition high quality transparencies, reflections and soft shadows. For a complete feature list see the [SLProject4 wiki](https://github.com/cpvrlab/SLProject4/wiki).
 
-### How to get the SLProject4
+## How to get the SLProject4
 
 The SLProject4 is hosted at GitHub as a GIT repository.
 [GIT](http://git-scm.com/) is a distributed versioning control system.
@@ -21,6 +24,3 @@ git checkout develop
 
 For detailed build instructions see the [SLProject4 wiki](https://github.com/cpvrlab/SLProject4/wiki).
 For detailed framework information see the [HTML documentation](http://cpvrlab.github.io/SLProject_doc/html/index.html).
-
-
-[![Build Status](https://ci.appveyor.com/api/projects/status/d101mkgdfy4lqe01?svg=true)](https://ci.appveyor.com/project/MarcusHudritsch/slproject)
