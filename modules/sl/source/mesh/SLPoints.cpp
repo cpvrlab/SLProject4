@@ -40,7 +40,7 @@ SLPoints::SLPoints(SLAssetManager* assetMgr,
 
     _primitive = PT_points;
 
-    if ((ULONG)points.size() > (ULONG)UINT_MAX)
+    if ((SLulong)points.size() > (SLulong)UINT_MAX)
         SL_EXIT_MSG("SLPoints supports max. 2^32 vertices.");
     if (points.size() != normals.size())
         SL_EXIT_MSG("SLPoints: different size of points and normals vector.");

@@ -260,7 +260,7 @@ void new_rvalue_references()
     cout << "Time used with copy: " << duration_cast<nanoseconds>(t2 - t1).count() << "ns.\n";
 
     t1 = high_resolution_clock::now();
-    MyVector a3(move(a1)); // move constructor (move() creates an rvalue reference)
+    MyVector a3(std::move(a1)); // move constructor (move() creates an rvalue reference)
     t2 = high_resolution_clock::now();
     // Don't access a1 anymore
     cout << "Time used with move: " << duration_cast<nanoseconds>(t2 - t1).count() << "ns.\n";
@@ -274,7 +274,7 @@ void new_rvalue_references()
 
     t1 = high_resolution_clock::now();
     MyVector a5;
-    a5 = move(a4); // move assignment (move() creates an rvalue reference)
+    a5 = std::move(a4); // move assignment (move() creates an rvalue reference)
     t2 = high_resolution_clock::now();
     // Don't access a4 anymore
     cout << "Time used with move: " << duration_cast<nanoseconds>(t2 - t1).count() << "ns.\n";
