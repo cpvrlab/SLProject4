@@ -1,6 +1,8 @@
 name: Deploy Emscripten
 
-on: workflow_dispatch
+on:
+  push:
+    branches: ['main', 'develop']
 
 jobs:
   deploy:

@@ -1,6 +1,8 @@
 name: Build Emscripten
 
-on: workflow_dispatch
+on:
+  push:
+    branches: ['main', 'develop']
 
 jobs:
   build:
