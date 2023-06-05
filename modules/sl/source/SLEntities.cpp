@@ -11,13 +11,13 @@
 #include <SLNode.h>
 
 //-----------------------------------------------------------------------------
-/*! addChild adds a child node by inserting an SLEntities into a vector in
- Depth First Search order. The root node gets the parent ID -1.
- The child is inserted right after the parent node.
- @param scenegraph The scenegraph as a vector
- @param myParentID Index of the parent node
- @param node The node to add as child of the parent
-*/
+/*!
+ * addChild adds a child node by inserting an SLEntities into a vector in
+ * Depth First Search order. The root node gets the parent ID -1.
+ * The child is inserted right after the parent node.
+ * @param myParentID Index of the parent node
+ * @param entity The entity to add as child of the parent
+ */
 void SLEntities::addChildEntity(SLint    myParentID,
                                 SLEntity entity)
 {
@@ -83,7 +83,6 @@ void SLEntities::addChildEntity(SLint    myParentID,
 }
 //-----------------------------------------------------------------------------
 /*! Returns the pointer to the node at id
- @param scenegraph The scenegraph as a SLEntities vector
  @param id The index of the node to return as a pointer
  @return The pointer of the node at id
  */
@@ -106,7 +105,6 @@ SLint SLEntities::getEntityID(SLNode* node)
 }
 //-----------------------------------------------------------------------------
 /*! Returns the pointer to the parent of the node at id
- @param scenegraph The scenegraph as a SLEntities vector
  @param id The index of the node in the scenegraph vector
  @return The pointer of the parent of the node at id
  */
@@ -161,7 +159,7 @@ SLint SLEntities::updateWMRec(SLint id, SLMat4f& parentWM)
     }
 #endif
 
-    SLuint handledChildren = 0;
+    SLint handledChildren = 0;
     while (handledChildren < entity->childCount)
     {
         SLint childID = id + handledChildren + 1;
@@ -172,7 +170,6 @@ SLint SLEntities::updateWMRec(SLint id, SLMat4f& parentWM)
 }
 //-----------------------------------------------------------------------------
 /*! Prints the scenegraph vector flat or as hierarchical tree as follows:
- @param scenegraph The scenegraph as a node vector
  @param doTreeDump Flag if dump as a tree or flat
 
 Pattern: ID.Parent.childCount
@@ -240,8 +237,8 @@ void SLEntities::dump(SLbool doTreeDump)
     cout << "----------------------------------------------------------" << endl;
 }
 //-----------------------------------------------------------------------------
-/*! Deletes a node at index id with all with all children
- @param scenegraph The scenegraph as a SLEntities vector
+/*!
+ * Deletes a node at index id with all with all children
  @param id Index of node to delete
  */
 void SLEntities::deleteEntity(SLint id)

@@ -245,6 +245,7 @@ SLMaterial::SLMaterial(SLAssetManager* am,
  @param ps Pointer to the particle system for the material.
  @param program Pointer to the shader program for the material.
  If none is passed a program will be generated from the passed parameters.
+ @param programTF Pointer to the shader program for Transform Feedback
  */
 SLMaterial::SLMaterial(SLAssetManager*   am,
                        const SLchar*     name,

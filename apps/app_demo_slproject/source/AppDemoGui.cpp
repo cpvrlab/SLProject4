@@ -152,17 +152,20 @@ Marc Affolter, Martin Christen, Jan Dellsperger, Manuel Frischknecht, Luc Girod,
 Credits for external libraries:
 - assimp: assimp.sourceforge.net
 - eigen: eigen.tuxfamily.org
+- emscripten: emscripten.org
 - imgui: github.com/ocornut/imgui
 - gl3w: https://github.com/skaslev/gl3w
 - glfw: glfw.org
 - g2o: github.com/RainerKuemmerle/g2o
 - ktx: khronos.org/ktx
 - libigl: libigl.github.io
+- mediapipe: developers.google.com/mediapipe
 - ORB-SLAM2: github.com/raulmur/ORB_SLAM2
 - OpenCV: opencv.org
 - OpenGL: opengl.org
 - OpenSSL: openssl.org
 - spa: midcdmz.nrel.gov/spa
+- stb: single file image library
 - zlib: zlib.net
 )";
 

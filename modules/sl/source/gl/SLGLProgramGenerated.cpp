@@ -1598,6 +1598,7 @@ void SLGLProgramGenerated::buildProgramName(SLMaterial* mat,
  already exists in the asset manager. See SLMaterial::activate.
  @param mat Parent material pointer
  @param programName Reference to program name string that gets built
+ @param isDrawProg Flag if program is for drawing instead of updating
 
  The shader program gets a unique name with the following pattern:
  <pre>
@@ -1730,6 +1731,7 @@ void SLGLProgramGenerated::buildProgramCode(SLMaterial* mat,
  * (for particle system drawing). The code is only assembled but not compiled and linked.
  * This happens within the before the first draw call from within SLMesh::draw.
  * @param mat Parent material pointer
+ * @param isDrawProg Flag if program is for drawing instead of update
  */
 void SLGLProgramGenerated::buildProgramCodePS(SLMaterial* mat, bool isDrawProg)
 {
