@@ -175,8 +175,15 @@ typedef double         SLdouble;   // analog to GLdouble
 typedef bool           SLbool;     // analog to GLbool
 typedef unsigned int   SLenum;     // analog to GLenum
 typedef unsigned int   SLbitfield; // analog to GLbitfield
-typedef int64_t        SLint64;
-typedef uint64_t       SLuint64;
+
+typedef int8_t   SLint8;
+typedef uint8_t  SLuint8;
+typedef int16_t  SLint16;
+typedef uint16_t SLuint16;
+typedef int32_t  SLint32;
+typedef uint32_t SLuint32;
+typedef int64_t  SLint64;
+typedef uint64_t SLuint64;
 
 // All 1D vectors begin with SLV*
 typedef vector<SLbool>   SLVbool;

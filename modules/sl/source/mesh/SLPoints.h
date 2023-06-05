@@ -33,7 +33,7 @@ public:
 
     //! Ctor for a random point cloud.
     SLPoints(SLAssetManager* assetMgr,
-             SLfloat         nPoints,
+             SLuint32        nPoints,
              SLRnd3f&        rnd,
              const SLstring& name = "normal point cloud",
              SLMaterial*     mat  = nullptr);
