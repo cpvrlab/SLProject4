@@ -3,7 +3,7 @@ name: Deploy Emscripten
 on: workflow_dispatch
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-22.04
 
     steps:
