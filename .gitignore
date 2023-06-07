@@ -91,3 +91,5 @@ yolov3.weights
 Tester
 /externals/prebuild_scripts/eigen
 /externals/prebuild_scripts/openssl
+
+docs/html
