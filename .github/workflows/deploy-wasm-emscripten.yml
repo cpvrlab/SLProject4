@@ -2,7 +2,7 @@ name: Deploy Emscripten
 
 on:
   push:
-    branches: ['main', 'develop']
+    branches: ['main']
 
 jobs:
   deploy:
