@@ -1,0 +1,20 @@
+name: Publish Documentation
+
+on:
+  workflow_dispatch
+
+jobs:
+  publish:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Run Doxygen
+      uses: mattnotmitt/doxygen-action@v1.9.5
+      with:
+        working-directory: docs
+
+    - name: Upload documentation
+      working-directory: ${{ github.workspace }}/docs/html
+      run: tar -czf - * | sshpass -p "${{ secrets.EMSCRIPTEN_DEPLOY_PASSWORD }}" ssh -o StrictHostKeyChecking=no github@pallas.ti.bfh.ch "rm -rf docs && mkdir docs && cd docs && tar xzvf -"
