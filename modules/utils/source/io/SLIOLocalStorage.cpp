@@ -35,8 +35,9 @@ SLIOReaderLocalStorage::SLIOReaderLocalStorage(std::string path)
         let item = localStorage.getItem(key);
         let string = atob(item);
 
-        let buffer = _malloc(string.length);
-        writeAsciiToMemory(string, buffer);
+        // Allocate one more byte than necessary because stringToAscii includes a null terminator.
+        let buffer = _malloc(string.length + 1);
+        stringToAscii(string, buffer, string.length + 1);
 
         setValue($1, buffer, "i8*");
         setValue($2, string.length, "i32");
