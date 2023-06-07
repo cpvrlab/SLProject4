@@ -919,6 +919,7 @@ INPUT                  = ../modules/sl/source \
                          OnPaint.md \
                          BlenderToSL.md \
                          ExampleScenes.md \
+                         ExampleBasic.md \
                          ExampleGlTF.md
 
 # This tag can be used to specify the character encoding of the source files

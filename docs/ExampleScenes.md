@@ -1,3 +1,5 @@
 \page example-scenes Example Scenes
 
-\subpage example-gltf
+Links to examples that run live in your browser (!):
+- \subpage example-basic
+- \subpage example-gltf
