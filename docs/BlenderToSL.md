@@ -1,5 +1,4 @@
-Blender to SLProject export
-============
+\page blender-to-sl Blender to SLProject Export
 
 \section intro Introduction
 <p>

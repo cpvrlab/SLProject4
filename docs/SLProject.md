@@ -1,5 +1,4 @@
-SLProject                         {#mainpage}
-============
+\mainpage SLProject
 
 <p>
 Welcome to the SLProject. SL stands for Scene Library. It is developed at the 

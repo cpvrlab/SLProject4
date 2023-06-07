@@ -1,5 +1,4 @@
-SLProject Data Protection Declaration
-============
+\page data-protection-declaration SLProject Data Protection Declaration
 
 The SLProject uses the following permissions:
 
