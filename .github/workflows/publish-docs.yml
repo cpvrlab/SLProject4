@@ -13,6 +13,9 @@ jobs:
     - name: Install Doxygen
       run: sudo apt install -y doxygen
 
+    - name: Install Graphviz
+      run: sudo apt install -y graphviz
+
     - name: Install Doxygen Awesome
       working-directory: ${{ github.workspace }}/docs
       run: git clone https://github.com/jothepro/doxygen-awesome-css.git -b v2.2.1
