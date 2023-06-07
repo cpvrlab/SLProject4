@@ -10,14 +10,16 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Install Doxygen
+      run: sudo apt install -y doxygen
+
     - name: Install Doxygen Awesome
       working-directory: ${{ github.workspace }}/docs
       run: git clone https://github.com/jothepro/doxygen-awesome-css.git -b v2.2.1
 
     - name: Run Doxygen
-      uses: mattnotmitt/doxygen-action@v1.9.5
-      with:
-        working-directory: docs
+      working-directory: ${{ github.workspace }}/docs
+      run: doxygen
 
     - name: Upload documentation
       working-directory: ${{ github.workspace }}/docs/html
