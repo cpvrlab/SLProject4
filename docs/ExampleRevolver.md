@@ -1,14 +1,11 @@
-\page example-gltf glTF Example
+\page example-revolver Revolving Meshes
 
-SLProject supports loading the [glTF model format](https://en.wikipedia.org/wiki/GlTF). This scene
-showcases loading and rendering the damaged helmet sample by Khronos. Notice how the environment is
-reflected onto the helmet. Note that it may take some time to load this scene since there is a lot of
-data to be downloaded.
+Examples of revolving mesh objects constructed by rotating a 2D curve. 
+The classes SLArrow, SLCone, SLCylinder, SLDisc, SLLens and SLSpheric inherit the SLRevolver class that inherits from SLMesh.
 
 \htmlonly
-<iframe src="https://pallas.ti.bfh.ch/slproject?scene=40" width="1280" height="720" frameBorder="0"></iframe>
+<iframe src="https://pallas.ti.bfh.ch/slproject?scene=4" width="1280" height="720" frameBorder="0"></iframe>
 \endhtmlonly
-
 
 General interaction help:
 <ul>
@@ -18,4 +15,5 @@ General interaction help:
   <li>Double click with the left mouse button to select an object.</li>
   <li>Click the right mouse button to open the context menu.</li>
   <li>You can open and dock additional windows from the menu Infos.</li>
+  <li>The are more example scenes available over the menu File > Load Test Scene</li>
 </ul>

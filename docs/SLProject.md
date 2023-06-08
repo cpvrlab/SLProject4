@@ -32,6 +32,7 @@ The code is provided without any warranties whether expressed or implied.
 <li><a href="https://github.com/cpvrlab/SLProject4/wiki/Build-on-MacOS-with-XCode-for-MacOS">Build for MacOS with Apple XCode</a></li>
 <li><a href="https://github.com/cpvrlab/SLProject4/wiki/Build-on-MacOS-with-XCode-for-iOS">Build for iOS with Apple XCode</a></li>
 <li><a href="https://github.com/cpvrlab/SLProject4/wiki/Build-on-Ubuntu-Linux">Build on Ubuntu Linux</a></li>
+<li><a href="https://github.com/cpvrlab/SLProject4/wiki/Build-for-the-web-with-Emscripten">Build for the Web with Emscripten</a></li>
 <li><a href="https://github.com/cpvrlab/SLProject4/wiki/Minimal-OpenGL-Apps">Minimal OpenGL Applications</a></li>
 <li><a href="https://github.com/cpvrlab/SLProject4/wiki/Minimal-OpenCV-Apps">Minimal OpenCV Applications</a></li>
 <li><a href="https://github.com/cpvrlab/SLProject4/wiki/Folder-Structure">Repository folder structure</a></li>
