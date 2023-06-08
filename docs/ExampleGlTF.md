@@ -6,7 +6,7 @@ reflected onto the helmet. Note that it may take some time to load this scene si
 data to be downloaded.
 
 \htmlonly
-<iframe src="https://pallas.ti.bfh.ch/slproject?scene=40" width="1280" height="720" frameBorder="0"></iframe>
+<iframe src="https://pallas.ti.bfh.ch/slproject?scene=40" width="960" height="640" frameBorder="0"></iframe>
 \endhtmlonly
 
 

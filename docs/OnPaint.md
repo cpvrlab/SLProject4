@@ -1,4 +1,4 @@
-\page on-paint How One Frame Gets Painted
+\page on-paint How one Frame gets painted
 
 As an example we start here at the outer shell of a desktop app using GLFW.
 The most outer onPaint routine gets called in the main event loop

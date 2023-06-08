@@ -50,7 +50,7 @@ Read the <a href="md_on_paint.html"><b>onPaint Page</b></a> for an overview how 
 <h3>Contributors:</h3>
 <p>
 Contributors since 2005 in alphabetic order:
-Martin Christen, Jan Dellsperger, Manuel Frischknecht, Luc Girod, Michael Goettlicher, Michael Schertenleib, Stefan Thoeni, Timo Tschanz, Marc Wacker, Pascal Zingg
+Martin Christen, Jan Dellsperger, Manuel Frischknecht, Luc Girod, Michael Goettlicher, Michael Schertenleib, Stefan Thoeni, Timo Tschanz, Marc Wacker, Marino von Wattenwyl, Pascal Zingg
 </p>
 
 <h3>Framework Dependencies:</h3>
