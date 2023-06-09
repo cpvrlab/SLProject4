@@ -551,6 +551,21 @@ int main(void)
     emscripten_set_touchmove_callback("#canvas", nullptr, false, emOnTouchMove);
     emscripten_set_beforeunload_callback(nullptr, emOnUnload);
 
+    // HACK: Consume events so they don't bubble up. Does Emscripten not have a API to do this in the event callback?
+    MAIN_THREAD_EM_ASM({
+        const canvas = document.querySelector("#canvas");
+        canvas.addEventListener("mousedown", event => event.stopPropagation());
+        canvas.addEventListener("mouseup", event => event.stopPropagation());
+        canvas.addEventListener("dblclick", event => event.stopPropagation());
+        canvas.addEventListener("mousemove", event => event.stopPropagation());
+        canvas.addEventListener("wheel", event => event.stopPropagation());
+        canvas.addEventListener("keydown", event => event.stopPropagation());
+        canvas.addEventListener("keyup", event => event.stopPropagation());
+        canvas.addEventListener("touchstart", event => event.stopPropagation());
+        canvas.addEventListener("touchend", event => event.stopPropagation());
+        canvas.addEventListener("touchmove", event => event.stopPropagation());
+    });
+
     AppDemo::calibIniPath = "data/calibrations/";
 
     SLVstring args;
