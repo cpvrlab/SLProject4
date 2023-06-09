@@ -2,7 +2,8 @@ name: Build Emscripten
 
 on:
   push:
-    branches: ['main']
+    branches:
+      - main
 
 jobs:
   build:
