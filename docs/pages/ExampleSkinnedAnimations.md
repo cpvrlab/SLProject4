@@ -1,4 +1,4 @@
-\page example-skinned-animation Skinned Animations
+\page example-skinned-animations Skinned Animations
 
 
 \htmlonly

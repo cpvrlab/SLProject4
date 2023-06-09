@@ -1,4 +1,4 @@
-\page example-node-animation Node Animations
+\page example-node-animations Node Animations
 
 
 \htmlonly
