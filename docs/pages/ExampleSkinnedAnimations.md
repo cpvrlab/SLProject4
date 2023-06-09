@@ -1,8 +1,9 @@
 \page example-skinned-animations Skinned Animations
 Skinned skeleton animation are imported at the moment with the Collada file format (DAE).
+Skinned skeleton animation are controlled by the SLAnimManager. Its interface is in the menu *Animation*.
 
 \htmlonly
-<iframe src="https://pallas.ti.bfh.ch/slproject?scene=47" width="1024" height="640" frameBorder="0"></iframe>
+<iframe src="https://pallas.ti.bfh.ch/slproject?scene=48" width="1024" height="640" frameBorder="0"></iframe>
 \endhtmlonly
 
 General help:

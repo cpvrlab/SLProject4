@@ -3268,7 +3268,7 @@ resolution shadows near the camera and lower resolution shadows further away.");
         sv->camera(cam1);
     }
 
-    else if (sceneID == SID_AnimationSkeletal) //..................................................
+    else if (sceneID == SID_AnimationSkinned) //..................................................
     {
         s->name("Skeletal Animation Test");
         s->info("Skeletal Animation Test Scene");
