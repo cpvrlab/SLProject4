@@ -1,6 +1,7 @@
 name: Deploy Emscripten
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main

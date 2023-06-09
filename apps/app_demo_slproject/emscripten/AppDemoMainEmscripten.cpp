@@ -539,16 +539,16 @@ int main(void)
     else
         SL_EXIT_MSG("Failed to make WebGL context current.");
 
-    emscripten_set_mousedown_callback("#canvas", nullptr, true, emOnMousePressed);
-    emscripten_set_mouseup_callback("#canvas", nullptr, true, emOnMouseReleased);
-    emscripten_set_dblclick_callback("#canvas", nullptr, true, emOnMouseDoubleClicked);
-    emscripten_set_mousemove_callback("#canvas", nullptr, true, emOnMouseMove);
-    emscripten_set_wheel_callback("#canvas", nullptr, true, emOnMouseWheel);
-    emscripten_set_keydown_callback("#canvas", nullptr, true, emOnKeyPressed);
-    emscripten_set_keyup_callback("#canvas", nullptr, true, emOnKeyReleased);
-    emscripten_set_touchstart_callback("#canvas", nullptr, true, emOnTouchStart);
-    emscripten_set_touchend_callback("#canvas", nullptr, true, emOnTouchEnd);
-    emscripten_set_touchmove_callback("#canvas", nullptr, true, emOnTouchMove);
+    emscripten_set_mousedown_callback("#canvas", nullptr, false, emOnMousePressed);
+    emscripten_set_mouseup_callback("#canvas", nullptr, false, emOnMouseReleased);
+    emscripten_set_dblclick_callback("#canvas", nullptr, false, emOnMouseDoubleClicked);
+    emscripten_set_mousemove_callback("#canvas", nullptr, false, emOnMouseMove);
+    emscripten_set_wheel_callback("#canvas", nullptr, false, emOnMouseWheel);
+    emscripten_set_keydown_callback("#canvas", nullptr, false, emOnKeyPressed);
+    emscripten_set_keyup_callback("#canvas", nullptr, false, emOnKeyReleased);
+    emscripten_set_touchstart_callback("#canvas", nullptr, false, emOnTouchStart);
+    emscripten_set_touchend_callback("#canvas", nullptr, false, emOnTouchEnd);
+    emscripten_set_touchmove_callback("#canvas", nullptr, false, emOnTouchMove);
     emscripten_set_beforeunload_callback(nullptr, emOnUnload);
 
     AppDemo::calibIniPath = "data/calibrations/";
