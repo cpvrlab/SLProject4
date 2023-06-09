@@ -920,6 +920,7 @@ INPUT                  = ../modules/sl/source \
                          pages/ExampleRevolver.md \
                          pages/ExampleGlTF.md \
                          pages/OnPaint.md \
+                         pages/Emscripten.md \
                          pages/BlenderToSL.md
 
 # This tag can be used to specify the character encoding of the source files
