@@ -1,4 +1,9 @@
 \page example-shadow-mapping Shadow Mapping
+In this scene you can see all light types: Directional, rectangular, spot and point light. 
+All light types (SLLightDirect, SLLightRect, SLLightSpot) are derived from SLLight and can have a SLShadowMap. 
+Only directional light (SLLightDirect) can create cascaded shadow maps. 
+Double-click a light to see its shadow volume. 
+*With RMB > Show Properties* you can see more properties under *Node Properties > Shadow mapping*.
 
 \htmlonly
 <iframe src="https://pallas.ti.bfh.ch/slproject?scene=22" width="1024" height="640" frameBorder="0"></iframe>

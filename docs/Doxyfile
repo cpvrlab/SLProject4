@@ -915,7 +915,7 @@ INPUT                  = ../modules/sl/source \
                          ../apps/app_demo_slproject/glfw \
                          ../apps/app_demo_slproject/source \
                          pages/Introduction.md \
-                         pages/Emscripten.md \
+                         pages/ExampleScenes.md \
                          pages/ExampleGlTF.md \
                          pages/ExampleImageBasedLighting.md \
                          pages/ExampleLevelOfDetail.md \
@@ -927,6 +927,7 @@ INPUT                  = ../modules/sl/source \
                          pages/ExampleShadowMapping.md \
                          pages/ExampleSkinnedAnimations.md \
                          pages/OnPaint.md \
+                         pages/Emscripten.md \
                          pages/BlenderToSL.md \
                          pages/SLProject.md
 
