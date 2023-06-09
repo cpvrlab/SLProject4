@@ -558,7 +558,7 @@ int main(void)
         canvas.addEventListener("mouseup", event => event.preventDefault());
         canvas.addEventListener("dblclick", event => event.preventDefault());
         canvas.addEventListener("mousemove", event => event.preventDefault());
-        canvas.addEventListener("mousewheel", event => event.preventDefault());
+        canvas.addEventListener("wheel", event => event.preventDefault());
         canvas.addEventListener("keydown", event => event.preventDefault());
         canvas.addEventListener("keyup", event => event.preventDefault());
         canvas.addEventListener("touchstart", event => event.preventDefault());
