@@ -554,16 +554,16 @@ int main(void)
     // HACK: Consume events so they don't bubble up. Does Emscripten not have a API to do this in the event callback?
     MAIN_THREAD_EM_ASM({
         const canvas = document.querySelector("#canvas");
-        canvas.addEventListener("mousedown", event => event.stopPropagation());
-        canvas.addEventListener("mouseup", event => event.stopPropagation());
-        canvas.addEventListener("dblclick", event => event.stopPropagation());
-        canvas.addEventListener("mousemove", event => event.stopPropagation());
-        canvas.addEventListener("mousewheel", event => event.stopPropagation());
-        canvas.addEventListener("keydown", event => event.stopPropagation());
-        canvas.addEventListener("keyup", event => event.stopPropagation());
-        canvas.addEventListener("touchstart", event => event.stopPropagation());
-        canvas.addEventListener("touchend", event => event.stopPropagation());
-        canvas.addEventListener("touchmove", event => event.stopPropagation());
+        canvas.addEventListener("mousedown", event => event.preventDefault());
+        canvas.addEventListener("mouseup", event => event.preventDefault());
+        canvas.addEventListener("dblclick", event => event.preventDefault());
+        canvas.addEventListener("mousemove", event => event.preventDefault());
+        canvas.addEventListener("mousewheel", event => event.preventDefault());
+        canvas.addEventListener("keydown", event => event.preventDefault());
+        canvas.addEventListener("keyup", event => event.preventDefault());
+        canvas.addEventListener("touchstart", event => event.preventDefault());
+        canvas.addEventListener("touchend", event => event.preventDefault());
+        canvas.addEventListener("touchmove", event => event.preventDefault());
     });
 
     AppDemo::calibIniPath = "data/calibrations/";
