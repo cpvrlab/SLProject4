@@ -914,7 +914,6 @@ INPUT                  = ../modules/sl/source \
                          ../apps/app_demo_slproject/include \
                          ../apps/app_demo_slproject/glfw \
                          ../apps/app_demo_slproject/source \
-                         pages/BlenderToSL.md \
                          pages/Introduction.md \
                          pages/Emscripten.md \
                          pages/ExampleGlTF.md \
@@ -928,6 +927,7 @@ INPUT                  = ../modules/sl/source \
                          pages/ExampleShadowMapping.md \
                          pages/ExampleSkinnedAnimations.md \
                          pages/OnPaint.md \
+                         pages/BlenderToSL.md \
                          pages/SLProject.md
 
 # This tag can be used to specify the character encoding of the source files

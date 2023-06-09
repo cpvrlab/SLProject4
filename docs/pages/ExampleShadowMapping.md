@@ -1,7 +1,7 @@
 \page example-shadow-mapping Shadow Mapping
 
 \htmlonly
-<iframe src="https://pallas.ti.bfh.ch/slproject?scene=22" width="960" height="640" frameBorder="0"></iframe>
+<iframe src="https://pallas.ti.bfh.ch/slproject?scene=22" width="1024" height="640" frameBorder="0"></iframe>
 \endhtmlonly
 
 General help:

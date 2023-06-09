@@ -1700,8 +1700,8 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                         s->onLoad(am, s, sv, SID_AnimationNode);
                     if (ImGui::MenuItem("Mass Animation", nullptr, sid == SID_AnimationMass))
                         s->onLoad(am, s, sv, SID_AnimationMass);
-                    if (ImGui::MenuItem("Skeletal Animation", nullptr, sid == SID_AnimationSkeletal))
-                        s->onLoad(am, s, sv, SID_AnimationSkeletal);
+                    if (ImGui::MenuItem("Skeletal Animation", nullptr, sid == SID_AnimationSkinned))
+                        s->onLoad(am, s, sv, SID_AnimationSkinned);
                     if (ImGui::MenuItem("AstroBoy Army", nullptr, sid == SID_AnimationAstroboyArmy))
                         s->onLoad(am, s, sv, SID_AnimationAstroboyArmy);
                     if (ImGui::MenuItem("Fanuc-CRX", nullptr, sid == SID_Robotics_FanucCRX_FK))
