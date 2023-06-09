@@ -5,4 +5,11 @@ These are at the moment: Google Chrome, Firefox and Microsoft Edge.
 See the GitHub wiki page <a href="https://github.com/cpvrlab/SLProject4/wiki/Build-for-the-web-with-Emscripten">Build for the Web with Emscripten</a> for more information for a local emscripten build.
 
 - \subpage example-revolver
+- \subpage example-ibl
+- \subpage example-lol
+- \subpage example-shadow-mapping
 - \subpage example-gltf
+- \subpage example-node-animations
+- \subpage example-skinned-animations
+- \subpage example-raytracing
+- \subpage example-pathtracing
