@@ -25,7 +25,7 @@ class SLAssetManager;
  If all points in the array _revPoints are different the normals will be
  smoothed. If two consecutive points are identical the normals will define a
  hard edge. Texture coords. are cylindrically mapped.
- See the \subpage example-revolver
+ See the online example \subpage example-revolver with various revolver objects.
 */
 class SLRevolver : public SLMesh
 {
