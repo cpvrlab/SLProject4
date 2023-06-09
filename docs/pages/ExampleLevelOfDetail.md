@@ -4,6 +4,8 @@ The following scene shows 2500 corinthian columns with each 83k triangles in the
 With 3 levels of detail the amount of geometry is reduced depending on the size of the bounding rectangle in screen space. 
 In addition, we do automatically a view frustum culling to optimize rendering performance.
 See the menu *GL* for additional visualizations for the OpenGL renderer.
+The scene uses also cascaded shadow mapping with the current time im Switzerland. 
+You can adjust the date and time with the dialogue *Info > Date-Time*.
 
 \htmlonly
 <iframe src="https://pallas.ti.bfh.ch/slproject?scene=90" width="960" height="640" frameBorder="0"></iframe>
