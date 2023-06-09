@@ -544,23 +544,28 @@ int main(void)
     emscripten_set_dblclick_callback("#canvas", nullptr, false, emOnMouseDoubleClicked);
     emscripten_set_mousemove_callback("#canvas", nullptr, false, emOnMouseMove);
     emscripten_set_wheel_callback("#canvas", nullptr, false, emOnMouseWheel);
-    emscripten_set_keydown_callback("#canvas", nullptr, false, emOnKeyPressed);
-    emscripten_set_keyup_callback("#canvas", nullptr, false, emOnKeyReleased);
+    emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, false, emOnKeyPressed);
+    emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, false, emOnKeyReleased);
     emscripten_set_touchstart_callback("#canvas", nullptr, false, emOnTouchStart);
     emscripten_set_touchend_callback("#canvas", nullptr, false, emOnTouchEnd);
     emscripten_set_touchmove_callback("#canvas", nullptr, false, emOnTouchMove);
     emscripten_set_beforeunload_callback(nullptr, emOnUnload);
 
-    // HACK: Consume events so they don't bubble up. Does Emscripten not have a API to do this in the event callback?
+    // HACK: Fixes to make this able to run in an <iframe>
     MAIN_THREAD_EM_ASM({
         const canvas = document.querySelector("#canvas");
+        
+        // Focus the canvas element on click.
+        canvas.addEventListener("click", event => canvas.focus());
+
+        // Prevent the events from bubbling up to the parent page.
         canvas.addEventListener("mousedown", event => event.preventDefault());
         canvas.addEventListener("mouseup", event => event.preventDefault());
         canvas.addEventListener("dblclick", event => event.preventDefault());
         canvas.addEventListener("mousemove", event => event.preventDefault());
         canvas.addEventListener("wheel", event => event.preventDefault());
-        canvas.addEventListener("keydown", event => event.preventDefault());
-        canvas.addEventListener("keyup", event => event.preventDefault());
+        document.addEventListener("keydown", event => event.preventDefault());
+        document.addEventListener("keyup", event => event.preventDefault());
         canvas.addEventListener("touchstart", event => event.preventDefault());
         canvas.addEventListener("touchend", event => event.preventDefault());
         canvas.addEventListener("touchmove", event => event.preventDefault());
