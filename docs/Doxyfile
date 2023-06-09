@@ -914,21 +914,7 @@ INPUT                  = ../modules/sl/source \
                          ../apps/app_demo_slproject/include \
                          ../apps/app_demo_slproject/glfw \
                          ../apps/app_demo_slproject/source \
-                         pages/BlenderToSL.md \
-                         pages/Introduction.md \
-                         pages/Emscripten.md \
-                         pages/ExampleGlTF.md \
-                         pages/ExampleImageBasedLighting.md \
-                         pages/ExampleLevelOfDetail.md \
-                         pages/ExampleNodeAnimations.md \
-                         pages/ExamplePathtracing.md \
-                         pages/ExampleRaytracing.md \
-                         pages/ExampleRevolver.md \
-                         pages/ExampleScenes.md \
-                         pages/ExampleShadowMapping.md \
-                         pages/ExampleSkinnedAnimations.md \
-                         pages/OnPaint.md \
-                         pages/SLProject.md
+                         pages
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -960,7 +946,8 @@ INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.cpp \
                          *.h \
                          *.frag \
-                         *.vert
+                         *.vert \
+                         *.md
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
