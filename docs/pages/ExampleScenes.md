@@ -6,7 +6,7 @@ See the GitHub wiki page <a href="https://github.com/cpvrlab/SLProject4/wiki/Bui
 
 - \subpage example-revolver
 - \subpage example-ibl
-- \subpage example-lol
+- \subpage example-lod
 - \subpage example-shadow-mapping
 - \subpage example-gltf
 - \subpage example-node-animations

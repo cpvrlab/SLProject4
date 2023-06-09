@@ -1,7 +1,9 @@
 \page example-lod Level of Detail
 
 The following scene shows 2500 corinthian columns with each 83k triangles in their highest resolution. 
-With 3 levels of detail the amount of geometry is reduced depending on the size of the bounding rectangle in screen space.
+With 3 levels of detail the amount of geometry is reduced depending on the size of the bounding rectangle in screen space. 
+In addition, we do automatically a view frustum culling to optimize rendering performance.
+See the menu *GL* for additional visualizations for the OpenGL renderer.
 
 \htmlonly
 <iframe src="https://pallas.ti.bfh.ch/slproject?scene=93" width="960" height="640" frameBorder="0"></iframe>

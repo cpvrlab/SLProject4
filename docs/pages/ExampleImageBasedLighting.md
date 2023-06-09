@@ -1,8 +1,9 @@
 \page example-ibl Image Based Lighting
 
 The following scene shows 7 x 7 spheres with different metallic (vertical) and 
-roughness (horizontal) material parameters. We implemented the standard 
-*Physically Based Rendering (PBR)* material model indroduced in 
+roughness (horizontal) material parameters. 
+These parameters can be passed either by float values or as textures per pixel.
+We implemented the standard *Physically Based Rendering (PBR)* material model introduced in 
 [Unreal Engine 4 in 2013](https://de45xmedrsdbp.cloudfront.net/Resources/files/2013SiggraphPresentationsNotes-26915738.pdf).
 The ambient part is added by the HDRI environment map shown around the scene as a skybox.
 The shaders for this type of SLMaterial are generated automatically in SLGLProgramGenerated.
