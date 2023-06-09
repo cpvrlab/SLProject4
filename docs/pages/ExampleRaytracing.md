@@ -1,7 +1,7 @@
 \page example-raytracing Ray Tracing
 
 \htmlonly
-<iframe src="https://pallas.ti.bfh.ch/slproject?scene=67" width="960" height="640" frameBorder="0"></iframe>
+<iframe src="https://pallas.ti.bfh.ch/slproject?scene=64" width="960" height="640" frameBorder="0"></iframe>
 \endhtmlonly
 
 General help:

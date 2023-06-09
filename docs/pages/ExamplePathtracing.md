@@ -1,7 +1,7 @@
 \page example-pathtracing Path Tracing
 
 \htmlonly
-<iframe src="https://pallas.ti.bfh.ch/slproject?scene=66" width="960" height="640" frameBorder="0"></iframe>
+<iframe src="https://pallas.ti.bfh.ch/slproject?scene=63" width="960" height="640" frameBorder="0"></iframe>
 \endhtmlonly
 
 General help:

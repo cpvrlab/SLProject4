@@ -6,7 +6,7 @@ In addition, we do automatically a view frustum culling to optimize rendering pe
 See the menu *GL* for additional visualizations for the OpenGL renderer.
 
 \htmlonly
-<iframe src="https://pallas.ti.bfh.ch/slproject?scene=93" width="960" height="640" frameBorder="0"></iframe>
+<iframe src="https://pallas.ti.bfh.ch/slproject?scene=90" width="960" height="640" frameBorder="0"></iframe>
 \endhtmlonly
 
 General help:

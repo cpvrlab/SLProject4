@@ -2,7 +2,7 @@
 
 
 \htmlonly
-<iframe src="https://pallas.ti.bfh.ch/slproject?scene=49" width="960" height="640" frameBorder="0"></iframe>
+<iframe src="https://pallas.ti.bfh.ch/slproject?scene=48" width="960" height="640" frameBorder="0"></iframe>
 \endhtmlonly
 
 General help:

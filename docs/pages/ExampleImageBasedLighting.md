@@ -9,7 +9,7 @@ The ambient part is added by the HDRI environment map shown around the scene as 
 The shaders for this type of SLMaterial are generated automatically in SLGLProgramGenerated.
 
 \htmlonly
-<iframe src="https://pallas.ti.bfh.ch/slproject?scene=15" width="960" height="640" frameBorder="0"></iframe>
+<iframe src="https://pallas.ti.bfh.ch/slproject?scene=14" width="960" height="640" frameBorder="0"></iframe>
 \endhtmlonly
 
 General help:
