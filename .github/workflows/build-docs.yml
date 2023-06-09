@@ -2,10 +2,10 @@ name: Build Docs
 
 on:
   push:
-    branches: ['main']
+    branches: ['main', 'develop']
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-22.04
 
     steps:
