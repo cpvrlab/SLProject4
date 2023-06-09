@@ -2,7 +2,7 @@
 Skinned skeleton animation are imported at the moment with the Collada file format (DAE).
 
 \htmlonly
-<iframe src="https://pallas.ti.bfh.ch/slproject?scene=47" width="960" height="640" frameBorder="0"></iframe>
+<iframe src="https://pallas.ti.bfh.ch/slproject?scene=47" width="1024" height="640" frameBorder="0"></iframe>
 \endhtmlonly
 
 General help:

@@ -7,7 +7,7 @@ The ray tracer is multithreaded and uses a combination bounding boxes and regula
 The ray tracer is implemented in the classes SLRaytracer and SLRay.
 
 \htmlonly
-<iframe src="https://pallas.ti.bfh.ch/slproject?scene=64" width="960" height="640" frameBorder="0"></iframe>
+<iframe src="https://pallas.ti.bfh.ch/slproject?scene=64" width="1080" height="640" frameBorder="0"></iframe>
 \endhtmlonly
 
 General help:

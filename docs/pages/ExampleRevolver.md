@@ -4,7 +4,7 @@ Examples of revolving mesh objects constructed by rotating a 2D curve.
 The classes SLArrow, SLCone, SLCylinder, SLDisc, SLLens and SLSpheric inherit the SLRevolver class that inherits from SLMesh.
 
 \htmlonly
-<iframe src="https://pallas.ti.bfh.ch/slproject?scene=4" width="960" height="640" frameBorder="0"></iframe>
+<iframe src="https://pallas.ti.bfh.ch/slproject?scene=4" width="1024" height="640" frameBorder="0"></iframe>
 \endhtmlonly
 
 General help:

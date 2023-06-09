@@ -8,7 +8,7 @@ The scene uses also cascaded shadow mapping with the current time im Switzerland
 You can adjust the date and time with the dialogue *Info > Date-Time*.
 
 \htmlonly
-<iframe src="https://pallas.ti.bfh.ch/slproject?scene=90" width="960" height="640" frameBorder="0"></iframe>
+<iframe src="https://pallas.ti.bfh.ch/slproject?scene=90" width="1024" height="640" frameBorder="0"></iframe>
 \endhtmlonly
 
 General help:
