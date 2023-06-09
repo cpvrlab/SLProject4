@@ -558,7 +558,7 @@ int main(void)
         canvas.addEventListener("mouseup", event => event.stopPropagation());
         canvas.addEventListener("dblclick", event => event.stopPropagation());
         canvas.addEventListener("mousemove", event => event.stopPropagation());
-        canvas.addEventListener("wheel", event => event.stopPropagation());
+        canvas.addEventListener("mousewheel", event => event.stopPropagation());
         canvas.addEventListener("keydown", event => event.stopPropagation());
         canvas.addEventListener("keyup", event => event.stopPropagation());
         canvas.addEventListener("touchstart", event => event.stopPropagation());
