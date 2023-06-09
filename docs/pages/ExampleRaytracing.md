@@ -1,8 +1,10 @@
 \page example-raytracing Ray Tracing
 Alternatively you can render a scene with ray tracing using the menu *Renderer > Ray Tracing*.
+The ray tracer is optimized for the Blinn-Phong reflection model. 
 By default, the resolution 0.5 times the window resolution. You can adjust the ray tracing setting over the menu *RT*.
 On the web there is no inter-frame update of the scene. Depending on the complexity you have to be patient a few seconds. 
-The ray tracer is multithreaded and uses a combination bounding boxes and regular voxel grid for fast ray-triangle intersection.  
+The ray tracer is multithreaded and uses a combination bounding boxes and regular voxel grid for fast ray-triangle intersection.
+The ray tracer is implemented in the classes SLRaytracer and SLRay.
 
 \htmlonly
 <iframe src="https://pallas.ti.bfh.ch/slproject?scene=64" width="960" height="640" frameBorder="0"></iframe>
