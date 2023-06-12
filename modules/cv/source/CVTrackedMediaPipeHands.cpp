@@ -22,11 +22,7 @@
 //-----------------------------------------------------------------------------
 typedef std::vector<std::pair<mp_hand_landmark, mp_hand_landmark>> ConnectionList;
 //-----------------------------------------------------------------------------
-//! ???
-/*!
- * ??? With MediaPipe docs links
- * Defines the connection list used for drawing the hand skeleton
- */
+// Defines the connection list used for drawing the hand skeleton
 static const ConnectionList CONNECTIONS = {
   {mp_hand_landmark_wrist, mp_hand_landmark_thumb_cmc},
   {mp_hand_landmark_thumb_cmc, mp_hand_landmark_thumb_mcp},
@@ -60,34 +56,46 @@ CVTrackedMediaPipeHands::CVTrackedMediaPipeHands(SLstring dataPath)
       graphPath.c_str(),
       "image");
 
-    // ??? What is the effect of this parameter
+    // The following lines set some parameters for the tracking.
+    // These are taken from MediaPipe's Python API:
+    // https://github.com/google/mediapipe/blob/master/mediapipe/python/solutions/hands.py
+
+    // Enable using the tracking results from the last frame to guess where the hand is now.
+    // This speeds up tracking considerably.
+    // Corresponds to "not static_image_mode" in the Python API.
+    mp_add_side_packet(builder,
+                       "use_prev_landmarks",
+                       mp_create_packet_bool(true));
+
+    // Maximum number of hands that can be detected.
+    // Corresponds to "max_num_hands" in the Python API.
+    mp_add_side_packet(builder,
+                       "num_hands",
+                       mp_create_packet_int(2));
+
+    // Complexity of the hand landmark model, can be 0 or 1.
+    // 0: Low landmark accuracy, fast
+    // 1: High landmark accuracy, slow
+    // Corresponds to "model_complexity" in the Python API.
+    mp_add_side_packet(builder,
+                       "model_complexity",
+                       mp_create_packet_int(1));
+
+    // Minimum confidence value for hand detection to be considered sucessful.
+    // Corresponds to "min_detection_confidence" in the Python API.
     mp_add_option_float(builder,
                         "palmdetectioncpu__TensorsToDetectionsCalculator",
                         "min_score_thresh",
                         0.5);
 
-    // ??? What is the effect of this parameter
+    // Minimum confidence value for the hand landmarks to be considered tracked successfully.
+    // Corresponds to "min_tracking_confidence" in the Python API.
     mp_add_option_double(builder,
                          "handlandmarkcpu__ThresholdingCalculator",
                          "threshold",
                          0.5);
 
-    // ??? What is the effect of this parameter
-    mp_add_side_packet(builder,
-                       "num_hands",
-                       mp_create_packet_int(2));
-
-    // ??? What is the effect of this parameter
-    mp_add_side_packet(builder,
-                       "model_complexity",
-                       mp_create_packet_int(1));
-
-    // ??? What is the effect of this parameter
-    mp_add_side_packet(builder,
-                       "use_prev_landmarks",
-                       mp_create_packet_bool(true));
-
-    // Creates a MediaPipe instance with the graph and some extra info
+    // Creates a MediaPipe instance with the graph and some extra info.
     _instance = mp_create_instance(builder);
     CHECK_MP_RESULT(_instance)
 
@@ -96,7 +104,7 @@ CVTrackedMediaPipeHands::CVTrackedMediaPipeHands(SLstring dataPath)
                                         "multi_hand_landmarks");
     CHECK_MP_RESULT(_landmarksPoller)
 
-    // Starts the MediaPipe graph
+    // Starts the MediaPipe graph.
     CHECK_MP_RESULT(mp_start(_instance))
 
     // clang-format off
@@ -144,10 +152,10 @@ void CVTrackedMediaPipeHands::processImageInMediaPipe(CVMat imageRgb)
     in_image.format   = mp_image_format_srgb;
     mp_packet* packet = mp_create_packet_image(in_image);
 
-
+    // Insert the image into the MediaPipe pipeline to be processed.
     CHECK_MP_RESULT(mp_process(_instance, packet))
 
-    // ???
+    // Block until the results from MediaPipe are available.
     CHECK_MP_RESULT(mp_wait_until_idle(_instance))
 }
 //-----------------------------------------------------------------------------

@@ -15,12 +15,21 @@
 #        include <mediapipe.h>
 
 //-----------------------------------------------------------------------------
-//! ???
-/*!
- * ??? With references to MediaPipe intro pages
- * https://developers.google.com/mediapipe/solutions/vision/hand_landmarker
- * Online examples: https://mediapipe-studio.webapps.google.com/demo/hand_landmarker
- */
+//! MediaPipe hand tracking class derived from CVTracked
+/*! Tracking class for MediaPipe hand tracking. MediaPipe is a machine
+learning framework from google with various built-in solutions for face
+tracking, hand tracking and much more. We use our custom C wrapper
+[libmediapipe](https://github.com/cpvrlab/libmediapipe) to integrate the
+framework. See mediapipe.h for more information about the MediaPipe data types
+and functions. This tracker tracks two hands and draws the detected landmarks
+over the image.
+
+Link to the hand landmarker solution:
+https://developers.google.com/mediapipe/solutions/vision/hand_landmarker
+
+Online examples:
+https://mediapipe-studio.webapps.google.com/demo/hand_landmarker
+*/
 class CVTrackedMediaPipeHands : public CVTracked
 {
 public:
