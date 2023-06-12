@@ -7,14 +7,16 @@ Not all scenes from app-Demo-SLProject can run in the browser because OpenGL 4.0
 
 <h2>How it works</h2>
 
-The Emscripten toolchain is made from the [Clang compiler](https://clang.llvm.org/), some runtime libraries, an implementation of the C, C++ and POSIX APIs, and ports of some popular libraries such as SDL, GLFW, libpng or zlib. This allows us to take code written for Desktop platforms and port it to the Web without much effort.
+The Emscripten toolchain is made from the [Clang compiler](https://clang.llvm.org/), some runtime libraries, an implementation of the C, C++ and POSIX APIs, and ports of some popular libraries such as SDL, GLFW, libpng or zlib. This allows us to take code written for desktop platforms and port it to the Web without much effort.
 
-<img src="https://pallas.ti.bfh.ch/slproject/images/emscripten_apis.svg" width="50%">
+<div style="width: 100%; justify-content: center; display: flex">
+    <img src="https://pallas.ti.bfh.ch/slproject/images/emscripten_apis.svg" width="40%">
+</div>
 
-Emscripten uses standard browser APIs to implement its libraries. For example, a call to the C function ```printf``` probably uses ```console.log``` internally Here's how a few commonly used libraries are implented behind the scenes:
+Emscripten uses standard browser APIs to implement its libraries. For example, a call to the C function ```printf``` probably uses ```console.log``` internally. Here is how a few commonly used libraries are implented behind the scenes:
 
 - Threads: [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API)
-- Sockets: [Web Sockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
+- Sockets: [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
 - GLFW: [Canvas](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API)
 - OpenGL: [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API)
 - OpenAL: [Web Audio](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
@@ -46,3 +48,25 @@ The canvas element where our graphics are drawn is not accessible in Web Workers
 an interface called [OffscreenCanvas](https://developer.mozilla.org/en-US/docs/Web/API/OffscreenCanvas). This interface allows us to
 transfer the canvas from the main thread to our Web Worker and render into it. We use the Emscripten linker flag ```-sOFFSCREENCANVAS_SUPPORT=1```
 to enable this feature and the flag ```-sOFFSCREENCANVASES_TO_PTHREAD='#canvas'``` to transfer the HTML canvas element to our Web Worker.
+
+<h2>File I/O</h2>
+
+When running natively, SLProject uses the file system to load and store data. In the browser environment, the type of storage depends on the asset type.
+
+<ul>
+<li>
+    <b>Images</b> are downloaded from a remote server (\ref SLIOReaderFetch). To store images, we open a popup in the browser that displays the image and contains a download link (\ref SLIOWriterBrowserPopup).
+</li>
+<li>
+    <b>Models and fonts</b> are downloaded from a remote server (\ref SLIOReaderFetch).
+</li>
+<li>
+    <b>Shader source files</b> are downloaded from a remote server (\ref SLIOReaderFetch).
+</li>
+<li>
+    <b>Generated shaders</b> are stored to and loaded from memory (\ref SLIOWriterMemory and \ref SLIOReaderMemory)
+</li>
+<li>
+    <b>Config files</b> are usually stored to and loaded from [browser local storage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) (\ref SLIOReaderLocalStorage and SLIOWriterLocalStorage). Static config files (e.g. calibrations) are downloaded from a remote server (\ref SLIOReaderFetch).
+</li>
+</ul>
