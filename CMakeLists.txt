@@ -50,7 +50,13 @@ option(SL_BUILD_WITH_OPTIX "Specifies if Optix renderer should be built" OFF)
 option(SL_BUILD_WITH_KTX "Specifies if Kronos Texture library (ktx) should be used" ON)
 option(SL_BUILD_WITH_OPENSSL "Specifies if OpenSSL should be used" ON)
 option(SL_BUILD_WITH_ASSIMP "Specifies if Assimp should be used" ON)
-option(SL_BUILD_WITH_MEDIAPIPE "Specifies if MediaPipe should be used" OFF)
+
+if ("${SYSTEM_NAME_UPPER}" MATCHES "IOS" OR "${SYSTEM_NAME_UPPER}" MATCHES "Emscripten")
+    option(SL_BUILD_WITH_MEDIAPIPE "Specifies if MediaPipe should be used" OFF)
+else ()
+    option(SL_BUILD_WITH_MEDIAPIPE "Specifies if MediaPipe should be used" ON)
+endif ()
+
 option(LIBIGL_USE_STATIC_LIBRARY "Specifies if LibIGL should be built statically" ON)
 
 message(STATUS "SL_DOWNLOAD_PREBUILTS: ${SL_DOWNLOAD_PREBUILTS}")
