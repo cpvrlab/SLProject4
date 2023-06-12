@@ -43,8 +43,9 @@ The code is provided without any warranties whether expressed or implied.
 
 <h3>Introduction:</h3>
 <p>
-Read the <a href="md__introduction.html"><b>Introduction Page</b></a> for an overview of the framework.<br>
-Read the <a href="md_on_paint.html"><b>onPaint Page</b></a> for an overview how on frame gets rendered.
+Read the \subpage introduction for an overview of the framework.<br>
+Read \subpage on-paint for an overview of how on frame gets rendered.<br>
+Read \subpage emscripten for an overview of how SLProject runs in the browser.
 </p>
 
 <h3>Contributors:</h3>
