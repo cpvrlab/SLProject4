@@ -442,6 +442,9 @@ void SLMesh::draw(SLSceneView* sv, SLNode* node)
     sp->uniformMatrix4fv("u_vMatrix", 1, (SLfloat*)&stateGL->viewMatrix);
     sp->uniformMatrix4fv("u_pMatrix", 1, (SLfloat*)&stateGL->projectionMatrix);
 
+    if (!_jointMatrices.empty())
+        sp->uniformMatrix4fv("u_jointMatrices", 100, (SLfloat*)&_jointMatrices[0]);
+
     SLint locTM = sp->getUniformLocation("u_tMatrix");
     if (locTM >= 0)
     {
@@ -597,7 +600,7 @@ void SLMesh::handleRectangleSelection(SLSceneView* sv,
                    (SLfloat)vp.width,
                    (SLfloat)vp.height);
         SLMat4f     v_mvp = v * mvp;
-        set<SLuint> tempIselected;        // Temp. vector for selected vertex indices
+        set<SLuint> tempIselected; // Temp. vector for selected vertex indices
 
         if (!cam->selectRect().isEmpty()) // Do rectangle Selection
         {
@@ -735,8 +738,44 @@ void SLMesh::generateVAO(SLGLVertexArray& vao)
         }
     }
 
+    bool useCPUSkinning = !Ji.empty() && !_mat->useGPUSkinning();
+    bool useGPUSkinning = _mat->useGPUSkinning();
+
+    SLVVec4f gpuIndices(P.size(), SLVec4f(0, 0, 0, 0));
+    SLVVec4f gpuWeights(P.size(), SLVec4f(1.0f, 0.0f, 0.0f, 0.0f));
+
+    if (!Ji.empty())
+    {
+        for (unsigned i = 0; i < P.size(); i++)
+        {
+            const SLVuchar& indices = Ji[i];
+
+            SLint i0 = indices.size() >= 1 ? indices[0] : 0;
+            SLint i1 = indices.size() >= 2 ? indices[1] : 0;
+            SLint i2 = indices.size() >= 3 ? indices[2] : 0;
+            SLint i3 = indices.size() >= 4 ? indices[3] : 0;
+
+            gpuIndices[i] = SLVec4f((SLfloat)i0, (SLfloat)i1, (SLfloat)i2, (SLfloat)i3);
+        }
+
+        for (unsigned i = 0; i < P.size(); i++)
+        {
+            const SLVfloat& weights = Jw[i];
+
+            SLfloat w0 = weights.size() >= 1 ? weights[0] : 0.0f;
+            SLfloat w1 = weights.size() >= 2 ? weights[1] : 0.0f;
+            SLfloat w2 = weights.size() >= 3 ? weights[2] : 0.0f;
+            SLfloat w3 = weights.size() >= 4 ? weights[3] : 0.0f;
+
+            gpuWeights[i] = SLVec4f(w0, w1, w2, w3);
+        }
+    }
+
+    vao.setAttrib(AT_jointIndex, AT_jointIndex, &gpuIndices);
+    vao.setAttrib(AT_jointWeight, AT_jointWeight, &gpuWeights);
+
     vao.generate((SLuint)P.size(),
-                 !Ji.empty() ? BU_stream : BU_static,
+                 useCPUSkinning ? BU_stream : BU_static,
                  Ji.empty());
 }
 //-----------------------------------------------------------------------------
@@ -1511,7 +1550,7 @@ void SLMesh::transformSkin(const std::function<void(SLMesh*)>& cbInformNodes)
     if (_jointMatrices.empty())
     {
         _jointMatrices.clear();
-        _jointMatrices.resize((SLuint)_skeleton->numJoints());
+        _jointMatrices.resize(100);
     }
 
     // update the joint matrix array
@@ -1526,6 +1565,8 @@ void SLMesh::transformSkin(const std::function<void(SLMesh*)>& cbInformNodes)
 
     // flag acceleration structure to be rebuilt
     _accelStructIsOutOfDate = true;
+
+    if (_mat->useGPUSkinning()) return;
 
     // iterate over all vertices and write to new buffers
     for (SLulong i = 0; i < P.size(); ++i)

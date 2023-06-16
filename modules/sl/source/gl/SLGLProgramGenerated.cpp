@@ -50,6 +50,10 @@ const string vertInput_a_uv1              = R"(
 layout (location = 3) in vec2  a_uv1;            // Vertex tex.coord. 2 for AO)";
 const string vertInput_a_tangent          = R"(
 layout (location = 5) in vec4  a_tangent;        // Vertex tangent attribute)";
+const string vertInput_a_skinning         = R"(
+
+layout (location = 6) in vec4  a_jointIds;       // Vertex joint indices attributes
+layout (location = 7) in vec4  a_jointWeights;   // Vertex joint weights attributes)";
 //-----------------------------------------------------------------------------
 const string vertInput_u_matrices_all = R"(
 
@@ -58,6 +62,10 @@ uniform mat4  u_vMatrix;    // View matrix (world to camera transform)
 uniform mat4  u_pMatrix;    // Projection matrix (camera to normalize device coords.))";
 const string vertInput_u_matrix_vOmv  = R"(
 uniform mat4  u_vOmvMatrix;         // view or modelview matrix)";
+//-----------------------------------------------------------------------------
+const string vertInput_u_jointMatrices = R"(
+
+uniform mat4 u_jointMatrices[100]; // Joint matrices for skinning)";
 //-----------------------------------------------------------------------------
 const string vertInput_u_lightNm = R"(
 
@@ -188,6 +196,20 @@ const string vertMain_v_uv0              = R"(
     v_uv0 = a_uv0;  // pass diffuse color tex.coord. 1 for interpolation)";
 const string vertMain_v_uv1              = R"(
     v_uv1 = a_uv1;  // pass diffuse color tex.coord. 1 for interpolation)";
+const string vertMain_skinning           = R"(
+
+    vec4 totalPosition = vec4(0.0);
+    vec3 totalNormal = vec3(0.0);
+
+    for (int i = 0; i < 4; i++)
+    {
+        mat4 jointMatrix = u_jointMatrices[int(a_jointIds[i])];
+        totalPosition += a_jointWeights[i] * jointMatrix * a_position;
+        totalNormal += a_jointWeights[i] * mat3(jointMatrix) * a_normal;
+    }
+
+    v_P_VS = vec3(mvMatrix * totalPosition);
+    v_N_VS = normalize(vec3(nMatrix * totalNormal));)";
 const string vertMain_TBN_Nm             = R"(
 
     // Building the matrix Eye Space -> Tangent Space
@@ -267,6 +289,14 @@ const string vertMain_EndAll = R"(
     gl_Position = u_pMatrix * mvMatrix * a_position;
 }
 )";
+
+const string vertMain_EndSkinned = R"(
+
+    // pass the vertex w. the fix-function transform
+    gl_Position = u_pMatrix * mvMatrix * totalPosition;
+}
+)";
+
 //-----------------------------------------------------------------------------
 const string vertMain_PS_U_Begin                = R"(
 
@@ -1582,7 +1612,7 @@ void SLGLProgramGenerated::buildProgramName(SLMaterial* mat,
             if (light->doCascadedShadows())
                 programName += "C" + std::to_string(light->shadowMap()->numCascades()); // Directional light with cascaded shadowmap
             else
-                programName += "D";                                                     // Directional light
+                programName += "D"; // Directional light
         }
         else if (light->spotCutOffDEG() < 180.0f)
             programName += "S"; // Spot light
@@ -1591,6 +1621,9 @@ void SLGLProgramGenerated::buildProgramName(SLMaterial* mat,
         if (light->createsShadows())
             programName += "s"; // Creates shadows
     }
+
+    if (mat->useGPUSkinning())
+        programName += "-S";
 }
 //-----------------------------------------------------------------------------
 /*! See the class information for more insights of the generated name. This
@@ -1653,7 +1686,7 @@ void SLGLProgramGenerated::buildProgramNamePS(SLMaterial* mat,
         if (FlBoTex) programName += "-FB";
         if (WS) programName += "-WS";
     }
-    else                                                  // Updating program
+    else // Updating program
     {
         bool counterGap = mat->ps()->doCounterGap();      // Counter gap/lag
         bool acc        = mat->ps()->doAcc();             // Acceleration
@@ -1889,6 +1922,9 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
     bool uv0 = mat->usesUVIndex(0);
     bool uv1 = mat->usesUVIndex(1);
 
+    // Check if we use GPU skinning
+    bool skinning = mat->useGPUSkinning();
+
     // Assemble vertex shader code
     string vertCode;
     vertCode += shaderHeader((int)lights->size());
@@ -1898,7 +1934,9 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
     if (uv0) vertCode += vertInput_a_uv0;
     if (uv1) vertCode += vertInput_a_uv1;
     if (Nm) vertCode += vertInput_a_tangent;
+    if (skinning) vertCode += vertInput_a_skinning;
     vertCode += vertInput_u_matrices_all;
+    if (skinning) vertCode += vertInput_u_jointMatrices;
     if (Nm) vertCode += vertInput_u_lightNm;
 
     // Vertex shader outputs
@@ -1916,8 +1954,9 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
     vertCode += vertMain_v_N_VS;
     if (uv0) vertCode += vertMain_v_uv0;
     if (uv1) vertCode += vertMain_v_uv1;
+    if (skinning) vertCode += vertMain_skinning;
     if (Nm) vertCode += vertMain_TBN_Nm;
-    vertCode += vertMain_EndAll;
+    vertCode += skinning ? vertMain_EndSkinned : vertMain_EndAll;
 
     addCodeToShader(_shaders[0], vertCode, _name + ".vert");
 
