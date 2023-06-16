@@ -199,7 +199,7 @@ void SLGLVertexBuffer::generate(SLuint          numVertices,
         {
             if (a.location > -1)
             { // Sets the vertex attribute data pointer to its corresponding GLSL variable
-                if (a.dataType == BT_uint)
+                if (a.dataType == BT_int || a.dataType == BT_uint)
                 {
                     glVertexAttribIPointer((SLuint)a.location,
                                            a.elementSize,
@@ -247,7 +247,7 @@ void SLGLVertexBuffer::generate(SLuint          numVertices,
 
                 if (a.location > -1)
                 { // Sets the vertex attribute data pointer to its corresponding GLSL variable
-                    if (a.dataType == BT_uint)
+                    if (a.dataType == BT_int || a.dataType == BT_uint)
                     {
                         glVertexAttribIPointer((SLuint)a.location,
                                                a.elementSize,
@@ -289,7 +289,7 @@ void SLGLVertexBuffer::generate(SLuint          numVertices,
                                     a.dataPointer);
 
                     // Sets the vertex attribute data pointer to its corresponding GLSL variable
-                    if (a.dataType == BT_uint)
+                    if (a.dataType == BT_int || a.dataType == BT_uint)
                     {
                         glVertexAttribIPointer((SLuint)a.location,
                                                a.elementSize,
@@ -367,10 +367,11 @@ SLuint SLGLVertexBuffer::sizeOfType(SLGLBufferType type)
 {
     switch (type)
     {
-        case BT_float: return sizeof(float);
-        case BT_ubyte: return sizeof(unsigned char);
-        case BT_ushort: return sizeof(unsigned short);
-        case BT_uint: return sizeof(unsigned int);
+        case BT_float: return sizeof(SLfloat);
+        case BT_int: return sizeof(SLint);
+        case BT_ubyte: return sizeof(SLuchar);
+        case BT_ushort: return sizeof(SLushort);
+        case BT_uint: return sizeof(SLint);
         default: SL_EXIT_MSG("Invalid buffer data type");
     }
     return 0;

@@ -741,7 +741,7 @@ void SLMesh::generateVAO(SLGLVertexArray& vao)
     bool useCPUSkinning = !Ji.empty() && !_mat->useGPUSkinning();
     bool useGPUSkinning = _mat->useGPUSkinning();
 
-    SLVVec4f gpuIndices(P.size(), SLVec4f(0, 0, 0, 0));
+    SLVVec4i gpuIndices(P.size(), SLVec4i(0, 0, 0, 0));
     SLVVec4f gpuWeights(P.size(), SLVec4f(1.0f, 0.0f, 0.0f, 0.0f));
 
     if (!Ji.empty())
@@ -755,7 +755,7 @@ void SLMesh::generateVAO(SLGLVertexArray& vao)
             SLint i2 = indices.size() >= 3 ? indices[2] : 0;
             SLint i3 = indices.size() >= 4 ? indices[3] : 0;
 
-            gpuIndices[i] = SLVec4f((SLfloat)i0, (SLfloat)i1, (SLfloat)i2, (SLfloat)i3);
+            gpuIndices[i] = SLVec4i(i0, i1, i2, i3);
         }
 
         for (unsigned i = 0; i < P.size(); i++)

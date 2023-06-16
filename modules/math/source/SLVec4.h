@@ -232,15 +232,16 @@ template<class T> SLVec4<T> SLVec4<T>::YELLOW = SLVec4<T>(1.0f, 1.0f, 0.0f, 1.0f
 template<class T> SLVec4<T> SLVec4<T>::CYAN   = SLVec4<T>(0.0f, 1.0f, 1.0f, 1.0f);
 template<class T> SLVec4<T> SLVec4<T>::MAGENTA= SLVec4<T>(1.0f, 0.0f, 1.0f, 1.0f);
 //-----------------------------------------------------------------------------
-typedef SLVec4<SLfloat>       SLVec4f;
-typedef SLVec4<SLint>         SLVec4i;
-typedef SLVec4<SLfloat>       SLCol4f;
+typedef SLVec4<SLfloat>  SLVec4f;
+typedef SLVec4<SLint>    SLVec4i;
+typedef SLVec4<SLfloat>  SLCol4f;
 
 typedef vector<SLVec4f>  SLVVec4f;
+typedef vector<SLVec4i>  SLVVec4i;
 typedef vector<SLCol4f>  SLVCol4f;
 
 #ifdef SL_HAS_DOUBLE
-typedef SLVec4<SLdouble>      SLVec4d;
+typedef SLVec4<SLdouble> SLVec4d;
 typedef vector<SLVec4d>  SLVVec4d;
 #endif
 //-----------------------------------------------------------------------------

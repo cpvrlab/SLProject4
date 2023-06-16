@@ -52,7 +52,7 @@ const string vertInput_a_tangent          = R"(
 layout (location = 5) in vec4  a_tangent;        // Vertex tangent attribute)";
 const string vertInput_a_skinning         = R"(
 
-layout (location = 6) in vec4  a_jointIds;       // Vertex joint indices attributes
+layout (location = 6) in ivec4 a_jointIds;       // Vertex joint indices attributes
 layout (location = 7) in vec4  a_jointWeights;   // Vertex joint weights attributes)";
 //-----------------------------------------------------------------------------
 const string vertInput_u_matrices_all = R"(
@@ -203,7 +203,7 @@ const string vertMain_skinning           = R"(
 
     for (int i = 0; i < 4; i++)
     {
-        mat4 jointMatrix = u_jointMatrices[int(a_jointIds[i])];
+        mat4 jointMatrix = u_jointMatrices[a_jointIds[i]];
         totalPosition += a_jointWeights[i] * jointMatrix * a_position;
         totalNormal += a_jointWeights[i] * mat3(jointMatrix) * a_normal;
     }

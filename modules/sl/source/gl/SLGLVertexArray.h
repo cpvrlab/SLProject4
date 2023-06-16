@@ -90,6 +90,11 @@ public:
                    SLint             location,
                    SLVVec4f*         data) { setAttrib(type, 4, location, &data->operator[](0)); }
 
+    //! Adds a vertex attribute with vector of SLVec4i
+    void setAttrib(SLGLAttributeType type,
+                   SLint             location,
+                   SLVVec4i*         data) { setAttrib(type, 4, location, &data->operator[](0), BT_int); }
+
     //! Adds the index array for indexed element drawing
     void setIndices(SLuint         numIndicesElements,
                     SLGLBufferType indexDataType,
