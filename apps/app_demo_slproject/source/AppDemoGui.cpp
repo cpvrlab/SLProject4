@@ -2393,7 +2393,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 if (ImGui::MenuItem("Skeleton", "K", sv->drawBits()->get(SL_DB_SKELETON)))
                     sv->drawBits()->toggle(SL_DB_SKELETON);
 
-                if (ImGui::MenuItem("GPU Skinning", "G", sv->drawBits()->get(SL_DB_GPU_SKINNING)))
+                if (ImGui::MenuItem("GPU Skinning", nullptr, sv->drawBits()->get(SL_DB_GPU_SKINNING)))
                     sv->drawBits()->toggle(SL_DB_GPU_SKINNING);
 
                 if (ImGui::MenuItem("All off"))

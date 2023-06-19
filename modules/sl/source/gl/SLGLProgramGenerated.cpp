@@ -1635,7 +1635,7 @@ void SLGLProgramGenerated::buildProgramName(SLMaterial* mat,
             programName += "s"; // Creates shadows
     }
 
-    if (mat->useGPUSkinning())
+    if (mat->supportsGPUSkinning())
         programName += "-S";
 }
 //-----------------------------------------------------------------------------
@@ -1936,7 +1936,7 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
     bool uv1 = mat->usesUVIndex(1);
 
     // Check if we use GPU skinning
-    bool skinning = mat->useGPUSkinning();
+    bool skinning = mat->supportsGPUSkinning();
 
     // Assemble vertex shader code
     string vertCode;

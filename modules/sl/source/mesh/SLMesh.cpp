@@ -443,7 +443,7 @@ void SLMesh::draw(SLSceneView* sv, SLNode* node)
     sp->uniformMatrix4fv("u_pMatrix", 1, (SLfloat*)&stateGL->projectionMatrix);
 
     // Pass skeleton joint matrices to the shader program
-    if (_mat->useGPUSkinning())
+    if (_mat->supportsGPUSkinning())
     {
         // Only perform skinning in the shader if we haven't performed CPU skinning and if there are joint IDs
         SLbool skinningEnabled = !_isCPUSkinned && !Ji.empty();
@@ -746,14 +746,11 @@ void SLMesh::generateVAO(SLGLVertexArray& vao)
         }
     }
 
-    bool useCPUSkinning = !Ji.empty() && !_mat->useGPUSkinning();
-    bool useGPUSkinning = _mat->useGPUSkinning();
-
-    SLVVec4i gpuIndices(P.size(), SLVec4i(0, 0, 0, 0));
-    SLVVec4f gpuWeights(P.size(), SLVec4f(1.0f, 0.0f, 0.0f, 0.0f));
-
     if (!Ji.empty())
     {
+        SLVVec4i gpuIndices(P.size(), SLVec4i(0, 0, 0, 0));
+        SLVVec4f gpuWeights(P.size(), SLVec4f(1.0f, 0.0f, 0.0f, 0.0f));
+
         for (unsigned i = 0; i < P.size(); i++)
         {
             const SLVuchar& indices = Ji[i];
@@ -777,13 +774,13 @@ void SLMesh::generateVAO(SLGLVertexArray& vao)
 
             gpuWeights[i] = SLVec4f(w0, w1, w2, w3);
         }
+
+        vao.setAttrib(AT_jointIndex, AT_jointIndex, &gpuIndices);
+        vao.setAttrib(AT_jointWeight, AT_jointWeight, &gpuWeights);
     }
 
-    vao.setAttrib(AT_jointIndex, AT_jointIndex, &gpuIndices);
-    vao.setAttrib(AT_jointWeight, AT_jointWeight, &gpuWeights);
-
     vao.generate((SLuint)P.size(),
-                 useCPUSkinning ? BU_stream : BU_static,
+                 !Ji.empty() && !_mat->supportsGPUSkinning() ? BU_stream : BU_static,
                  Ji.empty());
 }
 //-----------------------------------------------------------------------------
@@ -900,7 +897,7 @@ SLbool SLMesh::hit(SLRay* ray, SLNode* node)
 
     // Force the mesh to be skinned in software even if it would be normally skinned on the GPU.
     // We need the results from the skinning on the CPU to perform the ray-triangle intersection.
-    if (_skeleton && _mat && _mat->useGPUSkinning() && !_isCPUSkinned)
+    if (_skeleton && _mat && _mat->supportsGPUSkinning() && !_isCPUSkinned)
         transformSkin(true, [](SLMesh*) {});
 
     if (_accelStruct)
@@ -1589,7 +1586,7 @@ void SLMesh::transformSkin(bool                                forceCPUSkinning,
 
     // Perform software skinning if the material doesn't support CPU skinning or
     // if the results of the skinning process are required somewehere else.
-    if (!_mat->useGPUSkinning() || forceCPUSkinning)
+    if (!_mat->supportsGPUSkinning() || forceCPUSkinning)
     {
         _finalP = &skinnedP;
         _finalN = &skinnedN;

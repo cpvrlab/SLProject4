@@ -691,7 +691,7 @@ SLMaterial* SLAssimpImporter::loadMaterial(SLAssetManager* am,
 
     // Create SLMaterial instance. It is also added to the SLScene::_materials vector
     SLMaterial* slMat = new SLMaterial(am, name.c_str());
-    slMat->useGPUSkinning(true);
+    slMat->supportsGPUSkinning(true);
 
     // load all the textures for this aiMat and add it to the aiMat vector
     for (int tt = aiTextureType_NONE; tt <= aiTextureType_UNKNOWN; ++tt)
