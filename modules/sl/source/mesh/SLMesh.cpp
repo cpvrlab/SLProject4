@@ -450,7 +450,7 @@ void SLMesh::draw(SLSceneView* sv, SLNode* node)
         sp->uniform1i("u_skinningEnabled", skinningEnabled);
 
         if (skinningEnabled && !_jointMatrices.empty())
-            sp->uniformMatrix4fv("u_jointMatrices", 100, (SLfloat*)&_jointMatrices[0]);
+            sp->uniformMatrix4fv("u_jointMatrices", _jointMatrices.size(), (SLfloat*)&_jointMatrices[0]);
     }
 
     SLint locTM = sp->getUniformLocation("u_tMatrix");
@@ -1569,7 +1569,7 @@ void SLMesh::transformSkin(bool                                forceCPUSkinning,
     if (_jointMatrices.empty())
     {
         _jointMatrices.clear();
-        _jointMatrices.resize(100);
+        _jointMatrices.resize((SLuint)_skeleton->numJoints());
     }
 
     // update the joint matrix array
