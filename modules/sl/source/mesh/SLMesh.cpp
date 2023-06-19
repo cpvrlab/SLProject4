@@ -749,7 +749,7 @@ void SLMesh::generateVAO(SLGLVertexArray& vao)
     if (!Ji.empty())
     {
         SLVVec4i gpuIndices(P.size(), SLVec4i(0, 0, 0, 0));
-        SLVVec4f gpuWeights(P.size(), SLVec4f(1.0f, 0.0f, 0.0f, 0.0f));
+        SLVVec4f gpuWeights(P.size(), SLVec4f(0.0f, 0.0f, 0.0f, 0.0f));
 
         for (unsigned i = 0; i < P.size(); i++)
         {

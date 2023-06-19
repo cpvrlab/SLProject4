@@ -4337,6 +4337,7 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
 
                         ImGui::TreePop();
                     }
+
                     if (m->program() != nullptr)
                     {
                         for (auto* shd : m->program()->shaders())
@@ -4371,6 +4372,9 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
                             }
                         }
                     }
+
+                    ImGui::Text("Supports GPU skinning: %s", m->supportsGPUSkinning() ? "Yes" : "No");
+
                     ImGui::TreePop();
                 }
             }
