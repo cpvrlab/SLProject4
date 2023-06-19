@@ -2393,6 +2393,9 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 if (ImGui::MenuItem("Skeleton", "K", sv->drawBits()->get(SL_DB_SKELETON)))
                     sv->drawBits()->toggle(SL_DB_SKELETON);
 
+                if (ImGui::MenuItem("GPU Skinning", "G", sv->drawBits()->get(SL_DB_GPU_SKINNING)))
+                    sv->drawBits()->toggle(SL_DB_GPU_SKINNING);
+
                 if (ImGui::MenuItem("All off"))
                     sv->drawBits()->allOff();
 
@@ -2407,6 +2410,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                     sv->drawBits()->on(SL_DB_BBOX);
                     sv->drawBits()->on(SL_DB_SKELETON);
                     sv->drawBits()->on(SL_DB_CULLOFF);
+                    sv->drawBits()->on(SL_DB_GPU_SKINNING);
                 }
 
                 ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.65f);
