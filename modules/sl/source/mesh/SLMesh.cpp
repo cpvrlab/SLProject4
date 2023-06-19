@@ -449,7 +449,7 @@ void SLMesh::draw(SLSceneView* sv, SLNode* node)
         SLbool skinningEnabled = !_isCPUSkinned && !Ji.empty();
         sp->uniform1i("u_skinningEnabled", skinningEnabled);
 
-        if (skinningEnabled)
+        if (skinningEnabled && !_jointMatrices.empty())
             sp->uniformMatrix4fv("u_jointMatrices", 100, (SLfloat*)&_jointMatrices[0]);
     }
 
