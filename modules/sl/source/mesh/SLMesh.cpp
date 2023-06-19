@@ -1110,8 +1110,6 @@ flag is set. This can happen for mesh animations.
 */
 void SLMesh::updateAccelStruct()
 {
-    SL_LOG(".");
-
     calcMinMax();
 
     // Add half a percent in each direction to avoid zero size dimensions
