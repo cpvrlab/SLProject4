@@ -134,7 +134,8 @@ void SLScene::unInit()
 @return true if really something got updated
 */
 bool SLScene::onUpdate(bool renderTypeIsRT,
-                       bool voxelsAreShown)
+                       bool voxelsAreShown,
+                       bool forceCPUSkinning)
 {
     PROFILE_FUNCTION();
 
@@ -176,8 +177,11 @@ bool SLScene::onUpdate(bool renderTypeIsRT,
     // Do software skinning on all changed skeletons. Update any out of date acceleration structure for RT or if they're being rendered.
     if (_root3D)
     {
+        if (renderTypeIsRT || voxelsAreShown)
+            forceCPUSkinning = true;
+
         // we use a lambda to inform nodes that share a mesh that the mesh got updated (so we don't have to transfer the root node)
-        sceneHasChanged |= _root3D->updateMeshSkins([&](SLMesh* mesh)
+        sceneHasChanged |= _root3D->updateMeshSkins(forceCPUSkinning, [&](SLMesh* mesh)
                                                     {
             SLVNode nodes = _root3D->findChildren(mesh, true);
             for (auto* node : nodes)

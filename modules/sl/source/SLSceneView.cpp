@@ -513,7 +513,8 @@ SLbool SLSceneView::onPaint()
 
         // update current scene
         sceneHasChanged = _s->onUpdate((_renderType == RT_rt),
-                                       drawBit(SL_DB_VOXELS));
+                                       drawBit(SL_DB_VOXELS),
+                                       drawBit(SL_DB_WITHEDGES));
     }
 
     SLbool camUpdated = false;

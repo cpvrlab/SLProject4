@@ -65,7 +65,9 @@ uniform mat4  u_vOmvMatrix;         // view or modelview matrix)";
 //-----------------------------------------------------------------------------
 const string vertInput_u_jointMatrices = R"(
 
-uniform mat4 u_jointMatrices[100]; // Joint matrices for skinning)";
+uniform mat4 u_jointMatrices[100]; // Joint matrices for skinning
+uniform bool u_skinningEnabled;    // Flag if the shader should perform skinning
+)";
 //-----------------------------------------------------------------------------
 const string vertInput_u_lightNm = R"(
 
@@ -198,18 +200,29 @@ const string vertMain_v_uv1              = R"(
     v_uv1 = a_uv1;  // pass diffuse color tex.coord. 1 for interpolation)";
 const string vertMain_skinning           = R"(
 
-    vec4 totalPosition = vec4(0.0);
-    vec3 totalNormal = vec3(0.0);
+    vec4 totalPosition;
+    vec3 totalNormal;
 
-    for (int i = 0; i < 4; i++)
+    if (u_skinningEnabled)
     {
-        mat4 jointMatrix = u_jointMatrices[a_jointIds[i]];
-        totalPosition += a_jointWeights[i] * jointMatrix * a_position;
-        totalNormal += a_jointWeights[i] * mat3(jointMatrix) * a_normal;
-    }
+        totalPosition = vec4(0.0);
+        totalNormal = vec3(0.0);
 
-    v_P_VS = vec3(mvMatrix * totalPosition);
-    v_N_VS = normalize(vec3(nMatrix * totalNormal));)";
+        for (int i = 0; i < 4; i++)
+        {
+            mat4 jointMatrix = u_jointMatrices[a_jointIds[i]];
+            totalPosition += a_jointWeights[i] * jointMatrix * a_position;
+            totalNormal += a_jointWeights[i] * mat3(jointMatrix) * a_normal;
+        }
+
+        v_P_VS = vec3(mvMatrix * totalPosition);
+        v_N_VS = normalize(vec3(nMatrix * totalNormal));
+    }
+    else
+    {
+        totalPosition = a_position;
+        totalNormal = a_normal;
+    })";
 const string vertMain_TBN_Nm             = R"(
 
     // Building the matrix Eye Space -> Tangent Space

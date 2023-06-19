@@ -442,8 +442,16 @@ void SLMesh::draw(SLSceneView* sv, SLNode* node)
     sp->uniformMatrix4fv("u_vMatrix", 1, (SLfloat*)&stateGL->viewMatrix);
     sp->uniformMatrix4fv("u_pMatrix", 1, (SLfloat*)&stateGL->projectionMatrix);
 
-    if (!_jointMatrices.empty())
-        sp->uniformMatrix4fv("u_jointMatrices", 100, (SLfloat*)&_jointMatrices[0]);
+    // Pass skeleton joint matrices to the shader program
+    if (_mat->useGPUSkinning())
+    {
+        // Only perform skinning in the shader if we haven't performed CPU skinning and if there are joint IDs
+        SLbool skinningEnabled = !_isCPUSkinned && !Ji.empty();
+        sp->uniform1i("u_skinningEnabled", skinningEnabled);
+
+        if (skinningEnabled)
+            sp->uniformMatrix4fv("u_jointMatrices", 100, (SLfloat*)&_jointMatrices[0]);
+    }
 
     SLint locTM = sp->getUniformLocation("u_tMatrix");
     if (locTM >= 0)
@@ -890,8 +898,18 @@ SLbool SLMesh::hit(SLRay* ray, SLNode* node)
         return true;
     }
 
+    // Force the mesh to be skinned in software even if it would be normally skinned on the GPU.
+    // We need the results from the skinning on the CPU to perform the ray-triangle intersection.
+    if (_skeleton && _mat && _mat->useGPUSkinning() && !_isCPUSkinned)
+        transformSkin(true, [](SLMesh*) {});
+
     if (_accelStruct)
+    {
+        if (_accelStructIsOutOfDate)
+            updateAccelStruct();
+
         return _accelStruct->intersect(ray, node);
+    }
     else
     { // intersect against all faces
         SLbool wasHit = false;
@@ -1092,6 +1110,8 @@ flag is set. This can happen for mesh animations.
 */
 void SLMesh::updateAccelStruct()
 {
+    SL_LOG(".");
+
     calcMinMax();
 
     // Add half a percent in each direction to avoid zero size dimensions
@@ -1530,8 +1550,12 @@ a weight and an index. After the transform the VBO have to be updated.
 This skinning process can also be done (a lot faster) on the GPU.
 This software skinning is also needed for ray or path tracing.
 */
-void SLMesh::transformSkin(const std::function<void(SLMesh*)>& cbInformNodes)
+void SLMesh::transformSkin(bool                                forceCPUSkinning,
+                           const std::function<void(SLMesh*)>& cbInformNodes)
 {
+    if (_isSelected)
+        forceCPUSkinning = true;
+
     // create the secondary buffers for P and N once
     if (skinnedP.empty())
     {
@@ -1556,43 +1580,53 @@ void SLMesh::transformSkin(const std::function<void(SLMesh*)>& cbInformNodes)
     // update the joint matrix array
     _skeleton->getJointMatrices(_jointMatrices);
 
-    // notify Parent Nodes to update AABB
+    // notify parent nodes to update AABB
     cbInformNodes(this);
-
-    // temporarily set finalP and finalN
-    _finalP = &skinnedP;
-    _finalN = &skinnedN;
 
     // flag acceleration structure to be rebuilt
     _accelStructIsOutOfDate = true;
 
-    if (_mat->useGPUSkinning()) return;
+    // remember if this node has been skinned on the CPU
+    _isCPUSkinned = forceCPUSkinning;
 
-    // iterate over all vertices and write to new buffers
-    for (SLulong i = 0; i < P.size(); ++i)
+    // Perform software skinning if the material doesn't support CPU skinning or
+    // if the results of the skinning process are required somewehere else.
+    if (!_mat->useGPUSkinning() || forceCPUSkinning)
     {
-        skinnedP[i] = SLVec3f::ZERO;
-        if (!N.empty()) skinnedN[i] = SLVec3f::ZERO;
+        _finalP = &skinnedP;
+        _finalN = &skinnedN;
 
-        // accumulate final normal and positions
-        for (SLulong j = 0; j < Ji[i].size(); ++j)
+        // iterate over all vertices and write to new buffers
+        for (SLulong i = 0; i < P.size(); ++i)
         {
-            const SLMat4f& jm      = _jointMatrices[Ji[i][j]];
-            SLVec4f        tempPos = SLVec4f(jm * P[i]);
-            skinnedP[i].x += tempPos.x * Jw[i][j];
-            skinnedP[i].y += tempPos.y * Jw[i][j];
-            skinnedP[i].z += tempPos.z * Jw[i][j];
+            skinnedP[i] = SLVec3f::ZERO;
+            if (!N.empty()) skinnedN[i] = SLVec3f::ZERO;
 
-            if (!N.empty())
+            // accumulate final normal and positions
+            for (SLulong j = 0; j < Ji[i].size(); ++j)
             {
-                // Build the 3x3 submatrix in GLSL 110 (= mat3 jt3 = mat3(jt))
-                // for the normal transform that is the normally the inverse transpose.
-                // The inverse transpose can be ignored as long as we only have
-                // rotation and uniform scaling in the 3x3 submatrix.
-                SLMat3f jnm = jm.mat3();
-                skinnedN[i] += jnm * N[i] * Jw[i][j];
+                const SLMat4f& jm      = _jointMatrices[Ji[i][j]];
+                SLVec4f        tempPos = SLVec4f(jm * P[i]);
+                skinnedP[i].x += tempPos.x * Jw[i][j];
+                skinnedP[i].y += tempPos.y * Jw[i][j];
+                skinnedP[i].z += tempPos.z * Jw[i][j];
+
+                if (!N.empty())
+                {
+                    // Build the 3x3 submatrix in GLSL 110 (= mat3 jt3 = mat3(jt))
+                    // for the normal transform that is the normally the inverse transpose.
+                    // The inverse transpose can be ignored as long as we only have
+                    // rotation and uniform scaling in the 3x3 submatrix.
+                    SLMat3f jnm = jm.mat3();
+                    skinnedN[i] += jnm * N[i] * Jw[i][j];
+                }
             }
         }
+    }
+    else
+    {
+        _finalP = &P;
+        _finalN = &N;   
     }
 
     // update or create buffers
