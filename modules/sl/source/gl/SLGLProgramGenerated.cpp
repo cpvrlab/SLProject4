@@ -205,12 +205,22 @@ const string vertMain_skinning           = R"(
 
     if (u_skinningEnabled)
     {
+        // In skinned skeleton animation, every vertex of a mesh is transformed by
+        // max. four joints (bones) of a skeleton identified by indices. The
+        // joint matrices represent this transformation and can change per frame
+        // to animate the mesh. The effect that a joint has on a vertex is
+        // specified by the four weights passed along with the joint indices.
+
         totalPosition = vec4(0.0);
         totalNormal = vec3(0.0);
 
+        // iterate over all joints that are transforming this vertex.
         for (int i = 0; i < 4; i++)
         {
+            // get the transformation of this joint.
             mat4 jointMatrix = u_jointMatrices[a_jointIds[i]];
+
+            // apply the weighted transformation to the position and normal of the vertex.
             totalPosition += a_jointWeights[i] * jointMatrix * a_position;
             totalNormal += a_jointWeights[i] * mat3(jointMatrix) * a_normal;
         }

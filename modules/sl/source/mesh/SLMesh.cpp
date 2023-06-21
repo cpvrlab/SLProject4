@@ -748,35 +748,36 @@ void SLMesh::generateVAO(SLGLVertexArray& vao)
 
     if (!Ji.empty())
     {
-        SLVVec4i gpuIndices(P.size(), SLVec4i(0, 0, 0, 0));
-        SLVVec4f gpuWeights(P.size(), SLVec4f(0.0f, 0.0f, 0.0f, 0.0f));
+        // indices are passed to the shader as ivec4s
+        SLVVec4i indicesData(P.size(), SLVec4i(0, 0, 0, 0));
 
+        // weights are passed to the shader as vec4s
+        SLVVec4f indicesWeights(P.size(), SLVec4f(0.0f, 0.0f, 0.0f, 0.0f));
+
+        // create the vec4 of indices for all points
         for (unsigned i = 0; i < P.size(); i++)
         {
-            const SLVuchar& indices = Ji[i];
+            const SLVuchar& curIndices = Ji[i];
 
-            SLint i0 = indices.size() >= 1 ? indices[0] : 0;
-            SLint i1 = indices.size() >= 2 ? indices[1] : 0;
-            SLint i2 = indices.size() >= 3 ? indices[2] : 0;
-            SLint i3 = indices.size() >= 4 ? indices[3] : 0;
-
-            gpuIndices[i] = SLVec4i(i0, i1, i2, i3);
+            indicesData[i] = SLVec4i(curIndices.size() >= 1 ? curIndices[0] : 0,
+                                     curIndices.size() >= 2 ? curIndices[1] : 0,
+                                     curIndices.size() >= 3 ? curIndices[2] : 0,
+                                     curIndices.size() >= 4 ? curIndices[3] : 0);
         }
 
+        // create the vec4 of weights for all points
         for (unsigned i = 0; i < P.size(); i++)
         {
-            const SLVfloat& weights = Jw[i];
+            const SLVfloat& curWeights = Jw[i];
 
-            SLfloat w0 = weights.size() >= 1 ? weights[0] : 0.0f;
-            SLfloat w1 = weights.size() >= 2 ? weights[1] : 0.0f;
-            SLfloat w2 = weights.size() >= 3 ? weights[2] : 0.0f;
-            SLfloat w3 = weights.size() >= 4 ? weights[3] : 0.0f;
-
-            gpuWeights[i] = SLVec4f(w0, w1, w2, w3);
+            indicesWeights[i] = SLVec4f(curWeights.size() >= 1 ? curWeights[0] : 0.0f,
+                                        curWeights.size() >= 2 ? curWeights[1] : 0.0f,
+                                        curWeights.size() >= 3 ? curWeights[2] : 0.0f,
+                                        curWeights.size() >= 4 ? curWeights[3] : 0.0f);
         }
 
-        vao.setAttrib(AT_jointIndex, AT_jointIndex, &gpuIndices);
-        vao.setAttrib(AT_jointWeight, AT_jointWeight, &gpuWeights);
+        vao.setAttrib(AT_jointIndex, AT_jointIndex, &indicesData);
+        vao.setAttrib(AT_jointWeight, AT_jointWeight, &indicesWeights);
     }
 
     vao.generate((SLuint)P.size(),
@@ -1621,7 +1622,7 @@ void SLMesh::transformSkin(bool                                forceCPUSkinning,
     else
     {
         _finalP = &P;
-        _finalN = &N;   
+        _finalN = &N;
     }
 
     // update or create buffers
