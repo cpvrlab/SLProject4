@@ -746,20 +746,24 @@ void SLMesh::generateVAO(SLGLVertexArray& vao)
         }
     }
 
-    if (!Ji.empty())
-    {
-        // indices are passed to the shader as ivec4s
-        SLVVec4i indicesData(P.size(), SLVec4i(0, 0, 0, 0));
+    SLVVec4i jointIndicesData; // indices are passed to the shader as ivec4s
+    SLVVec4f jointWeightsData; // weights are passed to the shader as vec4s
 
-        // weights are passed to the shader as vec4s
-        SLVVec4f indicesWeights(P.size(), SLVec4f(0.0f, 0.0f, 0.0f, 0.0f));
+    if (!Ji.empty() && _mat->supportsGPUSkinning())
+    {
+        assert(Ji.size() == P.size());
+        assert(Jw.size() == P.size());
+
+        jointIndicesData = SLVVec4i(P.size(), SLVec4i(0, 0, 0, 0));
+        jointWeightsData = SLVVec4f(P.size(), SLVec4f(0.0f, 0.0f, 0.0f, 0.0f));
 
         // create the vec4 of indices for all points
         for (unsigned i = 0; i < P.size(); i++)
         {
             const SLVuchar& curIndices = Ji[i];
+            assert(!curIndices.empty());
 
-            indicesData[i] = SLVec4i(curIndices.size() >= 1 ? curIndices[0] : 0,
+            jointIndicesData[i] = SLVec4i(curIndices.size() >= 1 ? curIndices[0] : 0,
                                      curIndices.size() >= 2 ? curIndices[1] : 0,
                                      curIndices.size() >= 3 ? curIndices[2] : 0,
                                      curIndices.size() >= 4 ? curIndices[3] : 0);
@@ -769,19 +773,19 @@ void SLMesh::generateVAO(SLGLVertexArray& vao)
         for (unsigned i = 0; i < P.size(); i++)
         {
             const SLVfloat& curWeights = Jw[i];
+            assert(curWeights.size() == Ji[i].size());
 
-            indicesWeights[i] = SLVec4f(curWeights.size() >= 1 ? curWeights[0] : 0.0f,
-                                        curWeights.size() >= 2 ? curWeights[1] : 0.0f,
-                                        curWeights.size() >= 3 ? curWeights[2] : 0.0f,
-                                        curWeights.size() >= 4 ? curWeights[3] : 0.0f);
+            jointWeightsData[i] = SLVec4f(curWeights.size() >= 1 ? curWeights[0] : 0.0f,
+                                     curWeights.size() >= 2 ? curWeights[1] : 0.0f,
+                                     curWeights.size() >= 3 ? curWeights[2] : 0.0f,
+                                     curWeights.size() >= 4 ? curWeights[3] : 0.0f);
         }
-
-        vao.setAttrib(AT_jointIndex, AT_jointIndex, &indicesData);
-        vao.setAttrib(AT_jointWeight, AT_jointWeight, &indicesWeights);
+        vao.setAttrib(AT_jointIndex, AT_jointIndex, &jointIndicesData);
+        vao.setAttrib(AT_jointWeight, AT_jointWeight, &jointWeightsData);
     }
 
     vao.generate((SLuint)P.size(),
-                 !Ji.empty() && !_mat->supportsGPUSkinning() ? BU_stream : BU_static,
+                 !Ji.empty() ? BU_stream : BU_static,
                  Ji.empty());
 }
 //-----------------------------------------------------------------------------
