@@ -200,8 +200,8 @@ const string vertMain_v_uv1              = R"(
     v_uv1 = a_uv1;  // pass diffuse color tex.coord. 1 for interpolation)";
 const string vertMain_skinning           = R"(
 
-    vec4 totalPosition;
-    vec3 totalNormal;
+    vec4 skinnedPosition;
+    vec3 skinnedNormal;
 
     if (u_skinningEnabled)
     {
@@ -211,8 +211,8 @@ const string vertMain_skinning           = R"(
         // to animate the mesh. The effect that a joint has on a vertex is
         // specified by the four weights passed along with the joint indices.
 
-        totalPosition = vec4(0.0);
-        totalNormal = vec3(0.0);
+        skinnedPosition = vec4(0.0);
+        skinnedNormal = vec3(0.0);
 
         // iterate over all joints that are transforming this vertex.
         for (int i = 0; i < 4; i++)
@@ -221,17 +221,17 @@ const string vertMain_skinning           = R"(
             mat4 jointMatrix = u_jointMatrices[a_jointIds[i]];
 
             // apply the weighted transformation to the position and normal of the vertex.
-            totalPosition += a_jointWeights[i] * jointMatrix * a_position;
-            totalNormal += a_jointWeights[i] * mat3(jointMatrix) * a_normal;
+            skinnedPosition += a_jointWeights[i] * jointMatrix * a_position;
+            skinnedNormal += a_jointWeights[i] * mat3(jointMatrix) * a_normal;
         }
 
-        v_P_VS = vec3(mvMatrix * totalPosition);
-        v_N_VS = normalize(vec3(nMatrix * totalNormal));
+        v_P_VS = vec3(mvMatrix * skinnedPosition);
+        v_N_VS = normalize(vec3(nMatrix * skinnedNormal));
     }
     else
     {
-        totalPosition = a_position;
-        totalNormal = a_normal;
+        skinnedPosition = a_position;
+        skinnedNormal = a_normal;
     })";
 const string vertMain_TBN_Nm             = R"(
 
@@ -309,17 +309,9 @@ const string vertMain_PS_EndAll_VertBillboard = R"(
 const string vertMain_EndAll = R"(
 
     // pass the vertex w. the fix-function transform
-    gl_Position = u_pMatrix * mvMatrix * a_position;
+    gl_Position = u_pMatrix * mvMatrix * ${localPosition};
 }
 )";
-
-const string vertMain_EndSkinned = R"(
-
-    // pass the vertex w. the fix-function transform
-    gl_Position = u_pMatrix * mvMatrix * totalPosition;
-}
-)";
-
 //-----------------------------------------------------------------------------
 const string vertMain_PS_U_Begin                = R"(
 
@@ -1861,6 +1853,9 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat, SLVLight* lights)
     if (Nm) vertCode += vertMain_TBN_Nm;
     vertCode += vertMain_EndAll;
 
+    // Vertex shader variables
+    setVariable(vertCode, "localPosition", "a_position");
+
     addCodeToShader(_shaders[0], vertCode, _name + ".vert");
 
     // Assemble fragment shader code
@@ -1979,7 +1974,10 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
     if (uv1) vertCode += vertMain_v_uv1;
     if (skinning) vertCode += vertMain_skinning;
     if (Nm) vertCode += vertMain_TBN_Nm;
-    vertCode += skinning ? vertMain_EndSkinned : vertMain_EndAll;
+    vertCode += vertMain_EndAll;
+
+    // Vertex shader variables
+    setVariable(vertCode, "localPosition", skinning ? "skinnedPosition" : "a_position");
 
     addCodeToShader(_shaders[0], vertCode, _name + ".vert");
 
@@ -2291,6 +2289,10 @@ void SLGLProgramGenerated::buildPerPixVideoBkgdSm(SLVLight* lights)
     vertCode += vertMain_v_P_WS_Sm;
     vertCode += vertMain_v_N_VS;
     vertCode += vertMain_EndAll;
+
+    // Vertex shader variables
+    setVariable(vertCode, "localPosition", "a_position");
+
     addCodeToShader(_shaders[0], vertCode, _name + ".vert");
 
     // Assemble fragment shader code
@@ -2678,6 +2680,23 @@ void SLGLProgramGenerated::addCodeToShader(SLGLShader*   shader,
     }
 
     shader->file(generatedShaderPath + name);
+}
+//-----------------------------------------------------------------------------
+//! Builds unique program name that identifies shader program
+/*! A variable is specified in templates like this: ${variableName}.
+ */
+void SLGLProgramGenerated::setVariable(std::string&       code,
+                                       const std::string& name,
+                                       const std::string& value)
+{
+    std::string placeholder = "${" + name + "}";
+
+    std::string::size_type pos = 0;
+    while ((pos = code.find(placeholder)) != std::string::npos)
+    {
+        code.replace(pos, placeholder.size(), value);
+        pos += value.size();
+    }
 }
 //-----------------------------------------------------------------------------
 //! Adds shader header code
