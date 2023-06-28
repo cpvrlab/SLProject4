@@ -63,7 +63,7 @@ uniform mat4  u_pMatrix;    // Projection matrix (camera to normalize device coo
 const string vertInput_u_matrix_vOmv  = R"(
 uniform mat4  u_vOmvMatrix;         // view or modelview matrix)";
 //-----------------------------------------------------------------------------
-const string vertInput_u_jointMatrices = R"(
+const string vertInput_u_skinning = R"(
 
 uniform mat4 u_jointMatrices[100]; // Joint matrices for skinning
 uniform bool u_skinningEnabled;    // Flag if the shader should perform skinning
@@ -182,13 +182,13 @@ void main()
 {)";
 const string vertMain_v_P_VS             = R"(
     mat4 mvMatrix = u_vMatrix * u_mMatrix;
-    v_P_VS = vec3(mvMatrix *  a_position);   // vertex position in view space)";
+    v_P_VS = vec3(mvMatrix * ${localPosition});  // vertex position in view space)";
 const string vertMain_v_P_WS_Sm          = R"(
-    v_P_WS = vec3(u_mMatrix * a_position);   // vertex position in world space)";
+    v_P_WS = vec3(u_mMatrix * ${localPosition}); // vertex position in world space)";
 const string vertMain_v_N_VS             = R"(
     mat3 invMvMatrix = mat3(inverse(mvMatrix));
     mat3 nMatrix = transpose(invMvMatrix);
-    v_N_VS = vec3(nMatrix * a_normal);       // vertex normal in view space)";
+    v_N_VS = vec3(nMatrix * ${localNormal});     // vertex normal in view space)";
 const string vertMain_v_R_OS             = R"(
     vec3 I = normalize(v_P_VS);
     vec3 N = normalize(v_N_VS);
@@ -199,47 +199,63 @@ const string vertMain_v_uv0              = R"(
 const string vertMain_v_uv1              = R"(
     v_uv1 = a_uv1;  // pass diffuse color tex.coord. 1 for interpolation)";
 const string vertMain_skinning           = R"(
-
     vec4 skinnedPosition;
     vec3 skinnedNormal;
 
     if (u_skinningEnabled)
     {
         // In skinned skeleton animation, every vertex of a mesh is transformed by
-        // max. four joints (bones) of a skeleton identified by indices. The
-        // joint matrices represent this transformation and can change per frame
-        // to animate the mesh. The effect that a joint has on a vertex is
-        // specified by the four weights passed along with the joint indices.
-
-        skinnedPosition = vec4(0.0);
-        skinnedNormal = vec3(0.0);
-
-        // iterate over all joints that are transforming this vertex.
-        for (int i = 0; i < 4; i++)
-        {
-            // get the transformation of this joint.
-            mat4 jointMatrix = u_jointMatrices[a_jointIds[i]];
-
-            // apply the weighted transformation to the position and normal of the vertex.
-            skinnedPosition += a_jointWeights[i] * jointMatrix * a_position;
-            skinnedNormal += a_jointWeights[i] * mat3(jointMatrix) * a_normal;
-        }
-
-        v_P_VS = vec3(mvMatrix * skinnedPosition);
-        v_N_VS = normalize(vec3(nMatrix * skinnedNormal));
+        // max. four joints (bones) of a skeleton identified by indices. The joint
+        // matrix is a weighted sum of four joint matrices and can change per frame
+        // to animate the mesh.
+        mat4 jm = u_jointMatrices[int(a_jointIds.x)] * a_jointWeights.x
+                + u_jointMatrices[int(a_jointIds.y)] * a_jointWeights.y
+                + u_jointMatrices[int(a_jointIds.z)] * a_jointWeights.z
+                + u_jointMatrices[int(a_jointIds.w)] * a_jointWeights.w;
+    
+        skinnedPosition = jm * a_position;
+        skinnedNormal = mat3(jm) * a_normal;
     }
     else
     {
         skinnedPosition = a_position;
         skinnedNormal = a_normal;
-    })";
+    }
+)";
+const string vertMain_skinning_Nm        = R"(
+    vec4 skinnedPosition;
+    vec3 skinnedNormal;
+    vec4 skinnedTangent;
+
+    if (u_skinningEnabled)
+    {
+        // In skinned skeleton animation, every vertex of a mesh is transformed by
+        // max. four joints (bones) of a skeleton identified by indices. The joint
+        // matrix is a weighted sum of four joint matrices and can change per frame
+        // to animate the mesh.
+        mat4 jm = u_jointMatrices[int(a_jointIds.x)] * a_jointWeights.x
+                + u_jointMatrices[int(a_jointIds.y)] * a_jointWeights.y
+                + u_jointMatrices[int(a_jointIds.z)] * a_jointWeights.z
+                + u_jointMatrices[int(a_jointIds.w)] * a_jointWeights.w;
+    
+        skinnedPosition = jm * a_position;
+        skinnedNormal = mat3(jm) * a_normal;
+        skinnedTangent = vec4(mat3(jm) * a_tangent.xyz, a_tangent.w);
+    }
+    else
+    {
+        skinnedPosition = a_position;
+        skinnedNormal = a_normal;
+        skinnedTangent = a_tangent;
+    }
+)";
 const string vertMain_TBN_Nm             = R"(
 
     // Building the matrix Eye Space -> Tangent Space
     // See the math behind at: http://www.terathon.com/code/tangent.html
-    vec3 n = normalize(nMatrix * a_normal);
-    vec3 t = normalize(nMatrix * a_tangent.xyz);
-    vec3 b = cross(n, t) * a_tangent.w; // bitangent w. corrected handedness
+    vec3 n = normalize(nMatrix * ${localNormal});
+    vec3 t = normalize(nMatrix * ${localTangent}.xyz);
+    vec3 b = cross(n, t) * ${localTangent}.w; // bitangent w. corrected handedness
     mat3 TBN = mat3(t,b,n);
 
     // Transform vector to the eye into tangent space
@@ -1587,8 +1603,9 @@ void main()
 
  The shader program gets a unique name with the following pattern:
  <pre>
- genCook-D00-N00-E00-O01-RM00-Sky-C4s
-    |    |   |   |   |   |    |   |
+ genCook-D00-N00-E00-O01-RM00-Sky-C4s-S
+    |    |   |   |   |   |    |   |   |
+    |    |   |   |   |   |    |   |   + Support for GPU skinning
     |    |   |   |   |   |    |   + Directional light w. 4 shadow cascades
     |    |   |   |   |   |    + Ambient light from skybox
     |    |   |   |   |   + Roughness-metallic map with index 0 and uv 0
@@ -1823,6 +1840,9 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat, SLVLight* lights)
     bool uv1  = mat->usesUVIndex(1);
     bool sky  = mat->skybox() != nullptr;
 
+    // Check if the shader has to support skinning
+    bool skinning = mat->supportsGPUSkinning();
+
     // Assemble vertex shader code
     string vertCode;
     vertCode += shaderHeader((int)lights->size());
@@ -1831,9 +1851,11 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat, SLVLight* lights)
     vertCode += vertInput_a_pn;
     if (uv0) vertCode += vertInput_a_uv0;
     if (Nm) vertCode += vertInput_a_tangent;
+    if (skinning) vertCode += vertInput_a_skinning;
     vertCode += vertInput_u_matrices_all;
     // if (sky) vertCode += vertInput_u_matrix_invMv;
     if (Nm) vertCode += vertInput_u_lightNm;
+    if (skinning) vertCode += vertInput_u_skinning;
 
     // Vertex shader outputs
     vertCode += vertOutput_v_P_VS;
@@ -1845,6 +1867,7 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat, SLVLight* lights)
 
     // Vertex shader main loop
     vertCode += vertMain_Begin;
+    if (skinning) vertCode += Nm ? vertMain_skinning_Nm : vertMain_skinning;
     vertCode += vertMain_v_P_VS;
     if (Sm) vertCode += vertMain_v_P_WS_Sm;
     vertCode += vertMain_v_N_VS;
@@ -1854,7 +1877,9 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat, SLVLight* lights)
     vertCode += vertMain_EndAll;
 
     // Vertex shader variables
-    setVariable(vertCode, "localPosition", "a_position");
+    setVariable(vertCode, "localPosition", skinning ? "skinnedPosition" : "a_position");
+    setVariable(vertCode, "localNormal", skinning ? "skinnedNormal" : "a_normal");
+    if (Nm) setVariable(vertCode, "localTangent", skinning ? "skinnedTangent" : "a_tangent");
 
     addCodeToShader(_shaders[0], vertCode, _name + ".vert");
 
@@ -1940,7 +1965,7 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
     bool uv0 = mat->usesUVIndex(0);
     bool uv1 = mat->usesUVIndex(1);
 
-    // Check if we use GPU skinning
+    // Check if the shader has to support skinning
     bool skinning = mat->supportsGPUSkinning();
 
     // Assemble vertex shader code
@@ -1954,8 +1979,8 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
     if (Nm) vertCode += vertInput_a_tangent;
     if (skinning) vertCode += vertInput_a_skinning;
     vertCode += vertInput_u_matrices_all;
-    if (skinning) vertCode += vertInput_u_jointMatrices;
     if (Nm) vertCode += vertInput_u_lightNm;
+    if (skinning) vertCode += vertInput_u_skinning;
 
     // Vertex shader outputs
     vertCode += vertOutput_v_P_VS;
@@ -1967,17 +1992,19 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
 
     // Vertex shader main loop
     vertCode += vertMain_Begin;
+    if (skinning) vertCode += Nm ? vertMain_skinning_Nm : vertMain_skinning;
     vertCode += vertMain_v_P_VS;
     if (Sm) vertCode += vertMain_v_P_WS_Sm;
     vertCode += vertMain_v_N_VS;
     if (uv0) vertCode += vertMain_v_uv0;
     if (uv1) vertCode += vertMain_v_uv1;
-    if (skinning) vertCode += vertMain_skinning;
     if (Nm) vertCode += vertMain_TBN_Nm;
     vertCode += vertMain_EndAll;
 
     // Vertex shader variables
     setVariable(vertCode, "localPosition", skinning ? "skinnedPosition" : "a_position");
+    setVariable(vertCode, "localNormal", skinning ? "skinnedNormal" : "a_normal");
+    if (Nm) setVariable(vertCode, "localTangent", skinning ? "skinnedTangent" : "a_tangent");
 
     addCodeToShader(_shaders[0], vertCode, _name + ".vert");
 
@@ -2292,6 +2319,7 @@ void SLGLProgramGenerated::buildPerPixVideoBkgdSm(SLVLight* lights)
 
     // Vertex shader variables
     setVariable(vertCode, "localPosition", "a_position");
+    setVariable(vertCode, "localNormal", "a_normal");
 
     addCodeToShader(_shaders[0], vertCode, _name + ".vert");
 
@@ -2682,7 +2710,7 @@ void SLGLProgramGenerated::addCodeToShader(SLGLShader*   shader,
     shader->file(generatedShaderPath + name);
 }
 //-----------------------------------------------------------------------------
-//! Builds unique program name that identifies shader program
+//! Sets a variable in the shader code.
 /*! A variable is specified in templates like this: ${variableName}.
  */
 void SLGLProgramGenerated::setVariable(std::string&       code,
