@@ -27,7 +27,7 @@ CVTrackedArucoCube::CVTrackedArucoCube(string calibIniPath, float edgeLength)
 }
 //-----------------------------------------------------------------------------
 bool CVTrackedArucoCube::track(CVMat          imageGray,
-                               CVMat          imageRgb,
+                               CVMat          imageBgr,
                                CVCalibration* calib)
 {
     PROFILE_FUNCTION();
@@ -36,7 +36,7 @@ bool CVTrackedArucoCube::track(CVMat          imageGray,
     // TRACK FACES //
     /////////////////
 
-    if (!trackAll(imageGray, imageRgb, calib, _roi))
+    if (!trackAll(imageGray, imageBgr, calib, _roi))
     {
         return false;
     }

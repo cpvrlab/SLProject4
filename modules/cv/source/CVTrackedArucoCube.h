@@ -100,7 +100,7 @@ public:
     CVTrackedArucoCube(string calibIniPath, float edgeLength);
 
     bool track(CVMat          imageGray,
-               CVMat          imageRgb,
+               CVMat          imageBgr,
                CVCalibration* calib);
 
 private:

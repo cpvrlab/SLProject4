@@ -29,7 +29,7 @@ public:
     ~CVTrackedWAI() override;
 
     bool track(CVMat          imageGray,
-               CVMat          imageRgb,
+               CVMat          imageBgr,
                CVCalibration* calib) final;
 
 private:

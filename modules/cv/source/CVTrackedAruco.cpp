@@ -32,10 +32,10 @@ CVTrackedAruco::CVTrackedAruco(int arucoID, string calibIniPath)
 //-----------------------------------------------------------------------------
 //! Tracks the all Aruco markers in the given image for the first sceneview
 bool CVTrackedAruco::track(CVMat          imageGray,
-                           CVMat          imageRgb,
+                           CVMat          imageBgr,
                            CVCalibration* calib)
 {
-    if (!trackAll(imageGray, imageRgb, calib))
+    if (!trackAll(imageGray, imageBgr, calib))
     {
         return false;
     }
@@ -57,14 +57,14 @@ bool CVTrackedAruco::track(CVMat          imageGray,
 }
 //-----------------------------------------------------------------------------
 bool CVTrackedAruco::trackAll(CVMat          imageGray,
-                              CVMat          imageRgb,
+                              CVMat          imageBgr,
                               CVCalibration* calib,
                               CVRect         roi)
 {
     PROFILE_FUNCTION();
 
     assert(!imageGray.empty() && "ImageGray is empty");
-    assert(!imageRgb.empty() && "ImageRGB is empty");
+    assert(!imageBgr.empty() && "ImageBGR is empty");
     assert(!calib->cameraMat().empty() && "Calibration is empty");
 
     // Load aruco parameter once
@@ -130,7 +130,7 @@ bool CVTrackedAruco::trackAll(CVMat          imageGray,
     if (!arucoIDs.empty())
     {
         if (_drawDetection)
-            cv::aruco::drawDetectedMarkers(imageRgb,
+            cv::aruco::drawDetectedMarkers(imageBgr,
                                            corners,
                                            arucoIDs,
                                            cv::Scalar(0, 0, 255));
@@ -162,7 +162,7 @@ bool CVTrackedAruco::trackAll(CVMat          imageGray,
             {
 #if CV_MAJOR_VERSION < 4 || CV_MINOR_VERSION < 6
 #else
-                cv::drawFrameAxes(imageRgb,
+                cv::drawFrameAxes(imageBgr,
                                   calib->cameraMat(),
                                   calib->distortion(),
                                   cv::Mat(rVecs[i]),

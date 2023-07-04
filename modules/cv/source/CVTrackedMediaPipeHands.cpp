@@ -50,11 +50,8 @@ CVTrackedMediaPipeHands::CVTrackedMediaPipeHands(SLstring dataPath)
 {
     mp_set_resource_dir(dataPath.c_str());
 
-    SLstring graphPath = dataPath +
-                         "mediapipe/modules/hand_landmark/hand_landmark_tracking_cpu.binarypb";
-    auto* builder = mp_create_instance_builder(
-      graphPath.c_str(),
-      "image");
+    SLstring graphPath = dataPath + "mediapipe/modules/hand_landmark/hand_landmark_tracking_cpu.binarypb";
+    auto*    builder   = mp_create_instance_builder(graphPath.c_str(), "image");
 
     // The following lines set some parameters for the tracking.
     // These are taken from MediaPipe's Python API:

@@ -79,11 +79,11 @@ void CVTrackedChessboard::calcBoardCorners3D(const CVSize& boardSize,
 //-----------------------------------------------------------------------------
 //! Tracks the chessboard image in the given image for the first sceneview
 bool CVTrackedChessboard::track(CVMat          imageGray,
-                                CVMat          imageRgb,
+                                CVMat          imageBgr,
                                 CVCalibration* calib)
 {
     assert(!imageGray.empty() && "ImageGray is empty");
-    assert(!imageRgb.empty() && "ImageRGB is empty");
+    assert(!imageBgr.empty() && "ImageBGR is empty");
     assert(!calib->cameraMat().empty() && "Calibration is empty");
 
     ////////////
@@ -109,7 +109,7 @@ bool CVTrackedChessboard::track(CVMat          imageGray,
 
         if (_drawDetection)
         {
-            cv::drawChessboardCorners(imageRgb, _boardSize, corners2D, true);
+            cv::drawChessboardCorners(imageBgr, _boardSize, corners2D, true);
         }
 
         /////////////////////

@@ -92,17 +92,17 @@ The pose estimation is done using cv::solvePnP with 9 facial landmarks in 3D
 and their corresponding 2D points detected by the cv::facemark detector. For
 smoothing out the jittering we average the last few detections.
 @param imageGray Image for processing
-@param imageRgb Image for visualizations
+@param imageBgr Image for visualizations
 @param calib Pointer to a valid camera calibration
 */
 bool CVTrackedFaces::track(CVMat          imageGray,
-                           CVMat          imageRgb,
+                           CVMat          imageBgr,
                            CVCalibration* calib)
 {
     PROFILE_FUNCTION();
 
     assert(!imageGray.empty() && "ImageGray is empty");
-    assert(!imageRgb.empty() && "ImageRGB is empty");
+    assert(!imageBgr.empty() && "ImageBGR is empty");
     assert(!calib->cameraMat().empty() && "Calibration is empty");
 
     //////////////////
@@ -131,7 +131,7 @@ bool CVTrackedFaces::track(CVMat          imageGray,
     //////////////////////
 
     CVVVPoint2f landmarks;
-    bool        foundLandmarks = _facemark->fit(imageRgb, faces, landmarks);
+    bool        foundLandmarks = _facemark->fit(imageBgr, faces, landmarks);
 
     float time3MS = _timer.elapsedTimeInMilliSec();
     CVTracked::detect2TimesMS.set(time3MS - time2MS);
@@ -157,7 +157,7 @@ bool CVTrackedFaces::track(CVMat          imageGray,
             for (unsigned long p = 0; p < _avgPosePoints2D.size(); p++)
                 _cvPosePoints2D[p] = CVPoint2f(_avgPosePoints2D[p].average()[0], _avgPosePoints2D[p].average()[1]);
 
-            // delaunayTriangulate(imageRgb, landmarks[i], drawDetection);
+            // delaunayTriangulate(imageBgr, landmarks[i], drawDetection);
 
             ///////////////////
             // Visualization //
@@ -166,15 +166,15 @@ bool CVTrackedFaces::track(CVMat          imageGray,
             if (_drawDetection)
             {
                 // Draw rectangle of detected face
-                cv::rectangle(imageRgb, faces[i], cv::Scalar(255, 0, 0), 2);
+                cv::rectangle(imageBgr, faces[i], cv::Scalar(255, 0, 0), 2);
 
                 // Draw detected landmarks
                 for (auto& j : landmarks[i])
-                    cv::circle(imageRgb, j, 2, cv::Scalar(0, 0, 255), -1);
+                    cv::circle(imageBgr, j, 2, cv::Scalar(0, 0, 255), -1);
 
                 // Draw averaged face points used for pose estimation
                 for (unsigned long p = 0; p < _avgPosePoints2D.size(); p++)
-                    cv::circle(imageRgb, _cvPosePoints2D[p], 5, cv::Scalar(0, 255, 0), 1);
+                    cv::circle(imageBgr, _cvPosePoints2D[p], 5, cv::Scalar(0, 255, 0), 1);
             }
 
             // Do pose estimation for the first face found
@@ -214,16 +214,16 @@ bool CVTrackedFaces::track(CVMat          imageGray,
 //-----------------------------------------------------------------------------
 /*!
  Returns the Delaunay triangulation on the points within the image
- @param imageRgb OpenCV RGB image
+ @param imageBgr OpenCV BGR image
  @param points 2D points as OpenCV vector of points 2D
  @param drawDetection Flag if detection should be drawn
  */
-void CVTrackedFaces::delaunayTriangulate(CVMat             imageRgb,
+void CVTrackedFaces::delaunayTriangulate(CVMat             imageBgr,
                                          const CVVPoint2f& points,
                                          bool              drawDetection)
 {
     // Get rect of image
-    CVSize size = imageRgb.size();
+    CVSize size = imageBgr.size();
     CVRect rect(0, 0, size.width, size.height);
 
     // Create an instance of Subdiv2D
@@ -262,9 +262,9 @@ void CVTrackedFaces::delaunayTriangulate(CVMat             imageRgb,
             // Draw rectangles completely inside the image.
             if (rect.contains(pt[0]) && rect.contains(pt[1]) && rect.contains(pt[2]))
             {
-                line(imageRgb, pt[0], pt[1], cv::Scalar(255, 255, 255), 1, cv::LINE_AA, 0);
-                line(imageRgb, pt[1], pt[2], cv::Scalar(255, 255, 255), 1, cv::LINE_AA, 0);
-                line(imageRgb, pt[2], pt[0], cv::Scalar(255, 255, 255), 1, cv::LINE_AA, 0);
+                line(imageBgr, pt[0], pt[1], cv::Scalar(255, 255, 255), 1, cv::LINE_AA, 0);
+                line(imageBgr, pt[1], pt[2], cv::Scalar(255, 255, 255), 1, cv::LINE_AA, 0);
+                line(imageBgr, pt[2], pt[0], cv::Scalar(255, 255, 255), 1, cv::LINE_AA, 0);
             }
         }
     }
