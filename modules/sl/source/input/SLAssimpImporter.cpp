@@ -1365,14 +1365,14 @@ SLAnimation* SLAssimpImporter::loadAnimation(SLAnimManager& animManager, aiAnima
         // add position keys
         for (SLuint iK = 0; iK < channel->mNumPositionKeys; iK++)
         {
-            SLfloat time    = (SLfloat)channel->mPositionKeys[iK].mTime;
+            SLfloat time    = (SLfloat)channel->mPositionKeys[iK].mTime / animTicksPerSec;
             keyframes[time] = SLImportKeyframe(&channel->mPositionKeys[iK], nullptr, nullptr);
         }
 
         // add rotation keys
         for (SLuint iK = 0; iK < channel->mNumRotationKeys; iK++)
         {
-            SLfloat time = (SLfloat)channel->mRotationKeys[iK].mTime;
+            SLfloat time = (SLfloat)channel->mRotationKeys[iK].mTime / animTicksPerSec;
 
             if (keyframes.find(time) == keyframes.end())
                 keyframes[time] = SLImportKeyframe(nullptr, &channel->mRotationKeys[iK], nullptr);
@@ -1387,7 +1387,7 @@ SLAnimation* SLAssimpImporter::loadAnimation(SLAnimManager& animManager, aiAnima
         // add scaling keys
         for (SLuint iK = 0; iK < channel->mNumScalingKeys; iK++)
         {
-            SLfloat time = (SLfloat)channel->mScalingKeys[iK].mTime;
+            SLfloat time = (SLfloat)channel->mScalingKeys[iK].mTime / animTicksPerSec;
 
             if (keyframes.find(time) == keyframes.end())
                 keyframes[time] = SLImportKeyframe(nullptr, nullptr, &channel->mScalingKeys[iK]);
