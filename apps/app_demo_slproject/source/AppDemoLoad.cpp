@@ -3311,17 +3311,8 @@ resolution shadows near the camera and lower resolution shadows further away.");
         // Sintel character
         SLNode* char2 = importer.load(s->animManager(),
                                       am,
-                                      modelPath + "DAE/Sintel/SintelLowResOwnRig.dae",
-                                      texPath
-                                      //,false
-                                      //,true
-                                      //,SLProcess_JoinIdenticalVertices
-                                      //|SLProcess_RemoveRedundantMaterials
-                                      //|SLProcess_SortByPType
-                                      //|SLProcess_FindDegenerates
-                                      //|SLProcess_FindInvalidData
-                                      //|SLProcess_SplitLargeMeshes
-        );
+                                      modelPath + "GLTF/Sintel/Sintel_LowRes-Rigged.gltf",
+                                      texPath);
         char2->translate(1, 0, 0);
         SLAnimPlayback* char2Anim = s->animManager().lastAnimPlayback();
         char2Anim->playForward();
@@ -4159,7 +4150,7 @@ resolution shadows near the camera and lower resolution shadows further away.");
         AppDemo::devRot.zeroYawAtStart(true);
 #endif
 
-        sv->doWaitOnIdle(false);                    // for constant video feed
+        sv->doWaitOnIdle(false); // for constant video feed
     }
     else if (sceneID == SID_ErlebARBernChristoffel) //.............................................
     {
