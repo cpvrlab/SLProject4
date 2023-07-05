@@ -4014,7 +4014,7 @@ resolution shadows near the camera and lower resolution shadows further away.");
     {
         CVCapture::instance()->videoType(VT_MAIN);
         s->name("Tracking Hands with MediaPipe (main cam.)");
-        s->info("Tracking Hands with MediaPipe. Please be patient for recognition ...");
+        s->info("Tracking hands with MediaPipe.");
 
         videoTexture = new SLGLTexture(am,
                                        texPath + "LiveVideoError.png",

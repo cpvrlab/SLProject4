@@ -37,16 +37,17 @@ public:
     ~CVTrackedMediaPipeHands();
 
     bool track(CVMat          imageGray,
-               CVMat          imageRgb,
+               CVMat          imageBgr,
                CVCalibration* calib) final;
 
 private:
-    void processImageInMediaPipe(CVMat imageRgb);
+    void processImageInMediaPipe(CVMat imageBgr);
     void drawResults(mp_multi_face_landmark_list* landmarks,
-                     CVMat                        imageRgb);
+                     CVMat                        imageBgr);
 
     mp_instance* _instance;
     mp_poller*   _landmarksPoller;
+    CVMat        _imageRgb;
 };
 //-----------------------------------------------------------------------------
 

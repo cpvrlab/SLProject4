@@ -34,7 +34,7 @@ public:
     explicit CVTrackedChessboard(string calibIniPath);
 
     bool track(CVMat          imageGray,
-               CVMat          imageRgb,
+               CVMat          imageBgr,
                CVCalibration* calib) final;
 
 private:

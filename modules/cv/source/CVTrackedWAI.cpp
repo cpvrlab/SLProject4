@@ -42,12 +42,12 @@ CVTrackedWAI::~CVTrackedWAI()
  that is integrated within the lib-WAI. It only works well if the camera is
  calibrated.
  @param imageGray Image for processing
- @param imageRgb Image for visualizations
+ @param imageBgr Image for visualizations
  @param calib Pointer to a valid camera calibration
  @return returns true if pose estimation was successful
  */
 bool CVTrackedWAI::track(CVMat          imageGray,
-                         CVMat          imageRgb,
+                         CVMat          imageBgr,
                          CVCalibration* calib)
 {
     PROFILE_FUNCTION();
@@ -116,7 +116,7 @@ bool CVTrackedWAI::track(CVMat          imageGray,
 
     if (_drawDetection)
     {
-        _waiSlamer->drawInfo(imageRgb, 1.0f, true, true, true);
+        _waiSlamer->drawInfo(imageBgr, 1.0f, true, true, true);
     }
 
     // TODO(dgj1): at the moment we cant differentiate between these two

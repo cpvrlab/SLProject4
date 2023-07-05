@@ -133,7 +133,7 @@ public:
     explicit CVTrackedAruco(int arucoID, string calibIniPath);
 
     bool track(CVMat          imageGray,
-               CVMat          imageRgb,
+               CVMat          imageBgr,
                CVCalibration* calib);
 
     //! Helper function to draw and save an aruco marker board image
@@ -156,7 +156,7 @@ public:
 
 protected:
     bool trackAll(CVMat          imageGray,
-                  CVMat          imageRgb,
+                  CVMat          imageBgr,
                   CVCalibration* calib,
                   CVRect         roi = CVRect(0, 0, 0, 0));
 

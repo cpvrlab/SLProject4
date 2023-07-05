@@ -50,11 +50,8 @@ CVTrackedMediaPipeHands::CVTrackedMediaPipeHands(SLstring dataPath)
 {
     mp_set_resource_dir(dataPath.c_str());
 
-    SLstring graphPath = dataPath +
-                         "mediapipe/modules/hand_landmark/hand_landmark_tracking_cpu.binarypb";
-    auto* builder = mp_create_instance_builder(
-      graphPath.c_str(),
-      "image");
+    SLstring graphPath = dataPath + "mediapipe/modules/hand_landmark/hand_landmark_tracking_cpu.binarypb";
+    auto*    builder   = mp_create_instance_builder(graphPath.c_str(), "image");
 
     // The following lines set some parameters for the tracking.
     // These are taken from MediaPipe's Python API:
@@ -124,17 +121,17 @@ CVTrackedMediaPipeHands::~CVTrackedMediaPipeHands()
 }
 //-----------------------------------------------------------------------------
 bool CVTrackedMediaPipeHands::track(CVMat          imageGray,
-                                    CVMat          imageRgb,
+                                    CVMat          imageBgr,
                                     CVCalibration* calib)
 {
-    processImageInMediaPipe(imageRgb);
+    processImageInMediaPipe(imageBgr);
 
     if (mp_get_queue_size(_landmarksPoller) > 0)
     {
         auto* landmarksPacket = mp_poll_packet(_landmarksPoller);
         auto* landmarks       = mp_get_norm_multi_face_landmarks(landmarksPacket);
 
-        drawResults(landmarks, imageRgb);
+        drawResults(landmarks, imageBgr);
 
         mp_destroy_multi_face_landmarks(landmarks);
         mp_destroy_packet(landmarksPacket);
@@ -143,14 +140,16 @@ bool CVTrackedMediaPipeHands::track(CVMat          imageGray,
     return true;
 }
 //-----------------------------------------------------------------------------
-void CVTrackedMediaPipeHands::processImageInMediaPipe(CVMat imageRgb)
+void CVTrackedMediaPipeHands::processImageInMediaPipe(CVMat imageBgr)
 {
-    mp_image in_image;
-    in_image.data     = imageRgb.data;
-    in_image.width    = imageRgb.cols;
-    in_image.height   = imageRgb.rows;
-    in_image.format   = mp_image_format_srgb;
-    mp_packet* packet = mp_create_packet_image(in_image);
+    cv::cvtColor(imageBgr, _imageRgb, cv::COLOR_BGR2RGB);
+
+    mp_image inImage;
+    inImage.data      = _imageRgb.data;
+    inImage.width     = _imageRgb.cols;
+    inImage.height    = _imageRgb.rows;
+    inImage.format    = mp_image_format_srgb;
+    mp_packet* packet = mp_create_packet_image(inImage);
 
     // Insert the image into the MediaPipe pipeline to be processed.
     CHECK_MP_RESULT(mp_process(_instance, packet))
@@ -161,7 +160,7 @@ void CVTrackedMediaPipeHands::processImageInMediaPipe(CVMat imageRgb)
 //-----------------------------------------------------------------------------
 //! Draws the hand skeleton with connections and joints into the RGB image
 void CVTrackedMediaPipeHands::drawResults(mp_multi_face_landmark_list* landmarks,
-                                          CVMat                        imageRgb)
+                                          CVMat                        imageBgr)
 {
     for (int i = 0; i < landmarks->length; i++)
     {
@@ -171,12 +170,12 @@ void CVTrackedMediaPipeHands::drawResults(mp_multi_face_landmark_list* landmarks
         {
             auto  p1 = hand.elements[connection.first];
             auto  p2 = hand.elements[connection.second];
-            float x1 = (float)imageRgb.cols * p1.x;
-            float y1 = (float)imageRgb.rows * p1.y;
-            float x2 = (float)imageRgb.cols * p2.x;
-            float y2 = (float)imageRgb.rows * p2.y;
+            float x1 = (float)imageBgr.cols * p1.x;
+            float y1 = (float)imageBgr.rows * p1.y;
+            float x2 = (float)imageBgr.cols * p2.x;
+            float y2 = (float)imageBgr.rows * p2.y;
 
-            cv::line(imageRgb,
+            cv::line(imageBgr,
                      {(int)x1, (int)y1},
                      {(int)x2, (int)y2},
                      CV_RGB(0, 255, 0),
@@ -186,11 +185,11 @@ void CVTrackedMediaPipeHands::drawResults(mp_multi_face_landmark_list* landmarks
         for (int j = 0; j < hand.length; j++)
         {
             auto  p      = hand.elements[j];
-            float x      = (float)imageRgb.cols * p.x;
-            float y      = (float)imageRgb.rows * p.y;
+            float x      = (float)imageBgr.cols * p.x;
+            float y      = (float)imageBgr.rows * p.y;
             float radius = std::max(3.0f + 25.0f * -p.z, 1.0f);
 
-            cv::circle(imageRgb,
+            cv::circle(imageBgr,
                        CVPoint((int)x, (int)y),
                        (int)radius,
                        CV_RGB(255, 0, 0),

@@ -53,7 +53,7 @@ public:
     virtual ~CVTracked() = default;
 
     virtual bool track(CVMat          imageGray,
-                       CVMat          imageRgb,
+                       CVMat          imageBgr,
                        CVCalibration* calib) = 0;
 
     // Setters

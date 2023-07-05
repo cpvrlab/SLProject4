@@ -40,10 +40,10 @@ public:
     ~CVTrackedFaces();
 
     bool track(CVMat          imageGray,
-               CVMat          imageRgb,
+               CVMat          imageBgr,
                CVCalibration* calib) final;
 
-    static void delaunayTriangulate(CVMat             imageRgb,
+    static void delaunayTriangulate(CVMat             imageBgr,
                                     const CVVPoint2f& points,
                                     bool              drawDetection);
 
