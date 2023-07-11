@@ -12,8 +12,6 @@ EulerAngles Eul_(float ai, float aj, float ah, int order)
     return (ea);
 }
 /* Construct quaternion from Euler angles (in radians). */
-#pragma warning(disable:4552)
-#pragma warning(disable:4244)
 Quat Eul_ToQuat(EulerAngles ea)
 {
     Quat qu;
@@ -43,8 +41,6 @@ Quat Eul_ToQuat(EulerAngles ea)
 }
 
 /* Construct matrix from Euler angles (in radians). */
-#pragma warning(disable:4552)
-#pragma warning( disable:4244)
 void Eul_ToHMatrix(EulerAngles ea, HMatrix M)
 {  double ti, tj, th, ci, cj, ch, si, sj, sh, cc, cs, sc, ss;
    int i,j,k,h,n,s,f;
@@ -68,8 +64,6 @@ void Eul_ToHMatrix(EulerAngles ea, HMatrix M)
 }
 
 /* Convert matrix to Euler angles (in radians). */
-#pragma warning(disable:4552)
-#pragma warning( disable:4244)
 EulerAngles Eul_FromHMatrix(HMatrix M, int order)
 {
     EulerAngles ea;

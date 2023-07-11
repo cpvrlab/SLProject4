@@ -917,7 +917,7 @@ SLGLTexture* SLAssimpImporter::loadTexture(SLAssetManager* assetMgr,
                                            minificationFilter,
                                            GL_LINEAR,
                                            texType);
-    texture->uvIndex(uvIndex);
+    texture->uvIndex((SLbyte)uvIndex);
 
     // if texture images get deleted after build you can't do ray tracing
     if (deleteTexImgAfterBuild)
@@ -1274,7 +1274,7 @@ SLAnimation* SLAssimpImporter::loadAnimation(SLAnimManager& animManager, aiAnima
 
     // exit if we didn't load a skeleton but have animations for one
     if (!_skinnedMeshes.empty())
-        assert(_skeleton != nullptr && "The skeleton wasn't impoted correctly.");
+        assert(_skeleton != nullptr && "The skeleton wasn't imported correctly.");
 
     // create the animation
     SLAnimation* result;

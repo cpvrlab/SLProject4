@@ -293,7 +293,7 @@ void new_rvalue_references()
     const char* pb1 = b.c_str();
     cout << "a before the move: " << std::hex << pa1 << ", " << pa1 << endl;
     cout << "b before the move: " << std::hex << pb1 << ", " << pb1 << endl;
-    b               = move(a);
+    //b               = move(a);
     const char* pa2 = a.c_str();
     const char* pb2 = b.c_str();
     cout << "a after  the move: " << std::hex << pa2 << ", " << pa2 << endl;
