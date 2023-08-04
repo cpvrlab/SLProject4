@@ -33,12 +33,15 @@ https://mediapipe-studio.webapps.google.com/demo/hand_landmarker
 class CVTrackedMediaPipeHands : public CVTracked
 {
 public:
+    typedef CVPoint3f Results[2][21];
+
     CVTrackedMediaPipeHands(SLstring dataPath);
     ~CVTrackedMediaPipeHands();
 
-    bool track(CVMat          imageGray,
-               CVMat          imageBgr,
-               CVCalibration* calib) final;
+    bool           track(CVMat          imageGray,
+                         CVMat          imageBgr,
+                         CVCalibration* calib) final;
+    const Results& results() const { return _results; }
 
 private:
     void processImageInMediaPipe(CVMat imageBgr);
@@ -47,7 +50,9 @@ private:
 
     mp_instance* _instance;
     mp_poller*   _landmarksPoller;
+    mp_poller*   _worldLandmarksPoller;
     CVMat        _imageRgb;
+    Results      _results;
 };
 //-----------------------------------------------------------------------------
 

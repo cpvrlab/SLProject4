@@ -52,6 +52,7 @@
 #include <imgui_color_gradient.h> // For color over life, need to create own color interpolator
 #include <SLEntities.h>
 #include <SLFileStorage.h>
+#include <SLTrackedHand.h>
 
 #ifdef SL_BUILD_WAI
 #    include <CVTrackedWAI.h>
@@ -4008,14 +4009,42 @@ resolution shadows near the camera and lower resolution shadows further away.");
                                        GL_LINEAR,
                                        GL_LINEAR);
 
-        SLCamera* cam1 = new SLCamera("Camera 1");
-        cam1->background().texture(videoTexture);
-
         SLNode* scene = new SLNode("Scene");
         s->root3D(scene);
 
-        tracker     = new CVTrackedMediaPipeHands(AppDemo::dataPath);
-        trackedNode = cam1;
+        SLCamera* cam1 = new SLCamera("Camera 1");
+        cam1->translation(0, 0, 1);
+        cam1->lookAt(0, 0, 0);
+        cam1->focalDist(1);
+        cam1->setInitialState();
+        cam1->background().texture(videoTexture);
+        cam1->setInitialState();
+        cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
+        scene->addChild(cam1);
+
+        SLLightSpot* light1 = new SLLightSpot(am, s, 10, 10, 5, 0.5f);
+        light1->powers(0.2f, 1.0f, 1.0f);
+        light1->attenuation(1, 0, 0);
+        scene->addChild(light1);
+
+        SLMaterial* m2       = new SLMaterial(am, "m2", SLCol4f::WHITE);
+        SLGrid*     gridMesh = new SLGrid(am, SLVec3f(-5, 0, -5), SLVec3f(5, 0, 5), 20, 20, "Grid", m2);
+        SLNode*     gridNode = new SLNode(gridMesh, "grid");
+        gridNode->translation(0.0f, -0.2f, 0.0f);
+        scene->addChild(gridNode);
+
+        auto* handTracker = new CVTrackedMediaPipeHands(AppDemo::dataPath);
+
+        SLAssimpImporter importer;
+        SLNode*          lHand = importer.load(s->animManager(), am, modelPath + "GLTF/OculusHands/LeftHand.gltf", texPath);
+        SLNode*          hand  = new SLTrackedHand("LeftHand", handTracker, lHand);
+        scene->addChild(hand);
+
+        // HACK: We apparently need to stop animations so the hand can be animated?
+        s->stopAnimations(true);
+
+        tracker     = handTracker;
+        trackedNode = new SLNode(); // HACK: This is a memory leak
         tracker->drawDetection(true);
 
         sv->doWaitOnIdle(false);

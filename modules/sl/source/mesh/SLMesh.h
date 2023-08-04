@@ -165,19 +165,19 @@ public:
 #endif
 
     // Getters
-    SLMaterial*           mat() const { return _mat; }
-    SLMaterial*           matOut() const { return _matOut; }
-    SLGLPrimitiveType     primitive() const { return _primitive; }
-    const SLAnimSkeleton* skeleton() const { return _skeleton; }
-    SLuint                numI() const { return (SLuint)(!I16.empty() ? I16.size() : I32.size()); }
-    SLGLVertexArray&      vao() { return _vao; }
-    SLbool                isSelected() const { return _isSelected; }
-    SLfloat               edgeAngleDEG() const { return _edgeAngleDEG; }
-    SLfloat               edgeWidth() const { return _edgeWidth; }
-    SLCol4f               edgeColor() const { return _edgeColor; }
-    SLVec3f               finalP(SLuint i) { return _finalP->operator[](i); }
-    SLVec3f               finalN(SLuint i) { return _finalN->operator[](i); }
-    SLbool                accelStructIsOutOfDate() { return _accelStructIsOutOfDate; }
+    SLMaterial*       mat() const { return _mat; }
+    SLMaterial*       matOut() const { return _matOut; }
+    SLGLPrimitiveType primitive() const { return _primitive; }
+    SLAnimSkeleton*   skeleton() const { return _skeleton; }
+    SLuint            numI() const { return (SLuint)(!I16.empty() ? I16.size() : I32.size()); }
+    SLGLVertexArray&  vao() { return _vao; }
+    SLbool            isSelected() const { return _isSelected; }
+    SLfloat           edgeAngleDEG() const { return _edgeAngleDEG; }
+    SLfloat           edgeWidth() const { return _edgeWidth; }
+    SLCol4f           edgeColor() const { return _edgeColor; }
+    SLVec3f           finalP(SLuint i) { return _finalP->operator[](i); }
+    SLVec3f           finalN(SLuint i) { return _finalN->operator[](i); }
+    SLbool            accelStructIsOutOfDate() { return _accelStructIsOutOfDate; }
 
     // Setters
     void mat(SLMaterial* m) { _mat = m; }
@@ -208,8 +208,8 @@ public:
     SLVushort IE16; //!< Vector of hard edges vertex indices 16 bit (see computeHardEdgesIndices)
     SLVuint   IE32; //!< Vector of hard edges vertex indices 32 bit (see computeHardEdgesIndices)
 
-    SLVec3f minP;   //!< min. vertex in OS
-    SLVec3f maxP;   //!< max. vertex in OS
+    SLVec3f minP; //!< min. vertex in OS
+    SLVec3f maxP; //!< max. vertex in OS
 
 private:
     void calcTangents();

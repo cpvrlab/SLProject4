@@ -211,6 +211,8 @@ file(GLOB sources
         source/node/SLSkybox.h
         source/node/SLText.cpp
         source/node/SLText.h
+        source/node/SLTrackedHand.cpp
+        source/node/SLTrackedHand.h
         source/node/SLTransformNode.cpp
         source/node/SLTransformNode.h
         source/optix/SLOptix.cpp

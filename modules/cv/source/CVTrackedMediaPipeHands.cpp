@@ -44,7 +44,8 @@ static const ConnectionList CONNECTIONS = {
   {mp_hand_landmark_wrist, mp_hand_landmark_pinky_mcp},
   {mp_hand_landmark_pinky_mcp, mp_hand_landmark_pinky_pip},
   {mp_hand_landmark_pinky_pip, mp_hand_landmark_pinky_dip},
-  {mp_hand_landmark_pinky_dip, mp_hand_landmark_pinky_tip}};
+  {mp_hand_landmark_pinky_dip, mp_hand_landmark_pinky_tip},
+};
 //-----------------------------------------------------------------------------
 CVTrackedMediaPipeHands::CVTrackedMediaPipeHands(SLstring dataPath)
 {
@@ -53,7 +54,7 @@ CVTrackedMediaPipeHands::CVTrackedMediaPipeHands(SLstring dataPath)
     SLstring graphPath = dataPath + "mediapipe/modules/hand_landmark/hand_landmark_tracking_cpu.binarypb";
     auto*    builder   = mp_create_instance_builder(graphPath.c_str(), "image");
 
-    // The following lines set some parameters for the tracking.
+    // The following lines set the parameters for the tracking.
     // These are taken from MediaPipe's Python API:
     // https://github.com/google/mediapipe/blob/master/mediapipe/python/solutions/hands.py
 
@@ -92,16 +93,20 @@ CVTrackedMediaPipeHands::CVTrackedMediaPipeHands(SLstring dataPath)
                          "threshold",
                          0.5);
 
-    // Creates a MediaPipe instance with the graph and some extra info.
+    // Create a MediaPipe instance with the graph and some extra info.
     _instance = mp_create_instance(builder);
     CHECK_MP_RESULT(_instance)
 
-    // Creates a poller to read packets from an output stream.
+    // Create a poller to read the screen-space landmarks packets.
     _landmarksPoller = mp_create_poller(_instance,
                                         "multi_hand_landmarks");
     CHECK_MP_RESULT(_landmarksPoller)
 
-    // Starts the MediaPipe graph.
+    // Create a poller to read the world-space landmarks packets.
+    _worldLandmarksPoller = mp_create_poller(_instance, "multi_hand_world_landmarks");
+    CHECK_MP_RESULT(_worldLandmarksPoller);
+
+    // Start the MediaPipe graph.
     CHECK_MP_RESULT(mp_start(_instance))
 
     // clang-format off
@@ -117,6 +122,7 @@ CVTrackedMediaPipeHands::CVTrackedMediaPipeHands(SLstring dataPath)
 CVTrackedMediaPipeHands::~CVTrackedMediaPipeHands()
 {
     mp_destroy_poller(_landmarksPoller);
+    mp_destroy_poller(_worldLandmarksPoller);
     CHECK_MP_RESULT(mp_destroy_instance(_instance))
 }
 //-----------------------------------------------------------------------------
@@ -128,13 +134,34 @@ bool CVTrackedMediaPipeHands::track(CVMat          imageGray,
 
     if (mp_get_queue_size(_landmarksPoller) > 0)
     {
-        auto* landmarksPacket = mp_poll_packet(_landmarksPoller);
-        auto* landmarks       = mp_get_norm_multi_face_landmarks(landmarksPacket);
+        auto* packet    = mp_poll_packet(_landmarksPoller);
+        auto* landmarks = mp_get_norm_multi_face_landmarks(packet);
 
         drawResults(landmarks, imageBgr);
 
         mp_destroy_multi_face_landmarks(landmarks);
-        mp_destroy_packet(landmarksPacket);
+        mp_destroy_packet(packet);
+    }
+
+    if (mp_get_queue_size(_worldLandmarksPoller) > 0)
+    {
+        auto* packet    = mp_poll_packet(_worldLandmarksPoller);
+        auto* landmarks = mp_get_multi_face_landmarks(packet);
+
+        for (unsigned i = 0; i < landmarks->length; i++)
+        {
+            mp_landmark_list& hand = landmarks->elements[i];
+            if (hand.length != 21) continue;
+
+            for (unsigned j = 0; j < hand.length; j++)
+            {
+                mp_landmark& landmark = hand.elements[j];
+                _results[i][j]        = {landmark.x, landmark.y, landmark.z};
+            }
+        }
+
+        mp_destroy_multi_face_landmarks(landmarks);
+        mp_destroy_packet(packet);
     }
 
     return true;

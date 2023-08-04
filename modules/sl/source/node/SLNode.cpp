@@ -1079,7 +1079,7 @@ void SLNode::resetToInitialState()
 }
 //-----------------------------------------------------------------------------
 //! Returns the first skeleton found in the meshes
-const SLAnimSkeleton*
+SLAnimSkeleton*
 SLNode::skeleton()
 {
     if (_mesh && _mesh->skeleton())

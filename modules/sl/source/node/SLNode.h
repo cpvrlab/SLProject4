@@ -284,33 +284,33 @@ public:
     void         onUpdateCB(function<void()> callbackFunc) { _onUpdateCB = callbackFunc; }
 
     // Getters (see also member)
-    SLNode*               parent() { return _parent; }
-    SLint                 depth() const { return _depth; }
-    SLint                 entityID() const { return _entityID; }
-    const SLMat4f&        om() { return _om; }
-    const SLMat4f&        initialOM() { return _initialOM; }
-    const SLMat4f&        updateAndGetWM() const;
-    const SLMat4f&        updateAndGetWMI() const;
-    SLDrawBits*           drawBits() { return &_drawBits; }
-    SLbool                drawBit(SLuint bit) { return _drawBits.get(bit); }
-    SLAABBox*             aabb() { return &_aabb; }
-    SLAnimation*          animation() { return _animation; }
-    SLbool                castsShadows() { return _castsShadows; }
-    SLMesh*               mesh() { return _mesh; }
-    SLVNode&              children() { return _children; }
-    const SLAnimSkeleton* skeleton();
-    void                  updateRec();
-    virtual void          doUpdate() {}
-    bool                  updateMeshSkins(const std::function<void(SLMesh*)>& cbInformNodes);
-    void                  updateMeshAccelStructs();
-    void                  updateMeshMat(std::function<void(SLMaterial* m)> setMat,
-                                        bool                               recursive);
-    void                  setMeshMat(SLMaterial* mat, bool recursive);
-    bool                  isSelected() { return _isSelected; }
-    SLfloat               minLodCoverage() { return _minLodCoverage; }
-    SLubyte               levelForSM() { return _levelForSM; }
+    SLNode*         parent() { return _parent; }
+    SLint           depth() const { return _depth; }
+    SLint           entityID() const { return _entityID; }
+    const SLMat4f&  om() { return _om; }
+    const SLMat4f&  initialOM() { return _initialOM; }
+    const SLMat4f&  updateAndGetWM() const;
+    const SLMat4f&  updateAndGetWMI() const;
+    SLDrawBits*     drawBits() { return &_drawBits; }
+    SLbool          drawBit(SLuint bit) { return _drawBits.get(bit); }
+    SLAABBox*       aabb() { return &_aabb; }
+    SLAnimation*    animation() { return _animation; }
+    SLbool          castsShadows() { return _castsShadows; }
+    SLMesh*         mesh() { return _mesh; }
+    SLVNode&        children() { return _children; }
+    SLAnimSkeleton* skeleton();
+    void            updateRec();
+    virtual void    doUpdate() {}
+    bool            updateMeshSkins(const std::function<void(SLMesh*)>& cbInformNodes);
+    void            updateMeshAccelStructs();
+    void            updateMeshMat(std::function<void(SLMaterial* m)> setMat,
+                                  bool                               recursive);
+    void            setMeshMat(SLMaterial* mat, bool recursive);
+    bool            isSelected() { return _isSelected; }
+    SLfloat         minLodCoverage() { return _minLodCoverage; }
+    SLubyte         levelForSM() { return _levelForSM; }
 
-    static SLuint numWMUpdates;        //!< NO. of calls to updateWMRec per frame
+    static SLuint numWMUpdates; //!< NO. of calls to updateWMRec per frame
 
     static unsigned int instanceIndex; //!< ???
 
@@ -335,9 +335,9 @@ private:
                             SLbool          findRecursive);
 
 protected:
-    SLNode* _parent;                  //!< pointer to the parent node
-    SLVNode _children;                //!< vector of children nodes
-    SLMesh* _mesh;                    //!< pointer to a single mesh
+    SLNode* _parent;   //!< pointer to the parent node
+    SLVNode _children; //!< vector of children nodes
+    SLMesh* _mesh;     //!< pointer to a single mesh
 
     SLint            _depth;          //!< depth of the node in a scene tree
     SLint            _entityID;       //!< ID in the SLVEntity graph for Data Oriented Design
