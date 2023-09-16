@@ -663,7 +663,9 @@ patch size until we found a match for the point or we reach a threshold.
 */
 void CVTrackedFeatures::optimizeMatches()
 {
+#if DO_FEATURE_BENCHMARKING
     float reprojectionError = 0;
+#endif
 
     // 1. Reproject the model points with the calculated POSE
     CVVPoint2f projectedPoints(_marker.keypoints3D.size());
@@ -730,20 +732,20 @@ void CVTrackedFeatures::optimizeMatches()
                 }
             }
 
-            // 3. Match the descriptors of the keypoints inside
+            // 3. Match the descriptors of the key points inside
             // the rectangle around the projected map point
-            // with the descritor of the projected map point.
+            // with the descriptor of the projected map point.
 
             // This is our descriptor for the model point i
             CVMat modelPointDescriptor = _marker.descriptors.row((int)i);
 
-            // We extract the descriptors which belong to the keypoints
+            // We extract the descriptors which belong to the key points
             // inside the rectangle around the projected map point
             CVMat bboxPointsDescriptors;
             for (size_t j : frameIndicesInsideRect)
                 bboxPointsDescriptors.push_back(_currentFrame.descriptors.row((int)j));
 
-            // 4. Match the frame keypoints inside the rectangle with the projected model point
+            // 4. Match the frame key points inside the rectangle with the projected model point
             _matcher->match(bboxPointsDescriptors, modelPointDescriptor, newMatches);
         }
 
@@ -769,8 +771,11 @@ void CVTrackedFeatures::optimizeMatches()
 
         // Get the keypoint which was used for pose estimation
         CVPoint2f keypointForPose = _currentFrame.keypoints[(uint)_currentFrame.inlierMatches.back().queryIdx].pt;
+
+#if DO_FEATURE_BENCHMARKING
         reprojectionError += (float)norm(CVMat(projectedModelPoint),
                                          CVMat(keypointForPose));
+#endif
 
 #if DRAW_PATCHES
         // draw green rectangle around every map point
