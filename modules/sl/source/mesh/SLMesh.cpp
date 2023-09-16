@@ -19,12 +19,16 @@
 
 using std::set;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Weverything"
+#ifdef __clang__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Weverything"
+#endif
 #include <igl/remove_duplicate_vertices.h>
 #include <igl/per_face_normals.h>
 #include <igl/unique_edge_map.h>
-#pragma clang diagnostic pop
+#ifdef __clang__
+#    pragma clang diagnostic pop
+#endif
 
 //-----------------------------------------------------------------------------
 /*!

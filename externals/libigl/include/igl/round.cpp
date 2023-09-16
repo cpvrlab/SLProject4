@@ -13,7 +13,7 @@
 template <typename DerivedX >
 IGL_INLINE DerivedX igl::round(const DerivedX r)
 {
-  return (r > 0.0) ? std::floor(r + 0.5) : std::ceil(r - 0.5);
+    return (r > (DerivedX)0.0) ? std::floor(r + (DerivedX)0.5) : std::ceil(r - (DerivedX)0.5);
 }
 
 template < typename DerivedX, typename DerivedY>

@@ -431,7 +431,7 @@ void SLGLState::bindTexture(SLenum target, SLuint textureID)
  */
 void SLGLState::activeTexture(SLenum textureUnit)
 {
-    if ((textureUnit - GL_TEXTURE0) > _glMaxTexUnits)
+    if (((SLint)textureUnit - GL_TEXTURE0) > _glMaxTexUnits)
         SL_LOG("******* To many texture units: %i used of %i",
                (SLint)textureUnit - GL_TEXTURE0,
                _glMaxTexUnits);
