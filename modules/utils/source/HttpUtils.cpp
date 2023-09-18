@@ -308,7 +308,7 @@ void SecureSocket::disconnect()
  */
 DNSRequest::DNSRequest(string host)
 {
-    char             s[250];
+    char             s[250] = {'\0'};
     int              maxlen = 249;
     struct hostent*  h = nullptr;
     struct addrinfo* res = NULL;

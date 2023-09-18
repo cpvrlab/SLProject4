@@ -54,7 +54,8 @@ void WAIOrbVocabulary::loadFromFile(std::string strVocFile)
     }
     catch (std::exception& e)
     {
-        std::string err = "WAIOrbVocabulary::loadFromFile: failed to load vocabulary " + strVocFile;
+        std::string err = "WAIOrbVocabulary::loadFromFile: failed to load vocabulary " + 
+            strVocFile + ", exception:" + e.what();
         throw std::runtime_error(err);
     }
 #else

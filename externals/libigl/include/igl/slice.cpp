@@ -125,8 +125,8 @@ IGL_INLINE void igl::slice(
   int xm = X.rows();
   int xn = X.cols();
 #endif
-  int ym = R.size();
-  int yn = C.size();
+  int ym = (int)R.size();
+  int yn = (int)C.size();
 
   // special case when R or C is empty
   if (ym == 0 || yn == 0)
