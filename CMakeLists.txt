@@ -40,6 +40,9 @@ else ()
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 endif ()
 
+include(cmake/SetGitBranchNameAndCommitID.cmake)
+include(cmake/CompileOptions.cmake)
+
 option(SL_DOWNLOAD_DATA "Specifies if the data ZIP file should be downloaded" ON)
 option(SL_DOWNLOAD_PREBUILTS "Specifies if prebuilt libraries should be downloaded" ON)
 option(SL_BUILD_WAI "Specifies if the WAI library should be built" ON)
@@ -59,6 +62,8 @@ endif ()
 
 option(LIBIGL_USE_STATIC_LIBRARY "Specifies if LibIGL should be built statically" ON)
 
+message(STATUS "Current System Name: ${SYSTEM_NAME_UPPER}")
+message(STATUS "--------------------------------------------")
 message(STATUS "SL_DOWNLOAD_PREBUILTS: ${SL_DOWNLOAD_PREBUILTS}")
 message(STATUS "SL_BUILD_WAI: ${SL_BUILD_WAI}")
 message(STATUS "SL_BUILD_APPS: ${SL_BUILD_APPS}")
@@ -70,9 +75,6 @@ message(STATUS "SL_BUILD_WITH_OPENSSL: ${SL_BUILD_WITH_OPENSSL}")
 message(STATUS "SL_BUILD_WITH_ASSIMP: ${SL_BUILD_WITH_ASSIMP}")
 message(STATUS "SL_BUILD_WITH_MEDIAPIPE: ${SL_BUILD_WITH_MEDIAPIPE}")
 message(STATUS "LIBIGL_USE_STATIC_LIBRARY: ${LIBIGL_USE_STATIC_LIBRARY}")
-
-include(cmake/SetGitBranchNameAndCommitID.cmake)
-include(cmake/CompileOptions.cmake)
 
 if (SL_DOWNLOAD_DATA)
     include(cmake/DownloadData.cmake)
