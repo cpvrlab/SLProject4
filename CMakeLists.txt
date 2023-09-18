@@ -51,7 +51,7 @@ option(SL_BUILD_WITH_KTX "Specifies if Kronos Texture library (ktx) should be us
 option(SL_BUILD_WITH_OPENSSL "Specifies if OpenSSL should be used" ON)
 option(SL_BUILD_WITH_ASSIMP "Specifies if Assimp should be used" ON)
 
-if ("${SYSTEM_NAME_UPPER}" MATCHES "IOS" OR "${SYSTEM_NAME_UPPER}" MATCHES "Emscripten")
+if ("${SYSTEM_NAME_UPPER}" MATCHES "IOS" OR "${SYSTEM_NAME_UPPER}" MATCHES "EMSCRIPTEN")
     option(SL_BUILD_WITH_MEDIAPIPE "Specifies if MediaPipe should be used" OFF)
 else ()
     option(SL_BUILD_WITH_MEDIAPIPE "Specifies if MediaPipe should be used" ON)
