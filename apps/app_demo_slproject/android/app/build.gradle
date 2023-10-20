@@ -33,12 +33,6 @@ android {
             assets.srcDirs = ['src/main/assets']
         }
     }
-    lintOptions {
-        checkReleaseBuilds false
-        // Or, if you prefer, you can continue to check for errors in release builds,
-        // but continue the build even when errors are found:
-        abortOnError false
-    }
     buildTypes {
         release {
             minifyEnabled false
@@ -59,6 +53,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
     }
     ndkVersion '21.4.7075529'
+    namespace 'ch.bfh.cpvrlab'
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
 }
 
 dependencies {

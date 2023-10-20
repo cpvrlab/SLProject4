@@ -18,6 +18,7 @@
   * Install **cmake** if the IDE states it as missing.
 * Build the project with **Hammer button** or with **Build > Make Project (Ctrl-F9)**
   * The app can only run on real but not on virtual devices because the prebuilt OpenCV libraries (_lib/prebuilt/Android) are only built for the arm architectures armeabi-v7a and arm64-v8a. To run the app in a virtual device you would have to build OpenCV also for Android on the x86 architecture.
+* Your connected device must be enabled for development. See development settings under the system settings. Also the device must allow USB Debugging under the development settings.
 * After successful build you can start the app on a USB-connected device by clicking the **green start button**.
   * If your device is not listed in the **Deployment Targets** dialog please check again your USB driver. In some cases, you have to download the appropriate driver from the device manufacturer.
 
