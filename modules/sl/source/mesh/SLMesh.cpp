@@ -379,7 +379,7 @@ Optionally you can draw the normals and/or the uniform grid voxels.
 </p>
 Please view also the full process of rendering <a href="md_on_paint.html"><b>one frame</b></a>
 */
-void SLMesh::draw(SLSceneView* sv, SLNode* node)
+void SLMesh::draw(SLSceneView* sv, SLNode* node, SLuint instances)
 {
     SLGLState* stateGL = SLGLState::instance();
 
@@ -469,7 +469,10 @@ void SLMesh::draw(SLSceneView* sv, SLNode* node)
             _vao.drawArrayAs(PT_points);
         else
         {
-            _vao.drawElementsAs(primitiveType);
+            if (instances > 1)
+                _vao.drawElementsInstanced(primitiveType, instances);
+            else
+                _vao.drawElementsAs(primitiveType);
 
             if ((sv->drawBit(SL_DB_WITHEDGES) || node->drawBit(SL_DB_WITHEDGES)) &&
                 (!IE32.empty() || !IE16.empty()))

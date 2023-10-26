@@ -87,7 +87,7 @@ public:
                   SLbool          outputInterleaved = true);
 
     //! Binds & enables the vertex attribute for OpenGL < 3.0
-    void bindAndEnableAttrib();
+    void bindAndEnableAttrib(SLuint divisor = 0) const;
 
     //! disables the vertex attribute for OpenGL < 3.0
     void disableAttrib();

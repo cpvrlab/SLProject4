@@ -130,7 +130,7 @@ public:
     ~SLMesh() override;
 
     virtual void init(SLNode* node);
-    virtual void draw(SLSceneView* sv, SLNode* node);
+    virtual void draw(SLSceneView* sv, SLNode* node, SLuint intances = 0);
     void         drawIntoDepthBuffer(SLSceneView* sv,
                                      SLNode*      node,
                                      SLMaterial*  depthMat);
