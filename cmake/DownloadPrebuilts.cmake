@@ -1019,8 +1019,13 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "ANDROID") #----------------------------
     #set(OpenCV_VERSION "3.4.1")
     set(OpenCV_PREBUILT_DIR "andV8_opencv_${OpenCV_VERSION}")
     set(OpenCV_DIR "${PREBUILT_PATH}/${OpenCV_PREBUILT_DIR}")
-    set(OpenCV_LINK_DIR "${OpenCV_DIR}/${CMAKE_BUILD_TYPE}/${ANDROID_ABI}")
     set(OpenCV_INCLUDE_DIR "${OpenCV_DIR}/include")
+
+    if (CMAKE_BUILD_TYPE MATCHES "Debug")
+        set(OpenCV_LINK_DIR "${OpenCV_DIR}/Debug/${ANDROID_ABI}")
+    else ()
+        set(OpenCV_LINK_DIR "${OpenCV_DIR}/Release/${ANDROID_ABI}")
+    endif ()
 
     set(OpenCV_LINK_LIBS
             ${OpenCV_LINK_LIBS}
@@ -1075,7 +1080,12 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "ANDROID") #----------------------------
     set(g2o_PREBUILT_DIR "andV8_g2o")
     set(g2o_DIR "${PREBUILT_PATH}/${g2o_PREBUILT_DIR}")
     set(g2o_INCLUDE_DIR "${g2o_DIR}/include")
-    set(g2o_LINK_DIR "${g2o_DIR}/${CMAKE_BUILD_TYPE}/${ANDROID_ABI}")
+
+    if (CMAKE_BUILD_TYPE MATCHES "Debug")
+        set(g2o_LINK_DIR "${g2o_DIR}/Debug/${ANDROID_ABI}")
+    else ()
+        set(g2o_LINK_DIR "${g2o_DIR}/Release/${ANDROID_ABI}")
+    endif ()
 
     foreach (lib ${g2o_LINK_LIBS})
         add_library(${lib} SHARED IMPORTED)
@@ -1160,7 +1170,7 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "ANDROID") #----------------------------
     add_library(MediaPipe::MediaPipe SHARED IMPORTED)
     set_target_properties(MediaPipe::MediaPipe
         PROPERTIES
-        IMPORTED_LOCATION_RELEASE "${MediaPipe_DIR}/release/libmediapipe.so"
+        IMPORTED_LOCATION "${MediaPipe_DIR}/release/libmediapipe.so"
         IMPORTED_LOCATION_DEBUG "${MediaPipe_DIR}/debug/libmediapipe.so"
         INTERFACE_INCLUDE_DIRECTORIES "${MediaPipe_DIR}/include"
     ) 
@@ -1168,7 +1178,7 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "ANDROID") #----------------------------
     add_library(MediaPipe::OpenCV_Java4 SHARED IMPORTED)
     set_target_properties(MediaPipe::OpenCV_Java4
         PROPERTIES
-        IMPORTED_LOCATION_RELEASE "${MediaPipe_DIR}/release/libopencv_java4.so"
+        IMPORTED_LOCATION "${MediaPipe_DIR}/release/libopencv_java4.so"
         IMPORTED_LOCATION_DEBUG "${MediaPipe_DIR}/debug/libopencv_java4.so"
     )
 

@@ -387,12 +387,11 @@ void CVImage::load(const string& filename,
 
     // load the image format as stored in the file
 
-    SLIOBuffer buffer   = SLFileStorage::readIntoBuffer(filename, IOK_image);
-    CVMat      inputMat = CVMat(1, (int)buffer.size, CV_8UC1, buffer.data);
-
 #ifndef __EMSCRIPTEN__
-    _cvMat = cv::imdecode(inputMat, cv::ImreadModes::IMREAD_UNCHANGED);
+    _cvMat = cv::imread(filename, cv::ImreadModes::IMREAD_UNCHANGED);
 #else
+    SLIOBuffer buffer = SLFileStorage::readIntoBuffer(filename, IOK_image);
+
     unsigned char* encodedData = buffer.data;
     int            size        = (int)buffer.size;
     int            width;
@@ -401,9 +400,9 @@ void CVImage::load(const string& filename,
     stbi_hdr_to_ldr_gamma(1.0f);
     unsigned char* data = stbi_load_from_memory(encodedData, size, &width, &height, &numChannels, 0);
     _cvMat              = CVMat(height, width, CV_8UC(numChannels), data);
-#endif
 
     SLFileStorage::deleteBuffer(buffer);
+#endif
 
     if (!_cvMat.data)
     {
