@@ -22,3 +22,4 @@
 * After successful build you can start the app on a USB-connected device by clicking the **green start button**.
   * If your device is not listed in the **Deployment Targets** dialog please check again your USB driver. In some cases, you have to download the appropriate driver from the device manufacturer.
 
+(Note: You can't build the release version)
