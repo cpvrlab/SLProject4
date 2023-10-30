@@ -22,7 +22,7 @@ include(cmake/CustomCommands.cmake)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "")
 
-set_policy(CMP0111 OLD) # Avoids warnings for new policy CMP0111 from cmake 3.19 onwards
+# set_policy(CMP0111 OLD) # Avoids warnings for new policy CMP0111 from cmake 3.19 onwards
 
 set(META_PROJECT_NAME "SLProject")
 
@@ -62,8 +62,10 @@ endif ()
 
 option(LIBIGL_USE_STATIC_LIBRARY "Specifies if LibIGL should be built statically" ON)
 
-message(STATUS "Current System Name: ${SYSTEM_NAME_UPPER}")
-message(STATUS "--------------------------------------------")
+message(STATUS "----------------------------------------------------------------")
+message(STATUS "System: ${SYSTEM_NAME_UPPER}")
+message(STATUS "Architecture: ${CMAKE_SYSTEM_PROCESSOR}")
+message(STATUS "----------------------------------------------------------------")
 message(STATUS "SL_DOWNLOAD_PREBUILTS: ${SL_DOWNLOAD_PREBUILTS}")
 message(STATUS "SL_BUILD_WAI: ${SL_BUILD_WAI}")
 message(STATUS "SL_BUILD_APPS: ${SL_BUILD_APPS}")
@@ -75,14 +77,19 @@ message(STATUS "SL_BUILD_WITH_OPENSSL: ${SL_BUILD_WITH_OPENSSL}")
 message(STATUS "SL_BUILD_WITH_ASSIMP: ${SL_BUILD_WITH_ASSIMP}")
 message(STATUS "SL_BUILD_WITH_MEDIAPIPE: ${SL_BUILD_WITH_MEDIAPIPE}")
 message(STATUS "LIBIGL_USE_STATIC_LIBRARY: ${LIBIGL_USE_STATIC_LIBRARY}")
+message(STATUS "----------------------------------------------------------------")
 
 if (SL_DOWNLOAD_DATA)
     include(cmake/DownloadData.cmake)
 endif ()
 
+message(STATUS "----------------------------------------------------------------")
+
 if (SL_DOWNLOAD_PREBUILTS)
     include(cmake/DownloadPrebuilts.cmake)
 endif ()
+
+message(STATUS "----------------------------------------------------------------")
 
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Android")
     message(STATUS "SL_APP: ${SL_APP}")
@@ -104,3 +111,5 @@ endif ()
 if (SL_BUILD_APPS)
     add_subdirectory(apps)
 endif ()
+
+message(STATUS "----------------------------------------------------------------")

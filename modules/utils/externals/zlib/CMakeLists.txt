@@ -1,4 +1,3 @@
-cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 
 project(zlib C)

@@ -1,9 +1,3 @@
-#
-# CMake configuration of the cpvrlab/utils repository
-#
-
-cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
-
 # The FOLDER properties are needed in Visual Studio and XCode generated projects for nested folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "")

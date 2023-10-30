@@ -139,10 +139,10 @@ IF(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
     set(CMAKE_CXX_FLAGS_DEBUG "${VECTORIAL_INSTRUCTIONS}  -g3  -DDEBUG -D_DEBUG   -std=c++11")
     set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${VECTORIAL_INSTRUCTIONS} -O2 -g3  -DDEBUG -D_DEBUG  -std=c++11")
 
-    message(STATUS "vec=${VECTORIAL_INSTRUCTIONS}")
-    MESSAGE( STATUS "-------------------------------------------------------------------------------" )
-    message( STATUS "GNU COMPILER")
-    MESSAGE( STATUS "-------------------------------------------------------------------------------" )
+    # message(STATUS "vec=${VECTORIAL_INSTRUCTIONS}")
+    # MESSAGE( STATUS "-------------------------------------------------------------------------------" )
+    # message( STATUS "GNU COMPILER")
+    # MESSAGE( STATUS "-------------------------------------------------------------------------------" )
 
     # When compiling with clang-cl, use the DLL-specific version of the run-time library to link against libsl_wai
     # https://stackoverflow.com/a/18635749
