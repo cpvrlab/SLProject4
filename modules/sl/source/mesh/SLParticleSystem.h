@@ -42,7 +42,7 @@ public:
                      const SLstring& name        = "Particle system",
                      SLGLTexture*    texFlipbook = nullptr);
 
-    void draw(SLSceneView* sv, SLNode* node);
+    void draw(SLSceneView* sv, SLNode* node, SLuint instances = 1);
     void deleteData();
     void deleteDataGpu();
     void buildAABB(SLAABBox& aabb, const SLMat4f& wmNode);
@@ -350,6 +350,9 @@ private:
     SLGLVertexArray _vao1; //!< First OpenGL Vertex Array Object for swapping between updating/drawing
     SLGLVertexArray _vao2; //!< Second OpenGL Vertex Array Object for swapping between updating/drawing
 
+    SLGLVertexArray _renderVao1; //!< First OpenGL Vertex Array Object for swapping between updating/drawing
+    SLGLVertexArray _renderVao2; //!< Second OpenGL Vertex Array Object for swapping between updating/drawing
+
     // Boolean for generation/resume
     SLbool _isVisibleInFrustum = true;  //!< Boolean to set time since node not visible
     SLbool _isPaused           = false; //!< Boolean to stop updating
@@ -377,6 +380,7 @@ private:
     SLbool _doSizeOverLT       = true;  //!< Boolean for size over life time
     SLbool _doSizeOverLTCurve  = false; //!< Boolean for size over life time curve
     SLbool _doFlipBookTexture  = false; //!< Boolean for flipbook texture
+    SLbool _renderInstanced    = false; //!< Boolean for instanced rendering
 };
 //-----------------------------------------------------------------------------
 #endif

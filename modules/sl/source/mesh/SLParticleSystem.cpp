@@ -33,7 +33,13 @@ SLParticleSystem::SLParticleSystem(SLAssetManager* assetMgr,
 {
     assert(!name.empty());
 
-    _primitive = PT_points;
+    // To be added to constructor
+    _renderInstanced = true;
+
+    if (_renderInstanced)
+        _primitive = PT_triangles;
+    else
+        _primitive = PT_points;
 
     if (amount > UINT_MAX) // Need to change for number of floats
         SL_EXIT_MSG("SLParticleSystem supports max. 2^32 vertices.");
@@ -42,8 +48,6 @@ SLParticleSystem::SLParticleSystem(SLAssetManager* assetMgr,
     _amount         = amount;
     _velocityRndMin = velocityRandomStart;
     _velocityRndMax = velocityRandomEnd;
-
-    P.resize(1); // To trick parent class
 
     _textureFirst    = texC;
     _textureFlipbook = texFlipbook;
@@ -447,6 +451,39 @@ void SLParticleSystem::generate()
         _vao2.setAttrib(AT_initialPosition, AT_initialPosition, &tempInitP);
     _vao2.generateTF((SLuint)tempP.size());
 
+    if (_renderInstanced)
+    {
+        /* Generate for billboard (for drawing without geometry shader)*/
+        P.push_back(SLVec3f(-1, -1, 0));
+        P.push_back(SLVec3f(1, -1, 0));
+        P.push_back(SLVec3f(1, 1, 0));
+        P.push_back(SLVec3f(-1, 1, 0));
+
+        I32.push_back(0);
+        I32.push_back(1);
+        I32.push_back(2);
+        I32.push_back(2);
+        I32.push_back(3);
+        I32.push_back(0);
+
+        /* Generate vao for rendering with draw instanced */
+        _renderVao1.setAttrib(AT_custom0, AT_custom0, &P);
+        _renderVao1.setIndices(&I32);
+        _renderVao1.setExternalVBO(_vao1.vbo(), 2);
+
+        _renderVao2.setAttrib(AT_custom0, AT_custom0, &P);
+        _renderVao2.setIndices(&I32);
+        _renderVao2.setExternalVBO(_vao2.vbo(), 2);
+
+        _renderVao1.generate((SLuint)P.size());
+        _renderVao2.generate((SLuint)P.size());
+    }
+    else
+    {
+        P.push_back(SLVec3f(1, 1, 0));
+        I32.push_back(0);
+    }
+
     _isGenerated = true;
 }
 //-----------------------------------------------------------------------------
@@ -542,7 +579,7 @@ void SLParticleSystem::pauseOrResume()
  * user. After I update the particle in the update pass, then and finally I
  * draw them.
  */
-void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
+void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
 {
     /////////////////////////////////////
     // Init particles vector and init VAO
@@ -556,7 +593,7 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
     ////////////////////
 
     if (!_mat->program() || !_mat->programTF())
-        _mat->generateProgramPS();
+        _mat->generateProgramPS(_renderInstanced);
 
     ////////////////////////////////////////////////
     // Calculate time and paused and frustum culling
@@ -680,14 +717,20 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
             _vao1.beginTF(_vao2.tfoID());
             _vao1.drawArrayAs(PT_points);
             _vao1.endTF();
-            _vao = _vao2;
+            if (_renderInstanced)
+                _vao = _renderVao2;
+            else
+                _vao = _vao2;
         }
         else
         {
             _vao2.beginTF(_vao1.tfoID());
             _vao2.drawArrayAs(PT_points);
             _vao2.endTF();
-            _vao = _vao1;
+            if (_renderInstanced)
+                _vao = _renderVao2;
+            else
+                _vao = _vao1;
         }
         _updateTime.set(GlobalTimer::timeMS() - _startUpdateTimeMS);
     }
@@ -709,7 +752,6 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
     // World space
     if (_doWorldSpace)
     {
-
         if (_billboardType == BT_Vertical)
         {
             SLMat4f vMat = stateGL->viewMatrix; // Just view matrix because world space is enabled
@@ -728,7 +770,22 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
         }
         else
         {
-            spD->uniformMatrix4fv("u_vOmvMatrix", 1, (SLfloat*)&stateGL->viewMatrix);
+
+            SLMat4f vMat = stateGL->viewMatrix; // Just view matrix because world space is enabled
+            std::cout << "vMat" << std::endl;
+            vMat.m(0, 1.0f);
+            vMat.m(1, 0.0f);
+            vMat.m(2, 0.0f);
+
+            vMat.m(3, 1.0f);
+            vMat.m(4, 0.0f);
+            vMat.m(5, 0.0f);
+
+            vMat.m(6, 0.0f);
+            vMat.m(7, 0.0f);
+            vMat.m(8, 1.0f);
+            spD->uniformMatrix4fv("u_vOmvMatrix", 1, (SLfloat*)&vMat);
+            //spD->uniformMatrix4fv("u_vOmvMatrix", 1, (SLfloat*)&stateGL->viewMatrix);
         }
     }
     else
@@ -822,7 +879,10 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
         stateGL->blendFunc(GL_SRC_ALPHA, GL_ONE);
 
     ///////////////////////
-    SLMesh::draw(sv, node);
+    if (_renderInstanced)
+        SLMesh::draw(sv, node, _amount*2);
+    else
+        SLMesh::draw(sv, node);
     ///////////////////////
 
     if (_doColor && _doBlendBrightness)

@@ -108,7 +108,7 @@ public:
                SLGLProgram*    program);
 
     ~SLMaterial() override;
-    void  generateProgramPS();
+    void  generateProgramPS(bool renderInstanced = false);
     void  activate(SLCamera* cam,
                    SLVLight* lights,
                    SLSkybox* skybox = nullptr);

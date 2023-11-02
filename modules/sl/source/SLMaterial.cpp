@@ -377,7 +377,7 @@ SLMaterial::~SLMaterial()
  If this material has not yet a shader program assigned (SLMaterial::_program)
  a suitable program will be generated with an instance of SLGLProgramGenerated.
  */
-void SLMaterial::generateProgramPS()
+void SLMaterial::generateProgramPS(bool renderInstanced)
 {
     // If no shader program is attached add a generated shader program
     // A 3D object can be stored without material or shader program information.
@@ -395,11 +395,15 @@ void SLMaterial::generateProgramPS()
         // If the program was not found by name generate a new one
         if (!_program)
         {
+            std::string geom = "";
+            if (!renderInstanced)
+                geom = "Geom";
+
             _program = new SLGLProgramGenerated(_assetManager,
                                                 programNameDraw,
                                                 this,
                                                 true,
-                                                "Geom");
+                                                geom);
         }
     }
 

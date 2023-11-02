@@ -44,6 +44,8 @@ const string vertInput_PS_a_texNum        = R"(
 layout (location = 6) in uint  a_texNum;         // Particle rotation attribute)";
 const string vertInput_PS_a_initP         = R"(
 layout (location = 7) in vec3  a_initialPosition;// Particle initial position attribute)";
+const string vertInput_PS_a_positionP         = R"(
+layout (location = 8) in vec3  a_positionP;     // Particle position attribute)";
 const string vertInput_a_uv0              = R"(
 layout (location = 2) in vec2  a_uv0;            // Vertex tex.coord. 1 for diffuse color)";
 const string vertInput_a_uv1              = R"(
@@ -103,7 +105,6 @@ uniform int   u_condFB;             // Condition to update texNum)";
 
 //-----------------------------------------------------------------------------
 const string vertOutput_v_P_VS       = R"(
-
 out     vec3  v_P_VS;                   // Point of illumination in view space (VS))";
 const string vertOutput_v_P_WS       = R"(
 out     vec3  v_P_WS;                   // Point of illumination in world space (WS))";
@@ -146,6 +147,46 @@ const string vertOutput_PS_struct_texNum = R"(
     uint texNum;        // Num of texture in flipbook)";
 const string vertOutput_PS_struct_End    = R"(
 } vert; )";
+
+const string vertOutput_PS_instanced_texNum = R"(
+out uint texNum;        // Num of texture in flipbook)";
+const string vertOutput_PS_instanced_transparency     = R"(
+out float transparency;         // transparency of a particle )";
+
+const string fragInput_PS_instanced_transparency      = R"(
+in float transparency;         // transparency of a particle )";
+const string fragInput_PS_instanced_texNum = R"(
+in uint texNum;        // Num of texture in flipbook)";
+
+const string fragMain_PS_v_c             = R"(
+    vec4 color = u_color;                    // Particle color)";
+const string fragMain_PS_v_doColorOverLT = R"(
+    vec4 color = vec4(vert[0].color, 1.0);   // Particle color)";
+const string fragMain_PS_v_withoutColor  = R"(
+    vec4 color = vec4( 0.0, 0.0, 0.0, 1.0);  // Particle color)";
+const string fragMain_PS_instanced_c  = R"(
+    vec4 color = u_color;      // Particle color
+    color.w *= transparency;   // Apply transparency
+    )";
+
+const string vertInput_u_matrix_p             = R"(
+uniform mat4  u_pMatrix;     // Projection matrix)";
+const string vertInput_u_matrix_vertBillboard = R"(
+uniform mat4  u_vYawPMatrix; // Projection matrix)";
+const string fragInput_PS_u_c                 = R"(
+uniform vec4  u_color;       // Particle color)";
+const string vertInput_PS_u_ScaRa             = R"(
+uniform float u_scale;       // Particle scale
+uniform float u_radiusW;     // Particle width radius)
+uniform float u_radiusH;     // Particle height radius)";
+//-----------------------------------------------------------------------------
+
+const string vertOutput_PS_color = R"(
+out    vec4 v_particleColor;         // Size of a particle )";
+
+const string vertOutput_PS_texCoord = R"(
+out    vec2 v_texCoord;              // interpolated texture coordinateA)";
+
 //-----------------------------------------------------------------------------
 const string vertOutput_PS_tf_p             = R"(
 
@@ -167,9 +208,15 @@ out     vec3  tf_initialPosition;   // To transform feedback)";
 
 //-----------------------------------------------------------------------------
 const string vertMain_Begin              = R"(
-
 void main()
 {)";
+
+const string vertMain_instanced_Begin              = R"(
+void main()
+{
+    vec3 position = a_positionP;
+)";
+
 const string vertMain_v_P_VS             = R"(
     mat4 mvMatrix = u_vMatrix * u_mMatrix;
     v_P_VS = vec3(mvMatrix *  a_position);   // vertex position in view space)";
@@ -213,8 +260,9 @@ const string vertMain_TBN_Nm             = R"(
         v_lightDirTS[i] *= TBN;
     }
 )";
-const string vertMain_PS_v_a             = R"(
-    float age = u_time - a_startTime;   // Get the age of the particle)";
+
+//-----------------------------------------------------------------------------
+// Things that goes directly to geometry shader
 const string vertMain_PS_v_t_default     = R"(
     if(age < 0.0)
         vert.transparency = 0.0; // To be discard, because the particle is to be born
@@ -244,10 +292,82 @@ const string vertMain_PS_v_s_curve       = R"(
                 pow(vert.size,2.0) * u_si_bernstein.y +
                 vert.size * u_si_bernstein.z +
                 u_si_bernstein.w;  // Get transparency by bezier curve)";
+
+const string vertMain_PS_instanced_v_r             = R"(
+    float rotation = a_rotation;)";
+
+const string vertMain_PS_instanced_v_s             = R"(
+    float size = age / u_tTL;)";
+const string vertMain_PS_instanced_v_s_curve       = R"(
+    size = pow(size,3.0) * u_si_bernstein.x +
+           pow(size,2.0) * u_si_bernstein.y +
+           size * u_si_bernstein.z +
+           u_si_bernstein.w;  // Get transparency by bezier curve)";
+
+const string vertMain_PS_instanced_v_sS       = R"(
+    position = size * position;
+    )";
+
 const string vertMain_PS_v_doColorOverLT = R"(
     vert.color = colorByAge(age/u_tTL);)";
+const string vertMain_PS_v_color = R"(
+    vert.color = u_color.rgb;)";
+
 const string vertMain_PS_v_texNum        = R"(
     vert.texNum = a_texNum;)";
+
+const string vertMain_PS_v_a             = R"(
+    float age = u_time - a_startTime;   // Get the age of the particle)";
+
+const string vertMain_PS_v_tC = R"(
+    v_texCoord = 0.5 * (a_positionP.xy + vec2(1.0));)";
+
+const string vertMain_PS_instanced_v_t_default     = R"(
+    if(age < 0.0)
+        transparency = 0.0; // To be discard, because the particle is to be born
+    else
+        transparency = 1.0;)";
+const string vertMain_PS_instanced_v_t_begin       = R"(
+    if(age < 0.0)
+        transparency = 0.0; // To be discard, because the particle is to be born
+    else
+    {
+        transparency = age / u_tTL;  // Get by the ratio age:lifetime)";
+const string vertMain_PS_instanced_v_t_linear      = R"(
+        transparency = 1.0 - transparency;  // Linear)";
+const string vertMain_PS_instanced_v_t_curve       = R"(
+        transparency = pow(transparency,3.0) * u_al_bernstein.x +
+                       pow(transparency,2.0) * u_al_bernstein.y +
+                       transparency * u_al_bernstein.z +
+                       u_al_bernstein.w;  // Get transparency by bezier curve)";
+
+
+const string vertMain_PS_instanced_scale             = R"(
+    position = vec3(u_radiusW * position.x, u_radiusH * position.y, position.z);
+    position = u_scale * position;
+    )";
+
+const string vertMain_PS_instanced_rotate             = R"(
+    mat2 rot = mat2(cos(a_rotation),-sin(a_rotation),
+                    sin(a_rotation), cos(a_rotation)); // Matrix of rotation
+    position = vec3(rot * position.xy, position.z);
+    )";
+
+const string vertMain_PS_instanced_EndAll          = R"(
+
+    // Modelview matrix multiplication with (particle position + particle generator position)
+    // Calculate position in view space
+    gl_Position =  u_pMatrix * (u_vOmvMatrix * vec4(a_position, 1) + vec4(position, 0.0));
+}
+)";
+
+const string vertMain_PS_instanced_EndAll_VertBillboard = R"(
+    gl_Position =  vec4(position + a_positionP, 1);
+}
+)";
+
+
+
 const string vertMain_PS_EndAll          = R"(
 
     // Modelview matrix multiplication with (particle position + particle generator position)
@@ -265,8 +385,7 @@ const string vertMain_EndAll = R"(
 
     // pass the vertex w. the fix-function transform
     gl_Position = u_pMatrix * mvMatrix * a_position;
-}
-)";
+})";
 //-----------------------------------------------------------------------------
 const string vertMain_PS_U_Begin                = R"(
 
@@ -336,6 +455,9 @@ const string vertMain_PS_U_EndAll              = R"(
         }
     }
 })";
+
+
+
 //-----------------------------------------------------------------------------
 const string geomConfig_PS = R"(
 layout (points) in;             // Primitives that we received from vertex shader
@@ -361,7 +483,6 @@ uniform mat4  u_pMatrix;     // Projection matrix)";
 const string geomInput_u_matrix_vertBillboard = R"(
 uniform mat4  u_vYawPMatrix; // Projection matrix)";
 const string geomInput_PS_u_ScaRa             = R"(
-
 uniform float u_scale;       // Particle scale
 uniform float u_radiusW;     // Particle width radius)
 uniform float u_radiusH;     // Particle height radius)";
@@ -373,9 +494,11 @@ const string geomInput_PS_u_row               = R"(
 uniform int   u_row;         // Number of row of flipbook texture)";
 //-----------------------------------------------------------------------------
 const string geomOutput_PS_v_pC = R"(
-
 out vec4 v_particleColor;   // The resulting color per vertex)";
 const string geomOutput_PS_v_tC = R"(
+out vec2 v_texCoord;        // Texture coordinate at vertex)";
+
+const string vertOutput_PS_v_tC = R"(
 out vec2 v_texCoord;        // Texture coordinate at vertex)";
 //-----------------------------------------------------------------------------
 const string geomMain_PS_Begin = R"(
@@ -633,7 +756,6 @@ const string fragInput_PS_u_wireFrame = R"(
 uniform bool        u_doWireFrame;          // Boolean for wireFrame)";
 //-----------------------------------------------------------------------------
 const string fragMain_PS_TF = R"(
-
 out     vec4     o_fragColor;               // output fragment color
 
 void main()
@@ -643,7 +765,6 @@ void main()
 )";
 //-----------------------------------------------------------------------------
 const string fragMain_PS              = R"(
-
 void main()
 {     
     // Just set the interpolated color from the vertex shader
@@ -657,21 +778,36 @@ void main()
         discard;
 
 )";
-const string fragMain_PS_withoutColor = R"(
+
+const string fragMain_instanced_PS_begin              = R"(
 void main()
-{     
+{
+)";
+
+const string fragMain_PS_withoutColor = R"(
    // componentwise multiply w. texture color
    if(!u_doWireFrame)
         o_fragColor = texture(u_matTextureDiffuse0, v_texCoord);
    else
         o_fragColor = vec4(0,0,0,1.0);
 
-   o_fragColor.a *= v_particleColor.a;
+   o_fragColor.a *= transparency;
 
    if(o_fragColor.a < 0.001)
         discard;
-
 )";
+
+const string fragMain_instanced_PS_end              = R"(
+   // Just set the interpolated color from the vertex shader
+   o_fragColor =  color;
+   // componentwise multiply w. texture color
+   if(!u_doWireFrame)
+       o_fragColor *= texture(u_matTextureDiffuse0, v_texCoord);
+
+   if(o_fragColor.a < 0.001)
+        discard;
+)";
+
 const string fragMain_PS_endAll       = R"(
     //Same color for each wireframe
     if(u_doWireFrame)
@@ -1444,7 +1580,6 @@ const string fragMainCook_2_LightLoopNmSm = R"(
     }
 )";
 const string fragMainCook_3_FragColor     = R"(
-
     // ambient lighting (note that the next IBL tutorial will replace
     // this ambient lighting with environment lighting).
     vec3 ambient = vec3(0.03) * matDiff.rgb * matOccl;
@@ -1459,7 +1594,6 @@ const string fragMainCook_3_FragColor     = R"(
     o_fragColor.a = matDiff.a;
 )";
 const string fragMainCook_3_FragColorSky  = R"(
-
     // Build diffuse reflection from environment light map
     vec3 F = fresnelSchlickRoughness(max(dot(N, E), 0.0), F0, matRough);
     vec3 kS = F;
@@ -1643,7 +1777,6 @@ void SLGLProgramGenerated::buildProgramNamePS(SLMaterial* mat,
         bool  rot           = mat->ps()->doRotation();         // Rotation
         programName += "-B" + std::to_string(billboardType);
         if (rot) programName += "-RT";
-
         if (AlOvLi) programName += "-AL";
         if (AlOvLi && AlOvLiCu) programName += "cu";
         if (SiOvLi) programName += "-SL";
@@ -1733,7 +1866,7 @@ void SLGLProgramGenerated::buildProgramCode(SLMaterial* mat,
  * @param mat Parent material pointer
  * @param isDrawProg Flag if program is for drawing instead of update
  */
-void SLGLProgramGenerated::buildProgramCodePS(SLMaterial* mat, bool isDrawProg)
+void SLGLProgramGenerated::buildProgramCodePS(SLMaterial* mat, bool isDrawProg, bool isRenderInstanced)
 {
     if (mat->name() == "IBLMat")
     {
@@ -1745,7 +1878,12 @@ void SLGLProgramGenerated::buildProgramCodePS(SLMaterial* mat, bool isDrawProg)
            _shaders[1]->type() == ST_fragment);
 
     if (isDrawProg)
-        buildPerPixParticle(mat);
+    {
+        if (isRenderInstanced)
+            buildPerPixParticleInstanced(mat);
+        else
+            buildPerPixParticle(mat);
+    }
     else
         buildPerPixParticleUpdate(mat);
 }
@@ -1970,6 +2108,117 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
     fragCode += Dm ? fragMainBlinn_3_FragColorDm : fragMainBlinn_3_FragColor;
     if (Sm) fragCode += fragMain_4_ColoredShadows;
     fragCode += fragMain_5_FogGammaStereo;
+
+    addCodeToShader(_shaders[1], fragCode, _name + ".frag");
+}
+//-----------------------------------------------------------------------------
+void SLGLProgramGenerated::buildPerPixParticleInstanced(SLMaterial* mat)
+{
+    assert(_shaders.size() > 2 &&
+           _shaders[0]->type() == ST_vertex &&
+           _shaders[1]->type() == ST_fragment);
+
+    // Check what textures the material has
+    bool  Dm            = mat->hasTextureType(TT_diffuse);
+    GLint billboardType = mat->ps()->billboardType();      // Billboard type (0 -> default; 1 -> vertical billboard, 2 -> horizontal billboard)
+    bool  rot           = mat->ps()->doRotation();         // Rotation
+    bool  AlOvLi        = mat->ps()->doAlphaOverLT();      // Alpha over life
+    bool  Co            = mat->ps()->doColor();            // Color over life
+    bool  CoOvLi        = mat->ps()->doColorOverLT();      // Color over life
+    bool  AlOvLiCu      = mat->ps()->doAlphaOverLTCurve(); // Alpha over life curve
+    bool  SiOvLi        = mat->ps()->doSizeOverLT();       // Size over life
+    bool  SiOvLiCu      = mat->ps()->doSizeOverLTCurve();  // Size over life curve
+    bool  FlBoTex       = mat->ps()->doFlipBookTexture();  // Flipbook texture
+
+    //////////////////////////////
+    // Assemble vertex shader code
+    //////////////////////////////
+
+    string vertCode;
+    vertCode += shaderHeader();
+
+    // Vertex shader inputs
+    vertCode += vertInput_PS_a_positionP;
+    vertCode += vertInput_PS_a_p; //position
+    vertCode += vertInput_PS_a_st; // start time
+    if (rot) vertCode += vertInput_PS_a_r; //rotation as float
+    if (FlBoTex) vertCode += vertInput_PS_a_texNum; // per particle texture number
+
+    // Vertex shader uniforms
+    vertCode += vertInput_PS_u_ScaRa;
+    vertCode += vertInput_u_matrix_p;
+    vertCode += vertInput_PS_u_time;
+    vertCode += vertInput_u_matrix_vOmv;
+    if (AlOvLi && AlOvLiCu) vertCode += vertInput_PS_u_al_bernstein_alpha;
+    if (SiOvLi && SiOvLiCu) vertCode += vertInput_PS_u_al_bernstein_size;
+    if (Co && CoOvLi) vertCode += vertInput_PS_u_colorOvLF;
+
+    // Vertex shader outputs
+    if (FlBoTex) vertCode += vertOutput_PS_instanced_texNum;
+    vertCode += vertOutput_PS_instanced_transparency;
+    vertCode += vertOutput_PS_v_tC;
+
+    // Vertex shader functions
+    if (Co && CoOvLi) vertCode += vertFunction_PS_ColorOverLT;
+
+    // Vertex shader main loop
+    vertCode += vertMain_instanced_Begin;
+    vertCode += vertMain_PS_v_a;
+    vertCode += vertMain_PS_v_tC;
+    if (AlOvLi)
+        vertCode += vertMain_PS_instanced_v_t_begin;
+    else
+        vertCode += vertMain_PS_instanced_v_t_default;
+    if (AlOvLi) vertCode += AlOvLiCu ? vertMain_PS_instanced_v_t_curve : vertMain_PS_instanced_v_t_linear;
+    if (AlOvLi) vertCode += vertMain_PS_v_t_end;
+    //if (rot) vertCode += vertMain_PS_v_r;
+    vertCode += vertMain_PS_instanced_scale;
+    if (SiOvLi) vertCode += vertMain_PS_instanced_v_s;
+    if (SiOvLi && SiOvLiCu) vertCode += vertMain_PS_instanced_v_s_curve;
+    if (SiOvLi) vertCode += vertMain_PS_instanced_v_sS;
+    if (rot) vertCode += vertMain_PS_instanced_rotate;
+    if (Co && CoOvLi) vertCode += vertMain_PS_v_doColorOverLT;
+    if (FlBoTex) vertCode += vertMain_PS_v_texNum;
+    if (billboardType == BT_Vertical || billboardType == BT_Horizontal)
+        vertCode += vertMain_PS_EndAll_VertBillboard;
+    else
+        vertCode += vertMain_PS_instanced_EndAll;
+
+    addCodeToShader(_shaders[0], vertCode, _name + ".vert");
+
+    ////////////////////////////////
+    // Assemble fragment shader code
+    ////////////////////////////////
+
+    string fragCode;
+    fragCode += shaderHeader();
+
+    if (Co && !CoOvLi) vertCode += fragInput_PS_u_c;
+    // Fragment shader inputs
+    if (FlBoTex) fragCode += fragInput_PS_instanced_texNum;
+    fragCode += fragInput_PS_v_tC;
+    if (Co && !CoOvLi) fragCode += fragInput_PS_u_c;
+    fragCode += fragInput_PS_instanced_transparency;
+
+    // Fragment shader uniforms
+    if (Dm) fragCode += fragInput_u_matTexDm;
+    fragCode += fragInput_PS_u_overG;
+    fragCode += fragInput_PS_u_wireFrame;
+
+    // Fragment shader outputs
+    fragCode += fragOutputs_o_fragColor;
+
+    // Fragment shader main loop
+    fragCode += fragMain_instanced_PS_begin;
+    if (Co || CoOvLi)
+    {
+        fragCode += fragMain_PS_instanced_c;
+        fragCode += fragMain_instanced_PS_end;
+    }
+    else
+        fragCode += fragMain_PS_withoutColor;
+
+    fragCode += fragMain_PS_endAll;
 
     addCodeToShader(_shaders[1], fragCode, _name + ".frag");
 }
