@@ -9,6 +9,8 @@
 #elif defined(__APPLE__)
 #    define SYSTEM_DARWIN
 #    define GLFW_EXPOSE_NATIVE_COCOA
+#    define GLFW_NATIVE_INCLUDE_NONE
+
 #    define OBJC_OLD_DISPATCH_PROTOTYPES 1
 #    include <objc/objc.h>
 #    include <objc/message.h>
@@ -17,9 +19,7 @@
 #endif
 
 #include <webgpu.h>
-
 #include <GLFW/glfw3.h>
-#define GLFW_NATIVE_INCLUDE_NONE
 #include <GLFW/glfw3native.h>
 
 #include <iostream>
@@ -119,19 +119,24 @@ int main(int argc, const char* argv[])
     nativeSurfaceDesc.chain.sType                          = WGPUSType_SurfaceDescriptorFromWindowsHWND;
     nativeSurfaceDesc.hinstance                            = GetModuleHandle(nullptr);
     nativeSurfaceDesc.hwnd                                 = glfwGetWin32Window(window);
+#elif defined(SYSTEM_LINUX)
+    WGPUSurfaceDescriptorFromXlibWindow nativeSurfaceDesc = {};
+    nativeSurfaceDesc.chain.sType                         = WGPUSType_SurfaceDescriptorFromXlibWindow;
+    nativeSurfaceDesc.display                             = glfwGetX11Display();
+    nativeSurfaceDesc.window                              = glfwGetX11Window(window);
 #elif defined(SYSTEM_DARWIN)
     id cocoaWindow = glfwGetCocoaWindow(window);
 
     id contentView = objc_msgSend(cocoaWindow, sel_registerName("contentView"));
     objc_msgSend(contentView, sel_getUid("setWantsLayer:"), 1);
 
-    objc_class *metalLayerClass = objc_getClass("CAMetalLayer");
-    id metalLayer = objc_msgSend((id)metalLayerClass, sel_getUid("layer"));
+    objc_class* metalLayerClass = objc_getClass("CAMetalLayer");
+    id          metalLayer      = objc_msgSend((id)metalLayerClass, sel_getUid("layer"));
     objc_msgSend(contentView, sel_registerName("setLayer:"), metalLayer);
 
     WGPUSurfaceDescriptorFromMetalLayer nativeSurfaceDesc = {};
-    nativeSurfaceDesc.chain.sType = WGPUSType_SurfaceDescriptorFromMetalLayer;
-    nativeSurfaceDesc.layer = metalLayer;
+    nativeSurfaceDesc.chain.sType                         = WGPUSType_SurfaceDescriptorFromMetalLayer;
+    nativeSurfaceDesc.layer                               = metalLayer;
 #endif
 
     WGPUSurfaceDescriptor surfaceDesc = {};
