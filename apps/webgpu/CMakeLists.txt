@@ -44,6 +44,10 @@ if (SYSTEM_NAME_UPPER MATCHES "WINDOWS")
     set_target_properties(wgpu PROPERTIES
         IMPORTED_LOCATION "${WGPU_DIR}/libwgpu_native.lib"
         INTERFACE_INCLUDE_DIRECTORIES "${WGPU_DIR}")
+elseif (SYSTEM_NAME_UPPER MATCHES "LINUX")
+    set_target_properties(wgpu PROPERTIES
+        IMPORTED_LOCATION "${WGPU_DIR}/libwgpu_native.a"
+        INTERFACE_INCLUDE_DIRECTORIES "${WGPU_DIR}")
 elseif (SYSTEM_NAME_UPPER MATCHES "DARWIN")
     target_link_libraries(wgpu INTERFACE "-framework CoreFoundation" "-framework QuartzCore" "-framework Metal")
     set_target_properties(wgpu PROPERTIES
