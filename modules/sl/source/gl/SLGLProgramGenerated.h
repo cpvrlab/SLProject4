@@ -98,7 +98,8 @@ public:
                                  string&     programName);
     static void buildProgramNamePS(SLMaterial* mat,
                                    string&     programName,
-                                   bool        isDrawProg);
+                                   bool        isDrawProg,
+                                   bool        instancedRendering);
 
     void buildProgramCodePS(SLMaterial* mat, bool isDrawProg, bool isRenderInstanced = false);
     void buildProgramCode(SLMaterial* mat,

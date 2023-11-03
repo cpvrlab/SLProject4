@@ -40,7 +40,8 @@ public:
                      const SLfloat&  timeToLive,
                      SLGLTexture*    texC,
                      const SLstring& name        = "Particle system",
-                     SLGLTexture*    texFlipbook = nullptr);
+                     SLGLTexture*    texFlipbook = nullptr,
+                    const bool       renderInstanced = false);
 
     void draw(SLSceneView* sv, SLNode* node, SLuint instances = 1);
     void deleteData();
@@ -52,8 +53,12 @@ public:
     void changeTexture();
     void setNotVisibleInFrustum();
     void pauseOrResume();
+    void calcNormals() { N.push_back(SLVec3f(0, 1, 0)); };
+
 
     // Getters
+
+    SLbool            renderInstanced() { return _renderInstanced; }
     SLVec3f           acceleration() { return _acceleration; }
     SLfloat           accelerationConst() { return _accelerationConst; }
     SLint             amount() { return _amount; }
@@ -117,6 +122,7 @@ public:
     SLVec3f           velocityRndMax() { return _velocityRndMax; }
 
     // Setters
+    void drawInstanced(bool instanced) {_renderInstanced = instanced; }
     void amount(SLint i) { _amount = i; }
     void accConst(SLfloat f) { _accelerationConst = f; }
     void acceleration(SLVec3f v) { _acceleration = v; }

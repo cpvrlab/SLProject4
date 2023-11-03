@@ -74,15 +74,18 @@ const string vertConstant_PS_pi = R"(
 )";
 //-----------------------------------------------------------------------------
 const string vertInput_PS_u_time               = R"(
-
 uniform float u_time;               // Simulation time
 uniform float u_difTime;            // Simulation delta time after frustum culling
 uniform float u_tTL;                // Time to live of a particle)";
+const string fragInput_PS_u_tTL               = R"(
+uniform float u_tTL;               // Time to live of a particle)";
 const string vertInput_PS_u_al_bernstein_alpha = R"(
 uniform vec4  u_al_bernstein;       // Bernstein polynomial for alpha over time)";
 const string vertInput_PS_u_al_bernstein_size  = R"(
 uniform vec4  u_si_bernstein;       // Bernstein polynomial for size over time)";
 const string vertInput_PS_u_colorOvLF          = R"(
+uniform float u_colorArr[256 * 3];  // Array of color value (for color over life))";
+const string fragInput_PS_u_colorOvLF          = R"(
 uniform float u_colorArr[256 * 3];  // Array of color value (for color over life))";
 const string vertInput_PS_u_deltaTime          = R"(
 uniform float u_deltaTime;          // Elapsed time between frames)";
@@ -122,7 +125,14 @@ out     vec3  v_lightDirTS[NUM_LIGHTS]; // Vector to the light 0 in tangent spac
 out     vec3  v_spotDirTS[NUM_LIGHTS];  // Spot direction in tangent space)";
 //-----------------------------------------------------------------------------
 const string vertFunction_PS_ColorOverLT = R"(
+vec3 colorByAge(float age)
+{
+    int  cachePos = int(clamp(age, 0.0, 1.0) * 255.0) * 3;
+    vec3 color    = vec3(u_colorArr[cachePos], u_colorArr[cachePos + 1], u_colorArr[cachePos + 2]);
+    return color;
+})";
 
+const string fragFunction_PS_ColorOverLT = R"(
 vec3 colorByAge(float age)
 {
     int  cachePos = int(clamp(age, 0.0, 1.0) * 255.0) * 3;
@@ -162,13 +172,14 @@ const string fragMain_PS_v_c             = R"(
     vec4 color = u_color;                    // Particle color)";
 const string fragMain_PS_v_doColorOverLT = R"(
     vec4 color = vec4(vert[0].color, 1.0);   // Particle color)";
+const string fragMain_PS_instanced_v_doColorOverLT = R"(
+    vec4 color = vec4(colorByAge(v_age/u_tTL), 1.0);   // Particle color)";
 const string fragMain_PS_v_withoutColor  = R"(
     vec4 color = vec4( 0.0, 0.0, 0.0, 1.0);  // Particle color)";
 const string fragMain_PS_instanced_c  = R"(
-    vec4 color = u_color;      // Particle color
-    color.w *= transparency;   // Apply transparency
-    )";
-
+    vec4 color = u_color;      // Particle color)";
+const string fragMain_PS_instanced_transparency  = R"(
+    color.w *= transparency;   // Apply transparency)";
 const string vertInput_u_matrix_p             = R"(
 uniform mat4  u_pMatrix;     // Projection matrix)";
 const string vertInput_u_matrix_vertBillboard = R"(
@@ -231,7 +242,6 @@ const string vertMain_v_R_OS             = R"(
     vec3 N = normalize(v_N_VS);
     v_R_OS = invMvMatrix * reflect(I, N); // R = I-2.0*dot(N,I)*N;)";
 const string vertMain_v_uv0              = R"(
-
     v_uv0 = a_uv0;  // pass diffuse color tex.coord. 1 for interpolation)";
 const string vertMain_v_uv1              = R"(
     v_uv1 = a_uv1;  // pass diffuse color tex.coord. 1 for interpolation)";
@@ -310,17 +320,37 @@ const string vertMain_PS_instanced_v_sS       = R"(
 
 const string vertMain_PS_v_doColorOverLT = R"(
     vert.color = colorByAge(age/u_tTL);)";
+
+const string vertOutput_PS_age = R"(
+    out float v_age; // Age of a particle)";
+
+const string fragInput_PS_age = R"(
+    in float v_age; // Age of a particle)";
+
 const string vertMain_PS_v_color = R"(
     vert.color = u_color.rgb;)";
 
 const string vertMain_PS_v_texNum        = R"(
     vert.texNum = a_texNum;)";
 
+const string vertMain_PS_instanced_v_texNum        = R"(
+    texNum = a_texNum;)";
+
 const string vertMain_PS_v_a             = R"(
     float age = u_time - a_startTime;   // Get the age of the particle)";
 
 const string vertMain_PS_v_tC = R"(
     v_texCoord = 0.5 * (a_positionP.xy + vec2(1.0));)";
+
+const string vertMain_PS_v_tC_flipbook = R"(
+    uint actCI = uint(mod(float(a_texNum), float(u_col)));
+    uint actRI = (a_texNum - actCI) / u_col;
+    float actC = float(actCI);
+    float actR = float(actRI);
+
+    vec2 p = 0.5 * (a_positionP.xy + vec2(1.0));
+    v_texCoord = vec2((actC + p.x)/float(u_col), 1.0 - (actR - p.y)/float(u_row));
+)";
 
 const string vertMain_PS_instanced_v_t_default     = R"(
     if(age < 0.0)
@@ -340,7 +370,6 @@ const string vertMain_PS_instanced_v_t_curve       = R"(
                        pow(transparency,2.0) * u_al_bernstein.y +
                        transparency * u_al_bernstein.z +
                        u_al_bernstein.w;  // Get transparency by bezier curve)";
-
 
 const string vertMain_PS_instanced_scale             = R"(
     position = vec3(u_radiusW * position.x, u_radiusH * position.y, position.z);
@@ -362,10 +391,10 @@ const string vertMain_PS_instanced_EndAll          = R"(
 )";
 
 const string vertMain_PS_instanced_EndAll_VertBillboard = R"(
-    gl_Position =  vec4(position + a_positionP, 1);
+    //gl_Position =  vec4(a_position + a_positionP, 1);
+    gl_Position =  u_pMatrix * u_vYawPMatrix * vec4(a_position + position, 1.0);
 }
 )";
-
 
 
 const string vertMain_PS_EndAll          = R"(
@@ -377,7 +406,7 @@ const string vertMain_PS_EndAll          = R"(
 )";
 
 const string vertMain_PS_EndAll_VertBillboard = R"(
-    gl_Position =  vec4(a_position, 1);
+    gl_Position = vec4(a_position, 1);
 }
 )";
 
@@ -765,8 +794,6 @@ void main()
 )";
 //-----------------------------------------------------------------------------
 const string fragMain_PS              = R"(
-void main()
-{     
     // Just set the interpolated color from the vertex shader
    o_fragColor = v_particleColor;
 
@@ -776,10 +803,9 @@ void main()
 
    if(o_fragColor.a < 0.001)
         discard;
-
 )";
 
-const string fragMain_instanced_PS_begin              = R"(
+const string fragMain_PS_begin              = R"(
 void main()
 {
 )";
@@ -791,7 +817,20 @@ const string fragMain_PS_withoutColor = R"(
    else
         o_fragColor = vec4(0,0,0,1.0);
 
-   o_fragColor.a *= transparency;
+    o_fragColor.a *= v_particleColor.a;
+
+   if(o_fragColor.a < 0.001)
+        discard;
+)";
+
+const string fragMain_PS_instanced_withoutColor = R"(
+   // componentwise multiply w. texture color
+   if(!u_doWireFrame)
+        o_fragColor = texture(u_matTextureDiffuse0, v_texCoord);
+   else
+        o_fragColor = vec4(0,0,0,1.0);
+
+    o_fragColor.a *= transparency;
 
    if(o_fragColor.a < 0.001)
         discard;
@@ -1750,7 +1789,8 @@ void SLGLProgramGenerated::buildProgramName(SLMaterial* mat,
  */
 void SLGLProgramGenerated::buildProgramNamePS(SLMaterial* mat,
                                               string&     programName,
-                                              bool        isDrawProg)
+                                              bool        isDrawProg,
+                                              bool        instancedRendering)
 {
     assert(mat && "No material pointer passed!");
     programName = "gen";
@@ -1764,6 +1804,10 @@ void SLGLProgramGenerated::buildProgramNamePS(SLMaterial* mat,
     if (isDrawProg) // Drawing program
     {
         programName += "-Draw";
+
+        if (instancedRendering)
+            programName += "-Inst";
+
         programName += mat->texturesString();
         GLint billboardType = mat->ps()->billboardType();      // Billboard type (0 -> default; 1 -> vertical billboard, 2 -> horizontal billboard)
         bool  AlOvLi        = mat->ps()->doAlphaOverLT();      // Alpha over life
@@ -2114,7 +2158,7 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
 //-----------------------------------------------------------------------------
 void SLGLProgramGenerated::buildPerPixParticleInstanced(SLMaterial* mat)
 {
-    assert(_shaders.size() > 2 &&
+    assert(_shaders.size() == 2 &&
            _shaders[0]->type() == ST_vertex &&
            _shaders[1]->type() == ST_fragment);
 
@@ -2142,29 +2186,41 @@ void SLGLProgramGenerated::buildPerPixParticleInstanced(SLMaterial* mat)
     vertCode += vertInput_PS_a_p; //position
     vertCode += vertInput_PS_a_st; // start time
     if (rot) vertCode += vertInput_PS_a_r; //rotation as float
-    if (FlBoTex) vertCode += vertInput_PS_a_texNum; // per particle texture number
+    if (FlBoTex)
+    {
+        vertCode += vertInput_PS_u_col;
+        vertCode += vertInput_PS_u_row;
+        vertCode += vertInput_PS_a_texNum; // per particle texture number
+    }
 
     // Vertex shader uniforms
     vertCode += vertInput_PS_u_ScaRa;
     vertCode += vertInput_u_matrix_p;
     vertCode += vertInput_PS_u_time;
+
+    if (billboardType == BT_Vertical)
+        vertCode += vertInput_u_matrix_vertBillboard;
+
     vertCode += vertInput_u_matrix_vOmv;
+
     if (AlOvLi && AlOvLiCu) vertCode += vertInput_PS_u_al_bernstein_alpha;
     if (SiOvLi && SiOvLiCu) vertCode += vertInput_PS_u_al_bernstein_size;
-    if (Co && CoOvLi) vertCode += vertInput_PS_u_colorOvLF;
 
     // Vertex shader outputs
-    if (FlBoTex) vertCode += vertOutput_PS_instanced_texNum;
     vertCode += vertOutput_PS_instanced_transparency;
     vertCode += vertOutput_PS_v_tC;
 
-    // Vertex shader functions
-    if (Co && CoOvLi) vertCode += vertFunction_PS_ColorOverLT;
+    if (CoOvLi) vertCode += vertOutput_PS_age;
 
+    // Vertex shader functions
     // Vertex shader main loop
     vertCode += vertMain_instanced_Begin;
     vertCode += vertMain_PS_v_a;
-    vertCode += vertMain_PS_v_tC;
+    if (FlBoTex)
+        vertCode += vertMain_PS_v_tC_flipbook;
+    else
+        vertCode += vertMain_PS_v_tC;
+
     if (AlOvLi)
         vertCode += vertMain_PS_instanced_v_t_begin;
     else
@@ -2177,10 +2233,9 @@ void SLGLProgramGenerated::buildPerPixParticleInstanced(SLMaterial* mat)
     if (SiOvLi && SiOvLiCu) vertCode += vertMain_PS_instanced_v_s_curve;
     if (SiOvLi) vertCode += vertMain_PS_instanced_v_sS;
     if (rot) vertCode += vertMain_PS_instanced_rotate;
-    if (Co && CoOvLi) vertCode += vertMain_PS_v_doColorOverLT;
-    if (FlBoTex) vertCode += vertMain_PS_v_texNum;
+    //if (Co && CoOvLi) vertCode += vertMain_PS_v_doColorOverLT;
     if (billboardType == BT_Vertical || billboardType == BT_Horizontal)
-        vertCode += vertMain_PS_EndAll_VertBillboard;
+        vertCode += vertMain_PS_instanced_EndAll_VertBillboard;
     else
         vertCode += vertMain_PS_instanced_EndAll;
 
@@ -2193,11 +2248,15 @@ void SLGLProgramGenerated::buildPerPixParticleInstanced(SLMaterial* mat)
     string fragCode;
     fragCode += shaderHeader();
 
-    if (Co && !CoOvLi) vertCode += fragInput_PS_u_c;
     // Fragment shader inputs
     if (FlBoTex) fragCode += fragInput_PS_instanced_texNum;
     fragCode += fragInput_PS_v_tC;
     if (Co && !CoOvLi) fragCode += fragInput_PS_u_c;
+    if (CoOvLi)
+    {   fragCode += fragInput_PS_u_tTL;
+        fragCode += fragInput_PS_age;
+        fragCode += fragInput_PS_u_colorOvLF;
+    }
     fragCode += fragInput_PS_instanced_transparency;
 
     // Fragment shader uniforms
@@ -2208,15 +2267,23 @@ void SLGLProgramGenerated::buildPerPixParticleInstanced(SLMaterial* mat)
     // Fragment shader outputs
     fragCode += fragOutputs_o_fragColor;
 
+    if (CoOvLi) fragCode += fragFunction_PS_ColorOverLT;
+
     // Fragment shader main loop
-    fragCode += fragMain_instanced_PS_begin;
+    fragCode += fragMain_PS_begin;
+
+
+    if (Co && !CoOvLi) fragCode += fragMain_PS_instanced_c;
+
+    if (CoOvLi) fragCode += fragMain_PS_instanced_v_doColorOverLT;
+
     if (Co || CoOvLi)
     {
-        fragCode += fragMain_PS_instanced_c;
+        fragCode += fragMain_PS_instanced_transparency;
         fragCode += fragMain_instanced_PS_end;
     }
     else
-        fragCode += fragMain_PS_withoutColor;
+        fragCode += fragMain_PS_instanced_withoutColor;
 
     fragCode += fragMain_PS_endAll;
 
@@ -2281,6 +2348,7 @@ void SLGLProgramGenerated::buildPerPixParticle(SLMaterial* mat)
         vertCode += vertMain_PS_v_t_begin;
     else
         vertCode += vertMain_PS_v_t_default;
+
     if (AlOvLi) vertCode += AlOvLiCu ? vertMain_PS_v_t_curve : vertMain_PS_v_t_linear;
     if (AlOvLi) vertCode += vertMain_PS_v_t_end;
     if (rot) vertCode += vertMain_PS_v_r;
@@ -2292,7 +2360,7 @@ void SLGLProgramGenerated::buildPerPixParticle(SLMaterial* mat)
         vertCode += vertMain_PS_EndAll_VertBillboard;
     else
         vertCode += vertMain_PS_EndAll;
-
+    
     addCodeToShader(_shaders[0], vertCode, _name + ".vert");
 
     ////////////////////////////////
@@ -2369,9 +2437,10 @@ void SLGLProgramGenerated::buildPerPixParticle(SLMaterial* mat)
     fragCode += fragOutputs_o_fragColor;
 
     // Fragment shader main loop
+    fragCode += fragMain_PS_begin;
     fragCode += Co ? fragMain_PS : fragMain_PS_withoutColor;
     fragCode += fragMain_PS_endAll;
-
+    
     addCodeToShader(_shaders[1], fragCode, _name + ".frag");
 }
 //-----------------------------------------------------------------------------

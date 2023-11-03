@@ -372,6 +372,20 @@ SLMaterial::~SLMaterial()
         _errorTexture = nullptr;
     }
 }
+
+
+void SLMaterial::deleteDataGpu()
+{
+    if (_program)
+    {
+        _assetManager->removeProgram(_program);
+        _program->deleteDataGpu();
+        delete _program;
+        _program = nullptr;
+    }
+}
+
+
 //-----------------------------------------------------------------------------
 /*!
  If this material has not yet a shader program assigned (SLMaterial::_program)
@@ -389,7 +403,7 @@ void SLMaterial::generateProgramPS(bool renderInstanced)
 
         // Check first the asset manager if the requested program type already exists
         string programNameDraw;
-        SLGLProgramGenerated::buildProgramNamePS(this, programNameDraw, true);
+        SLGLProgramGenerated::buildProgramNamePS(this, programNameDraw, true, renderInstanced);
         _program = _assetManager->getProgramByName(programNameDraw);
 
         // If the program was not found by name generate a new one
@@ -415,7 +429,7 @@ void SLMaterial::generateProgramPS(bool renderInstanced)
 
         // Check first the asset manager if the requested programTF type already exists
         string programNameUpdate;
-        SLGLProgramGenerated::buildProgramNamePS(this, programNameUpdate, false);
+        SLGLProgramGenerated::buildProgramNamePS(this, programNameUpdate, false, renderInstanced);
         _programTF = _assetManager->getProgramByName(programNameUpdate);
         if (!_programTF)
         {

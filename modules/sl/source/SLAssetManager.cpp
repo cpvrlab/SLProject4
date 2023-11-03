@@ -95,6 +95,21 @@ bool SLAssetManager::removeMesh(SLMesh* mesh)
     }
     return false;
 }
+
+//! Removes the specified program from the meshes resource vector.
+bool SLAssetManager::removeProgram(SLGLProgram* program)
+{
+    assert(program);
+    for (SLulong i = 0; i < _programs.size(); ++i)
+    {
+        if (_programs[i] == program)
+        {
+            _programs.erase(_programs.begin() + i);
+            return true;
+        }
+    }
+    return false;
+}
 //-----------------------------------------------------------------------------
 //! Returns the pointer to shader program if found by name
 SLGLProgram* SLAssetManager::getProgramByName(const string& programName)
@@ -104,6 +119,7 @@ SLGLProgram* SLAssetManager::getProgramByName(const string& programName)
             return sp;
     return nullptr;
 }
+
 //-----------------------------------------------------------------------------
 //! merge other asset manager into this
 void SLAssetManager::merge(SLAssetManager& other)

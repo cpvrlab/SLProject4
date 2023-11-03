@@ -29,17 +29,17 @@ SLParticleSystem::SLParticleSystem(SLAssetManager* assetMgr,
                                    const SLfloat&  timeToLive,
                                    SLGLTexture*    texC,
                                    const SLstring& name,
-                                   SLGLTexture*    texFlipbook) : SLMesh(assetMgr, name)
+                                   SLGLTexture*    texFlipbook,
+                                   const bool      renderInstanced) : SLMesh(assetMgr, name)
 {
     assert(!name.empty());
 
     // To be added to constructor
-    _renderInstanced = true;
+    _renderInstanced = renderInstanced;
+    _primitive = PT_points;
 
-    if (_renderInstanced)
-        _primitive = PT_triangles;
-    else
-        _primitive = PT_points;
+    P.push_back(SLVec3f(0, 0, 0)); // Trick SL project because it want mesh to have vertex
+    I32.push_back(0);
 
     if (amount > UINT_MAX) // Need to change for number of floats
         SL_EXIT_MSG("SLParticleSystem supports max. 2^32 vertices.");
@@ -58,6 +58,7 @@ SLParticleSystem::SLParticleSystem(SLAssetManager* assetMgr,
 
     _updateTime.init(60, 0.0f);
     _drawTime.init(60, 0.0f);
+
 }
 //-----------------------------------------------------------------------------
 //! Function which return a position in a sphere
@@ -312,6 +313,13 @@ void SLParticleSystem::generate()
     SLVuint  tempTexNum;
     SLVVec3f tempInitP;
 
+    if (_renderInstanced)
+        _primitive = PT_triangles;
+    else
+        _primitive = PT_points;
+
+    deleteDataGpu();
+
     tempP.resize(_amount);
     tempV.resize(_amount);
     tempST.resize(_amount);
@@ -453,6 +461,8 @@ void SLParticleSystem::generate()
 
     if (_renderInstanced)
     {
+        P.clear();
+        I32.clear();
         /* Generate for billboard (for drawing without geometry shader)*/
         P.push_back(SLVec3f(-1, -1, 0));
         P.push_back(SLVec3f(1, -1, 0));
@@ -477,11 +487,6 @@ void SLParticleSystem::generate()
 
         _renderVao1.generate((SLuint)P.size());
         _renderVao2.generate((SLuint)P.size());
-    }
-    else
-    {
-        P.push_back(SLVec3f(1, 1, 0));
-        I32.push_back(0);
     }
 
     _isGenerated = true;
@@ -591,9 +596,10 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
     ////////////////////
     // Generate programs
     ////////////////////
-
     if (!_mat->program() || !_mat->programTF())
+    {
         _mat->generateProgramPS(_renderInstanced);
+    }
 
     ////////////////////////////////////////////////
     // Calculate time and paused and frustum culling
@@ -718,7 +724,7 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
             _vao1.drawArrayAs(PT_points);
             _vao1.endTF();
             if (_renderInstanced)
-                _vao = _renderVao2;
+                _vao = _renderVao1;
             else
                 _vao = _vao2;
         }
@@ -880,7 +886,7 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
 
     ///////////////////////
     if (_renderInstanced)
-        SLMesh::draw(sv, node, _amount*2);
+        SLMesh::draw(sv, node, _amount);
     else
         SLMesh::draw(sv, node);
     ///////////////////////
@@ -898,9 +904,7 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
 //! deleteData deletes all mesh data and VAOs
 void SLParticleSystem::deleteData()
 {
-    _vao1.deleteGL();
-    _vao2.deleteGL();
-    SLMesh::deleteData();
+    return;
 }
 //-----------------------------------------------------------------------------
 //! deleteData deletes all mesh data and VAOs
@@ -908,7 +912,10 @@ void SLParticleSystem::deleteDataGpu()
 {
     _vao1.deleteGL();
     _vao2.deleteGL();
+    _renderVao1.deleteGL();
+    _renderVao2.deleteGL();
     SLMesh::deleteDataGpu();
+    _mat->deleteDataGpu();
 }
 //-----------------------------------------------------------------------------
 /*! SLParticleSystem::buildAABB builds the passed axis-aligned bounding box in

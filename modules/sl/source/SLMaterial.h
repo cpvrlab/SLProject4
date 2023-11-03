@@ -114,6 +114,9 @@ public:
                    SLSkybox* skybox = nullptr);
     SLint passToUniforms(SLGLProgram* program, SLint nextTexUnit);
 
+
+    void deleteDataGpu();
+
     //! Returns true if there is any transparency in diffuse alpha or textures
     SLbool hasAlpha()
     {

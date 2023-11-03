@@ -2393,6 +2393,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 if (ImGui::MenuItem("Skeleton", "K", sv->drawBits()->get(SL_DB_SKELETON)))
                     sv->drawBits()->toggle(SL_DB_SKELETON);
 
+
                 if (ImGui::MenuItem("All off"))
                     sv->drawBits()->allOff();
 
@@ -3767,6 +3768,13 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
                                 if (amount <= 0)
                                     amount = 1;
                                 ps->amount(amount);
+                                ps->isGenerated(false);
+                            }
+
+                            bool instanced = ps->renderInstanced();
+                            if (ImGui::Checkbox("Instanced draw", &instanced))
+                            {
+                                ps->drawInstanced(instanced);
                                 ps->isGenerated(false);
                             }
 
