@@ -74,9 +74,6 @@ int main(int argc, const char* argv[])
     // Prevent GLFW from creating an OpenGL context as the underlying graphics API probably won't be OpenGL.
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-    // Create a non-resizable window as we currently don't recreate surfaces when the window size changes.
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
     GLFWwindow* window = glfwCreateWindow(1280, 720, "WebGPU Demo", nullptr, nullptr);
     WEBGPU_DEMO_CHECK(window, "[GLFW] Window created");
 
@@ -200,7 +197,7 @@ int main(int argc, const char* argv[])
     };
     // clang-format on
 
-    unsigned vertexCount = vertexData.size() / 2;
+    unsigned vertexCount    = vertexData.size() / 2;
     unsigned vertexDataSize = vertexData.size() * sizeof(float);
 
     WGPUBufferDescriptor vertexBufferDesc = {};
@@ -216,7 +213,7 @@ int main(int argc, const char* argv[])
     wgpuQueueWriteBuffer(queue, vertexBuffer, 0, vertexData.data(), vertexDataSize);
 
     // === Create the WebGPU index buffer ===
-    
+
     // clang-format off
     std::vector<std::uint16_t> indexData =
     {
@@ -225,7 +222,7 @@ int main(int argc, const char* argv[])
     };
     // clang-format on
 
-    unsigned indexCount = indexData.size();
+    unsigned indexCount    = indexData.size();
     unsigned indexDataSize = indexData.size() * sizeof(std::uint16_t);
 
     WGPUBufferDescriptor indexBufferDesc = {};
@@ -274,16 +271,16 @@ int main(int argc, const char* argv[])
 
     // Description of the vertex attribute for the vertex buffer layout
     WGPUVertexAttribute vertexAttribute = {};
-    vertexAttribute.format = WGPUVertexFormat_Float32x2;
-    vertexAttribute.offset = 0;
-    vertexAttribute.shaderLocation = 0;
+    vertexAttribute.format              = WGPUVertexFormat_Float32x2;
+    vertexAttribute.offset              = 0;
+    vertexAttribute.shaderLocation      = 0;
 
     // Description of the vertex buffer layout for the vertex shader stage
     WGPUVertexBufferLayout vertexBufferLayout = {};
-    vertexBufferLayout.arrayStride = 2ull * sizeof(float);
-    vertexBufferLayout.stepMode = WGPUVertexStepMode_Vertex;
-    vertexBufferLayout.attributeCount = 1;
-    vertexBufferLayout.attributes = &vertexAttribute;
+    vertexBufferLayout.arrayStride            = 2ull * sizeof(float);
+    vertexBufferLayout.stepMode               = WGPUVertexStepMode_Vertex;
+    vertexBufferLayout.attributeCount         = 1;
+    vertexBufferLayout.attributes             = &vertexAttribute;
 
     // Configuration for the vertex shader stage
     WGPUVertexState vertexState = {};
@@ -337,7 +334,47 @@ int main(int argc, const char* argv[])
         // Get a texture from the surface to render into.
         WGPUSurfaceTexture surfaceTexture;
         wgpuSurfaceGetCurrentTexture(surface, &surfaceTexture);
-        WEBGPU_DEMO_CHECK(surfaceTexture.status == WGPUSurfaceGetCurrentTextureStatus_Success, "[WebGPU] Failed to acquire current surface texture");
+
+        // The surface might change over time.
+        // For example, the window might be resized or minimized.
+        // We have to check the status and adapt to it.
+        switch (surfaceTexture.status)
+        {
+            case WGPUSurfaceGetCurrentTextureStatus_Success:
+                // Everything is ok.
+                // TODO: check for a suboptimal texture and re-configure it if needed.
+                break;
+
+            case WGPUSurfaceGetCurrentTextureStatus_Timeout:
+            case WGPUSurfaceGetCurrentTextureStatus_Outdated:
+            case WGPUSurfaceGetCurrentTextureStatus_Lost:
+                // The surface needs to be re-configured.
+
+                // Get the window size from the GLFW window.
+                glfwGetWindowSize(window, &surfaceWidth, &surfaceHeight);
+
+                // The surface size might be zero if the window is minimized.
+                if (surfaceWidth != 0 && surfaceHeight != 0)
+                {
+                    WEBGPU_DEMO_LOG("[WebGPU] Re-configuring surface");
+                    surfaceConfig.width  = surfaceWidth;
+                    surfaceConfig.height = surfaceHeight;
+                    wgpuSurfaceConfigure(surface, &surfaceConfig);
+                }
+
+                // Skip this frame.
+                glfwPollEvents();
+                continue;
+
+            case WGPUSurfaceGetCurrentTextureStatus_OutOfMemory:
+            case WGPUSurfaceGetCurrentTextureStatus_DeviceLost:
+                // An error occured.
+                WEBGPU_DEMO_CHECK(false, "[WebGPU] Failed to acquire current surface texture");
+                break;
+
+            case WGPUSurfaceGetCurrentTextureStatus_Force32:
+                break;
+        }
 
         // Create a view into the texture to specify where and how to modify the texture.
         WGPUTextureView view = wgpuTextureCreateView(surfaceTexture.texture, nullptr);
