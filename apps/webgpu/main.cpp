@@ -102,10 +102,14 @@ int main(int argc, const char* argv[])
     // which is how WebGPU prevents code from working on one machine and not on another.
 
     WGPURequiredLimits requiredLimits                     = {};
-    requiredLimits.limits.maxVertexAttributes             = 1;
-    requiredLimits.limits.maxVertexBuffers                = 1;
+    requiredLimits.limits.maxVertexAttributes             = 1u;
+    requiredLimits.limits.maxVertexBuffers                = 1u;
     requiredLimits.limits.maxBufferSize                   = 4ull * 2ull * sizeof(float);
-    requiredLimits.limits.maxVertexBufferArrayStride      = 2ull * sizeof(float);
+    requiredLimits.limits.maxVertexBufferArrayStride      = 2u * sizeof(float);
+    requiredLimits.limits.maxInterStageShaderComponents   = 2u;
+    requiredLimits.limits.maxBindGroups                   = 1u;
+    requiredLimits.limits.maxUniformBuffersPerShaderStage = 1u;
+    requiredLimits.limits.maxUniformBufferBindingSize     = 16ull * 4ull;
     requiredLimits.limits.minStorageBufferOffsetAlignment = adapterLimits.limits.minStorageBufferOffsetAlignment;
     requiredLimits.limits.minUniformBufferOffsetAlignment = adapterLimits.limits.minUniformBufferOffsetAlignment;
 
@@ -184,7 +188,7 @@ int main(int argc, const char* argv[])
     wgpuSurfaceConfigure(surface, &surfaceConfig);
     WEBGPU_DEMO_LOG("[WebGPU] Surface configured");
 
-    // === Create the WebGPU vertex buffer ===
+    // === Create the vertex buffer ===
     // The vertex buffer contains the input data for the shader.
 
     // clang-format off
@@ -212,7 +216,7 @@ int main(int argc, const char* argv[])
     // Upload the data to the GPU.
     wgpuQueueWriteBuffer(queue, vertexBuffer, 0, vertexData.data(), vertexDataSize);
 
-    // === Create the WebGPU index buffer ===
+    // === Create the index buffer ===
 
     // clang-format off
     std::vector<std::uint16_t> indexData =
@@ -236,20 +240,46 @@ int main(int argc, const char* argv[])
 
     wgpuQueueWriteBuffer(queue, indexBuffer, 0, indexData.data(), indexDataSize);
 
+    // === Create the uniform buffer ===
+
+    WGPUBufferDescriptor uniformBufferDesc = {};
+    uniformBufferDesc.label                = "Demo Uniform Buffer";
+    uniformBufferDesc.size                 = sizeof(float);
+    uniformBufferDesc.usage                = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Uniform;
+
+    WGPUBuffer uniformBuffer = wgpuDeviceCreateBuffer(device, &uniformBufferDesc);
+    WEBGPU_DEMO_CHECK(indexBuffer, "[WebGPU] Failed to create uniform buffer");
+    WEBGPU_DEMO_LOG("[WebGPU] Uniform buffer created");
+
+    float uniformBufferData = 0.0f;
+    wgpuQueueWriteBuffer(queue, uniformBuffer, 0, &uniformBufferData, sizeof(float));
+
     // === Create the shader module ===
     // Create a shader module for use in our render pipeline.
     // Shaders are written in a WebGPU-specific language called WGSL (WebGPU shader language).
     // Shader modules can be used in multiple pipeline stages by specifying different entry points.
 
     const char* shaderSource = R"(
+        @group(0) @binding(0) var<uniform> u_time: f32;
+
+        struct VertexOutput {
+            @builtin(position) position: vec4f,
+            @location(0) texture_coords: vec2f,
+        }
+
         @vertex
-        fn vs_main(@location(0) in_vertex_position: vec2f) -> @builtin(position) vec4f {
-            return vec4f(in_vertex_position, 0.0, 1.0);
+        fn vs_main(@location(0) in_vertex_position: vec2f) -> VertexOutput {
+            var offset = vec2(0.5 * sin(u_time), 0.5 * cos(u_time));
+            
+            var out: VertexOutput;
+            out.position = vec4f(in_vertex_position + offset, 0.0, 1.0);
+            out.texture_coords = in_vertex_position + vec2(0.5, 0.5);
+            return out;
         }
 
         @fragment
-        fn fs_main() -> @location(0) vec4f {
-            return vec4f(0.2, 0.2, 1.0, 1.0);
+        fn fs_main(in: VertexOutput) -> @location(0) vec4f {
+            return vec4f(in.texture_coords, 1.0, 1.0);
         }
     )";
 
@@ -265,7 +295,52 @@ int main(int argc, const char* argv[])
     WEBGPU_DEMO_CHECK(shaderModule, "[WebGPU] Failed to create shader module");
     WEBGPU_DEMO_LOG("[WebGPU] Shader module created");
 
-    // === Create the WebGPU render pipeline ===
+    // === Create the bind group layout ===
+    // Bind groups contain binding layouts that describe how uniforms are passed to shaders.
+
+    WGPUBindGroupLayoutEntry bindingLayout = {};
+    bindingLayout.binding                  = 0;
+    bindingLayout.visibility               = WGPUShaderStage_Vertex;
+    bindingLayout.buffer.type              = WGPUBufferBindingType_Uniform;
+    bindingLayout.buffer.minBindingSize    = sizeof(float);
+
+    WGPUBindGroupLayoutDescriptor bindGroupLayoutDesc = {};
+    bindGroupLayoutDesc.label                         = "Demo Bind Group Layout";
+    bindGroupLayoutDesc.entryCount                    = 1;
+    bindGroupLayoutDesc.entries                       = &bindingLayout;
+    WGPUBindGroupLayout bindGroupLayout               = wgpuDeviceCreateBindGroupLayout(device, &bindGroupLayoutDesc);
+    WEBGPU_DEMO_CHECK(bindGroupLayout, "[WebGPU] Failed to create bind group layout");
+    WEBGPU_DEMO_LOG("[WebGPU] Bind group layout created");
+
+    // === Create the bind group ===
+    // The bind group actually binds the buffer to the uniform.
+
+    WGPUBindGroupEntry binding = {};
+    binding.binding            = 0;
+    binding.buffer             = uniformBuffer;
+    binding.offset             = 0;
+    binding.size               = sizeof(float);
+
+    WGPUBindGroupDescriptor bindGroupDesc = {};
+    bindGroupDesc.layout                  = bindGroupLayout;
+    bindGroupDesc.entryCount              = bindGroupLayoutDesc.entryCount;
+    bindGroupDesc.entries                 = &binding;
+    WGPUBindGroup bindGroup               = wgpuDeviceCreateBindGroup(device, &bindGroupDesc);
+    WEBGPU_DEMO_CHECK(bindGroup, "[WebGPU] Failed to create bind group");
+    WEBGPU_DEMO_LOG("[WebGPU] Bind group created");
+
+    // === Create the pipeline layout ===
+    // The pipeline layout specifies the bind groups the pipeline uses.
+
+    WGPUPipelineLayoutDescriptor pipelineLayoutDesc = {};
+    pipelineLayoutDesc.label                        = "Demo Pipeline Layout";
+    pipelineLayoutDesc.bindGroupLayoutCount         = 1;
+    pipelineLayoutDesc.bindGroupLayouts             = &bindGroupLayout;
+    WGPUPipelineLayout pipelineLayout               = wgpuDeviceCreatePipelineLayout(device, &pipelineLayoutDesc);
+    WEBGPU_DEMO_CHECK(pipelineLayout, "[WebGPU] Failed to create pipeline layout");
+    WEBGPU_DEMO_LOG("[WebGPU] Pipeline layout created");
+
+    // === Create the render pipeline ===
     // The render pipeline specifies the configuration for the fixed-function stages as well as
     // the shaders for the programmable stages of the hardware pipeline.
 
@@ -314,6 +389,7 @@ int main(int argc, const char* argv[])
     // Configuration for the entire pipeline
     WGPURenderPipelineDescriptor pipelineDesc = {};
     pipelineDesc.label                        = "Demo Pipeline";
+    pipelineDesc.layout                       = pipelineLayout;
     pipelineDesc.vertex                       = vertexState;
     pipelineDesc.primitive                    = primitiveState;
     pipelineDesc.multisample                  = multisampleState;
@@ -327,7 +403,6 @@ int main(int argc, const char* argv[])
 
     while (!glfwWindowShouldClose(window))
     {
-
         // === Create a WebGPU texture view ===
         // The texture view is where we render our image into.
 
@@ -379,6 +454,10 @@ int main(int argc, const char* argv[])
         // Create a view into the texture to specify where and how to modify the texture.
         WGPUTextureView view = wgpuTextureCreateView(surfaceTexture.texture, nullptr);
 
+        // === Update the uniform ===
+        float time = static_cast<float>(glfwGetTime());
+        wgpuQueueWriteBuffer(queue, uniformBuffer, 0, &time, sizeof(float));
+
         // === Create a WebGPU command encoder ===
         // The encoder encodes the commands for the GPU into a command buffer.
 
@@ -415,6 +494,7 @@ int main(int argc, const char* argv[])
         wgpuRenderPassEncoderSetPipeline(renderPassEncoder, pipeline);
         wgpuRenderPassEncoderSetVertexBuffer(renderPassEncoder, 0, vertexBuffer, 0, vertexDataSize);
         wgpuRenderPassEncoderSetIndexBuffer(renderPassEncoder, indexBuffer, WGPUIndexFormat_Uint16, 0, indexDataSize);
+        wgpuRenderPassEncoderSetBindGroup(renderPassEncoder, 0, bindGroup, 0, nullptr);
         wgpuRenderPassEncoderDrawIndexed(renderPassEncoder, indexCount, 1, 0, 0, 0);
         wgpuRenderPassEncoderEnd(renderPassEncoder);
 
@@ -447,7 +527,14 @@ int main(int argc, const char* argv[])
     // === Release all WebGPU resources ===
 
     wgpuRenderPipelineRelease(pipeline);
+    wgpuPipelineLayoutRelease(pipelineLayout);
+    wgpuBindGroupRelease(bindGroup);
+    wgpuBindGroupLayoutRelease(bindGroupLayout);
     wgpuShaderModuleRelease(shaderModule);
+    wgpuBufferDestroy(uniformBuffer);
+    wgpuBufferRelease(uniformBuffer);
+    wgpuBufferDestroy(indexBuffer);
+    wgpuBufferRelease(indexBuffer);
     wgpuBufferDestroy(vertexBuffer);
     wgpuBufferRelease(vertexBuffer);
     wgpuSurfaceRelease(surface);
