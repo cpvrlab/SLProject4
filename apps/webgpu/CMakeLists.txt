@@ -42,7 +42,7 @@ add_library(wgpu STATIC IMPORTED)
 if (SYSTEM_NAME_UPPER MATCHES "WINDOWS")
     target_link_libraries(wgpu INTERFACE "ws2_32" "userenv" "bcrypt" "d3dcompiler" "ntdll" "opengl32")
     set_target_properties(wgpu PROPERTIES
-        IMPORTED_LOCATION "${WGPU_DIR}/libwgpu_native.lib"
+        IMPORTED_LOCATION "${WGPU_DIR}/wgpu_native.lib"
         INTERFACE_INCLUDE_DIRECTORIES "${WGPU_DIR}")
 elseif (SYSTEM_NAME_UPPER MATCHES "LINUX")
     set_target_properties(wgpu PROPERTIES

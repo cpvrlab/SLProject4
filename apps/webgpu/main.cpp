@@ -23,7 +23,9 @@
 #include <GLFW/glfw3native.h>
 
 #include <iostream>
+#include <vector>
 #include <cstdlib>
+#include <cstdint>
 
 #define WEBGPU_DEMO_LOG(msg) std::cout << (msg) << std::endl
 
@@ -93,11 +95,26 @@ int main(int argc, const char* argv[])
     WGPUAdapter adapter;
     wgpuInstanceRequestAdapter(instance, &adapterOptions, handleAdapterRequest, &adapter);
 
+    WGPUSupportedLimits adapterLimits;
+    wgpuAdapterGetLimits(adapter, &adapterLimits);
+
     // === Acquire a WebGPU device ===
     // A device provides access to a GPU and is created from an adapter.
+    // We specify the capabilites that we require our device to have in requiredLimits.
+    // We cannot access more resources than specified in the required limits,
+    // which is how WebGPU prevents code from working on one machine and not on another.
+
+    WGPURequiredLimits requiredLimits                     = {};
+    requiredLimits.limits.maxVertexAttributes             = 1;
+    requiredLimits.limits.maxVertexBuffers                = 1;
+    requiredLimits.limits.maxBufferSize                   = 4ull * 2ull * sizeof(float);
+    requiredLimits.limits.maxVertexBufferArrayStride      = 2ull * sizeof(float);
+    requiredLimits.limits.minStorageBufferOffsetAlignment = adapterLimits.limits.minStorageBufferOffsetAlignment;
+    requiredLimits.limits.minUniformBufferOffsetAlignment = adapterLimits.limits.minUniformBufferOffsetAlignment;
 
     WGPUDeviceDescriptor deviceDesc = {};
     deviceDesc.label                = "Demo Device";
+    deviceDesc.requiredLimits       = &requiredLimits;
     deviceDesc.defaultQueue.label   = "Demo Queue";
 
     WGPUDevice device;
@@ -170,6 +187,58 @@ int main(int argc, const char* argv[])
     wgpuSurfaceConfigure(surface, &surfaceConfig);
     WEBGPU_DEMO_LOG("[WebGPU] Surface configured");
 
+    // === Create the WebGPU vertex buffer ===
+    // The vertex buffer contains the input data for the shader.
+
+    // clang-format off
+    std::vector<float> vertexData =
+    {
+      -0.5,  0.5, // top-left corner
+      -0.5, -0.5, // bottom-left corner
+       0.5,  0.5, // top-right corner
+       0.5, -0.5, // bottom-right corner
+    };
+    // clang-format on
+
+    unsigned vertexCount = vertexData.size() / 2;
+    unsigned vertexDataSize = vertexData.size() * sizeof(float);
+
+    WGPUBufferDescriptor vertexBufferDesc = {};
+    vertexBufferDesc.label                = "Demo Vertex Buffer";
+    vertexBufferDesc.size                 = vertexDataSize;
+    vertexBufferDesc.usage                = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Vertex;
+
+    WGPUBuffer vertexBuffer = wgpuDeviceCreateBuffer(device, &vertexBufferDesc);
+    WEBGPU_DEMO_CHECK(vertexBuffer, "[WebGPU] Failed to create vertex buffer");
+    WEBGPU_DEMO_LOG("[WebGPU] Vertex buffer created");
+
+    // Upload the data to the GPU.
+    wgpuQueueWriteBuffer(queue, vertexBuffer, 0, vertexData.data(), vertexDataSize);
+
+    // === Create the WebGPU index buffer ===
+    
+    // clang-format off
+    std::vector<std::uint16_t> indexData =
+    {
+        0, 1, 2,
+        2, 1, 3,
+    };
+    // clang-format on
+
+    unsigned indexCount = indexData.size();
+    unsigned indexDataSize = indexData.size() * sizeof(std::uint16_t);
+
+    WGPUBufferDescriptor indexBufferDesc = {};
+    indexBufferDesc.label                = "Demo Index Buffer";
+    indexBufferDesc.size                 = indexDataSize;
+    indexBufferDesc.usage                = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Index;
+
+    WGPUBuffer indexBuffer = wgpuDeviceCreateBuffer(device, &indexBufferDesc);
+    WEBGPU_DEMO_CHECK(indexBuffer, "[WebGPU] Failed to create index buffer");
+    WEBGPU_DEMO_LOG("[WebGPU] Index buffer created");
+
+    wgpuQueueWriteBuffer(queue, indexBuffer, 0, indexData.data(), indexDataSize);
+
     // === Create the shader module ===
     // Create a shader module for use in our render pipeline.
     // Shaders are written in a WebGPU-specific language called WGSL (WebGPU shader language).
@@ -177,14 +246,8 @@ int main(int argc, const char* argv[])
 
     const char* shaderSource = R"(
         @vertex
-        fn vs_main(@builtin(vertex_index) in_vertex_index: u32) -> @builtin(position) vec4f {
-            if (in_vertex_index == 0u) {
-                return vec4f(-0.5, -0.5, 0.0, 1.0);
-            } else if (in_vertex_index == 1u) {
-                return vec4f(0.5, -0.5, 0.0, 1.0);
-            } else {
-                return vec4f(0.0, 0.5, 0.0, 1.0);
-            }
+        fn vs_main(@location(0) in_vertex_position: vec2f) -> @builtin(position) vec4f {
+            return vec4f(in_vertex_position, 0.0, 1.0);
         }
 
         @fragment
@@ -198,7 +261,7 @@ int main(int argc, const char* argv[])
     shaderModuleWGSLDesc.code                           = shaderSource;
 
     WGPUShaderModuleDescriptor shaderModuleDesc = {};
-    shaderModuleDesc.label                      = "Hello Triangle Shader";
+    shaderModuleDesc.label                      = "Demo Shader";
     shaderModuleDesc.nextInChain                = (const WGPUChainedStruct*)&shaderModuleWGSLDesc;
 
     WGPUShaderModule shaderModule = wgpuDeviceCreateShaderModule(device, &shaderModuleDesc);
@@ -209,10 +272,25 @@ int main(int argc, const char* argv[])
     // The render pipeline specifies the configuration for the fixed-function stages as well as
     // the shaders for the programmable stages of the hardware pipeline.
 
+    // Description of the vertex attribute for the vertex buffer layout
+    WGPUVertexAttribute vertexAttribute = {};
+    vertexAttribute.format = WGPUVertexFormat_Float32x2;
+    vertexAttribute.offset = 0;
+    vertexAttribute.shaderLocation = 0;
+
+    // Description of the vertex buffer layout for the vertex shader stage
+    WGPUVertexBufferLayout vertexBufferLayout = {};
+    vertexBufferLayout.arrayStride = 2ull * sizeof(float);
+    vertexBufferLayout.stepMode = WGPUVertexStepMode_Vertex;
+    vertexBufferLayout.attributeCount = 1;
+    vertexBufferLayout.attributes = &vertexAttribute;
+
     // Configuration for the vertex shader stage
     WGPUVertexState vertexState = {};
     vertexState.module          = shaderModule;
     vertexState.entryPoint      = "vs_main";
+    vertexState.bufferCount     = 1;
+    vertexState.buffers         = &vertexBufferLayout;
 
     // Configuration for the primitive assembly and rasterization stages
     WGPUPrimitiveState primitiveState = {};
@@ -238,7 +316,7 @@ int main(int argc, const char* argv[])
 
     // Configuration for the entire pipeline
     WGPURenderPipelineDescriptor pipelineDesc = {};
-    pipelineDesc.label                        = "Hello Triangle Pipeline";
+    pipelineDesc.label                        = "Demo Pipeline";
     pipelineDesc.vertex                       = vertexState;
     pipelineDesc.primitive                    = primitiveState;
     pipelineDesc.multisample                  = multisampleState;
@@ -252,6 +330,7 @@ int main(int argc, const char* argv[])
 
     while (!glfwWindowShouldClose(window))
     {
+
         // === Create a WebGPU texture view ===
         // The texture view is where we render our image into.
 
@@ -267,7 +346,7 @@ int main(int argc, const char* argv[])
         // The encoder encodes the commands for the GPU into a command buffer.
 
         WGPUCommandEncoderDescriptor cmdEncoderDesc = {};
-        cmdEncoderDesc.label                        = " Hello Triangle Command Encoder";
+        cmdEncoderDesc.label                        = "Demo Command Encoder";
 
         WGPUCommandEncoder cmdEncoder = wgpuDeviceCreateCommandEncoder(device, &cmdEncoderDesc);
         WEBGPU_DEMO_CHECK(cmdEncoder, "[WebGPU] Failed to create command encoder");
@@ -287,7 +366,7 @@ int main(int argc, const char* argv[])
         colorAttachment.clearValue.a                  = 1.0;
 
         WGPURenderPassDescriptor renderPassDesc = {};
-        renderPassDesc.label                    = "Hello Triangle Render Pass";
+        renderPassDesc.label                    = "Demo Render Pass";
         renderPassDesc.colorAttachmentCount     = 1;
         renderPassDesc.colorAttachments         = &colorAttachment;
 
@@ -297,14 +376,16 @@ int main(int argc, const char* argv[])
 
         WGPURenderPassEncoder renderPassEncoder = wgpuCommandEncoderBeginRenderPass(cmdEncoder, &renderPassDesc);
         wgpuRenderPassEncoderSetPipeline(renderPassEncoder, pipeline);
-        wgpuRenderPassEncoderDraw(renderPassEncoder, 3, 1, 0, 0);
+        wgpuRenderPassEncoderSetVertexBuffer(renderPassEncoder, 0, vertexBuffer, 0, vertexDataSize);
+        wgpuRenderPassEncoderSetIndexBuffer(renderPassEncoder, indexBuffer, WGPUIndexFormat_Uint16, 0, indexDataSize);
+        wgpuRenderPassEncoderDrawIndexed(renderPassEncoder, indexCount, 1, 0, 0, 0);
         wgpuRenderPassEncoderEnd(renderPassEncoder);
 
         // === Get the command buffer ===
         // The command encoder is finished to get the commands for the GPU to execute in a command buffer.
 
         WGPUCommandBufferDescriptor cmdBufferDesc = {};
-        cmdBufferDesc.label                       = "Hello Triangle Command Buffer";
+        cmdBufferDesc.label                       = "Demo Command Buffer";
 
         WGPUCommandBuffer cmdBuffer = wgpuCommandEncoderFinish(cmdEncoder, &cmdBufferDesc);
 
@@ -330,6 +411,8 @@ int main(int argc, const char* argv[])
 
     wgpuRenderPipelineRelease(pipeline);
     wgpuShaderModuleRelease(shaderModule);
+    wgpuBufferDestroy(vertexBuffer);
+    wgpuBufferRelease(vertexBuffer);
     wgpuSurfaceRelease(surface);
     wgpuQueueRelease(queue);
     wgpuDeviceRelease(device);
