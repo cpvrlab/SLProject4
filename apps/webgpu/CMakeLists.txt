@@ -47,4 +47,4 @@ if (SYSTEM_NAME_UPPER MATCHES "WINDOWS")
 endif ()
 
 add_executable(webgpu-demo main.cpp)
-target_link_libraries(webgpu-demo PRIVATE wgpu glfw3dll)
+target_link_libraries(webgpu-demo PRIVATE wgpu ${glfw_LIBS})
