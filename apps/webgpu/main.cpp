@@ -188,7 +188,7 @@ int main(int argc, const char* argv[])
     surfaceConfig.device                   = device;
     surfaceConfig.usage                    = WGPUTextureUsage_RenderAttachment;
     surfaceConfig.format                   = surfaceCapabilities.formats[0];
-    surfaceConfig.presentMode              = WGPUPresentMode_Fifo;
+    surfaceConfig.presentMode              = WGPUPresentMode_Mailbox;
     surfaceConfig.alphaMode                = surfaceCapabilities.alphaModes[0];
     surfaceConfig.width                    = surfaceWidth;
     surfaceConfig.height                   = surfaceHeight;
@@ -262,9 +262,6 @@ int main(int argc, const char* argv[])
     wgpuQueueWriteBuffer(queue, uniformBuffer, 0, &uniformBufferData, sizeof(float));
 
     // === Create the texture ===
-
-    // unsigned     pixelDataSize = 256 * 256 * 4;
-    // std::vector<std::uint8_t> pixelData(pixelDataSize, 100);
 
     cv::Mat image = cv::imread(std::string(SL_PROJECT_ROOT) + "/data/images/textures/brickwall0512_C.jpg");
     cv::cvtColor(image, image, cv::COLOR_BGR2RGBA);
