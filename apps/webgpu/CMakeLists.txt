@@ -38,13 +38,22 @@ else ()
 endif ()
 
 add_library(wgpu STATIC IMPORTED)
-set_target_properties(wgpu PROPERTIES
-        IMPORTED_LOCATION "${WGPU_DIR}/wgpu_native.lib"
-        INTERFACE_INCLUDE_DIRECTORIES "${WGPU_DIR}")
 
 if (SYSTEM_NAME_UPPER MATCHES "WINDOWS")
-    target_link_libraries(wgpu INTERFACE "ws2_32" "userenv" "advapi32" "bcrypt" "d3dcompiler" "ntdll" "opengl32")
+    target_link_libraries(wgpu INTERFACE "ws2_32" "userenv" "bcrypt" "d3dcompiler" "ntdll" "opengl32")
+    set_target_properties(wgpu PROPERTIES
+        IMPORTED_LOCATION "${WGPU_DIR}/libwgpu_native.lib"
+        INTERFACE_INCLUDE_DIRECTORIES "${WGPU_DIR}")
+elseif (SYSTEM_NAME_UPPER MATCHES "DARWIN")
+    target_link_libraries(wgpu INTERFACE "-framework CoreFoundation" "-framework QuartzCore" "-framework Metal")
+    set_target_properties(wgpu PROPERTIES
+        IMPORTED_LOCATION "${WGPU_DIR}/libwgpu_native.a"
+        INTERFACE_INCLUDE_DIRECTORIES "${WGPU_DIR}")
 endif ()
 
 add_executable(webgpu-demo main.cpp)
 target_link_libraries(webgpu-demo PRIVATE wgpu ${glfw_LIBS})
+
+if (SYSTEM_NAME_UPPER MATCHES "DARWIN")
+    target_link_libraries(webgpu-demo PRIVATE "-framework Cocoa" "-framework IOKit")
+endif ()

@@ -9,10 +9,17 @@
 #elif defined(__APPLE__)
 #    define SYSTEM_DARWIN
 #    define GLFW_EXPOSE_NATIVE_COCOA
+#    define OBJC_OLD_DISPATCH_PROTOTYPES 1
+#    include <objc/objc.h>
+#    include <objc/message.h>
+#    include <objc/runtime.h>
+#    include <ApplicationServices/ApplicationServices.h>
 #endif
 
 #include <webgpu.h>
+
 #include <GLFW/glfw3.h>
+#define GLFW_NATIVE_INCLUDE_NONE
 #include <GLFW/glfw3native.h>
 
 #include <iostream>
@@ -107,11 +114,24 @@ int main(int argc, const char* argv[])
     // The surface is where our rendered images will be presented to.
     // It is created from window handles on most platforms and from a canvas in the browser.
 
-#ifdef SYSTEM_WINDOWS
+#if defined(SYSTEM_WINDOWS)
     WGPUSurfaceDescriptorFromWindowsHWND nativeSurfaceDesc = {};
     nativeSurfaceDesc.chain.sType                          = WGPUSType_SurfaceDescriptorFromWindowsHWND;
     nativeSurfaceDesc.hinstance                            = GetModuleHandle(nullptr);
     nativeSurfaceDesc.hwnd                                 = glfwGetWin32Window(window);
+#elif defined(SYSTEM_DARWIN)
+    id cocoaWindow = glfwGetCocoaWindow(window);
+
+    id contentView = objc_msgSend(cocoaWindow, sel_registerName("contentView"));
+    objc_msgSend(contentView, sel_getUid("setWantsLayer:"), 1);
+
+    objc_class *metalLayerClass = objc_getClass("CAMetalLayer");
+    id metalLayer = objc_msgSend((id)metalLayerClass, sel_getUid("layer"));
+    objc_msgSend(contentView, sel_registerName("setLayer:"), metalLayer);
+
+    WGPUSurfaceDescriptorFromMetalLayer nativeSurfaceDesc = {};
+    nativeSurfaceDesc.chain.sType = WGPUSType_SurfaceDescriptorFromMetalLayer;
+    nativeSurfaceDesc.layer = metalLayer;
 #endif
 
     WGPUSurfaceDescriptor surfaceDesc = {};
@@ -286,7 +306,7 @@ int main(int argc, const char* argv[])
         // === Submit the command buffer to the GPU ===
         // The work for the GPU is submitted through the queue and executed.
         wgpuQueueSubmit(queue, 1, &cmdBuffer);
-        
+
         // === Present the surface ===
         // This presents our rendered texture to the screen.
         wgpuSurfacePresent(surface);
