@@ -40,6 +40,11 @@ def build(build_type):
 
     if not is_windows:
         config_command.append("-DCMAKE_BUILD_TYPE=" + cmake_build_type)
+    
+    if system == SYSTEM_MAC64:
+        config_command.append("-DCMAKE_OSX_ARCHITECTURES=x86_64")
+    elif system == SYSTEM_MACARM64:
+        config_command.append("-DCMAKE_OSX_ARCHITECTURES=arm64")
 
     build_command = [
         "cmake",
