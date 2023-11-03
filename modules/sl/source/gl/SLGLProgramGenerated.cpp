@@ -322,10 +322,10 @@ const string vertMain_PS_v_doColorOverLT = R"(
     vert.color = colorByAge(age/u_tTL);)";
 
 const string vertOutput_PS_age = R"(
-    out float v_age; // Age of a particle)";
+out float v_age; // Age of a particle)";
 
 const string fragInput_PS_age = R"(
-    in float v_age; // Age of a particle)";
+in float v_age; // Age of a particle)";
 
 const string vertMain_PS_v_color = R"(
     vert.color = u_color.rgb;)";
@@ -333,14 +333,14 @@ const string vertMain_PS_v_color = R"(
 const string vertMain_PS_v_texNum        = R"(
     vert.texNum = a_texNum;)";
 
-const string vertMain_PS_instanced_v_texNum        = R"(
-    texNum = a_texNum;)";
-
 const string vertMain_PS_v_a             = R"(
     float age = u_time - a_startTime;   // Get the age of the particle)";
 
 const string vertMain_PS_v_tC = R"(
     v_texCoord = 0.5 * (a_positionP.xy + vec2(1.0));)";
+
+const string vertMain_PS_v_age = R"(
+    v_age = age;)";
 
 const string vertMain_PS_v_tC_flipbook = R"(
     uint actCI = uint(mod(float(a_texNum), float(u_col)));
@@ -2212,7 +2212,6 @@ void SLGLProgramGenerated::buildPerPixParticleInstanced(SLMaterial* mat)
 
     if (CoOvLi) vertCode += vertOutput_PS_age;
 
-    // Vertex shader functions
     // Vertex shader main loop
     vertCode += vertMain_instanced_Begin;
     vertCode += vertMain_PS_v_a;
@@ -2227,13 +2226,13 @@ void SLGLProgramGenerated::buildPerPixParticleInstanced(SLMaterial* mat)
         vertCode += vertMain_PS_instanced_v_t_default;
     if (AlOvLi) vertCode += AlOvLiCu ? vertMain_PS_instanced_v_t_curve : vertMain_PS_instanced_v_t_linear;
     if (AlOvLi) vertCode += vertMain_PS_v_t_end;
-    //if (rot) vertCode += vertMain_PS_v_r;
     vertCode += vertMain_PS_instanced_scale;
     if (SiOvLi) vertCode += vertMain_PS_instanced_v_s;
     if (SiOvLi && SiOvLiCu) vertCode += vertMain_PS_instanced_v_s_curve;
     if (SiOvLi) vertCode += vertMain_PS_instanced_v_sS;
     if (rot) vertCode += vertMain_PS_instanced_rotate;
-    //if (Co && CoOvLi) vertCode += vertMain_PS_v_doColorOverLT;
+    if (CoOvLi) vertCode += vertMain_PS_v_age;
+
     if (billboardType == BT_Vertical || billboardType == BT_Horizontal)
         vertCode += vertMain_PS_instanced_EndAll_VertBillboard;
     else
@@ -2360,7 +2359,7 @@ void SLGLProgramGenerated::buildPerPixParticle(SLMaterial* mat)
         vertCode += vertMain_PS_EndAll_VertBillboard;
     else
         vertCode += vertMain_PS_EndAll;
-    
+
     addCodeToShader(_shaders[0], vertCode, _name + ".vert");
 
     ////////////////////////////////
@@ -2440,7 +2439,7 @@ void SLGLProgramGenerated::buildPerPixParticle(SLMaterial* mat)
     fragCode += fragMain_PS_begin;
     fragCode += Co ? fragMain_PS : fragMain_PS_withoutColor;
     fragCode += fragMain_PS_endAll;
-    
+
     addCodeToShader(_shaders[1], fragCode, _name + ".frag");
 }
 //-----------------------------------------------------------------------------
