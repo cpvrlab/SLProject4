@@ -21,6 +21,8 @@
 #include <webgpu.h>
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
 
 #include <iostream>
 #include <vector>
@@ -101,17 +103,22 @@ int main(int argc, const char* argv[])
     // We cannot access more resources than specified in the required limits,
     // which is how WebGPU prevents code from working on one machine and not on another.
 
-    WGPURequiredLimits requiredLimits                     = {};
-    requiredLimits.limits.maxVertexAttributes             = 1u;
-    requiredLimits.limits.maxVertexBuffers                = 1u;
-    requiredLimits.limits.maxBufferSize                   = 4ull * 2ull * sizeof(float);
-    requiredLimits.limits.maxVertexBufferArrayStride      = 2u * sizeof(float);
-    requiredLimits.limits.maxInterStageShaderComponents   = 2u;
-    requiredLimits.limits.maxBindGroups                   = 1u;
-    requiredLimits.limits.maxUniformBuffersPerShaderStage = 1u;
-    requiredLimits.limits.maxUniformBufferBindingSize     = 16ull * 4ull;
-    requiredLimits.limits.minStorageBufferOffsetAlignment = adapterLimits.limits.minStorageBufferOffsetAlignment;
-    requiredLimits.limits.minUniformBufferOffsetAlignment = adapterLimits.limits.minUniformBufferOffsetAlignment;
+    WGPURequiredLimits requiredLimits                      = {};
+    requiredLimits.limits.maxVertexAttributes              = 1u;
+    requiredLimits.limits.maxVertexBuffers                 = 1u;
+    requiredLimits.limits.maxBufferSize                    = 4ull * 2ull * sizeof(float);
+    requiredLimits.limits.maxVertexBufferArrayStride       = 2u * sizeof(float);
+    requiredLimits.limits.maxInterStageShaderComponents    = 2u;
+    requiredLimits.limits.maxBindGroups                    = 2u;
+    requiredLimits.limits.maxBindingsPerBindGroup          = 2u;
+    requiredLimits.limits.maxUniformBuffersPerShaderStage  = 1u;
+    requiredLimits.limits.maxUniformBufferBindingSize      = 16ull * 4ull;
+    requiredLimits.limits.maxSampledTexturesPerShaderStage = 1u;
+    requiredLimits.limits.maxTextureDimension1D            = 2048;
+    requiredLimits.limits.maxTextureDimension2D            = 2048;
+    requiredLimits.limits.maxTextureArrayLayers            = 1;
+    requiredLimits.limits.minStorageBufferOffsetAlignment  = adapterLimits.limits.minStorageBufferOffsetAlignment;
+    requiredLimits.limits.minUniformBufferOffsetAlignment  = adapterLimits.limits.minUniformBufferOffsetAlignment;
 
     WGPUDeviceDescriptor deviceDesc = {};
     deviceDesc.label                = "Demo Device";
@@ -254,6 +261,65 @@ int main(int argc, const char* argv[])
     float uniformBufferData = 0.0f;
     wgpuQueueWriteBuffer(queue, uniformBuffer, 0, &uniformBufferData, sizeof(float));
 
+    // === Create the texture ===
+
+    // unsigned     pixelDataSize = 256 * 256 * 4;
+    // std::vector<std::uint8_t> pixelData(pixelDataSize, 100);
+
+    cv::Mat image = cv::imread(std::string(SL_PROJECT_ROOT) + "/data/images/textures/brickwall0512_C.jpg");
+    cv::cvtColor(image, image, cv::COLOR_BGR2RGBA);
+
+    unsigned imageWidth = image.cols;
+    unsigned imageHeight = image.rows;
+    unsigned pixelDataSize = 4 * imageWidth * imageHeight;
+
+    WGPUTextureDescriptor textureDesc   = {};
+    textureDesc.label                   = "Demo Texture";
+    textureDesc.usage                   = WGPUTextureUsage_CopyDst | WGPUTextureUsage_TextureBinding;
+    textureDesc.dimension               = WGPUTextureDimension_2D;
+    textureDesc.size.width              = imageWidth;
+    textureDesc.size.height             = imageHeight;
+    textureDesc.size.depthOrArrayLayers = 1;
+    textureDesc.format                  = WGPUTextureFormat_RGBA8UnormSrgb;
+    textureDesc.mipLevelCount           = 1;
+    textureDesc.sampleCount             = 1;
+
+    WGPUTexture texture = wgpuDeviceCreateTexture(device, &textureDesc);
+    WEBGPU_DEMO_CHECK(texture, "[WebGPU] Failed to create texture");
+    WEBGPU_DEMO_LOG("[WebGPU] Texture created");
+
+    // Where do we copyu the pixel data to?
+    WGPUImageCopyTexture destination = {};
+    destination.texture              = texture;
+    destination.mipLevel             = 0;
+    destination.origin.x             = 0;
+    destination.origin.y             = 0;
+    destination.origin.z             = 0;
+    destination.aspect               = WGPUTextureAspect_All;
+
+    // Where do we copy the pixel data from?
+    WGPUTextureDataLayout pixelDataLayout = {};
+    pixelDataLayout.offset                = 0;
+    pixelDataLayout.bytesPerRow           = 4 * textureDesc.size.width;
+    pixelDataLayout.rowsPerImage          = textureDesc.size.height;
+
+    // Upload the data to the GPU.
+    wgpuQueueWriteTexture(queue, &destination, image.data, pixelDataSize, &pixelDataLayout, &textureDesc.size);
+
+    // === Create a texture view into the texture ===
+    WGPUTextureViewDescriptor textureViewDesc = {};
+    textureViewDesc.aspect                    = WGPUTextureAspect_All;
+    textureViewDesc.baseArrayLayer            = 0;
+    textureViewDesc.arrayLayerCount           = 1;
+    textureViewDesc.baseMipLevel              = 0;
+    textureViewDesc.mipLevelCount             = 1;
+    textureViewDesc.dimension                 = WGPUTextureViewDimension_2D;
+    textureViewDesc.format                    = textureDesc.format;
+
+    WGPUTextureView textureView = wgpuTextureCreateView(texture, &textureViewDesc);
+    WEBGPU_DEMO_CHECK(textureView, "[WebGPU] Failed to create texture view");
+    WEBGPU_DEMO_LOG("[WebGPU] Texture view created");
+
     // === Create the shader module ===
     // Create a shader module for use in our render pipeline.
     // Shaders are written in a WebGPU-specific language called WGSL (WebGPU shader language).
@@ -261,6 +327,7 @@ int main(int argc, const char* argv[])
 
     const char* shaderSource = R"(
         @group(0) @binding(0) var<uniform> u_time: f32;
+        @group(0) @binding(1) var texture: texture_2d<f32>;
 
         struct VertexOutput {
             @builtin(position) position: vec4f,
@@ -279,7 +346,7 @@ int main(int argc, const char* argv[])
 
         @fragment
         fn fs_main(in: VertexOutput) -> @location(0) vec4f {
-            return vec4f(in.texture_coords, 1.0, 1.0);
+            return textureLoad(texture, vec2i(i32(512.0 * in.texture_coords.x), i32(512.0 * in.texture_coords.y)), 0).rgba;
         }
     )";
 
@@ -296,35 +363,51 @@ int main(int argc, const char* argv[])
     WEBGPU_DEMO_LOG("[WebGPU] Shader module created");
 
     // === Create the bind group layout ===
-    // Bind groups contain binding layouts that describe how uniforms are passed to shaders.
+    // Bind groups contain binding layouts that describe how uniforms and textures are passed to shaders.
 
-    WGPUBindGroupLayoutEntry bindingLayout = {};
-    bindingLayout.binding                  = 0;
-    bindingLayout.visibility               = WGPUShaderStage_Vertex;
-    bindingLayout.buffer.type              = WGPUBufferBindingType_Uniform;
-    bindingLayout.buffer.minBindingSize    = sizeof(float);
+    // Entry for the uniform
+    WGPUBindGroupLayoutEntry uniformLayout = {};
+    uniformLayout.binding                  = 0;
+    uniformLayout.visibility               = WGPUShaderStage_Vertex;
+    uniformLayout.buffer.type              = WGPUBufferBindingType_Uniform;
+    uniformLayout.buffer.minBindingSize    = sizeof(float);
+
+    // Entry for the texture
+    WGPUBindGroupLayoutEntry textureLayout = {};
+    textureLayout.binding                  = 1;
+    textureLayout.visibility               = WGPUShaderStage_Fragment;
+    textureLayout.texture.sampleType       = WGPUTextureSampleType_Float;
+    textureLayout.texture.viewDimension    = WGPUTextureViewDimension_2D;
+
+    std::vector<WGPUBindGroupLayoutEntry> bindGroupLayoutEntries = {uniformLayout, textureLayout};
 
     WGPUBindGroupLayoutDescriptor bindGroupLayoutDesc = {};
     bindGroupLayoutDesc.label                         = "Demo Bind Group Layout";
-    bindGroupLayoutDesc.entryCount                    = 1;
-    bindGroupLayoutDesc.entries                       = &bindingLayout;
+    bindGroupLayoutDesc.entryCount                    = bindGroupLayoutEntries.size();
+    bindGroupLayoutDesc.entries                       = bindGroupLayoutEntries.data();
     WGPUBindGroupLayout bindGroupLayout               = wgpuDeviceCreateBindGroupLayout(device, &bindGroupLayoutDesc);
     WEBGPU_DEMO_CHECK(bindGroupLayout, "[WebGPU] Failed to create bind group layout");
     WEBGPU_DEMO_LOG("[WebGPU] Bind group layout created");
 
     // === Create the bind group ===
-    // The bind group actually binds the buffer to the uniform.
+    // The bind group actually binds the buffer to uniforms and textures.
 
-    WGPUBindGroupEntry binding = {};
-    binding.binding            = 0;
-    binding.buffer             = uniformBuffer;
-    binding.offset             = 0;
-    binding.size               = sizeof(float);
+    WGPUBindGroupEntry uniformBinding = {};
+    uniformBinding.binding             = 0;
+    uniformBinding.buffer              = uniformBuffer;
+    uniformBinding.offset              = 0;
+    uniformBinding.size                = sizeof(float);
+
+    WGPUBindGroupEntry textureBinding = {};
+    textureBinding.binding             = 1;
+    textureBinding.textureView         = textureView;
+
+    std::vector<WGPUBindGroupEntry> bindGroupEntries = {uniformBinding, textureBinding};
 
     WGPUBindGroupDescriptor bindGroupDesc = {};
     bindGroupDesc.layout                  = bindGroupLayout;
-    bindGroupDesc.entryCount              = bindGroupLayoutDesc.entryCount;
-    bindGroupDesc.entries                 = &binding;
+    bindGroupDesc.entryCount              = bindGroupEntries.size();
+    bindGroupDesc.entries                 = bindGroupEntries.data();
     WGPUBindGroup bindGroup               = wgpuDeviceCreateBindGroup(device, &bindGroupDesc);
     WEBGPU_DEMO_CHECK(bindGroup, "[WebGPU] Failed to create bind group");
     WEBGPU_DEMO_LOG("[WebGPU] Bind group created");
@@ -531,6 +614,9 @@ int main(int argc, const char* argv[])
     wgpuBindGroupRelease(bindGroup);
     wgpuBindGroupLayoutRelease(bindGroupLayout);
     wgpuShaderModuleRelease(shaderModule);
+    wgpuTextureViewRelease(textureView);
+    wgpuTextureDestroy(texture);
+    wgpuTextureRelease(texture);
     wgpuBufferDestroy(uniformBuffer);
     wgpuBufferRelease(uniformBuffer);
     wgpuBufferDestroy(indexBuffer);

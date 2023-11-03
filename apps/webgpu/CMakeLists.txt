@@ -56,7 +56,7 @@ elseif (SYSTEM_NAME_UPPER MATCHES "DARWIN")
 endif ()
 
 add_executable(webgpu-demo main.cpp)
-target_link_libraries(webgpu-demo PRIVATE wgpu ${glfw_LIBS})
+target_link_libraries(webgpu-demo PRIVATE wgpu sl_cv ${glfw_LIBS})
 
 if (SYSTEM_NAME_UPPER MATCHES "LINUX")
     target_link_libraries(webgpu-demo PRIVATE "X11")
