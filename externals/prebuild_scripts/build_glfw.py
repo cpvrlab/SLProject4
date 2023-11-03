@@ -82,9 +82,6 @@ prebuilt_dir = Path(os.curdir).absolute().parent / "prebuilt"
 output_dir = Path(prebuilt_dir, name)
 print("Output directory: " + str(output_dir))
 
-zip_filename = name + ".zip"
-print("Zip file: " + zip_filename)
-
 if not os.path.isdir("glfw"):
     print("\n=== Cloning GLFW ===\n")
     subprocess.run(["git", "clone", "https://github.com/glfw/glfw.git"])
@@ -110,3 +107,12 @@ build("release")
 shutil.copytree(INSTALL_DIR / "debug" / "include", output_dir / "include")
 shutil.copy("LICENSE.md", output_dir)
 shutil.copy("README.md", output_dir)
+
+print("\n=== Creating archive === \n")
+
+os.chdir(os.pardir)
+shutil.make_archive(name, "zip", output_dir.parent, output_dir.name)
+print("Archive created")
+print("Path: " + str(Path(name + ".zip").absolute()))
+
+print("\n")
