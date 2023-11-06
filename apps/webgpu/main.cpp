@@ -24,6 +24,7 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
 #include <SLMat4.h>
+#include <SLVec4.h>
 
 #include <iostream>
 #include <vector>
@@ -362,7 +363,7 @@ int main(int argc, const char* argv[])
     textureDesc.size.height             = imageHeight;
     textureDesc.size.depthOrArrayLayers = 1;
     textureDesc.format                  = WGPUTextureFormat_RGBA8UnormSrgb;
-    textureDesc.mipLevelCount           = 1;
+    textureDesc.mipLevelCount           = 4;
     textureDesc.sampleCount             = 1;
 
     WGPUTexture texture = wgpuDeviceCreateTexture(device, &textureDesc);
@@ -384,8 +385,51 @@ int main(int argc, const char* argv[])
     pixelDataLayout.bytesPerRow           = 4 * textureDesc.size.width;
     pixelDataLayout.rowsPerImage          = textureDesc.size.height;
 
-    // Upload the data to the GPU.
-    wgpuQueueWriteTexture(queue, &destination, image.data, pixelDataSize, &pixelDataLayout, &textureDesc.size);
+    // Generate mip levels.
+
+    WGPUExtent3D mipLevelSize;
+    mipLevelSize.width = textureDesc.size.width;
+    mipLevelSize.height = textureDesc.size.height;
+    mipLevelSize.depthOrArrayLayers = 1;
+
+    for (unsigned mipLevel = 0; mipLevel < textureDesc.mipLevelCount; mipLevel++)
+    {
+        // === Test colors ===
+        //
+        // std::uint64_t mipLevelColors[] =
+        // {
+        //     0xFF0000FF,
+        //     0xFFFF00FF,
+        //     0x00FF00FF,
+        //     0x0000FFFF
+        // };
+        // 
+        // for (unsigned y = 0; y < mipLevelSize.height; y++)
+        // {
+        //     for (unsigned x = 0; x < mipLevelSize.width; x++)
+        //     {
+        //         unsigned pixelIndex = x + y * mipLevelSize.width;
+        //         std::memcpy(&mipLevelData[4ull * pixelIndex], &mipLevelColors[mipLevel], 4);
+        //     }   
+        // }
+
+        cv::Mat mipLevelImage;
+        cv::Size cvSize(static_cast<int>(mipLevelSize.width), static_cast<int>(mipLevelSize.height));
+        cv::resize(image, mipLevelImage, cvSize);
+
+        std::size_t mipLevelBytes = 4ull * mipLevelSize.width * mipLevelSize.height;
+
+        destination.mipLevel         = mipLevel;
+        pixelDataLayout.bytesPerRow  = 4 * mipLevelSize.width;
+        pixelDataLayout.rowsPerImage = mipLevelSize.height;
+
+        // Upload the data to the GPU.
+        wgpuQueueWriteTexture(queue, &destination, mipLevelImage.data, mipLevelBytes, &pixelDataLayout, &mipLevelSize);
+
+        // Scale the image down for the next mip level.
+        mipLevelSize.width /= 2;
+        mipLevelSize.height /= 2;
+    }
 
     // === Create a texture view into the texture ===
     WGPUTextureViewDescriptor textureViewDesc = {};
@@ -393,7 +437,7 @@ int main(int argc, const char* argv[])
     textureViewDesc.baseArrayLayer            = 0;
     textureViewDesc.arrayLayerCount           = 1;
     textureViewDesc.baseMipLevel              = 0;
-    textureViewDesc.mipLevelCount             = 1;
+    textureViewDesc.mipLevelCount             = textureDesc.mipLevelCount;
     textureViewDesc.dimension                 = WGPUTextureViewDimension_2D;
     textureViewDesc.format                    = textureDesc.format;
 
@@ -414,9 +458,9 @@ int main(int argc, const char* argv[])
     samplerDesc.minFilter             = WGPUFilterMode_Linear;
     samplerDesc.mipmapFilter          = WGPUMipmapFilterMode_Linear;
     samplerDesc.lodMinClamp           = 0.0f;
-    samplerDesc.lodMaxClamp           = 1.0f;
+    samplerDesc.lodMaxClamp           = static_cast<float>(textureDesc.mipLevelCount);
     samplerDesc.compare               = WGPUCompareFunction_Undefined;
-    samplerDesc.maxAnisotropy         = 1;
+    samplerDesc.maxAnisotropy         = 1.0f;
 
     WGPUSampler sampler = wgpuDeviceCreateSampler(device, &samplerDesc);
     WEBGPU_DEMO_CHECK(sampler, "[WebGPU] Failed to create sampler");
@@ -635,12 +679,38 @@ int main(int argc, const char* argv[])
     WEBGPU_DEMO_CHECK(pipeline, "[WebGPU] Failed to create render pipeline");
     WEBGPU_DEMO_LOG("[WebGPU] Render pipeline created");
 
-    float rotation = 0.0f;
+    SLMat4f modelMatrix;
+
+    double lastCursorX = 0.0f;
+    double lastCursorY = 0.0f;
 
     // === Render loop ===
 
     while (!glfwWindowShouldClose(window))
     {
+        // === Update cube model matrix ===
+
+        double cursorX;
+        double cursorY;
+        glfwGetCursorPos(window, &cursorX, &cursorY);
+
+        SLMat4f rotationX;
+        SLMat4f rotationY;
+
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
+        {
+            float deltaRotX = 0.5f * static_cast<float>(cursorY - lastCursorY);
+            float deltaRotY = 0.5f * static_cast<float>(cursorX - lastCursorX);
+
+            rotationX.rotate(deltaRotX, SLVec3f::AXISX);
+            rotationY.rotate(deltaRotY, SLVec3f::AXISY);
+        }
+
+        modelMatrix = rotationY * rotationX * modelMatrix;
+
+        lastCursorX = cursorX;
+        lastCursorY = cursorY;
+
         // === Create a WebGPU texture view ===
         // The texture view is where we render our image into.
 
@@ -717,9 +787,6 @@ int main(int argc, const char* argv[])
 
         SLMat4f viewMatrix;
         viewMatrix.translate(0.0f, 0.0f, -2.0f);
-
-        SLMat4f modelMatrix;
-        modelMatrix.rotation(90.0f * static_cast<float>(glfwGetTime()), SLVec3f::AXISY);
 
         // === Update uniforms ===
         ShaderUniformData uniformData = {};
