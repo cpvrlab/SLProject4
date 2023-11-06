@@ -11,7 +11,6 @@
 #    define GLFW_EXPOSE_NATIVE_COCOA
 #    define GLFW_NATIVE_INCLUDE_NONE
 
-#    define OBJC_OLD_DISPATCH_PROTOTYPES 1
 #    include <objc/objc.h>
 #    include <objc/message.h>
 #    include <objc/runtime.h>
@@ -165,12 +164,18 @@ int main(int argc, const char* argv[])
 #elif defined(SYSTEM_DARWIN)
     id cocoaWindow = glfwGetCocoaWindow(window);
 
-    id contentView = objc_msgSend(cocoaWindow, sel_registerName("contentView"));
-    objc_msgSend(contentView, sel_getUid("setWantsLayer:"), 1);
+    // We call the Objective-C runtime directly to get the Metal surface.
+    
+    // We need to cast 'objc_msgSend' to appropiate function pointer types before calling them.
+    auto* sendMessageReturnId      = (id(*)(id, ...))objc_msgSend;
+    auto* sendMessageReturnNothing = (void (*)(id, ...))objc_msgSend;
+
+    id contentView = sendMessageReturnId(cocoaWindow, sel_getUid("contentView"));
+    sendMessageReturnNothing(contentView, sel_getUid("setWantsLayer:"), 1);
 
     objc_class* metalLayerClass = objc_getClass("CAMetalLayer");
-    id          metalLayer      = objc_msgSend((id)metalLayerClass, sel_getUid("layer"));
-    objc_msgSend(contentView, sel_registerName("setLayer:"), metalLayer);
+    id          metalLayer      = sendMessageReturnId((id)metalLayerClass, sel_getUid("layer"));
+    sendMessageReturnNothing(contentView, sel_registerName("setLayer:"), metalLayer);
 
     WGPUSurfaceDescriptorFromMetalLayer nativeSurfaceDesc = {};
     nativeSurfaceDesc.chain.sType                         = WGPUSType_SurfaceDescriptorFromMetalLayer;
@@ -388,8 +393,8 @@ int main(int argc, const char* argv[])
     // Generate mip levels.
 
     WGPUExtent3D mipLevelSize;
-    mipLevelSize.width = textureDesc.size.width;
-    mipLevelSize.height = textureDesc.size.height;
+    mipLevelSize.width              = textureDesc.size.width;
+    mipLevelSize.height             = textureDesc.size.height;
     mipLevelSize.depthOrArrayLayers = 1;
 
     for (unsigned mipLevel = 0; mipLevel < textureDesc.mipLevelCount; mipLevel++)
@@ -403,17 +408,17 @@ int main(int argc, const char* argv[])
         //     0x00FF00FF,
         //     0x0000FFFF
         // };
-        // 
+        //
         // for (unsigned y = 0; y < mipLevelSize.height; y++)
         // {
         //     for (unsigned x = 0; x < mipLevelSize.width; x++)
         //     {
         //         unsigned pixelIndex = x + y * mipLevelSize.width;
         //         std::memcpy(&mipLevelData[4ull * pixelIndex], &mipLevelColors[mipLevel], 4);
-        //     }   
+        //     }
         // }
 
-        cv::Mat mipLevelImage;
+        cv::Mat  mipLevelImage;
         cv::Size cvSize(static_cast<int>(mipLevelSize.width), static_cast<int>(mipLevelSize.height));
         cv::resize(image, mipLevelImage, cvSize);
 
@@ -725,7 +730,7 @@ int main(int argc, const char* argv[])
         {
             case WGPUSurfaceGetCurrentTextureStatus_Success:
                 // Everything is ok.
-                
+
                 // Check for a suboptimal texture and re-configure it if needed.
                 if (surfaceTexture.suboptimal)
                 {
