@@ -725,7 +725,20 @@ int main(int argc, const char* argv[])
         {
             case WGPUSurfaceGetCurrentTextureStatus_Success:
                 // Everything is ok.
-                // TODO: check for a suboptimal texture and re-configure it if needed.
+                
+                // Check for a suboptimal texture and re-configure it if needed.
+                if (surfaceTexture.suboptimal)
+                {
+                    WEBGPU_DEMO_LOG("[WebGPU] Re-configuring currently suboptimal surface");
+                    surfaceConfig.width  = surfaceWidth;
+                    surfaceConfig.height = surfaceHeight;
+                    wgpuSurfaceConfigure(surface, &surfaceConfig);
+
+                    // Skip this frame.
+                    glfwPollEvents();
+                    continue;
+                }
+
                 break;
 
             case WGPUSurfaceGetCurrentTextureStatus_Timeout:
