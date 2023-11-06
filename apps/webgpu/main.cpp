@@ -206,7 +206,7 @@ int main(int argc, const char* argv[])
     surfaceConfig.device                   = device;
     surfaceConfig.usage                    = WGPUTextureUsage_RenderAttachment;
     surfaceConfig.format                   = surfaceCapabilities.formats[0];
-    surfaceConfig.presentMode              = WGPUPresentMode_Mailbox;
+    surfaceConfig.presentMode              = WGPUPresentMode_Fifo;
     surfaceConfig.alphaMode                = surfaceCapabilities.alphaModes[0];
     surfaceConfig.width                    = surfaceWidth;
     surfaceConfig.height                   = surfaceHeight;
