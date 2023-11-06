@@ -23,11 +23,13 @@
 #include <GLFW/glfw3native.h>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
+#include <SLMat4.h>
 
 #include <iostream>
 #include <vector>
 #include <cstdlib>
 #include <cstdint>
+#include <cstring>
 
 #define WEBGPU_DEMO_LOG(msg) std::cout << (msg) << std::endl
 
@@ -37,6 +39,15 @@
         std::cerr << (errorMsg) << std::endl; \
         std::exit(1); \
     }
+
+struct alignas(16) ShaderUniformData
+{
+    float projectionMatrix[16];
+    float viewMatrix[16];
+    float modelMatrix[16];
+};
+
+static_assert(sizeof(ShaderUniformData) % 16 == 0, "uniform data size must be a multiple of 16");
 
 void handleAdapterRequest(WGPURequestAdapterStatus status,
                           WGPUAdapter              adapter,
@@ -104,18 +115,19 @@ int main(int argc, const char* argv[])
     // which is how WebGPU prevents code from working on one machine and not on another.
 
     WGPURequiredLimits requiredLimits                      = {};
-    requiredLimits.limits.maxVertexAttributes              = 1u;
+    requiredLimits.limits.maxVertexAttributes              = 2u;
     requiredLimits.limits.maxVertexBuffers                 = 1u;
-    requiredLimits.limits.maxBufferSize                    = 4ull * 2ull * sizeof(float);
-    requiredLimits.limits.maxVertexBufferArrayStride       = 2u * sizeof(float);
+    requiredLimits.limits.maxBufferSize                    = 1024ull;
+    requiredLimits.limits.maxVertexBufferArrayStride       = 5u * sizeof(float);
     requiredLimits.limits.maxInterStageShaderComponents    = 2u;
-    requiredLimits.limits.maxBindGroups                    = 2u;
-    requiredLimits.limits.maxBindingsPerBindGroup          = 2u;
+    requiredLimits.limits.maxBindGroups                    = 1u;
+    requiredLimits.limits.maxBindingsPerBindGroup          = 3u;
     requiredLimits.limits.maxUniformBuffersPerShaderStage  = 1u;
-    requiredLimits.limits.maxUniformBufferBindingSize      = 16ull * 4ull;
+    requiredLimits.limits.maxUniformBufferBindingSize      = 512ull;
     requiredLimits.limits.maxSampledTexturesPerShaderStage = 1u;
-    requiredLimits.limits.maxTextureDimension1D            = 2048;
-    requiredLimits.limits.maxTextureDimension2D            = 2048;
+    requiredLimits.limits.maxSamplersPerShaderStage        = 1u;
+    requiredLimits.limits.maxTextureDimension1D            = 4096;
+    requiredLimits.limits.maxTextureDimension2D            = 4096;
     requiredLimits.limits.maxTextureArrayLayers            = 1;
     requiredLimits.limits.minStorageBufferOffsetAlignment  = adapterLimits.limits.minStorageBufferOffsetAlignment;
     requiredLimits.limits.minUniformBufferOffsetAlignment  = adapterLimits.limits.minUniformBufferOffsetAlignment;
@@ -201,14 +213,57 @@ int main(int argc, const char* argv[])
     // clang-format off
     std::vector<float> vertexData =
     {
-      -0.5,  0.5, // top-left corner
-      -0.5, -0.5, // bottom-left corner
-       0.5,  0.5, // top-right corner
-       0.5, -0.5, // bottom-right corner
+		// left
+		-0.5,  0.5, -0.5,    0.0f, 0.0f,
+		-0.5, -0.5, -0.5,    0.0f, 1.0f,
+		-0.5,  0.5,  0.5,    1.0f, 0.0f,
+		-0.5,  0.5,  0.5,    1.0f, 0.0f,
+		-0.5, -0.5, -0.5,    0.0f, 1.0f,
+		-0.5, -0.5,  0.5,    1.0f, 1.0f,
+
+		// right
+		 0.5,  0.5,  0.5,    0.0f, 0.0f,
+		 0.5, -0.5,  0.5,    0.0f, 1.0f,
+		 0.5,  0.5, -0.5,    1.0f, 0.0f,
+		 0.5,  0.5, -0.5,    1.0f, 0.0f,
+		 0.5, -0.5,  0.5,    0.0f, 1.0f,
+		 0.5, -0.5, -0.5,    1.0f, 1.0f,
+
+		// bottom
+		-0.5, -0.5,  0.5,    0.0f, 0.0f,
+		-0.5, -0.5, -0.5,    0.0f, 1.0f,
+		 0.5, -0.5,  0.5,    1.0f, 0.0f,
+		 0.5, -0.5,  0.5,    1.0f, 0.0f,
+		-0.5, -0.5, -0.5,    0.0f, 1.0f,
+		 0.5, -0.5, -0.5,    1.0f, 1.0f,
+
+	    // top
+        -0.5,  0.5, -0.5,    0.0f, 0.0f,
+		-0.5,  0.5,  0.5,    0.0f, 1.0f,
+		 0.5,  0.5, -0.5,    1.0f, 0.0f,
+		 0.5,  0.5, -0.5,    1.0f, 0.0f,
+		-0.5,  0.5,  0.5,    0.0f, 1.0f,
+		 0.5,  0.5,  0.5,    1.0f, 1.0f,
+
+		// back
+		 0.5,  0.5, -0.5,    0.0f, 0.0f,
+		 0.5, -0.5, -0.5,    0.0f, 1.0f,
+		-0.5,  0.5, -0.5,    1.0f, 0.0f,
+		-0.5,  0.5, -0.5,    1.0f, 0.0f,
+		 0.5, -0.5, -0.5,    0.0f, 1.0f,
+		-0.5, -0.5, -0.5,    1.0f, 1.0f,
+	
+		// front
+		-0.5,  0.5,  0.5,    0.0f, 0.0f,
+		-0.5, -0.5,  0.5,    0.0f, 1.0f,
+		 0.5,  0.5,  0.5,    1.0f, 0.0f,
+		 0.5,  0.5,  0.5,    1.0f, 0.0f,
+		-0.5, -0.5,  0.5,    0.0f, 1.0f,
+		 0.5, -0.5,  0.5,    1.0f, 1.0f,
     };
     // clang-format on
 
-    unsigned vertexCount    = vertexData.size() / 2;
+    unsigned vertexCount    = vertexData.size() / 5;
     unsigned vertexDataSize = vertexData.size() * sizeof(float);
 
     WGPUBufferDescriptor vertexBufferDesc = {};
@@ -225,13 +280,9 @@ int main(int argc, const char* argv[])
 
     // === Create the index buffer ===
 
-    // clang-format off
-    std::vector<std::uint16_t> indexData =
-    {
-        0, 1, 2,
-        2, 1, 3,
-    };
-    // clang-format on
+    std::vector<std::uint16_t> indexData = {};
+    for (std::uint16_t index = 0; index < 36; index++)
+        indexData.push_back(index);
 
     unsigned indexCount    = indexData.size();
     unsigned indexDataSize = indexData.size() * sizeof(std::uint16_t);
@@ -251,23 +302,56 @@ int main(int argc, const char* argv[])
 
     WGPUBufferDescriptor uniformBufferDesc = {};
     uniformBufferDesc.label                = "Demo Uniform Buffer";
-    uniformBufferDesc.size                 = sizeof(float);
+    uniformBufferDesc.size                 = sizeof(ShaderUniformData);
     uniformBufferDesc.usage                = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Uniform;
 
     WGPUBuffer uniformBuffer = wgpuDeviceCreateBuffer(device, &uniformBufferDesc);
     WEBGPU_DEMO_CHECK(indexBuffer, "[WebGPU] Failed to create uniform buffer");
     WEBGPU_DEMO_LOG("[WebGPU] Uniform buffer created");
 
-    float uniformBufferData = 0.0f;
-    wgpuQueueWriteBuffer(queue, uniformBuffer, 0, &uniformBufferData, sizeof(float));
+    ShaderUniformData uniformData = {};
+    wgpuQueueWriteBuffer(queue, uniformBuffer, 0, &uniformData, sizeof(ShaderUniformData));
+
+    // === Create the depth texture ===
+
+    WGPUTextureFormat depthTextureFormat = WGPUTextureFormat_Depth24Plus;
+
+    WGPUTextureDescriptor depthTextureDesc   = {};
+    depthTextureDesc.dimension               = WGPUTextureDimension_2D;
+    depthTextureDesc.format                  = depthTextureFormat;
+    depthTextureDesc.mipLevelCount           = 1;
+    depthTextureDesc.sampleCount             = 1;
+    depthTextureDesc.size.width              = surfaceWidth;
+    depthTextureDesc.size.height             = surfaceHeight;
+    depthTextureDesc.size.depthOrArrayLayers = 1;
+    depthTextureDesc.usage                   = WGPUTextureUsage_RenderAttachment;
+    depthTextureDesc.viewFormatCount         = 1;
+    depthTextureDesc.viewFormats             = &depthTextureFormat;
+
+    WGPUTexture depthTexture = wgpuDeviceCreateTexture(device, &depthTextureDesc);
+    WEBGPU_DEMO_CHECK(depthTexture, "[WebGPU] Failed to create depth texture");
+    WEBGPU_DEMO_LOG("[WebGPU] Depth texture created");
+
+    WGPUTextureViewDescriptor depthTextureViewDesc = {};
+    depthTextureViewDesc.aspect                    = WGPUTextureAspect_DepthOnly;
+    depthTextureViewDesc.baseArrayLayer            = 0;
+    depthTextureViewDesc.arrayLayerCount           = 1;
+    depthTextureViewDesc.baseMipLevel              = 0;
+    depthTextureViewDesc.mipLevelCount             = 1;
+    depthTextureViewDesc.dimension                 = WGPUTextureViewDimension_2D;
+    depthTextureViewDesc.format                    = depthTextureFormat;
+
+    WGPUTextureView depthTextureView = wgpuTextureCreateView(depthTexture, &depthTextureViewDesc);
+    WEBGPU_DEMO_CHECK(depthTextureView, "[WebGPU] Failed to create depth texture view");
+    WEBGPU_DEMO_LOG("[WebGPU] Depth texture view created");
 
     // === Create the texture ===
 
     cv::Mat image = cv::imread(std::string(SL_PROJECT_ROOT) + "/data/images/textures/brickwall0512_C.jpg");
     cv::cvtColor(image, image, cv::COLOR_BGR2RGBA);
 
-    unsigned imageWidth = image.cols;
-    unsigned imageHeight = image.rows;
+    unsigned imageWidth    = image.cols;
+    unsigned imageHeight   = image.rows;
     unsigned pixelDataSize = 4 * imageWidth * imageHeight;
 
     WGPUTextureDescriptor textureDesc   = {};
@@ -317,33 +401,67 @@ int main(int argc, const char* argv[])
     WEBGPU_DEMO_CHECK(textureView, "[WebGPU] Failed to create texture view");
     WEBGPU_DEMO_LOG("[WebGPU] Texture view created");
 
+    // === Create the texture sampler ===
+    // The sampler is used to look up values of the texture in the shader.
+    // We could look up values directly without a sampler, but with a sampler we
+    // get access to features like interpolation and mipmapping.
+
+    WGPUSamplerDescriptor samplerDesc = {};
+    samplerDesc.addressModeU          = WGPUAddressMode_ClampToEdge;
+    samplerDesc.addressModeV          = WGPUAddressMode_ClampToEdge;
+    samplerDesc.addressModeW          = WGPUAddressMode_ClampToEdge;
+    samplerDesc.magFilter             = WGPUFilterMode_Linear;
+    samplerDesc.minFilter             = WGPUFilterMode_Linear;
+    samplerDesc.mipmapFilter          = WGPUMipmapFilterMode_Linear;
+    samplerDesc.lodMinClamp           = 0.0f;
+    samplerDesc.lodMaxClamp           = 1.0f;
+    samplerDesc.compare               = WGPUCompareFunction_Undefined;
+    samplerDesc.maxAnisotropy         = 1;
+
+    WGPUSampler sampler = wgpuDeviceCreateSampler(device, &samplerDesc);
+    WEBGPU_DEMO_CHECK(sampler, "[WebGPU] Failed to create sampler");
+    WEBGPU_DEMO_LOG("[WebGPU] Sampler created");
+
     // === Create the shader module ===
     // Create a shader module for use in our render pipeline.
     // Shaders are written in a WebGPU-specific language called WGSL (WebGPU shader language).
     // Shader modules can be used in multiple pipeline stages by specifying different entry points.
 
     const char* shaderSource = R"(
-        @group(0) @binding(0) var<uniform> u_time: f32;
-        @group(0) @binding(1) var texture: texture_2d<f32>;
+        struct VertexInput {
+            @location(0) position: vec3f,
+            @location(1) uvs: vec2f,
+        };
+
+        struct Uniforms {
+            projectionMatrix: mat4x4f,
+            viewMatrix: mat4x4f,
+            modelMatrix: mat4x4f,
+        };
 
         struct VertexOutput {
             @builtin(position) position: vec4f,
-            @location(0) texture_coords: vec2f,
+            @location(0) uvs: vec2f,
         }
+        
+        @group(0) @binding(0) var<uniform> uniforms: Uniforms;
+        @group(0) @binding(1) var texture: texture_2d<f32>;
+        @group(0) @binding(2) var textureSampler: sampler;
 
         @vertex
-        fn vs_main(@location(0) in_vertex_position: vec2f) -> VertexOutput {
-            var offset = vec2(0.5 * sin(u_time), 0.5 * cos(u_time));
-            
+        fn vs_main(in: VertexInput) -> VertexOutput {
+            var localPos = vec4f(in.position, 1.0);
+            var worldPos = uniforms.modelMatrix * localPos;
+
             var out: VertexOutput;
-            out.position = vec4f(in_vertex_position + offset, 0.0, 1.0);
-            out.texture_coords = in_vertex_position + vec2(0.5, 0.5);
+            out.position = uniforms.projectionMatrix * uniforms.viewMatrix * worldPos;
+            out.uvs = in.uvs;
             return out;
         }
 
         @fragment
         fn fs_main(in: VertexOutput) -> @location(0) vec4f {
-            return textureLoad(texture, vec2i(i32(512.0 * in.texture_coords.x), i32(512.0 * in.texture_coords.y)), 0).rgba;
+            return textureSample(texture, textureSampler, in.uvs).rgba;
         }
     )";
 
@@ -363,20 +481,28 @@ int main(int argc, const char* argv[])
     // Bind groups contain binding layouts that describe how uniforms and textures are passed to shaders.
 
     // Entry for the uniform
-    WGPUBindGroupLayoutEntry uniformLayout = {};
-    uniformLayout.binding                  = 0;
-    uniformLayout.visibility               = WGPUShaderStage_Vertex;
-    uniformLayout.buffer.type              = WGPUBufferBindingType_Uniform;
-    uniformLayout.buffer.minBindingSize    = sizeof(float);
+    WGPUBindGroupLayoutEntry uniformBindLayout = {};
+    uniformBindLayout.binding                  = 0;
+    uniformBindLayout.visibility               = WGPUShaderStage_Vertex;
+    uniformBindLayout.buffer.type              = WGPUBufferBindingType_Uniform;
+    uniformBindLayout.buffer.minBindingSize    = sizeof(ShaderUniformData);
 
     // Entry for the texture
-    WGPUBindGroupLayoutEntry textureLayout = {};
-    textureLayout.binding                  = 1;
-    textureLayout.visibility               = WGPUShaderStage_Fragment;
-    textureLayout.texture.sampleType       = WGPUTextureSampleType_Float;
-    textureLayout.texture.viewDimension    = WGPUTextureViewDimension_2D;
+    WGPUBindGroupLayoutEntry textureBindLayout = {};
+    textureBindLayout.binding                  = 1;
+    textureBindLayout.visibility               = WGPUShaderStage_Fragment;
+    textureBindLayout.texture.sampleType       = WGPUTextureSampleType_Float;
+    textureBindLayout.texture.viewDimension    = WGPUTextureViewDimension_2D;
 
-    std::vector<WGPUBindGroupLayoutEntry> bindGroupLayoutEntries = {uniformLayout, textureLayout};
+    // Entry for the sampler
+    WGPUBindGroupLayoutEntry samplerBindLayout = {};
+    samplerBindLayout.binding                  = 2;
+    samplerBindLayout.visibility               = WGPUShaderStage_Fragment;
+    samplerBindLayout.sampler.type             = WGPUSamplerBindingType_Filtering;
+
+    std::vector<WGPUBindGroupLayoutEntry> bindGroupLayoutEntries = {uniformBindLayout,
+                                                                    textureBindLayout,
+                                                                    samplerBindLayout};
 
     WGPUBindGroupLayoutDescriptor bindGroupLayoutDesc = {};
     bindGroupLayoutDesc.label                         = "Demo Bind Group Layout";
@@ -390,16 +516,22 @@ int main(int argc, const char* argv[])
     // The bind group actually binds the buffer to uniforms and textures.
 
     WGPUBindGroupEntry uniformBinding = {};
-    uniformBinding.binding             = 0;
-    uniformBinding.buffer              = uniformBuffer;
-    uniformBinding.offset              = 0;
-    uniformBinding.size                = sizeof(float);
+    uniformBinding.binding            = 0;
+    uniformBinding.buffer             = uniformBuffer;
+    uniformBinding.offset             = 0;
+    uniformBinding.size               = sizeof(ShaderUniformData);
 
     WGPUBindGroupEntry textureBinding = {};
-    textureBinding.binding             = 1;
-    textureBinding.textureView         = textureView;
+    textureBinding.binding            = 1;
+    textureBinding.textureView        = textureView;
 
-    std::vector<WGPUBindGroupEntry> bindGroupEntries = {uniformBinding, textureBinding};
+    WGPUBindGroupEntry samplerBinding = {};
+    samplerBinding.binding            = 2;
+    samplerBinding.sampler            = sampler;
+
+    std::vector<WGPUBindGroupEntry> bindGroupEntries = {uniformBinding,
+                                                        textureBinding,
+                                                        samplerBinding};
 
     WGPUBindGroupDescriptor bindGroupDesc = {};
     bindGroupDesc.layout                  = bindGroupLayout;
@@ -424,18 +556,25 @@ int main(int argc, const char* argv[])
     // The render pipeline specifies the configuration for the fixed-function stages as well as
     // the shaders for the programmable stages of the hardware pipeline.
 
-    // Description of the vertex attribute for the vertex buffer layout
-    WGPUVertexAttribute vertexAttribute = {};
-    vertexAttribute.format              = WGPUVertexFormat_Float32x2;
-    vertexAttribute.offset              = 0;
-    vertexAttribute.shaderLocation      = 0;
+    // Description of the vertex attributes for the vertex buffer layout
+    WGPUVertexAttribute positionAttribute = {};
+    positionAttribute.format              = WGPUVertexFormat_Float32x3;
+    positionAttribute.offset              = 0;
+    positionAttribute.shaderLocation      = 0;
+
+    WGPUVertexAttribute uvsAttribute = {};
+    uvsAttribute.format              = WGPUVertexFormat_Float32x2;
+    uvsAttribute.offset              = 3 * sizeof(float);
+    uvsAttribute.shaderLocation      = 1;
+
+    std::vector<WGPUVertexAttribute> vertexAttributes = {positionAttribute, uvsAttribute};
 
     // Description of the vertex buffer layout for the vertex shader stage
     WGPUVertexBufferLayout vertexBufferLayout = {};
-    vertexBufferLayout.arrayStride            = 2ull * sizeof(float);
+    vertexBufferLayout.arrayStride            = 5ull * sizeof(float);
     vertexBufferLayout.stepMode               = WGPUVertexStepMode_Vertex;
-    vertexBufferLayout.attributeCount         = 1;
-    vertexBufferLayout.attributes             = &vertexAttribute;
+    vertexBufferLayout.attributeCount         = vertexAttributes.size();
+    vertexBufferLayout.attributes             = vertexAttributes.data();
 
     // Configuration for the vertex shader stage
     WGPUVertexState vertexState = {};
@@ -450,6 +589,22 @@ int main(int argc, const char* argv[])
     primitiveState.stripIndexFormat   = WGPUIndexFormat_Undefined;
     primitiveState.frontFace          = WGPUFrontFace_CCW;
     primitiveState.cullMode           = WGPUCullMode_None;
+
+    // Configuration for depth testing and stencil buffer
+    WGPUDepthStencilState depthStencilState    = {};
+    depthStencilState.format                   = depthTextureFormat;
+    depthStencilState.depthWriteEnabled        = true;
+    depthStencilState.depthCompare             = WGPUCompareFunction_Less;
+    depthStencilState.stencilReadMask          = 0;
+    depthStencilState.stencilWriteMask         = 0;
+    depthStencilState.stencilFront.compare     = WGPUCompareFunction_Always;
+    depthStencilState.stencilFront.failOp      = WGPUStencilOperation_Keep;
+    depthStencilState.stencilFront.depthFailOp = WGPUStencilOperation_Keep;
+    depthStencilState.stencilFront.passOp      = WGPUStencilOperation_Keep;
+    depthStencilState.stencilBack.compare      = WGPUCompareFunction_Always;
+    depthStencilState.stencilBack.failOp       = WGPUStencilOperation_Keep;
+    depthStencilState.stencilBack.depthFailOp  = WGPUStencilOperation_Keep;
+    depthStencilState.stencilBack.passOp       = WGPUStencilOperation_Keep;
 
     // Configuration for multisampling
     WGPUMultisampleState multisampleState = {};
@@ -472,12 +627,15 @@ int main(int argc, const char* argv[])
     pipelineDesc.layout                       = pipelineLayout;
     pipelineDesc.vertex                       = vertexState;
     pipelineDesc.primitive                    = primitiveState;
+    pipelineDesc.depthStencil                 = &depthStencilState;
     pipelineDesc.multisample                  = multisampleState;
     pipelineDesc.fragment                     = &fragmentState;
 
     WGPURenderPipeline pipeline = wgpuDeviceCreateRenderPipeline(device, &pipelineDesc);
     WEBGPU_DEMO_CHECK(pipeline, "[WebGPU] Failed to create render pipeline");
     WEBGPU_DEMO_LOG("[WebGPU] Render pipeline created");
+
+    float rotation = 0.0f;
 
     // === Render loop ===
 
@@ -515,6 +673,23 @@ int main(int argc, const char* argv[])
                     surfaceConfig.width  = surfaceWidth;
                     surfaceConfig.height = surfaceHeight;
                     wgpuSurfaceConfigure(surface, &surfaceConfig);
+
+                    // Recreate the depth texture.
+
+                    wgpuTextureViewRelease(textureView);
+                    wgpuTextureDestroy(depthTexture);
+                    wgpuTextureRelease(depthTexture);
+
+                    depthTextureDesc.size.width  = surfaceWidth;
+                    depthTextureDesc.size.height = surfaceHeight;
+
+                    depthTexture = wgpuDeviceCreateTexture(device, &depthTextureDesc);
+                    WEBGPU_DEMO_CHECK(depthTexture, "[WebGPU] Failed to re-create depth texture");
+                    WEBGPU_DEMO_LOG("[WebGPU] Depth texture re-created");
+
+                    depthTextureView = wgpuTextureCreateView(depthTexture, &depthTextureViewDesc);
+                    WEBGPU_DEMO_CHECK(depthTextureView, "[WebGPU] Failed to re-create depth texture view");
+                    WEBGPU_DEMO_LOG("[WebGPU] Depth texture view re-created");
                 }
 
                 // Skip this frame.
@@ -534,9 +709,24 @@ int main(int argc, const char* argv[])
         // Create a view into the texture to specify where and how to modify the texture.
         WGPUTextureView view = wgpuTextureCreateView(surfaceTexture.texture, nullptr);
 
-        // === Update the uniform ===
-        float time = static_cast<float>(glfwGetTime());
-        wgpuQueueWriteBuffer(queue, uniformBuffer, 0, &time, sizeof(float));
+        // === Prepare uniform data ===
+        float aspectRatio = static_cast<float>(surfaceWidth) / static_cast<float>(surfaceHeight);
+
+        SLMat4f projectionMatrix;
+        projectionMatrix.perspective(70.0f, aspectRatio, 0.1, 1000.0f);
+
+        SLMat4f viewMatrix;
+        viewMatrix.translate(0.0f, 0.0f, -2.0f);
+
+        SLMat4f modelMatrix;
+        modelMatrix.rotation(90.0f * static_cast<float>(glfwGetTime()), SLVec3f::AXISY);
+
+        // === Update uniforms ===
+        ShaderUniformData uniformData = {};
+        std::memcpy(uniformData.projectionMatrix, projectionMatrix.m(), sizeof(uniformData.projectionMatrix));
+        std::memcpy(uniformData.viewMatrix, viewMatrix.m(), sizeof(uniformData.viewMatrix));
+        std::memcpy(uniformData.modelMatrix, modelMatrix.m(), sizeof(uniformData.modelMatrix));
+        wgpuQueueWriteBuffer(queue, uniformBuffer, 0, &uniformData, sizeof(ShaderUniformData));
 
         // === Create a WebGPU command encoder ===
         // The encoder encodes the commands for the GPU into a command buffer.
@@ -551,6 +741,7 @@ int main(int argc, const char* argv[])
         // The render pass specifies what attachments to use while rendering.
         // A color attachment specifies what view to render into and what to do with the texture before and after
         // rendering. We clear the texture before rendering and store the results after rendering.
+        // The depth attachment specifies what depth texture to use.
 
         WGPURenderPassColorAttachment colorAttachment = {};
         colorAttachment.view                          = view;
@@ -561,10 +752,22 @@ int main(int argc, const char* argv[])
         colorAttachment.clearValue.b                  = 0.2;
         colorAttachment.clearValue.a                  = 1.0;
 
+        WGPURenderPassDepthStencilAttachment depthStencilAttachment = {};
+        depthStencilAttachment.view                                 = depthTextureView;
+        depthStencilAttachment.depthLoadOp                          = WGPULoadOp_Clear;
+        depthStencilAttachment.depthStoreOp                         = WGPUStoreOp_Store;
+        depthStencilAttachment.depthClearValue                      = 1.0f;
+        depthStencilAttachment.depthReadOnly                        = false;
+        depthStencilAttachment.stencilLoadOp                        = WGPULoadOp_Clear;
+        depthStencilAttachment.stencilStoreOp                       = WGPUStoreOp_Store;
+        depthStencilAttachment.stencilClearValue                    = 0.0f;
+        depthStencilAttachment.stencilReadOnly                      = true;
+
         WGPURenderPassDescriptor renderPassDesc = {};
         renderPassDesc.label                    = "Demo Render Pass";
         renderPassDesc.colorAttachmentCount     = 1;
         renderPassDesc.colorAttachments         = &colorAttachment;
+        renderPassDesc.depthStencilAttachment   = &depthStencilAttachment;
 
         // === Encode the commands ===
         // The commands to begin a render pass, bind a pipeline, draw the triangle and end the render pass
@@ -611,9 +814,13 @@ int main(int argc, const char* argv[])
     wgpuBindGroupRelease(bindGroup);
     wgpuBindGroupLayoutRelease(bindGroupLayout);
     wgpuShaderModuleRelease(shaderModule);
+    wgpuSamplerRelease(sampler);
     wgpuTextureViewRelease(textureView);
     wgpuTextureDestroy(texture);
     wgpuTextureRelease(texture);
+    wgpuTextureViewRelease(depthTextureView);
+    wgpuTextureDestroy(depthTexture);
+    wgpuTextureRelease(depthTexture);
     wgpuBufferDestroy(uniformBuffer);
     wgpuBufferRelease(uniformBuffer);
     wgpuBufferDestroy(indexBuffer);
