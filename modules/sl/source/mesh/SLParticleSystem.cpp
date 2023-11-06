@@ -886,7 +886,7 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
 
     ///////////////////////
     if (_renderInstanced)
-        SLMesh::draw(sv, node, _amount);
+        SLMesh::draw(sv, node, 2*_amount); //2 triangles per particle
     else
         SLMesh::draw(sv, node);
     ///////////////////////
