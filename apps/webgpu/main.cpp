@@ -7,7 +7,9 @@
 #    define SYSTEM_LINUX
 #    define GLFW_EXPOSE_NATIVE_X11
 #elif defined(__APPLE__)
-#    define SYSTEM_DARWIN
+#    ifndef SYSTEM_DARWIN
+#        define SYSTEM_DARWIN
+#    endif
 #    define GLFW_EXPOSE_NATIVE_COCOA
 #endif
 
