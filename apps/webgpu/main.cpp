@@ -9,12 +9,6 @@
 #elif defined(__APPLE__)
 #    define SYSTEM_DARWIN
 #    define GLFW_EXPOSE_NATIVE_COCOA
-#    define GLFW_NATIVE_INCLUDE_NONE
-
-#    include <objc/objc.h>
-#    include <objc/message.h>
-#    include <objc/runtime.h>
-#    include <ApplicationServices/ApplicationServices.h>
 #endif
 
 #include <webgpu.h>
@@ -48,6 +42,10 @@ struct alignas(16) ShaderUniformData
 };
 
 static_assert(sizeof(ShaderUniformData) % 16 == 0, "uniform data size must be a multiple of 16");
+
+#ifdef SYSTEM_DARWIN
+extern "C" void* createMetalLayer(void* window);
+#endif
 
 void handleAdapterRequest(WGPURequestAdapterStatus status,
                           WGPUAdapter              adapter,
@@ -162,24 +160,9 @@ int main(int argc, const char* argv[])
     nativeSurfaceDesc.display                             = glfwGetX11Display();
     nativeSurfaceDesc.window                              = glfwGetX11Window(window);
 #elif defined(SYSTEM_DARWIN)
-    id cocoaWindow = glfwGetCocoaWindow(window);
-
-    // We call the Objective-C runtime directly to get the Metal surface.
-    
-    // We need to cast 'objc_msgSend' to appropiate function pointer types before calling them.
-    auto* sendMessageReturnId      = (id(*)(id, ...))objc_msgSend;
-    auto* sendMessageReturnNothing = (void (*)(id, ...))objc_msgSend;
-
-    id contentView = sendMessageReturnId(cocoaWindow, sel_getUid("contentView"));
-    sendMessageReturnNothing(contentView, sel_getUid("setWantsLayer:"), 1);
-
-    objc_class* metalLayerClass = objc_getClass("CAMetalLayer");
-    id          metalLayer      = sendMessageReturnId((id)metalLayerClass, sel_getUid("layer"));
-    sendMessageReturnNothing(contentView, sel_registerName("setLayer:"), metalLayer);
-
     WGPUSurfaceDescriptorFromMetalLayer nativeSurfaceDesc = {};
     nativeSurfaceDesc.chain.sType                         = WGPUSType_SurfaceDescriptorFromMetalLayer;
-    nativeSurfaceDesc.layer                               = metalLayer;
+    nativeSurfaceDesc.layer                               = createMetalLayer(glfwGetCocoaWindow(window));
 #endif
 
     WGPUSurfaceDescriptor surfaceDesc = {};
