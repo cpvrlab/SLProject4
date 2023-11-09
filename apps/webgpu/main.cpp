@@ -130,7 +130,7 @@ int main(int argc, const char* argv[])
 
     // === Acquire a WebGPU device ===
     // A device provides access to a GPU and is created from an adapter.
-    // We specify the capabilites that we require our device to have in requiredLimits.
+    // We specify the capabilities that we require our device to have in requiredLimits.
     // We cannot access more resources than specified in the required limits,
     // which is how WebGPU prevents code from working on one machine and not on another.
 
