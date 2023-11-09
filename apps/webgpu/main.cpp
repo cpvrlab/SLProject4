@@ -34,6 +34,14 @@
         std::exit(1); \
     }
 
+struct AppData
+{
+    WGPUDevice  device = nullptr;
+    WGPUSurface surface = nullptr;
+
+    bool requireSurfaceReconfiguration = false;
+};
+
 struct alignas(16) ShaderUniformData
 {
     float projectionMatrix[16];
@@ -46,6 +54,12 @@ static_assert(sizeof(ShaderUniformData) % 16 == 0, "uniform data size must be a 
 #ifdef SYSTEM_DARWIN
 extern "C" void* createMetalLayer(void* window);
 #endif
+
+void onWindowResized(GLFWwindow* window, int width, int height)
+{
+    AppData& app = *((AppData*)glfwGetWindowUserPointer(window));
+    app.requireSurfaceReconfiguration = true;
+}
 
 void handleAdapterRequest(WGPURequestAdapterStatus status,
                           WGPUAdapter              adapter,
@@ -75,6 +89,8 @@ void handleDeviceRequest(WGPURequestDeviceStatus status,
 
 int main(int argc, const char* argv[])
 {
+    AppData app;
+
     // === Initialize GLFW ===
 
     WEBGPU_DEMO_CHECK(glfwInit(), "[GLFW] Failed to initialize");
@@ -86,7 +102,11 @@ int main(int argc, const char* argv[])
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
     GLFWwindow* window = glfwCreateWindow(1280, 720, "WebGPU Demo", nullptr, nullptr);
-    WEBGPU_DEMO_CHECK(window, "[GLFW] Window created");
+    WEBGPU_DEMO_CHECK(window, "[GLFW] Failed to create window");
+    WEBGPU_DEMO_LOG("[GLFW] Window created");
+
+    glfwSetWindowUserPointer(window, &app);
+    glfwSetWindowSizeCallback(window, onWindowResized);
 
     // === Create a WebGPU instance ===
     // The instance is the root interface to WebGPU through which we create all other WebGPU resources.
@@ -135,13 +155,12 @@ int main(int argc, const char* argv[])
     deviceDesc.requiredLimits       = &requiredLimits;
     deviceDesc.defaultQueue.label   = "Demo Queue";
 
-    WGPUDevice device;
-    wgpuAdapterRequestDevice(adapter, &deviceDesc, handleDeviceRequest, &device);
+    wgpuAdapterRequestDevice(adapter, &deviceDesc, handleDeviceRequest, &app.device);
 
     // === Acquire a WebGPU queue ===
     // The queue is where the commands for the GPU are submitted to.
 
-    WGPUQueue queue = wgpuDeviceGetQueue(device);
+    WGPUQueue queue = wgpuDeviceGetQueue(app.device);
     WEBGPU_DEMO_CHECK(queue, "[WebGPU] Failed to acquire queue");
     WEBGPU_DEMO_LOG("[WebGPU] Queue acquired");
 
@@ -169,8 +188,8 @@ int main(int argc, const char* argv[])
     surfaceDesc.label                 = "Demo Surface";
     surfaceDesc.nextInChain           = (const WGPUChainedStruct*)&nativeSurfaceDesc;
 
-    WGPUSurface surface = wgpuInstanceCreateSurface(instance, &surfaceDesc);
-    WEBGPU_DEMO_CHECK(surface, "[WebGPU] Failed to create surface");
+    app.surface = wgpuInstanceCreateSurface(instance, &surfaceDesc);
+    WEBGPU_DEMO_CHECK(app.surface, "[WebGPU] Failed to create surface");
     WEBGPU_DEMO_LOG("[WebGPU] Surface created");
 
     // === Configure the surface ===
@@ -178,7 +197,7 @@ int main(int argc, const char* argv[])
 
     // Query the surface capabilities from the adapter.
     WGPUSurfaceCapabilities surfaceCapabilities;
-    wgpuSurfaceGetCapabilities(surface, adapter, &surfaceCapabilities);
+    wgpuSurfaceGetCapabilities(app.surface, adapter, &surfaceCapabilities);
 
     // Get the window size from the GLFW window.
     int surfaceWidth;
@@ -186,14 +205,14 @@ int main(int argc, const char* argv[])
     glfwGetWindowSize(window, &surfaceWidth, &surfaceHeight);
 
     WGPUSurfaceConfiguration surfaceConfig = {};
-    surfaceConfig.device                   = device;
+    surfaceConfig.device                   = app.device;
     surfaceConfig.usage                    = WGPUTextureUsage_RenderAttachment;
     surfaceConfig.format                   = surfaceCapabilities.formats[0];
     surfaceConfig.presentMode              = WGPUPresentMode_Fifo;
     surfaceConfig.alphaMode                = surfaceCapabilities.alphaModes[0];
     surfaceConfig.width                    = surfaceWidth;
     surfaceConfig.height                   = surfaceHeight;
-    wgpuSurfaceConfigure(surface, &surfaceConfig);
+    wgpuSurfaceConfigure(app.surface, &surfaceConfig);
     WEBGPU_DEMO_LOG("[WebGPU] Surface configured");
 
     // === Create the vertex buffer ===
@@ -260,7 +279,7 @@ int main(int argc, const char* argv[])
     vertexBufferDesc.size                 = vertexDataSize;
     vertexBufferDesc.usage                = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Vertex;
 
-    WGPUBuffer vertexBuffer = wgpuDeviceCreateBuffer(device, &vertexBufferDesc);
+    WGPUBuffer vertexBuffer = wgpuDeviceCreateBuffer(app.device, &vertexBufferDesc);
     WEBGPU_DEMO_CHECK(vertexBuffer, "[WebGPU] Failed to create vertex buffer");
     WEBGPU_DEMO_LOG("[WebGPU] Vertex buffer created");
 
@@ -281,7 +300,7 @@ int main(int argc, const char* argv[])
     indexBufferDesc.size                 = indexDataSize;
     indexBufferDesc.usage                = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Index;
 
-    WGPUBuffer indexBuffer = wgpuDeviceCreateBuffer(device, &indexBufferDesc);
+    WGPUBuffer indexBuffer = wgpuDeviceCreateBuffer(app.device, &indexBufferDesc);
     WEBGPU_DEMO_CHECK(indexBuffer, "[WebGPU] Failed to create index buffer");
     WEBGPU_DEMO_LOG("[WebGPU] Index buffer created");
 
@@ -294,7 +313,7 @@ int main(int argc, const char* argv[])
     uniformBufferDesc.size                 = sizeof(ShaderUniformData);
     uniformBufferDesc.usage                = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Uniform;
 
-    WGPUBuffer uniformBuffer = wgpuDeviceCreateBuffer(device, &uniformBufferDesc);
+    WGPUBuffer uniformBuffer = wgpuDeviceCreateBuffer(app.device, &uniformBufferDesc);
     WEBGPU_DEMO_CHECK(indexBuffer, "[WebGPU] Failed to create uniform buffer");
     WEBGPU_DEMO_LOG("[WebGPU] Uniform buffer created");
 
@@ -317,7 +336,7 @@ int main(int argc, const char* argv[])
     depthTextureDesc.viewFormatCount         = 1;
     depthTextureDesc.viewFormats             = &depthTextureFormat;
 
-    WGPUTexture depthTexture = wgpuDeviceCreateTexture(device, &depthTextureDesc);
+    WGPUTexture depthTexture = wgpuDeviceCreateTexture(app.device, &depthTextureDesc);
     WEBGPU_DEMO_CHECK(depthTexture, "[WebGPU] Failed to create depth texture");
     WEBGPU_DEMO_LOG("[WebGPU] Depth texture created");
 
@@ -354,7 +373,7 @@ int main(int argc, const char* argv[])
     textureDesc.mipLevelCount           = 4;
     textureDesc.sampleCount             = 1;
 
-    WGPUTexture texture = wgpuDeviceCreateTexture(device, &textureDesc);
+    WGPUTexture texture = wgpuDeviceCreateTexture(app.device, &textureDesc);
     WEBGPU_DEMO_CHECK(texture, "[WebGPU] Failed to create texture");
     WEBGPU_DEMO_LOG("[WebGPU] Texture created");
 
@@ -450,7 +469,7 @@ int main(int argc, const char* argv[])
     samplerDesc.compare               = WGPUCompareFunction_Undefined;
     samplerDesc.maxAnisotropy         = 1.0f;
 
-    WGPUSampler sampler = wgpuDeviceCreateSampler(device, &samplerDesc);
+    WGPUSampler sampler = wgpuDeviceCreateSampler(app.device, &samplerDesc);
     WEBGPU_DEMO_CHECK(sampler, "[WebGPU] Failed to create sampler");
     WEBGPU_DEMO_LOG("[WebGPU] Sampler created");
 
@@ -505,7 +524,7 @@ int main(int argc, const char* argv[])
     shaderModuleDesc.label                      = "Demo Shader";
     shaderModuleDesc.nextInChain                = (const WGPUChainedStruct*)&shaderModuleWGSLDesc;
 
-    WGPUShaderModule shaderModule = wgpuDeviceCreateShaderModule(device, &shaderModuleDesc);
+    WGPUShaderModule shaderModule = wgpuDeviceCreateShaderModule(app.device, &shaderModuleDesc);
     WEBGPU_DEMO_CHECK(shaderModule, "[WebGPU] Failed to create shader module");
     WEBGPU_DEMO_LOG("[WebGPU] Shader module created");
 
@@ -540,7 +559,7 @@ int main(int argc, const char* argv[])
     bindGroupLayoutDesc.label                         = "Demo Bind Group Layout";
     bindGroupLayoutDesc.entryCount                    = bindGroupLayoutEntries.size();
     bindGroupLayoutDesc.entries                       = bindGroupLayoutEntries.data();
-    WGPUBindGroupLayout bindGroupLayout               = wgpuDeviceCreateBindGroupLayout(device, &bindGroupLayoutDesc);
+    WGPUBindGroupLayout bindGroupLayout               = wgpuDeviceCreateBindGroupLayout(app.device, &bindGroupLayoutDesc);
     WEBGPU_DEMO_CHECK(bindGroupLayout, "[WebGPU] Failed to create bind group layout");
     WEBGPU_DEMO_LOG("[WebGPU] Bind group layout created");
 
@@ -569,7 +588,7 @@ int main(int argc, const char* argv[])
     bindGroupDesc.layout                  = bindGroupLayout;
     bindGroupDesc.entryCount              = bindGroupEntries.size();
     bindGroupDesc.entries                 = bindGroupEntries.data();
-    WGPUBindGroup bindGroup               = wgpuDeviceCreateBindGroup(device, &bindGroupDesc);
+    WGPUBindGroup bindGroup               = wgpuDeviceCreateBindGroup(app.device, &bindGroupDesc);
     WEBGPU_DEMO_CHECK(bindGroup, "[WebGPU] Failed to create bind group");
     WEBGPU_DEMO_LOG("[WebGPU] Bind group created");
 
@@ -580,7 +599,7 @@ int main(int argc, const char* argv[])
     pipelineLayoutDesc.label                        = "Demo Pipeline Layout";
     pipelineLayoutDesc.bindGroupLayoutCount         = 1;
     pipelineLayoutDesc.bindGroupLayouts             = &bindGroupLayout;
-    WGPUPipelineLayout pipelineLayout               = wgpuDeviceCreatePipelineLayout(device, &pipelineLayoutDesc);
+    WGPUPipelineLayout pipelineLayout               = wgpuDeviceCreatePipelineLayout(app.device, &pipelineLayoutDesc);
     WEBGPU_DEMO_CHECK(pipelineLayout, "[WebGPU] Failed to create pipeline layout");
     WEBGPU_DEMO_LOG("[WebGPU] Pipeline layout created");
 
@@ -663,11 +682,12 @@ int main(int argc, const char* argv[])
     pipelineDesc.multisample                  = multisampleState;
     pipelineDesc.fragment                     = &fragmentState;
 
-    WGPURenderPipeline pipeline = wgpuDeviceCreateRenderPipeline(device, &pipelineDesc);
+    WGPURenderPipeline pipeline = wgpuDeviceCreateRenderPipeline(app.device, &pipelineDesc);
     WEBGPU_DEMO_CHECK(pipeline, "[WebGPU] Failed to create render pipeline");
     WEBGPU_DEMO_LOG("[WebGPU] Render pipeline created");
 
-    SLMat4f modelMatrix;
+    float camRotX = 0.0f;
+    float camRotY = 0.0f;
 
     double lastCursorX = 0.0f;
     double lastCursorY = 0.0f;
@@ -682,19 +702,11 @@ int main(int argc, const char* argv[])
         double cursorY;
         glfwGetCursorPos(window, &cursorX, &cursorY);
 
-        SLMat4f rotationX;
-        SLMat4f rotationY;
-
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
         {
-            float deltaRotX = 0.5f * static_cast<float>(cursorY - lastCursorY);
-            float deltaRotY = 0.5f * static_cast<float>(cursorX - lastCursorX);
-
-            rotationX.rotate(deltaRotX, SLVec3f::AXISX);
-            rotationY.rotate(deltaRotY, SLVec3f::AXISY);
+            camRotX -= 0.25f * static_cast<float>(cursorY - lastCursorY);
+            camRotY -= 0.25f * static_cast<float>(cursorX - lastCursorX);
         }
-
-        modelMatrix = rotationY * rotationX * modelMatrix;
 
         lastCursorX = cursorX;
         lastCursorY = cursorY;
@@ -702,9 +714,47 @@ int main(int argc, const char* argv[])
         // === Create a WebGPU texture view ===
         // The texture view is where we render our image into.
 
+        if (app.requireSurfaceReconfiguration)
+        {
+            app.requireSurfaceReconfiguration = false;
+
+            // Get the window size from the GLFW window.
+            glfwGetWindowSize(window, &surfaceWidth, &surfaceHeight);
+
+            // The surface size might be zero if the window is minimized.
+            if (surfaceWidth != 0 && surfaceHeight != 0)
+            {
+                WEBGPU_DEMO_LOG("[WebGPU] Re-configuring surface");
+                surfaceConfig.width  = surfaceWidth;
+                surfaceConfig.height = surfaceHeight;
+                wgpuSurfaceConfigure(app.surface, &surfaceConfig);
+
+                // Recreate the depth texture.
+
+                wgpuTextureViewRelease(textureView);
+                wgpuTextureDestroy(depthTexture);
+                wgpuTextureRelease(depthTexture);
+
+                depthTextureDesc.size.width  = surfaceWidth;
+                depthTextureDesc.size.height = surfaceHeight;
+
+                depthTexture = wgpuDeviceCreateTexture(app.device, &depthTextureDesc);
+                WEBGPU_DEMO_CHECK(depthTexture, "[WebGPU] Failed to re-create depth texture");
+                WEBGPU_DEMO_LOG("[WebGPU] Depth texture re-created");
+
+                depthTextureView = wgpuTextureCreateView(depthTexture, &depthTextureViewDesc);
+                WEBGPU_DEMO_CHECK(depthTextureView, "[WebGPU] Failed to re-create depth texture view");
+                WEBGPU_DEMO_LOG("[WebGPU] Depth texture view re-created");
+            }
+
+            // Skip this frame.
+            glfwPollEvents();
+            continue;
+        }
+
         // Get a texture from the surface to render into.
         WGPUSurfaceTexture surfaceTexture;
-        wgpuSurfaceGetCurrentTexture(surface, &surfaceTexture);
+        wgpuSurfaceGetCurrentTexture(app.surface, &surfaceTexture);
 
         // The surface might change over time.
         // For example, the window might be resized or minimized.
@@ -712,18 +762,11 @@ int main(int argc, const char* argv[])
         switch (surfaceTexture.status)
         {
             case WGPUSurfaceGetCurrentTextureStatus_Success:
-                // Everything is ok.
-
-                // Check for a suboptimal texture and re-configure it if needed.
+                // Everything is ok, but still check for a suboptimal texture and re-configure it if needed.
                 if (surfaceTexture.suboptimal)
                 {
                     WEBGPU_DEMO_LOG("[WebGPU] Re-configuring currently suboptimal surface");
-                    surfaceConfig.width  = surfaceWidth;
-                    surfaceConfig.height = surfaceHeight;
-                    wgpuSurfaceConfigure(surface, &surfaceConfig);
-
-                    // Skip this frame.
-                    glfwPollEvents();
+                    app.requireSurfaceReconfiguration = true;
                     continue;
                 }
 
@@ -733,38 +776,7 @@ int main(int argc, const char* argv[])
             case WGPUSurfaceGetCurrentTextureStatus_Outdated:
             case WGPUSurfaceGetCurrentTextureStatus_Lost:
                 // The surface needs to be re-configured.
-
-                // Get the window size from the GLFW window.
-                glfwGetWindowSize(window, &surfaceWidth, &surfaceHeight);
-
-                // The surface size might be zero if the window is minimized.
-                if (surfaceWidth != 0 && surfaceHeight != 0)
-                {
-                    WEBGPU_DEMO_LOG("[WebGPU] Re-configuring surface");
-                    surfaceConfig.width  = surfaceWidth;
-                    surfaceConfig.height = surfaceHeight;
-                    wgpuSurfaceConfigure(surface, &surfaceConfig);
-
-                    // Recreate the depth texture.
-
-                    wgpuTextureViewRelease(textureView);
-                    wgpuTextureDestroy(depthTexture);
-                    wgpuTextureRelease(depthTexture);
-
-                    depthTextureDesc.size.width  = surfaceWidth;
-                    depthTextureDesc.size.height = surfaceHeight;
-
-                    depthTexture = wgpuDeviceCreateTexture(device, &depthTextureDesc);
-                    WEBGPU_DEMO_CHECK(depthTexture, "[WebGPU] Failed to re-create depth texture");
-                    WEBGPU_DEMO_LOG("[WebGPU] Depth texture re-created");
-
-                    depthTextureView = wgpuTextureCreateView(depthTexture, &depthTextureViewDesc);
-                    WEBGPU_DEMO_CHECK(depthTextureView, "[WebGPU] Failed to re-create depth texture view");
-                    WEBGPU_DEMO_LOG("[WebGPU] Depth texture view re-created");
-                }
-
-                // Skip this frame.
-                glfwPollEvents();
+                app.requireSurfaceReconfiguration = true;
                 continue;
 
             case WGPUSurfaceGetCurrentTextureStatus_OutOfMemory:
@@ -783,11 +795,16 @@ int main(int argc, const char* argv[])
         // === Prepare uniform data ===
         float aspectRatio = static_cast<float>(surfaceWidth) / static_cast<float>(surfaceHeight);
 
+        SLMat4f modelMatrix;
+
         SLMat4f projectionMatrix;
         projectionMatrix.perspective(70.0f, aspectRatio, 0.1, 1000.0f);
 
         SLMat4f viewMatrix;
-        viewMatrix.translate(0.0f, 0.0f, -2.0f);
+        viewMatrix.rotate(camRotY, SLVec3f::AXISY);
+        viewMatrix.rotate(camRotX, SLVec3f::AXISX);
+        viewMatrix.translate(0.0f, 0.0f, 2.0f);
+        viewMatrix.invert();
 
         // === Update uniforms ===
         ShaderUniformData uniformData = {};
@@ -802,7 +819,7 @@ int main(int argc, const char* argv[])
         WGPUCommandEncoderDescriptor cmdEncoderDesc = {};
         cmdEncoderDesc.label                        = "Demo Command Encoder";
 
-        WGPUCommandEncoder cmdEncoder = wgpuDeviceCreateCommandEncoder(device, &cmdEncoderDesc);
+        WGPUCommandEncoder cmdEncoder = wgpuDeviceCreateCommandEncoder(app.device, &cmdEncoderDesc);
         WEBGPU_DEMO_CHECK(cmdEncoder, "[WebGPU] Failed to create command encoder");
 
         // === Create a WebGPU render pass ===
@@ -863,7 +880,7 @@ int main(int argc, const char* argv[])
 
         // === Present the surface ===
         // This presents our rendered texture to the screen.
-        wgpuSurfacePresent(surface);
+        wgpuSurfacePresent(app.surface);
 
         // === Clean up resources ===
         wgpuCommandBufferRelease(cmdBuffer);
@@ -895,9 +912,9 @@ int main(int argc, const char* argv[])
     wgpuBufferRelease(indexBuffer);
     wgpuBufferDestroy(vertexBuffer);
     wgpuBufferRelease(vertexBuffer);
-    wgpuSurfaceRelease(surface);
+    wgpuSurfaceRelease(app.surface);
     wgpuQueueRelease(queue);
-    wgpuDeviceRelease(device);
+    wgpuDeviceRelease(app.device);
     wgpuAdapterRelease(adapter);
     wgpuInstanceRelease(instance);
     WEBGPU_DEMO_LOG("[WebGPU] Resources released");
