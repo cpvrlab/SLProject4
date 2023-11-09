@@ -38,10 +38,55 @@
 
 struct AppData
 {
-    WGPUDevice  device = nullptr;
-    WGPUSurface surface = nullptr;
+    GLFWwindow* window        = nullptr;
+    int         surfaceWidth  = 0;
+    int         surfaceHeight = 0;
+
+    WGPUInstance        instance         = nullptr;
+    WGPUAdapter         adapter          = nullptr;
+    WGPUDevice          device           = nullptr;
+    WGPUQueue           queue            = nullptr;
+    WGPUSurface         surface          = nullptr;
+    WGPUTexture         depthTexture     = nullptr;
+    WGPUTextureView     depthTextureView = nullptr;
+    WGPUBuffer          vertexBuffer     = nullptr;
+    WGPUBuffer          indexBuffer      = nullptr;
+    WGPUBuffer          uniformBuffer    = nullptr;
+    WGPUTexture         texture          = nullptr;
+    WGPUTextureView     textureView      = nullptr;
+    WGPUSampler         sampler          = nullptr;
+    WGPUShaderModule    shaderModule     = nullptr;
+    WGPUBindGroupLayout bindGroupLayout  = nullptr;
+    WGPUBindGroup       bindGroup        = nullptr;
+    WGPUPipelineLayout  pipelineLayout   = nullptr;
+    WGPURenderPipeline  pipeline         = nullptr;
+
+    WGPUSurfaceConfiguration  surfaceConfig;
+    WGPUTextureFormat         depthTextureFormat;
+    WGPUTextureDescriptor     depthTextureDesc;
+    WGPUTextureViewDescriptor depthTextureViewDesc;
+
+    unsigned vertexDataSize;
+    unsigned indexCount;
+    unsigned indexDataSize;
 
     bool requireSurfaceReconfiguration = false;
+
+    float camRotX = 0.0f;
+    float camRotY = 0.0f;
+    float camZ    = 2.0f;
+};
+
+struct VertexData
+{
+    float positionX;
+    float positionY;
+    float positionZ;
+    float normalX;
+    float normalY;
+    float normalZ;
+    float uvX;
+    float uvY;
 };
 
 struct alignas(16) ShaderUniformData
@@ -57,10 +102,210 @@ static_assert(sizeof(ShaderUniformData) % 16 == 0, "uniform data size must be a 
 extern "C" void* createMetalLayer(void* window);
 #endif
 
-void onWindowResized(GLFWwindow* window, int width, int height)
+void reconfigureSurface(AppData& app)
+{
+    // Get the window size from the GLFW window.
+    glfwGetWindowSize(app.window, &app.surfaceWidth, &app.surfaceHeight);
+
+    // The surface size might be zero if the window is minimized.
+    if (app.surfaceWidth == 0 || app.surfaceHeight == 0)
+        return;
+
+    WEBGPU_DEMO_LOG("[WebGPU] Re-configuring surface");
+    app.surfaceConfig.width  = app.surfaceWidth;
+    app.surfaceConfig.height = app.surfaceHeight;
+    wgpuSurfaceConfigure(app.surface, &app.surfaceConfig);
+
+    // Recreate the depth texture.
+
+    wgpuTextureViewRelease(app.depthTextureView);
+    wgpuTextureDestroy(app.depthTexture);
+    wgpuTextureRelease(app.depthTexture);
+
+    app.depthTextureDesc.size.width  = app.surfaceWidth;
+    app.depthTextureDesc.size.height = app.surfaceHeight;
+
+    app.depthTexture = wgpuDeviceCreateTexture(app.device, &app.depthTextureDesc);
+    WEBGPU_DEMO_CHECK(app.depthTexture, "[WebGPU] Failed to re-create depth texture");
+    WEBGPU_DEMO_LOG("[WebGPU] Depth texture re-created");
+
+    app.depthTextureView = wgpuTextureCreateView(app.depthTexture, &app.depthTextureViewDesc);
+    WEBGPU_DEMO_CHECK(app.depthTextureView, "[WebGPU] Failed to re-create depth texture view");
+    WEBGPU_DEMO_LOG("[WebGPU] Depth texture view re-created");
+}
+
+void onPaint(AppData& app)
+{
+    if (app.surfaceWidth == 0 || app.surfaceHeight == 0)
+        return;
+
+    // Get a texture from the surface to render into.
+    WGPUSurfaceTexture surfaceTexture;
+    wgpuSurfaceGetCurrentTexture(app.surface, &surfaceTexture);
+
+    // The surface might change over time.
+    // For example, the window might be resized or minimized.
+    // We have to check the status and adapt to it.
+    switch (surfaceTexture.status)
+    {
+        case WGPUSurfaceGetCurrentTextureStatus_Success:
+            // Everything is ok, but still check for a suboptimal texture and re-configure it if needed.
+            if (surfaceTexture.suboptimal)
+            {
+                WEBGPU_DEMO_LOG("[WebGPU] Re-configuring currently suboptimal surface");
+                reconfigureSurface(app);
+                wgpuSurfaceGetCurrentTexture(app.surface, &surfaceTexture);
+            }
+
+            break;
+
+        case WGPUSurfaceGetCurrentTextureStatus_Timeout:
+        case WGPUSurfaceGetCurrentTextureStatus_Outdated:
+        case WGPUSurfaceGetCurrentTextureStatus_Lost:
+            // The surface needs to be re-configured.
+            reconfigureSurface(app);
+            wgpuSurfaceGetCurrentTexture(app.surface, &surfaceTexture);
+            break;
+
+        case WGPUSurfaceGetCurrentTextureStatus_OutOfMemory:
+        case WGPUSurfaceGetCurrentTextureStatus_DeviceLost:
+            // An error occured.
+            WEBGPU_DEMO_CHECK(false, "[WebGPU] Failed to acquire current surface texture");
+            break;
+
+        case WGPUSurfaceGetCurrentTextureStatus_Force32:
+            break;
+    }
+
+    // === Create a WebGPU texture view ===
+    // The texture view is where we render our image into.
+
+    // Create a view into the texture to specify where and how to modify the texture.
+    WGPUTextureView view = wgpuTextureCreateView(surfaceTexture.texture, nullptr);
+
+    // === Prepare uniform data ===
+    float aspectRatio = static_cast<float>(app.surfaceWidth) / static_cast<float>(app.surfaceHeight);
+
+    SLMat4f modelMatrix;
+
+    SLMat4f projectionMatrix;
+    projectionMatrix.perspective(70.0f, aspectRatio, 0.1, 1000.0f);
+
+    SLMat4f viewMatrix;
+    viewMatrix.rotate(app.camRotY, SLVec3f::AXISY);
+    viewMatrix.rotate(app.camRotX, SLVec3f::AXISX);
+    viewMatrix.translate(0.0f, 0.0f, 2.0f);
+    viewMatrix.invert();
+
+    // === Update uniforms ===
+    ShaderUniformData uniformData = {};
+    std::memcpy(uniformData.projectionMatrix, projectionMatrix.m(), sizeof(uniformData.projectionMatrix));
+    std::memcpy(uniformData.viewMatrix, viewMatrix.m(), sizeof(uniformData.viewMatrix));
+    std::memcpy(uniformData.modelMatrix, modelMatrix.m(), sizeof(uniformData.modelMatrix));
+    wgpuQueueWriteBuffer(app.queue, app.uniformBuffer, 0, &uniformData, sizeof(ShaderUniformData));
+
+    // === Create a WebGPU command encoder ===
+    // The encoder encodes the commands for the GPU into a command buffer.
+
+    WGPUCommandEncoderDescriptor cmdEncoderDesc = {};
+    cmdEncoderDesc.label                        = "Demo Command Encoder";
+
+    WGPUCommandEncoder cmdEncoder = wgpuDeviceCreateCommandEncoder(app.device, &cmdEncoderDesc);
+    WEBGPU_DEMO_CHECK(cmdEncoder, "[WebGPU] Failed to create command encoder");
+
+    // === Create a WebGPU render pass ===
+    // The render pass specifies what attachments to use while rendering.
+    // A color attachment specifies what view to render into and what to do with the texture before and after
+    // rendering. We clear the texture before rendering and store the results after rendering.
+    // The depth attachment specifies what depth texture to use.
+
+    WGPURenderPassColorAttachment colorAttachment = {};
+    colorAttachment.view                          = view;
+    colorAttachment.loadOp                        = WGPULoadOp_Clear;
+    colorAttachment.storeOp                       = WGPUStoreOp_Store;
+    colorAttachment.clearValue.r                  = 0.3;
+    colorAttachment.clearValue.g                  = 0.0;
+    colorAttachment.clearValue.b                  = 0.2;
+    colorAttachment.clearValue.a                  = 1.0;
+
+    WGPURenderPassDepthStencilAttachment depthStencilAttachment = {};
+    depthStencilAttachment.view                                 = app.depthTextureView;
+    depthStencilAttachment.depthLoadOp                          = WGPULoadOp_Clear;
+    depthStencilAttachment.depthStoreOp                         = WGPUStoreOp_Store;
+    depthStencilAttachment.depthClearValue                      = 1.0f;
+    depthStencilAttachment.depthReadOnly                        = false;
+    depthStencilAttachment.stencilLoadOp                        = WGPULoadOp_Clear;
+    depthStencilAttachment.stencilStoreOp                       = WGPUStoreOp_Store;
+    depthStencilAttachment.stencilClearValue                    = 0.0f;
+    depthStencilAttachment.stencilReadOnly                      = true;
+
+    WGPURenderPassDescriptor renderPassDesc = {};
+    renderPassDesc.label                    = "Demo Render Pass";
+    renderPassDesc.colorAttachmentCount     = 1;
+    renderPassDesc.colorAttachments         = &colorAttachment;
+    renderPassDesc.depthStencilAttachment   = &depthStencilAttachment;
+
+    // === Encode the commands ===
+    // The commands to begin a render pass, bind a pipeline, draw the triangle and end the render pass
+    // are encoded into a buffer.
+
+    WGPURenderPassEncoder renderPassEncoder = wgpuCommandEncoderBeginRenderPass(cmdEncoder, &renderPassDesc);
+    wgpuRenderPassEncoderSetPipeline(renderPassEncoder, app.pipeline);
+    wgpuRenderPassEncoderSetVertexBuffer(renderPassEncoder, 0, app.vertexBuffer, 0, app.vertexDataSize);
+    wgpuRenderPassEncoderSetIndexBuffer(renderPassEncoder, app.indexBuffer, WGPUIndexFormat_Uint16, 0, app.indexDataSize);
+    wgpuRenderPassEncoderSetBindGroup(renderPassEncoder, 0, app.bindGroup, 0, nullptr);
+    wgpuRenderPassEncoderDrawIndexed(renderPassEncoder, app.indexCount, 1, 0, 0, 0);
+    wgpuRenderPassEncoderEnd(renderPassEncoder);
+
+    // === Get the command buffer ===
+    // The command encoder is finished to get the commands for the GPU to execute in a command buffer.
+
+    WGPUCommandBufferDescriptor cmdBufferDesc = {};
+    cmdBufferDesc.label                       = "Demo Command Buffer";
+
+    WGPUCommandBuffer cmdBuffer = wgpuCommandEncoderFinish(cmdEncoder, &cmdBufferDesc);
+
+    // === Submit the command buffer to the GPU ===
+    // The work for the GPU is submitted through the queue and executed.
+    wgpuQueueSubmit(app.queue, 1, &cmdBuffer);
+
+    // === Present the surface ===
+    // This presents our rendered texture to the screen.
+    wgpuSurfacePresent(app.surface);
+
+    // === Clean up resources ===
+    wgpuCommandBufferRelease(cmdBuffer);
+    wgpuRenderPassEncoderRelease(renderPassEncoder);
+    wgpuCommandEncoderRelease(cmdEncoder);
+    wgpuTextureViewRelease(view);
+    wgpuTextureRelease(surfaceTexture.texture);
+}
+
+void onResize(GLFWwindow* window, int width, int height)
 {
     AppData& app = *((AppData*)glfwGetWindowUserPointer(window));
-    app.requireSurfaceReconfiguration = true;
+    reconfigureSurface(app);
+    onPaint(app);
+}
+
+void initGLFW(AppData& app)
+{
+    // === Initialize GLFW ===
+
+    WEBGPU_DEMO_CHECK(glfwInit(), "[GLFW] Failed to initialize");
+    WEBGPU_DEMO_LOG("[GLFW] Initialized");
+
+    // === Create the GLFW window ===
+
+    // Prevent GLFW from creating an OpenGL context as the underlying graphics API probably won't be OpenGL.
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+
+    app.window = glfwCreateWindow(1280, 720, "WebGPU Demo", nullptr, nullptr);
+    WEBGPU_DEMO_CHECK(app.window, "[GLFW] Failed to create window");
+    WEBGPU_DEMO_LOG("[GLFW] Window created");
+
+    glfwSetWindowUserPointer(app.window, &app);
+    glfwSetFramebufferSizeCallback(app.window, onResize);
 }
 
 void handleAdapterRequest(WGPURequestAdapterStatus status,
@@ -89,32 +334,13 @@ void handleDeviceRequest(WGPURequestDeviceStatus status,
     *outDevice            = device;
 }
 
-int main(int argc, const char* argv[])
+void initWebGPU(AppData& app)
 {
-    AppData app;
-
-    // === Initialize GLFW ===
-
-    WEBGPU_DEMO_CHECK(glfwInit(), "[GLFW] Failed to initialize");
-    WEBGPU_DEMO_LOG("[GLFW] Initialized");
-
-    // === Create the GLFW window ===
-
-    // Prevent GLFW from creating an OpenGL context as the underlying graphics API probably won't be OpenGL.
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "WebGPU Demo", nullptr, nullptr);
-    WEBGPU_DEMO_CHECK(window, "[GLFW] Failed to create window");
-    WEBGPU_DEMO_LOG("[GLFW] Window created");
-
-    glfwSetWindowUserPointer(window, &app);
-    glfwSetWindowSizeCallback(window, onWindowResized);
-
     // === Create a WebGPU instance ===
     // The instance is the root interface to WebGPU through which we create all other WebGPU resources.
 
-    WGPUInstance instance = wgpuCreateInstance(nullptr);
-    WEBGPU_DEMO_CHECK(instance, "[WebGPU] Failed to create instance");
+    app.instance = wgpuCreateInstance(nullptr);
+    WEBGPU_DEMO_CHECK(app.instance, "[WebGPU] Failed to create instance");
     WEBGPU_DEMO_LOG("[WebGPU] Instance created");
 
     // === Acquire a WebGPU adapter ===
@@ -122,11 +348,10 @@ int main(int argc, const char* argv[])
 
     WGPURequestAdapterOptions adapterOptions = {};
 
-    WGPUAdapter adapter;
-    wgpuInstanceRequestAdapter(instance, &adapterOptions, handleAdapterRequest, &adapter);
+    wgpuInstanceRequestAdapter(app.instance, &adapterOptions, handleAdapterRequest, &app.adapter);
 
     WGPUSupportedLimits adapterLimits;
-    wgpuAdapterGetLimits(adapter, &adapterLimits);
+    wgpuAdapterGetLimits(app.adapter, &adapterLimits);
 
     // === Acquire a WebGPU device ===
     // A device provides access to a GPU and is created from an adapter.
@@ -135,11 +360,11 @@ int main(int argc, const char* argv[])
     // which is how WebGPU prevents code from working on one machine and not on another.
 
     WGPURequiredLimits requiredLimits                      = {};
-    requiredLimits.limits.maxVertexAttributes              = 2u;
+    requiredLimits.limits.maxVertexAttributes              = 3u;
     requiredLimits.limits.maxVertexBuffers                 = 1u;
-    requiredLimits.limits.maxBufferSize                    = 1024ull;
-    requiredLimits.limits.maxVertexBufferArrayStride       = 5u * sizeof(float);
-    requiredLimits.limits.maxInterStageShaderComponents    = 2u;
+    requiredLimits.limits.maxBufferSize                    = 2048ull;
+    requiredLimits.limits.maxVertexBufferArrayStride       = sizeof(VertexData);
+    requiredLimits.limits.maxInterStageShaderComponents    = 5u;
     requiredLimits.limits.maxBindGroups                    = 1u;
     requiredLimits.limits.maxBindingsPerBindGroup          = 3u;
     requiredLimits.limits.maxUniformBuffersPerShaderStage  = 1u;
@@ -157,13 +382,13 @@ int main(int argc, const char* argv[])
     deviceDesc.requiredLimits       = &requiredLimits;
     deviceDesc.defaultQueue.label   = "Demo Queue";
 
-    wgpuAdapterRequestDevice(adapter, &deviceDesc, handleDeviceRequest, &app.device);
+    wgpuAdapterRequestDevice(app.adapter, &deviceDesc, handleDeviceRequest, &app.device);
 
     // === Acquire a WebGPU queue ===
     // The queue is where the commands for the GPU are submitted to.
 
-    WGPUQueue queue = wgpuDeviceGetQueue(app.device);
-    WEBGPU_DEMO_CHECK(queue, "[WebGPU] Failed to acquire queue");
+    app.queue = wgpuDeviceGetQueue(app.device);
+    WEBGPU_DEMO_CHECK(app.queue, "[WebGPU] Failed to acquire queue");
     WEBGPU_DEMO_LOG("[WebGPU] Queue acquired");
 
     // === Create a WebGPU surface ===
@@ -174,23 +399,23 @@ int main(int argc, const char* argv[])
     WGPUSurfaceDescriptorFromWindowsHWND nativeSurfaceDesc = {};
     nativeSurfaceDesc.chain.sType                          = WGPUSType_SurfaceDescriptorFromWindowsHWND;
     nativeSurfaceDesc.hinstance                            = GetModuleHandle(nullptr);
-    nativeSurfaceDesc.hwnd                                 = glfwGetWin32Window(window);
+    nativeSurfaceDesc.hwnd                                 = glfwGetWin32Window(app.window);
 #elif defined(SYSTEM_LINUX)
     WGPUSurfaceDescriptorFromXlibWindow nativeSurfaceDesc = {};
     nativeSurfaceDesc.chain.sType                         = WGPUSType_SurfaceDescriptorFromXlibWindow;
     nativeSurfaceDesc.display                             = glfwGetX11Display();
-    nativeSurfaceDesc.window                              = glfwGetX11Window(window);
+    nativeSurfaceDesc.window                              = glfwGetX11Window(app.window);
 #elif defined(SYSTEM_DARWIN)
     WGPUSurfaceDescriptorFromMetalLayer nativeSurfaceDesc = {};
     nativeSurfaceDesc.chain.sType                         = WGPUSType_SurfaceDescriptorFromMetalLayer;
-    nativeSurfaceDesc.layer                               = createMetalLayer(glfwGetCocoaWindow(window));
+    nativeSurfaceDesc.layer                               = createMetalLayer(glfwGetCocoaWindow(app.window));
 #endif
 
     WGPUSurfaceDescriptor surfaceDesc = {};
     surfaceDesc.label                 = "Demo Surface";
     surfaceDesc.nextInChain           = (const WGPUChainedStruct*)&nativeSurfaceDesc;
 
-    app.surface = wgpuInstanceCreateSurface(instance, &surfaceDesc);
+    app.surface = wgpuInstanceCreateSurface(app.instance, &surfaceDesc);
     WEBGPU_DEMO_CHECK(app.surface, "[WebGPU] Failed to create surface");
     WEBGPU_DEMO_LOG("[WebGPU] Surface created");
 
@@ -199,94 +424,92 @@ int main(int argc, const char* argv[])
 
     // Query the surface capabilities from the adapter.
     WGPUSurfaceCapabilities surfaceCapabilities;
-    wgpuSurfaceGetCapabilities(app.surface, adapter, &surfaceCapabilities);
+    wgpuSurfaceGetCapabilities(app.surface, app.adapter, &surfaceCapabilities);
 
     // Get the window size from the GLFW window.
-    int surfaceWidth;
-    int surfaceHeight;
-    glfwGetWindowSize(window, &surfaceWidth, &surfaceHeight);
+    glfwGetFramebufferSize(app.window, &app.surfaceWidth, &app.surfaceHeight);
 
-    WGPUSurfaceConfiguration surfaceConfig = {};
-    surfaceConfig.device                   = app.device;
-    surfaceConfig.usage                    = WGPUTextureUsage_RenderAttachment;
-    surfaceConfig.format                   = surfaceCapabilities.formats[0];
-    surfaceConfig.presentMode              = WGPUPresentMode_Fifo;
-    surfaceConfig.alphaMode                = surfaceCapabilities.alphaModes[0];
-    surfaceConfig.width                    = surfaceWidth;
-    surfaceConfig.height                   = surfaceHeight;
-    wgpuSurfaceConfigure(app.surface, &surfaceConfig);
+    app.surfaceConfig             = {};
+    app.surfaceConfig.device      = app.device;
+    app.surfaceConfig.usage       = WGPUTextureUsage_RenderAttachment;
+    app.surfaceConfig.format      = surfaceCapabilities.formats[0];
+    app.surfaceConfig.presentMode = WGPUPresentMode_Fifo;
+    app.surfaceConfig.alphaMode   = surfaceCapabilities.alphaModes[0];
+    app.surfaceConfig.width       = app.surfaceWidth;
+    app.surfaceConfig.height      = app.surfaceHeight;
+    wgpuSurfaceConfigure(app.surface, &app.surfaceConfig);
     WEBGPU_DEMO_LOG("[WebGPU] Surface configured");
 
     // === Create the vertex buffer ===
     // The vertex buffer contains the input data for the shader.
 
     // clang-format off
-    std::vector<float> vertexData =
+    std::vector<VertexData> vertexData =
     {
         // left
-        -0.5,  0.5, -0.5,    0.0f, 0.0f,
-        -0.5, -0.5, -0.5,    0.0f, 1.0f,
-        -0.5,  0.5,  0.5,    1.0f, 0.0f,
-        -0.5,  0.5,  0.5,    1.0f, 0.0f,
-        -0.5, -0.5, -0.5,    0.0f, 1.0f,
-        -0.5, -0.5,  0.5,    1.0f, 1.0f,
+        {-0.5,  0.5, -0.5, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+        {-0.5, -0.5, -0.5, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+        {-0.5,  0.5,  0.5, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f},
+        {-0.5,  0.5,  0.5, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f},
+        {-0.5, -0.5, -0.5, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+        {-0.5, -0.5,  0.5, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f},
 
         // right
-         0.5,  0.5,  0.5,    0.0f, 0.0f,
-         0.5, -0.5,  0.5,    0.0f, 1.0f,
-         0.5,  0.5, -0.5,    1.0f, 0.0f,
-         0.5,  0.5, -0.5,    1.0f, 0.0f,
-         0.5, -0.5,  0.5,    0.0f, 1.0f,
-         0.5, -0.5, -0.5,    1.0f, 1.0f,
+        { 0.5,  0.5,  0.5,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+        { 0.5, -0.5,  0.5,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+        { 0.5,  0.5, -0.5,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f},
+        { 0.5,  0.5, -0.5,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f},
+        { 0.5, -0.5,  0.5,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+        { 0.5, -0.5, -0.5,  1.0f, 0.0f, 0.0f, 1.0f, 1.0f},
 
         // bottom
-        -0.5, -0.5,  0.5,    0.0f, 0.0f,
-        -0.5, -0.5, -0.5,    0.0f, 1.0f,
-         0.5, -0.5,  0.5,    1.0f, 0.0f,
-         0.5, -0.5,  0.5,    1.0f, 0.0f,
-        -0.5, -0.5, -0.5,    0.0f, 1.0f,
-         0.5, -0.5, -0.5,    1.0f, 1.0f,
+        {-0.5, -0.5,  0.5, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f},
+        {-0.5, -0.5, -0.5, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f},
+        { 0.5, -0.5,  0.5, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f},
+        { 0.5, -0.5,  0.5, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f},
+        {-0.5, -0.5, -0.5, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f},
+        { 0.5, -0.5, -0.5, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f},
 
         // top
-        -0.5,  0.5, -0.5,    0.0f, 0.0f,
-        -0.5,  0.5,  0.5,    0.0f, 1.0f,
-         0.5,  0.5, -0.5,    1.0f, 0.0f,
-         0.5,  0.5, -0.5,    1.0f, 0.0f,
-        -0.5,  0.5,  0.5,    0.0f, 1.0f,
-         0.5,  0.5,  0.5,    1.0f, 1.0f,
+        {-0.5,  0.5, -0.5, 0.0f,  1.0f, 0.0f, 0.0f, 0.0f},
+        {-0.5,  0.5,  0.5, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f},
+        { 0.5,  0.5, -0.5, 0.0f,  1.0f, 0.0f, 1.0f, 0.0f},
+        { 0.5,  0.5, -0.5, 0.0f,  1.0f, 0.0f, 1.0f, 0.0f},
+        {-0.5,  0.5,  0.5, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f},
+        { 0.5,  0.5,  0.5, 0.0f,  1.0f, 0.0f, 1.0f, 1.0f},
 
         // back
-         0.5,  0.5, -0.5,    0.0f, 0.0f,
-         0.5, -0.5, -0.5,    0.0f, 1.0f,
-        -0.5,  0.5, -0.5,    1.0f, 0.0f,
-        -0.5,  0.5, -0.5,    1.0f, 0.0f,
-         0.5, -0.5, -0.5,    0.0f, 1.0f,
-        -0.5, -0.5, -0.5,    1.0f, 1.0f,
+        { 0.5,  0.5, -0.5, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f},
+        { 0.5, -0.5, -0.5, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f},
+        {-0.5,  0.5, -0.5, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f},
+        {-0.5,  0.5, -0.5, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f},
+        { 0.5, -0.5, -0.5, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f},
+        {-0.5, -0.5, -0.5, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f},
 
         // front
-        -0.5,  0.5,  0.5,    0.0f, 0.0f,
-        -0.5, -0.5,  0.5,    0.0f, 1.0f,
-         0.5,  0.5,  0.5,    1.0f, 0.0f,
-         0.5,  0.5,  0.5,    1.0f, 0.0f,
-        -0.5, -0.5,  0.5,    0.0f, 1.0f,
-         0.5, -0.5,  0.5,    1.0f, 1.0f,
+        {-0.5,  0.5,  0.5, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f},
+        {-0.5, -0.5,  0.5, 0.0f, 0.0f,  1.0f, 0.0f, 1.0f},
+        { 0.5,  0.5,  0.5, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f},
+        { 0.5,  0.5,  0.5, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f},
+        {-0.5, -0.5,  0.5, 0.0f, 0.0f,  1.0f, 0.0f, 1.0f},
+        { 0.5, -0.5,  0.5, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f},
     };
     // clang-format on
 
-    unsigned vertexCount    = vertexData.size() / 5;
-    unsigned vertexDataSize = vertexData.size() * sizeof(float);
+    unsigned vertexCount = vertexData.size();
+    app.vertexDataSize   = vertexData.size() * sizeof(VertexData);
 
     WGPUBufferDescriptor vertexBufferDesc = {};
     vertexBufferDesc.label                = "Demo Vertex Buffer";
-    vertexBufferDesc.size                 = vertexDataSize;
+    vertexBufferDesc.size                 = app.vertexDataSize;
     vertexBufferDesc.usage                = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Vertex;
 
-    WGPUBuffer vertexBuffer = wgpuDeviceCreateBuffer(app.device, &vertexBufferDesc);
-    WEBGPU_DEMO_CHECK(vertexBuffer, "[WebGPU] Failed to create vertex buffer");
+    app.vertexBuffer = wgpuDeviceCreateBuffer(app.device, &vertexBufferDesc);
+    WEBGPU_DEMO_CHECK(app.vertexBuffer, "[WebGPU] Failed to create vertex buffer");
     WEBGPU_DEMO_LOG("[WebGPU] Vertex buffer created");
 
     // Upload the data to the GPU.
-    wgpuQueueWriteBuffer(queue, vertexBuffer, 0, vertexData.data(), vertexDataSize);
+    wgpuQueueWriteBuffer(app.queue, app.vertexBuffer, 0, vertexData.data(), app.vertexDataSize);
 
     // === Create the index buffer ===
 
@@ -294,19 +517,19 @@ int main(int argc, const char* argv[])
     for (std::uint16_t index = 0; index < 36; index++)
         indexData.push_back(index);
 
-    unsigned indexCount    = indexData.size();
-    unsigned indexDataSize = indexData.size() * sizeof(std::uint16_t);
+    app.indexCount    = indexData.size();
+    app.indexDataSize = indexData.size() * sizeof(std::uint16_t);
 
     WGPUBufferDescriptor indexBufferDesc = {};
     indexBufferDesc.label                = "Demo Index Buffer";
-    indexBufferDesc.size                 = indexDataSize;
+    indexBufferDesc.size                 = app.indexDataSize;
     indexBufferDesc.usage                = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Index;
 
-    WGPUBuffer indexBuffer = wgpuDeviceCreateBuffer(app.device, &indexBufferDesc);
-    WEBGPU_DEMO_CHECK(indexBuffer, "[WebGPU] Failed to create index buffer");
+    app.indexBuffer = wgpuDeviceCreateBuffer(app.device, &indexBufferDesc);
+    WEBGPU_DEMO_CHECK(app.indexBuffer, "[WebGPU] Failed to create index buffer");
     WEBGPU_DEMO_LOG("[WebGPU] Index buffer created");
 
-    wgpuQueueWriteBuffer(queue, indexBuffer, 0, indexData.data(), indexDataSize);
+    wgpuQueueWriteBuffer(app.queue, app.indexBuffer, 0, indexData.data(), app.indexDataSize);
 
     // === Create the uniform buffer ===
 
@@ -315,44 +538,44 @@ int main(int argc, const char* argv[])
     uniformBufferDesc.size                 = sizeof(ShaderUniformData);
     uniformBufferDesc.usage                = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Uniform;
 
-    WGPUBuffer uniformBuffer = wgpuDeviceCreateBuffer(app.device, &uniformBufferDesc);
-    WEBGPU_DEMO_CHECK(indexBuffer, "[WebGPU] Failed to create uniform buffer");
+    app.uniformBuffer = wgpuDeviceCreateBuffer(app.device, &uniformBufferDesc);
+    WEBGPU_DEMO_CHECK(app.indexBuffer, "[WebGPU] Failed to create uniform buffer");
     WEBGPU_DEMO_LOG("[WebGPU] Uniform buffer created");
 
     ShaderUniformData uniformData = {};
-    wgpuQueueWriteBuffer(queue, uniformBuffer, 0, &uniformData, sizeof(ShaderUniformData));
+    wgpuQueueWriteBuffer(app.queue, app.uniformBuffer, 0, &uniformData, sizeof(ShaderUniformData));
 
     // === Create the depth texture ===
 
-    WGPUTextureFormat depthTextureFormat = WGPUTextureFormat_Depth24Plus;
+    app.depthTextureFormat = WGPUTextureFormat_Depth24Plus;
 
-    WGPUTextureDescriptor depthTextureDesc   = {};
-    depthTextureDesc.dimension               = WGPUTextureDimension_2D;
-    depthTextureDesc.format                  = depthTextureFormat;
-    depthTextureDesc.mipLevelCount           = 1;
-    depthTextureDesc.sampleCount             = 1;
-    depthTextureDesc.size.width              = surfaceWidth;
-    depthTextureDesc.size.height             = surfaceHeight;
-    depthTextureDesc.size.depthOrArrayLayers = 1;
-    depthTextureDesc.usage                   = WGPUTextureUsage_RenderAttachment;
-    depthTextureDesc.viewFormatCount         = 1;
-    depthTextureDesc.viewFormats             = &depthTextureFormat;
+    app.depthTextureDesc                         = {};
+    app.depthTextureDesc.dimension               = WGPUTextureDimension_2D;
+    app.depthTextureDesc.format                  = app.depthTextureFormat;
+    app.depthTextureDesc.mipLevelCount           = 1;
+    app.depthTextureDesc.sampleCount             = 1;
+    app.depthTextureDesc.size.width              = app.surfaceWidth;
+    app.depthTextureDesc.size.height             = app.surfaceHeight;
+    app.depthTextureDesc.size.depthOrArrayLayers = 1;
+    app.depthTextureDesc.usage                   = WGPUTextureUsage_RenderAttachment;
+    app.depthTextureDesc.viewFormatCount         = 1;
+    app.depthTextureDesc.viewFormats             = &app.depthTextureFormat;
 
-    WGPUTexture depthTexture = wgpuDeviceCreateTexture(app.device, &depthTextureDesc);
-    WEBGPU_DEMO_CHECK(depthTexture, "[WebGPU] Failed to create depth texture");
+    app.depthTexture = wgpuDeviceCreateTexture(app.device, &app.depthTextureDesc);
+    WEBGPU_DEMO_CHECK(app.depthTexture, "[WebGPU] Failed to create depth texture");
     WEBGPU_DEMO_LOG("[WebGPU] Depth texture created");
 
-    WGPUTextureViewDescriptor depthTextureViewDesc = {};
-    depthTextureViewDesc.aspect                    = WGPUTextureAspect_DepthOnly;
-    depthTextureViewDesc.baseArrayLayer            = 0;
-    depthTextureViewDesc.arrayLayerCount           = 1;
-    depthTextureViewDesc.baseMipLevel              = 0;
-    depthTextureViewDesc.mipLevelCount             = 1;
-    depthTextureViewDesc.dimension                 = WGPUTextureViewDimension_2D;
-    depthTextureViewDesc.format                    = depthTextureFormat;
+    app.depthTextureViewDesc                 = {};
+    app.depthTextureViewDesc.aspect          = WGPUTextureAspect_DepthOnly;
+    app.depthTextureViewDesc.baseArrayLayer  = 0;
+    app.depthTextureViewDesc.arrayLayerCount = 1;
+    app.depthTextureViewDesc.baseMipLevel    = 0;
+    app.depthTextureViewDesc.mipLevelCount   = 1;
+    app.depthTextureViewDesc.dimension       = WGPUTextureViewDimension_2D;
+    app.depthTextureViewDesc.format          = app.depthTextureFormat;
 
-    WGPUTextureView depthTextureView = wgpuTextureCreateView(depthTexture, &depthTextureViewDesc);
-    WEBGPU_DEMO_CHECK(depthTextureView, "[WebGPU] Failed to create depth texture view");
+    app.depthTextureView = wgpuTextureCreateView(app.depthTexture, &app.depthTextureViewDesc);
+    WEBGPU_DEMO_CHECK(app.depthTextureView, "[WebGPU] Failed to create depth texture view");
     WEBGPU_DEMO_LOG("[WebGPU] Depth texture view created");
 
     // === Create the texture ===
@@ -375,13 +598,13 @@ int main(int argc, const char* argv[])
     textureDesc.mipLevelCount           = 4;
     textureDesc.sampleCount             = 1;
 
-    WGPUTexture texture = wgpuDeviceCreateTexture(app.device, &textureDesc);
-    WEBGPU_DEMO_CHECK(texture, "[WebGPU] Failed to create texture");
+    app.texture = wgpuDeviceCreateTexture(app.device, &textureDesc);
+    WEBGPU_DEMO_CHECK(app.texture, "[WebGPU] Failed to create texture");
     WEBGPU_DEMO_LOG("[WebGPU] Texture created");
 
-    // Where do we copyu the pixel data to?
+    // Where do we copy the pixel data to?
     WGPUImageCopyTexture destination = {};
-    destination.texture              = texture;
+    destination.texture              = app.texture;
     destination.mipLevel             = 0;
     destination.origin.x             = 0;
     destination.origin.y             = 0;
@@ -433,7 +656,7 @@ int main(int argc, const char* argv[])
         pixelDataLayout.rowsPerImage = mipLevelSize.height;
 
         // Upload the data to the GPU.
-        wgpuQueueWriteTexture(queue, &destination, mipLevelImage.data, mipLevelBytes, &pixelDataLayout, &mipLevelSize);
+        wgpuQueueWriteTexture(app.queue, &destination, mipLevelImage.data, mipLevelBytes, &pixelDataLayout, &mipLevelSize);
 
         // Scale the image down for the next mip level.
         mipLevelSize.width /= 2;
@@ -450,8 +673,8 @@ int main(int argc, const char* argv[])
     textureViewDesc.dimension                 = WGPUTextureViewDimension_2D;
     textureViewDesc.format                    = textureDesc.format;
 
-    WGPUTextureView textureView = wgpuTextureCreateView(texture, &textureViewDesc);
-    WEBGPU_DEMO_CHECK(textureView, "[WebGPU] Failed to create texture view");
+    app.textureView = wgpuTextureCreateView(app.texture, &textureViewDesc);
+    WEBGPU_DEMO_CHECK(app.textureView, "[WebGPU] Failed to create texture view");
     WEBGPU_DEMO_LOG("[WebGPU] Texture view created");
 
     // === Create the texture sampler ===
@@ -471,8 +694,8 @@ int main(int argc, const char* argv[])
     samplerDesc.compare               = WGPUCompareFunction_Undefined;
     samplerDesc.maxAnisotropy         = 1.0f;
 
-    WGPUSampler sampler = wgpuDeviceCreateSampler(app.device, &samplerDesc);
-    WEBGPU_DEMO_CHECK(sampler, "[WebGPU] Failed to create sampler");
+    app.sampler = wgpuDeviceCreateSampler(app.device, &samplerDesc);
+    WEBGPU_DEMO_CHECK(app.sampler, "[WebGPU] Failed to create sampler");
     WEBGPU_DEMO_LOG("[WebGPU] Sampler created");
 
     // === Create the shader module ===
@@ -483,7 +706,8 @@ int main(int argc, const char* argv[])
     const char* shaderSource = R"(
         struct VertexInput {
             @location(0) position: vec3f,
-            @location(1) uvs: vec2f,
+            @location(1) normal: vec3f,
+            @location(2) uv: vec2f,
         };
 
         struct Uniforms {
@@ -494,9 +718,12 @@ int main(int argc, const char* argv[])
 
         struct VertexOutput {
             @builtin(position) position: vec4f,
-            @location(0) uvs: vec2f,
+            @location(0) worldNormal: vec3f,
+            @location(1) uv: vec2f,
         }
         
+        const LIGHT_DIR = vec3f(4.0, -8.0, 1.0);
+
         @group(0) @binding(0) var<uniform> uniforms: Uniforms;
         @group(0) @binding(1) var texture: texture_2d<f32>;
         @group(0) @binding(2) var textureSampler: sampler;
@@ -508,13 +735,19 @@ int main(int argc, const char* argv[])
 
             var out: VertexOutput;
             out.position = uniforms.projectionMatrix * uniforms.viewMatrix * worldPos;
-            out.uvs = in.uvs;
+            out.worldNormal = in.normal;
+            out.uv = in.uv;
             return out;
         }
 
         @fragment
         fn fs_main(in: VertexOutput) -> @location(0) vec4f {
-            return textureSample(texture, textureSampler, in.uvs).rgba;
+            var baseColor = textureSample(texture, textureSampler, in.uv);
+            
+            var diffuse = dot(-normalize(in.worldNormal), normalize(LIGHT_DIR));
+            diffuse = diffuse * 0.5 + 0.5;
+
+            return vec4(baseColor.rgb * diffuse, baseColor.a);
         }
     )";
 
@@ -526,8 +759,8 @@ int main(int argc, const char* argv[])
     shaderModuleDesc.label                      = "Demo Shader";
     shaderModuleDesc.nextInChain                = (const WGPUChainedStruct*)&shaderModuleWGSLDesc;
 
-    WGPUShaderModule shaderModule = wgpuDeviceCreateShaderModule(app.device, &shaderModuleDesc);
-    WEBGPU_DEMO_CHECK(shaderModule, "[WebGPU] Failed to create shader module");
+    app.shaderModule = wgpuDeviceCreateShaderModule(app.device, &shaderModuleDesc);
+    WEBGPU_DEMO_CHECK(app.shaderModule, "[WebGPU] Failed to create shader module");
     WEBGPU_DEMO_LOG("[WebGPU] Shader module created");
 
     // === Create the bind group layout ===
@@ -561,8 +794,9 @@ int main(int argc, const char* argv[])
     bindGroupLayoutDesc.label                         = "Demo Bind Group Layout";
     bindGroupLayoutDesc.entryCount                    = bindGroupLayoutEntries.size();
     bindGroupLayoutDesc.entries                       = bindGroupLayoutEntries.data();
-    WGPUBindGroupLayout bindGroupLayout               = wgpuDeviceCreateBindGroupLayout(app.device, &bindGroupLayoutDesc);
-    WEBGPU_DEMO_CHECK(bindGroupLayout, "[WebGPU] Failed to create bind group layout");
+
+    app.bindGroupLayout = wgpuDeviceCreateBindGroupLayout(app.device, &bindGroupLayoutDesc);
+    WEBGPU_DEMO_CHECK(app.bindGroupLayout, "[WebGPU] Failed to create bind group layout");
     WEBGPU_DEMO_LOG("[WebGPU] Bind group layout created");
 
     // === Create the bind group ===
@@ -570,28 +804,28 @@ int main(int argc, const char* argv[])
 
     WGPUBindGroupEntry uniformBinding = {};
     uniformBinding.binding            = 0;
-    uniformBinding.buffer             = uniformBuffer;
+    uniformBinding.buffer             = app.uniformBuffer;
     uniformBinding.offset             = 0;
     uniformBinding.size               = sizeof(ShaderUniformData);
 
     WGPUBindGroupEntry textureBinding = {};
     textureBinding.binding            = 1;
-    textureBinding.textureView        = textureView;
+    textureBinding.textureView        = app.textureView;
 
     WGPUBindGroupEntry samplerBinding = {};
     samplerBinding.binding            = 2;
-    samplerBinding.sampler            = sampler;
+    samplerBinding.sampler            = app.sampler;
 
     std::vector<WGPUBindGroupEntry> bindGroupEntries = {uniformBinding,
                                                         textureBinding,
                                                         samplerBinding};
 
     WGPUBindGroupDescriptor bindGroupDesc = {};
-    bindGroupDesc.layout                  = bindGroupLayout;
+    bindGroupDesc.layout                  = app.bindGroupLayout;
     bindGroupDesc.entryCount              = bindGroupEntries.size();
     bindGroupDesc.entries                 = bindGroupEntries.data();
-    WGPUBindGroup bindGroup               = wgpuDeviceCreateBindGroup(app.device, &bindGroupDesc);
-    WEBGPU_DEMO_CHECK(bindGroup, "[WebGPU] Failed to create bind group");
+    app.bindGroup                         = wgpuDeviceCreateBindGroup(app.device, &bindGroupDesc);
+    WEBGPU_DEMO_CHECK(app.bindGroup, "[WebGPU] Failed to create bind group");
     WEBGPU_DEMO_LOG("[WebGPU] Bind group created");
 
     // === Create the pipeline layout ===
@@ -600,9 +834,10 @@ int main(int argc, const char* argv[])
     WGPUPipelineLayoutDescriptor pipelineLayoutDesc = {};
     pipelineLayoutDesc.label                        = "Demo Pipeline Layout";
     pipelineLayoutDesc.bindGroupLayoutCount         = 1;
-    pipelineLayoutDesc.bindGroupLayouts             = &bindGroupLayout;
-    WGPUPipelineLayout pipelineLayout               = wgpuDeviceCreatePipelineLayout(app.device, &pipelineLayoutDesc);
-    WEBGPU_DEMO_CHECK(pipelineLayout, "[WebGPU] Failed to create pipeline layout");
+    pipelineLayoutDesc.bindGroupLayouts             = &app.bindGroupLayout;
+
+    app.pipelineLayout = wgpuDeviceCreatePipelineLayout(app.device, &pipelineLayoutDesc);
+    WEBGPU_DEMO_CHECK(app.pipelineLayout, "[WebGPU] Failed to create pipeline layout");
     WEBGPU_DEMO_LOG("[WebGPU] Pipeline layout created");
 
     // === Create the render pipeline ===
@@ -615,23 +850,28 @@ int main(int argc, const char* argv[])
     positionAttribute.offset              = 0;
     positionAttribute.shaderLocation      = 0;
 
-    WGPUVertexAttribute uvsAttribute = {};
-    uvsAttribute.format              = WGPUVertexFormat_Float32x2;
-    uvsAttribute.offset              = 3 * sizeof(float);
-    uvsAttribute.shaderLocation      = 1;
+    WGPUVertexAttribute normalAttribute = {};
+    normalAttribute.format              = WGPUVertexFormat_Float32x3;
+    normalAttribute.offset              = 3 * sizeof(float);
+    normalAttribute.shaderLocation      = 1;
 
-    std::vector<WGPUVertexAttribute> vertexAttributes = {positionAttribute, uvsAttribute};
+    WGPUVertexAttribute uvAttribute = {};
+    uvAttribute.format              = WGPUVertexFormat_Float32x2;
+    uvAttribute.offset              = 6 * sizeof(float);
+    uvAttribute.shaderLocation      = 2;
+
+    std::vector<WGPUVertexAttribute> vertexAttributes = {positionAttribute, normalAttribute, uvAttribute};
 
     // Description of the vertex buffer layout for the vertex shader stage
     WGPUVertexBufferLayout vertexBufferLayout = {};
-    vertexBufferLayout.arrayStride            = 5ull * sizeof(float);
+    vertexBufferLayout.arrayStride            = sizeof(VertexData);
     vertexBufferLayout.stepMode               = WGPUVertexStepMode_Vertex;
     vertexBufferLayout.attributeCount         = vertexAttributes.size();
     vertexBufferLayout.attributes             = vertexAttributes.data();
 
     // Configuration for the vertex shader stage
     WGPUVertexState vertexState = {};
-    vertexState.module          = shaderModule;
+    vertexState.module          = app.shaderModule;
     vertexState.entryPoint      = "vs_main";
     vertexState.bufferCount     = 1;
     vertexState.buffers         = &vertexBufferLayout;
@@ -645,7 +885,7 @@ int main(int argc, const char* argv[])
 
     // Configuration for depth testing and stencil buffer
     WGPUDepthStencilState depthStencilState    = {};
-    depthStencilState.format                   = depthTextureFormat;
+    depthStencilState.format                   = app.depthTextureFormat;
     depthStencilState.depthWriteEnabled        = true;
     depthStencilState.depthCompare             = WGPUCompareFunction_Less;
     depthStencilState.stencilReadMask          = 0;
@@ -669,7 +909,7 @@ int main(int argc, const char* argv[])
     colorTargetState.format               = surfaceCapabilities.formats[0];
     colorTargetState.writeMask            = WGPUColorWriteMask_All;
     WGPUFragmentState fragmentState       = {};
-    fragmentState.module                  = shaderModule;
+    fragmentState.module                  = app.shaderModule;
     fragmentState.entryPoint              = "fs_main";
     fragmentState.targetCount             = 1;
     fragmentState.targets                 = &colorTargetState;
@@ -677,255 +917,92 @@ int main(int argc, const char* argv[])
     // Configuration for the entire pipeline
     WGPURenderPipelineDescriptor pipelineDesc = {};
     pipelineDesc.label                        = "Demo Pipeline";
-    pipelineDesc.layout                       = pipelineLayout;
+    pipelineDesc.layout                       = app.pipelineLayout;
     pipelineDesc.vertex                       = vertexState;
     pipelineDesc.primitive                    = primitiveState;
     pipelineDesc.depthStencil                 = &depthStencilState;
     pipelineDesc.multisample                  = multisampleState;
     pipelineDesc.fragment                     = &fragmentState;
 
-    WGPURenderPipeline pipeline = wgpuDeviceCreateRenderPipeline(app.device, &pipelineDesc);
-    WEBGPU_DEMO_CHECK(pipeline, "[WebGPU] Failed to create render pipeline");
+    app.pipeline = wgpuDeviceCreateRenderPipeline(app.device, &pipelineDesc);
+    WEBGPU_DEMO_CHECK(app.pipeline, "[WebGPU] Failed to create render pipeline");
     WEBGPU_DEMO_LOG("[WebGPU] Render pipeline created");
+}
 
-    float camRotX = 0.0f;
-    float camRotY = 0.0f;
+void deinitWebGPU(AppData& app)
+{
+    // === Release all WebGPU resources ===
+
+    wgpuRenderPipelineRelease(app.pipeline);
+    wgpuPipelineLayoutRelease(app.pipelineLayout);
+    wgpuBindGroupRelease(app.bindGroup);
+    wgpuBindGroupLayoutRelease(app.bindGroupLayout);
+    wgpuShaderModuleRelease(app.shaderModule);
+    wgpuSamplerRelease(app.sampler);
+    wgpuTextureViewRelease(app.textureView);
+    wgpuTextureDestroy(app.texture);
+    wgpuTextureRelease(app.texture);
+    wgpuTextureViewRelease(app.depthTextureView);
+    wgpuTextureDestroy(app.depthTexture);
+    wgpuTextureRelease(app.depthTexture);
+    wgpuBufferDestroy(app.uniformBuffer);
+    wgpuBufferRelease(app.uniformBuffer);
+    wgpuBufferDestroy(app.indexBuffer);
+    wgpuBufferRelease(app.indexBuffer);
+    wgpuBufferDestroy(app.vertexBuffer);
+    wgpuBufferRelease(app.vertexBuffer);
+    wgpuSurfaceRelease(app.surface);
+    wgpuQueueRelease(app.queue);
+    wgpuDeviceRelease(app.device);
+    wgpuAdapterRelease(app.adapter);
+    wgpuInstanceRelease(app.instance);
+
+    WEBGPU_DEMO_LOG("[WebGPU] Resources released");
+}
+
+void deinitGLFW(AppData& app)
+{
+    // === Destroy the window and terminate GLFW ===
+
+    glfwDestroyWindow(app.window);
+    glfwTerminate();
+    WEBGPU_DEMO_LOG("[GLFW] Window closed and terminated");
+}
+
+int main(int argc, const char* argv[])
+{
+    AppData app;
+    initGLFW(app);
+    initWebGPU(app);
 
     double lastCursorX = 0.0f;
     double lastCursorY = 0.0f;
 
     // === Render loop ===
 
-    while (!glfwWindowShouldClose(window))
+    while (!glfwWindowShouldClose(app.window))
     {
         // === Update cube model matrix ===
 
         double cursorX;
         double cursorY;
-        glfwGetCursorPos(window, &cursorX, &cursorY);
+        glfwGetCursorPos(app.window, &cursorX, &cursorY);
 
-        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
+        if (glfwGetMouseButton(app.window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
         {
-            camRotX -= 0.25f * static_cast<float>(cursorY - lastCursorY);
-            camRotY -= 0.25f * static_cast<float>(cursorX - lastCursorX);
+            app.camRotX -= 0.25f * static_cast<float>(cursorY - lastCursorY);
+            app.camRotY -= 0.25f * static_cast<float>(cursorX - lastCursorX);
         }
 
         lastCursorX = cursorX;
         lastCursorY = cursorY;
 
-        // === Create a WebGPU texture view ===
-        // The texture view is where we render our image into.
-
-        if (app.requireSurfaceReconfiguration)
-        {
-            app.requireSurfaceReconfiguration = false;
-
-            // Get the window size from the GLFW window.
-            glfwGetWindowSize(window, &surfaceWidth, &surfaceHeight);
-
-            // The surface size might be zero if the window is minimized.
-            if (surfaceWidth != 0 && surfaceHeight != 0)
-            {
-                WEBGPU_DEMO_LOG("[WebGPU] Re-configuring surface");
-                surfaceConfig.width  = surfaceWidth;
-                surfaceConfig.height = surfaceHeight;
-                wgpuSurfaceConfigure(app.surface, &surfaceConfig);
-
-                // Recreate the depth texture.
-
-                wgpuTextureViewRelease(textureView);
-                wgpuTextureDestroy(depthTexture);
-                wgpuTextureRelease(depthTexture);
-
-                depthTextureDesc.size.width  = surfaceWidth;
-                depthTextureDesc.size.height = surfaceHeight;
-
-                depthTexture = wgpuDeviceCreateTexture(app.device, &depthTextureDesc);
-                WEBGPU_DEMO_CHECK(depthTexture, "[WebGPU] Failed to re-create depth texture");
-                WEBGPU_DEMO_LOG("[WebGPU] Depth texture re-created");
-
-                depthTextureView = wgpuTextureCreateView(depthTexture, &depthTextureViewDesc);
-                WEBGPU_DEMO_CHECK(depthTextureView, "[WebGPU] Failed to re-create depth texture view");
-                WEBGPU_DEMO_LOG("[WebGPU] Depth texture view re-created");
-            }
-
-            // Skip this frame.
-            glfwPollEvents();
-            continue;
-        }
-
-        // Get a texture from the surface to render into.
-        WGPUSurfaceTexture surfaceTexture;
-        wgpuSurfaceGetCurrentTexture(app.surface, &surfaceTexture);
-
-        // The surface might change over time.
-        // For example, the window might be resized or minimized.
-        // We have to check the status and adapt to it.
-        switch (surfaceTexture.status)
-        {
-            case WGPUSurfaceGetCurrentTextureStatus_Success:
-                // Everything is ok, but still check for a suboptimal texture and re-configure it if needed.
-                if (surfaceTexture.suboptimal)
-                {
-                    WEBGPU_DEMO_LOG("[WebGPU] Re-configuring currently suboptimal surface");
-                    app.requireSurfaceReconfiguration = true;
-                    continue;
-                }
-
-                break;
-
-            case WGPUSurfaceGetCurrentTextureStatus_Timeout:
-            case WGPUSurfaceGetCurrentTextureStatus_Outdated:
-            case WGPUSurfaceGetCurrentTextureStatus_Lost:
-                // The surface needs to be re-configured.
-                app.requireSurfaceReconfiguration = true;
-                continue;
-
-            case WGPUSurfaceGetCurrentTextureStatus_OutOfMemory:
-            case WGPUSurfaceGetCurrentTextureStatus_DeviceLost:
-                // An error occured.
-                WEBGPU_DEMO_CHECK(false, "[WebGPU] Failed to acquire current surface texture");
-                break;
-
-            case WGPUSurfaceGetCurrentTextureStatus_Force32:
-                break;
-        }
-
-        // Create a view into the texture to specify where and how to modify the texture.
-        WGPUTextureView view = wgpuTextureCreateView(surfaceTexture.texture, nullptr);
-
-        // === Prepare uniform data ===
-        float aspectRatio = static_cast<float>(surfaceWidth) / static_cast<float>(surfaceHeight);
-
-        SLMat4f modelMatrix;
-
-        SLMat4f projectionMatrix;
-        projectionMatrix.perspective(70.0f, aspectRatio, 0.1, 1000.0f);
-
-        SLMat4f viewMatrix;
-        viewMatrix.rotate(camRotY, SLVec3f::AXISY);
-        viewMatrix.rotate(camRotX, SLVec3f::AXISX);
-        viewMatrix.translate(0.0f, 0.0f, 2.0f);
-        viewMatrix.invert();
-
-        // === Update uniforms ===
-        ShaderUniformData uniformData = {};
-        std::memcpy(uniformData.projectionMatrix, projectionMatrix.m(), sizeof(uniformData.projectionMatrix));
-        std::memcpy(uniformData.viewMatrix, viewMatrix.m(), sizeof(uniformData.viewMatrix));
-        std::memcpy(uniformData.modelMatrix, modelMatrix.m(), sizeof(uniformData.modelMatrix));
-        wgpuQueueWriteBuffer(queue, uniformBuffer, 0, &uniformData, sizeof(ShaderUniformData));
-
-        // === Create a WebGPU command encoder ===
-        // The encoder encodes the commands for the GPU into a command buffer.
-
-        WGPUCommandEncoderDescriptor cmdEncoderDesc = {};
-        cmdEncoderDesc.label                        = "Demo Command Encoder";
-
-        WGPUCommandEncoder cmdEncoder = wgpuDeviceCreateCommandEncoder(app.device, &cmdEncoderDesc);
-        WEBGPU_DEMO_CHECK(cmdEncoder, "[WebGPU] Failed to create command encoder");
-
-        // === Create a WebGPU render pass ===
-        // The render pass specifies what attachments to use while rendering.
-        // A color attachment specifies what view to render into and what to do with the texture before and after
-        // rendering. We clear the texture before rendering and store the results after rendering.
-        // The depth attachment specifies what depth texture to use.
-
-        WGPURenderPassColorAttachment colorAttachment = {};
-        colorAttachment.view                          = view;
-        colorAttachment.loadOp                        = WGPULoadOp_Clear;
-        colorAttachment.storeOp                       = WGPUStoreOp_Store;
-        colorAttachment.clearValue.r                  = 0.3;
-        colorAttachment.clearValue.g                  = 0.0;
-        colorAttachment.clearValue.b                  = 0.2;
-        colorAttachment.clearValue.a                  = 1.0;
-
-        WGPURenderPassDepthStencilAttachment depthStencilAttachment = {};
-        depthStencilAttachment.view                                 = depthTextureView;
-        depthStencilAttachment.depthLoadOp                          = WGPULoadOp_Clear;
-        depthStencilAttachment.depthStoreOp                         = WGPUStoreOp_Store;
-        depthStencilAttachment.depthClearValue                      = 1.0f;
-        depthStencilAttachment.depthReadOnly                        = false;
-        depthStencilAttachment.stencilLoadOp                        = WGPULoadOp_Clear;
-        depthStencilAttachment.stencilStoreOp                       = WGPUStoreOp_Store;
-        depthStencilAttachment.stencilClearValue                    = 0.0f;
-        depthStencilAttachment.stencilReadOnly                      = true;
-
-        WGPURenderPassDescriptor renderPassDesc = {};
-        renderPassDesc.label                    = "Demo Render Pass";
-        renderPassDesc.colorAttachmentCount     = 1;
-        renderPassDesc.colorAttachments         = &colorAttachment;
-        renderPassDesc.depthStencilAttachment   = &depthStencilAttachment;
-
-        // === Encode the commands ===
-        // The commands to begin a render pass, bind a pipeline, draw the triangle and end the render pass
-        // are encoded into a buffer.
-
-        WGPURenderPassEncoder renderPassEncoder = wgpuCommandEncoderBeginRenderPass(cmdEncoder, &renderPassDesc);
-        wgpuRenderPassEncoderSetPipeline(renderPassEncoder, pipeline);
-        wgpuRenderPassEncoderSetVertexBuffer(renderPassEncoder, 0, vertexBuffer, 0, vertexDataSize);
-        wgpuRenderPassEncoderSetIndexBuffer(renderPassEncoder, indexBuffer, WGPUIndexFormat_Uint16, 0, indexDataSize);
-        wgpuRenderPassEncoderSetBindGroup(renderPassEncoder, 0, bindGroup, 0, nullptr);
-        wgpuRenderPassEncoderDrawIndexed(renderPassEncoder, indexCount, 1, 0, 0, 0);
-        wgpuRenderPassEncoderEnd(renderPassEncoder);
-
-        // === Get the command buffer ===
-        // The command encoder is finished to get the commands for the GPU to execute in a command buffer.
-
-        WGPUCommandBufferDescriptor cmdBufferDesc = {};
-        cmdBufferDesc.label                       = "Demo Command Buffer";
-
-        WGPUCommandBuffer cmdBuffer = wgpuCommandEncoderFinish(cmdEncoder, &cmdBufferDesc);
-
-        // === Submit the command buffer to the GPU ===
-        // The work for the GPU is submitted through the queue and executed.
-        wgpuQueueSubmit(queue, 1, &cmdBuffer);
-
-        // === Present the surface ===
-        // This presents our rendered texture to the screen.
-        wgpuSurfacePresent(app.surface);
-
-        // === Clean up resources ===
-        wgpuCommandBufferRelease(cmdBuffer);
-        wgpuRenderPassEncoderRelease(renderPassEncoder);
-        wgpuCommandEncoderRelease(cmdEncoder);
-        wgpuTextureViewRelease(view);
-        wgpuTextureRelease(surfaceTexture.texture);
-
+        onPaint(app);
         glfwPollEvents();
     }
 
-    // === Release all WebGPU resources ===
-
-    wgpuRenderPipelineRelease(pipeline);
-    wgpuPipelineLayoutRelease(pipelineLayout);
-    wgpuBindGroupRelease(bindGroup);
-    wgpuBindGroupLayoutRelease(bindGroupLayout);
-    wgpuShaderModuleRelease(shaderModule);
-    wgpuSamplerRelease(sampler);
-    wgpuTextureViewRelease(textureView);
-    wgpuTextureDestroy(texture);
-    wgpuTextureRelease(texture);
-    wgpuTextureViewRelease(depthTextureView);
-    wgpuTextureDestroy(depthTexture);
-    wgpuTextureRelease(depthTexture);
-    wgpuBufferDestroy(uniformBuffer);
-    wgpuBufferRelease(uniformBuffer);
-    wgpuBufferDestroy(indexBuffer);
-    wgpuBufferRelease(indexBuffer);
-    wgpuBufferDestroy(vertexBuffer);
-    wgpuBufferRelease(vertexBuffer);
-    wgpuSurfaceRelease(app.surface);
-    wgpuQueueRelease(queue);
-    wgpuDeviceRelease(app.device);
-    wgpuAdapterRelease(adapter);
-    wgpuInstanceRelease(instance);
-    WEBGPU_DEMO_LOG("[WebGPU] Resources released");
-
-    // === Destroy the window and terminate GLFW ===
-
-    glfwDestroyWindow(window);
-    glfwTerminate();
-    WEBGPU_DEMO_LOG("[GLFW] Window closed and terminated");
+    deinitWebGPU(app);
+    deinitGLFW(app);
 
     return 0;
 }
