@@ -77,6 +77,18 @@ struct AppData
     float camZ    = 2.0f;
 };
 
+struct VertexData
+{
+    float positionX;
+    float positionY;
+    float positionZ;
+    float normalX;
+    float normalY;
+    float normalZ;
+    float uvX;
+    float uvY;
+};
+
 struct alignas(16) ShaderUniformData
 {
     float projectionMatrix[16];
@@ -124,6 +136,9 @@ void reconfigureSurface(AppData& app)
 
 void onPaint(AppData& app)
 {
+    if (app.surfaceWidth == 0 || app.surfaceHeight == 0)
+        return;
+
     // Get a texture from the surface to render into.
     WGPUSurfaceTexture surfaceTexture;
     wgpuSurfaceGetCurrentTexture(app.surface, &surfaceTexture);
@@ -345,11 +360,11 @@ void initWebGPU(AppData& app)
     // which is how WebGPU prevents code from working on one machine and not on another.
 
     WGPURequiredLimits requiredLimits                      = {};
-    requiredLimits.limits.maxVertexAttributes              = 2u;
+    requiredLimits.limits.maxVertexAttributes              = 3u;
     requiredLimits.limits.maxVertexBuffers                 = 1u;
-    requiredLimits.limits.maxBufferSize                    = 1024ull;
-    requiredLimits.limits.maxVertexBufferArrayStride       = 5u * sizeof(float);
-    requiredLimits.limits.maxInterStageShaderComponents    = 2u;
+    requiredLimits.limits.maxBufferSize                    = 2048ull;
+    requiredLimits.limits.maxVertexBufferArrayStride       = sizeof(VertexData);
+    requiredLimits.limits.maxInterStageShaderComponents    = 5u;
     requiredLimits.limits.maxBindGroups                    = 1u;
     requiredLimits.limits.maxBindingsPerBindGroup          = 3u;
     requiredLimits.limits.maxUniformBuffersPerShaderStage  = 1u;
@@ -429,60 +444,60 @@ void initWebGPU(AppData& app)
     // The vertex buffer contains the input data for the shader.
 
     // clang-format off
-    std::vector<float> vertexData =
+    std::vector<VertexData> vertexData =
     {
         // left
-        -0.5,  0.5, -0.5,    0.0f, 0.0f,
-        -0.5, -0.5, -0.5,    0.0f, 1.0f,
-        -0.5,  0.5,  0.5,    1.0f, 0.0f,
-        -0.5,  0.5,  0.5,    1.0f, 0.0f,
-        -0.5, -0.5, -0.5,    0.0f, 1.0f,
-        -0.5, -0.5,  0.5,    1.0f, 1.0f,
+        {-0.5,  0.5, -0.5, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+        {-0.5, -0.5, -0.5, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+        {-0.5,  0.5,  0.5, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f},
+        {-0.5,  0.5,  0.5, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f},
+        {-0.5, -0.5, -0.5, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+        {-0.5, -0.5,  0.5, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f},
 
         // right
-         0.5,  0.5,  0.5,    0.0f, 0.0f,
-         0.5, -0.5,  0.5,    0.0f, 1.0f,
-         0.5,  0.5, -0.5,    1.0f, 0.0f,
-         0.5,  0.5, -0.5,    1.0f, 0.0f,
-         0.5, -0.5,  0.5,    0.0f, 1.0f,
-         0.5, -0.5, -0.5,    1.0f, 1.0f,
+        { 0.5,  0.5,  0.5,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+        { 0.5, -0.5,  0.5,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+        { 0.5,  0.5, -0.5,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f},
+        { 0.5,  0.5, -0.5,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f},
+        { 0.5, -0.5,  0.5,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+        { 0.5, -0.5, -0.5,  1.0f, 0.0f, 0.0f, 1.0f, 1.0f},
 
         // bottom
-        -0.5, -0.5,  0.5,    0.0f, 0.0f,
-        -0.5, -0.5, -0.5,    0.0f, 1.0f,
-         0.5, -0.5,  0.5,    1.0f, 0.0f,
-         0.5, -0.5,  0.5,    1.0f, 0.0f,
-        -0.5, -0.5, -0.5,    0.0f, 1.0f,
-         0.5, -0.5, -0.5,    1.0f, 1.0f,
+        {-0.5, -0.5,  0.5, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f},
+        {-0.5, -0.5, -0.5, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f},
+        { 0.5, -0.5,  0.5, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f},
+        { 0.5, -0.5,  0.5, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f},
+        {-0.5, -0.5, -0.5, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f},
+        { 0.5, -0.5, -0.5, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f},
 
         // top
-        -0.5,  0.5, -0.5,    0.0f, 0.0f,
-        -0.5,  0.5,  0.5,    0.0f, 1.0f,
-         0.5,  0.5, -0.5,    1.0f, 0.0f,
-         0.5,  0.5, -0.5,    1.0f, 0.0f,
-        -0.5,  0.5,  0.5,    0.0f, 1.0f,
-         0.5,  0.5,  0.5,    1.0f, 1.0f,
+        {-0.5,  0.5, -0.5, 0.0f,  1.0f, 0.0f, 0.0f, 0.0f},
+        {-0.5,  0.5,  0.5, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f},
+        { 0.5,  0.5, -0.5, 0.0f,  1.0f, 0.0f, 1.0f, 0.0f},
+        { 0.5,  0.5, -0.5, 0.0f,  1.0f, 0.0f, 1.0f, 0.0f},
+        {-0.5,  0.5,  0.5, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f},
+        { 0.5,  0.5,  0.5, 0.0f,  1.0f, 0.0f, 1.0f, 1.0f},
 
         // back
-         0.5,  0.5, -0.5,    0.0f, 0.0f,
-         0.5, -0.5, -0.5,    0.0f, 1.0f,
-        -0.5,  0.5, -0.5,    1.0f, 0.0f,
-        -0.5,  0.5, -0.5,    1.0f, 0.0f,
-         0.5, -0.5, -0.5,    0.0f, 1.0f,
-        -0.5, -0.5, -0.5,    1.0f, 1.0f,
+        { 0.5,  0.5, -0.5, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f},
+        { 0.5, -0.5, -0.5, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f},
+        {-0.5,  0.5, -0.5, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f},
+        {-0.5,  0.5, -0.5, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f},
+        { 0.5, -0.5, -0.5, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f},
+        {-0.5, -0.5, -0.5, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f},
 
         // front
-        -0.5,  0.5,  0.5,    0.0f, 0.0f,
-        -0.5, -0.5,  0.5,    0.0f, 1.0f,
-         0.5,  0.5,  0.5,    1.0f, 0.0f,
-         0.5,  0.5,  0.5,    1.0f, 0.0f,
-        -0.5, -0.5,  0.5,    0.0f, 1.0f,
-         0.5, -0.5,  0.5,    1.0f, 1.0f,
+        {-0.5,  0.5,  0.5, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f},
+        {-0.5, -0.5,  0.5, 0.0f, 0.0f,  1.0f, 0.0f, 1.0f},
+        { 0.5,  0.5,  0.5, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f},
+        { 0.5,  0.5,  0.5, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f},
+        {-0.5, -0.5,  0.5, 0.0f, 0.0f,  1.0f, 0.0f, 1.0f},
+        { 0.5, -0.5,  0.5, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f},
     };
     // clang-format on
 
-    unsigned vertexCount = vertexData.size() / 5;
-    app.vertexDataSize   = vertexData.size() * sizeof(float);
+    unsigned vertexCount = vertexData.size();
+    app.vertexDataSize   = vertexData.size() * sizeof(VertexData);
 
     WGPUBufferDescriptor vertexBufferDesc = {};
     vertexBufferDesc.label                = "Demo Vertex Buffer";
@@ -587,7 +602,7 @@ void initWebGPU(AppData& app)
     WEBGPU_DEMO_CHECK(app.texture, "[WebGPU] Failed to create texture");
     WEBGPU_DEMO_LOG("[WebGPU] Texture created");
 
-    // Where do we copyu the pixel data to?
+    // Where do we copy the pixel data to?
     WGPUImageCopyTexture destination = {};
     destination.texture              = app.texture;
     destination.mipLevel             = 0;
@@ -691,7 +706,8 @@ void initWebGPU(AppData& app)
     const char* shaderSource = R"(
         struct VertexInput {
             @location(0) position: vec3f,
-            @location(1) uvs: vec2f,
+            @location(1) normal: vec3f,
+            @location(2) uv: vec2f,
         };
 
         struct Uniforms {
@@ -702,9 +718,12 @@ void initWebGPU(AppData& app)
 
         struct VertexOutput {
             @builtin(position) position: vec4f,
-            @location(0) uvs: vec2f,
+            @location(0) worldNormal: vec3f,
+            @location(1) uv: vec2f,
         }
         
+        const LIGHT_DIR = vec3f(4.0, -8.0, 1.0);
+
         @group(0) @binding(0) var<uniform> uniforms: Uniforms;
         @group(0) @binding(1) var texture: texture_2d<f32>;
         @group(0) @binding(2) var textureSampler: sampler;
@@ -716,13 +735,19 @@ void initWebGPU(AppData& app)
 
             var out: VertexOutput;
             out.position = uniforms.projectionMatrix * uniforms.viewMatrix * worldPos;
-            out.uvs = in.uvs;
+            out.worldNormal = in.normal;
+            out.uv = in.uv;
             return out;
         }
 
         @fragment
         fn fs_main(in: VertexOutput) -> @location(0) vec4f {
-            return textureSample(texture, textureSampler, in.uvs).rgba;
+            var baseColor = textureSample(texture, textureSampler, in.uv);
+            
+            var diffuse = dot(-normalize(in.worldNormal), normalize(LIGHT_DIR));
+            diffuse = diffuse * 0.5 + 0.5;
+
+            return vec4(baseColor.rgb * diffuse, baseColor.a);
         }
     )";
 
@@ -825,16 +850,21 @@ void initWebGPU(AppData& app)
     positionAttribute.offset              = 0;
     positionAttribute.shaderLocation      = 0;
 
-    WGPUVertexAttribute uvsAttribute = {};
-    uvsAttribute.format              = WGPUVertexFormat_Float32x2;
-    uvsAttribute.offset              = 3 * sizeof(float);
-    uvsAttribute.shaderLocation      = 1;
+    WGPUVertexAttribute normalAttribute = {};
+    normalAttribute.format              = WGPUVertexFormat_Float32x3;
+    normalAttribute.offset              = 3 * sizeof(float);
+    normalAttribute.shaderLocation      = 1;
 
-    std::vector<WGPUVertexAttribute> vertexAttributes = {positionAttribute, uvsAttribute};
+    WGPUVertexAttribute uvAttribute = {};
+    uvAttribute.format              = WGPUVertexFormat_Float32x2;
+    uvAttribute.offset              = 6 * sizeof(float);
+    uvAttribute.shaderLocation      = 2;
+
+    std::vector<WGPUVertexAttribute> vertexAttributes = {positionAttribute, normalAttribute, uvAttribute};
 
     // Description of the vertex buffer layout for the vertex shader stage
     WGPUVertexBufferLayout vertexBufferLayout = {};
-    vertexBufferLayout.arrayStride            = 5ull * sizeof(float);
+    vertexBufferLayout.arrayStride            = sizeof(VertexData);
     vertexBufferLayout.stepMode               = WGPUVertexStepMode_Vertex;
     vertexBufferLayout.attributeCount         = vertexAttributes.size();
     vertexBufferLayout.attributes             = vertexAttributes.data();
