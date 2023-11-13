@@ -1775,27 +1775,20 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
 
                 if (ImGui::BeginMenu("Particle Systems"))
                 {
-                    if (stateGL->glHasGeometryShaders())
-                    {
-                        if (ImGui::MenuItem("First Particle System", nullptr, sid == SID_ParticleSystem_First))
-                            s->onLoad(am, s, sv, SID_ParticleSystem_First);
-                        if (ImGui::MenuItem("Demo Particle System", nullptr, sid == SID_ParticleSystem_Demo))
-                            s->onLoad(am, s, sv, SID_ParticleSystem_Demo);
-                        if (ImGui::MenuItem("Dust Storm Particle System", nullptr, sid == SID_ParticleSystem_DustStorm))
-                            s->onLoad(am, s, sv, SID_ParticleSystem_DustStorm);
-                        if (ImGui::MenuItem("Fountain Particle System", nullptr, sid == SID_ParticleSystem_Fountain))
-                            s->onLoad(am, s, sv, SID_ParticleSystem_Fountain);
-                        if (ImGui::MenuItem("Sun Particle System", nullptr, sid == SID_ParticleSystem_Sun))
-                            s->onLoad(am, s, sv, SID_ParticleSystem_Sun);
-                        if (ImGui::MenuItem("Ring of Fire Particle System", nullptr, sid == SID_ParticleSystem_RingOfFire))
-                            s->onLoad(am, s, sv, SID_ParticleSystem_RingOfFire);
-                        if (ImGui::MenuItem("Complex Fire Particle System", nullptr, sid == SID_ParticleSystem_FireComplex))
-                            s->onLoad(am, s, sv, SID_ParticleSystem_FireComplex);
-                    }
-                    else
-                    {
-                        ImGui::MenuItem("Particles need OpenGL >= 4.0 or OpenGLES >= 3.1", nullptr, false, false);
-                    }
+                    if (ImGui::MenuItem("First Particle System", nullptr, sid == SID_ParticleSystem_First))
+                        s->onLoad(am, s, sv, SID_ParticleSystem_First);
+                    if (ImGui::MenuItem("Demo Particle System", nullptr, sid == SID_ParticleSystem_Demo))
+                        s->onLoad(am, s, sv, SID_ParticleSystem_Demo);
+                    if (ImGui::MenuItem("Dust Storm Particle System", nullptr, sid == SID_ParticleSystem_DustStorm))
+                        s->onLoad(am, s, sv, SID_ParticleSystem_DustStorm);
+                    if (ImGui::MenuItem("Fountain Particle System", nullptr, sid == SID_ParticleSystem_Fountain))
+                        s->onLoad(am, s, sv, SID_ParticleSystem_Fountain);
+                    if (ImGui::MenuItem("Sun Particle System", nullptr, sid == SID_ParticleSystem_Sun))
+                        s->onLoad(am, s, sv, SID_ParticleSystem_Sun);
+                    if (ImGui::MenuItem("Ring of Fire Particle System", nullptr, sid == SID_ParticleSystem_RingOfFire))
+                        s->onLoad(am, s, sv, SID_ParticleSystem_RingOfFire);
+                    if (ImGui::MenuItem("Complex Fire Particle System", nullptr, sid == SID_ParticleSystem_FireComplex))
+                        s->onLoad(am, s, sv, SID_ParticleSystem_FireComplex);
 
                     ImGui::EndMenu();
                 }
@@ -1964,13 +1957,10 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                         s->onLoad(am, s, sv, SID_Benchmark6_ColumnsLOD);
                     if (ImGui::MenuItem("Jan's Universe", nullptr, sid == SID_Benchmark7_JansUniverse))
                         s->onLoad(am, s, sv, SID_Benchmark7_JansUniverse);
-                    if (stateGL->glHasGeometryShaders())
-                    {
-                        if (ImGui::MenuItem("Particle System lot of fire complex", nullptr, sid == SID_Benchmark8_ParticleSystemFireComplex))
-                            s->onLoad(am, s, sv, SID_Benchmark8_ParticleSystemFireComplex);
-                        if (ImGui::MenuItem("Particle System lot of particle", nullptr, sid == SID_Benchmark9_ParticleSystemManyParticles))
-                            s->onLoad(am, s, sv, SID_Benchmark9_ParticleSystemManyParticles);
-                    }
+                    if (ImGui::MenuItem("Particle System lot of fire complex", nullptr, sid == SID_Benchmark8_ParticleSystemFireComplex))
+                        s->onLoad(am, s, sv, SID_Benchmark8_ParticleSystemFireComplex);
+                    if (ImGui::MenuItem("Particle System lot of particle", nullptr, sid == SID_Benchmark9_ParticleSystemManyParticles))
+                        s->onLoad(am, s, sv, SID_Benchmark9_ParticleSystemManyParticles);
                     ImGui::EndMenu();
                 }
 

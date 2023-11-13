@@ -35,7 +35,15 @@ SLParticleSystem::SLParticleSystem(SLAssetManager* assetMgr,
     assert(!name.empty());
 
     // To be added to constructor
-    _renderInstanced = renderInstanced;
+
+    if (SLGLState::instance()->glHasGeometryShaders())
+    {
+        _renderInstanced = renderInstanced;
+    }
+    else
+    {
+        _renderInstanced = true;
+    }
     _primitive = PT_points;
 
     P.push_back(SLVec3f(0, 0, 0)); // Trick SL project because it want mesh to have vertex
