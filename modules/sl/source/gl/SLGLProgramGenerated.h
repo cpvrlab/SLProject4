@@ -99,9 +99,9 @@ public:
     static void buildProgramNamePS(SLMaterial* mat,
                                    string&     programName,
                                    bool        isDrawProg,
-                                   bool        instancedRendering);
+                                   bool        renderInstanced);
 
-    void buildProgramCodePS(SLMaterial* mat, bool isDrawProg, bool isRenderInstanced = false);
+    void buildProgramCodePS(SLMaterial* mat, bool isDrawProg, bool renderInstanced = false);
     void buildProgramCode(SLMaterial* mat,
                           SLVLight*   lights);
     void beginShader(SLCamera*   cam,

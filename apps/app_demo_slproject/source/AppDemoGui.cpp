@@ -3774,10 +3774,10 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
                                 ps->isGenerated(false);
                             }
 
-                            bool instanced = ps->renderInstanced();
-                            if (ImGui::Checkbox("Instanced draw", &instanced))
+                            bool renderInstanced = ps->renderInstanced();
+                            if (ImGui::Checkbox("Instanced draw", &renderInstanced))
                             {
-                                ps->drawInstanced(instanced);
+                                ps->drawInstanced(renderInstanced);
                                 ps->isGenerated(false);
                             }
 
