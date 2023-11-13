@@ -28,7 +28,7 @@
 #include <cstring>
 
 #define WEBGPU_DEMO_LOG(msg) std::cout << (msg) << std::endl
-
+   
 #define WEBGPU_DEMO_CHECK(condition, errorMsg) \
     if (!(condition)) \
     { \
@@ -36,7 +36,134 @@
         std::exit(1); \
     }
 
-struct AppData
+/*
+To interact with WebGPU, we create objects with a call to wgpu*Create*. This function normally takes the parent
+object as a parameter and a WGPU*Descriptor that contains the specification for the object. The returned object
+is released after usage with a call to wgpuRelease*. An object can have a label that is used when reporting errors.
+
+WebGPU concepts:
+    - WGPUInstance
+        The core interface through which all other objects are created.
+    
+    - WGPUAdapter
+        Represents a physical device and is used to query its capabilities and limits.
+    
+    - WGPUDevice
+        Represents a logical device we interact with. It is created by specifying the capabilities we require
+        and fails if the adapter does not support them. We cannot create more resources than specified in the
+        limits at creation. This is done to prevent a function from working on one device but not on another.
+    
+    - WGPUQueue
+        The queue is where we submit the commands for the GPU to. Everything that is executed on the GPU goes
+        through the queue. Examples are executing rendering or compute pipelines, writing to or reading from buffers.
+    
+    - WGPUSurface
+        The surface we draw onto. How it is acquired depends on the OS so we have to manually convert window handles
+        from the different platforms to surfaces. The surface has to be reconfigured every time the window size
+        changes.
+    
+    - WGPUBuffer
+        Represents a chunk of memory on the GPU. They can be used for example as vertex buffers, uniforms buffers or
+        storage buffers. Buffers are created with a fixed size and usage flags that specify e.g. whether we can copy
+        to this buffer or whether it is used as an index buffer. The memory for the buffer is automatically allocated
+        at creation but has to be deallocated manually using wgpuBufferDestroy. wgpuQueueWriteBuffer is used to upload
+        buffer data to the GPU.
+    
+    - WGPUTexture
+        Represents pixel data in the memory of the GPU. It is similar to a buffer in that memory for it is allocated at
+        creation, that it has usage flags and that the memory is deallocated using wgpuTextureDestroy. Data is uploaded
+        using wgpuQueueWriteTexture. A texture additionally has a size, a format, a mip level count and a sample count.
+        Textures can be used in shaders or as a render attachment (e.g. the depth buffer). Mip maps have to be created
+        manually.
+    
+    - WGPUTextureView
+        To use a texture, a texture view has to be created. It specifies which part of the texture is accessed
+        (which base array layer, how many array layers, which base mip level, which format, ...).
+    
+    - WGPUTextureSampler
+        To read a texture in a shader, a sampler is commonly used. Textures can also be accessed directly without a
+        sampler by specifying texel coordinates, which is more like reading the data from a buffer. To get access to
+        features like filtering, mipmapping or clamping, a sampler is used.
+    
+    - WGPURenderPipeline
+        Represents a configuration of the GPU pipeline. It specifies completely how input data is transformed into
+        output pixels by settings the configuration for the GPU pipeline stages.
+
+        The WebGPU render pipeline model looks like this:
+            1. vertex fetch
+            2. vertex shader
+            3. primitive assembly
+            4. rasterization
+            5. fragment shader
+            6. stencil test and write
+            7. depth test and write
+            8. blending
+            9. write to attachments
+
+        The descriptor for this structure contains the following configurations:
+
+            - layout: WGPUPipelineLayout
+            - vertex: WGPUVertexState
+                Configuration for the vertex fetch and vertex shader stages.
+                Specifies the shader module to run as well as the buffers and constants used.
+                A vertex buffer is specified using a WGPUVertexBufferLayout structure that contains a list of
+                attributes (WGPUVertexAttribute) along with the stride and step mode (per vertex or per instance).
+                Attributes are specified through a format, an offset in the data and a location in the shader.
+                The location is a number hard-coded for the attribute in the shader code. 
+            - primitive: WGPUPrimitiveState
+                Configuration for the primitive assembly and rasterization stages.
+                Specifies the topology (triangles, triangle strips, lines, ...), what index format
+                is used, how the face orientation of triangles is defined and the cull mode.
+            - depthStencil: WGPUDepthStencilState
+                Configuration for the depth test and stencil test stages.
+                Specifies the format of the depth/stencil buffer and how depth and stencil testing are performed. 
+            - multisample: WGPUMultisampleState
+                Configuration for multisampling.
+                Specifies the number of samples per pixel as well as additional parameters for muiltisampling.
+            - fragment: WGPUFragmentState
+                Configuration for the fragment shader and blending stages.
+                Specifies the shader module to run as well as the buffers and constants used.
+                This state also specifies a list of color targets that are rendered into which contains
+                additional configuration such as the color attachement format and the blending mode.
+
+    - WGPUShaderModule
+        Represents a shader on the GPU. It is created by specifying code in either the WebGPU shading language (WGSL)
+        or the SPIR-V format (not support on the Web). This code is then compiled by the WebGPU implementation to a
+        backend-specific shader format such as SPIR-V for Vulkan or MSL for Metal. A shader can have multiple entry
+        points, making it possible to use one shader module for both the vertex shader and fragment shader stage.
+
+    - WGPUBindGroup
+        A list of resources bound in a shader. Resources can be buffers, samplers or texture views. Each bind group
+        entry contains a binding (a unique number assigned to the resource in the shader code), the buffer, sampler or
+        texture view bound, an offset and a size. Multiple bind groups can be set per render pass.
+
+    - WGPUBindGroupLayout
+        A list of layouts for bind groups. A bind group references its layout and they both have to have the same
+        number of entries. The entries describe the binding, which shader stages can access it as well as additional
+        info depending on the type. For example, buffer bind group layout entries specify whether they are a uniform
+        buffer, a storage buffer or read-only storage. 
+
+    - WGPUPipelineLayout
+        Specifies the bind groups used in the pipeline.
+    
+    - WGPUCommandEncoder
+        Work for the GPU has to be recorded into a command buffer. This is done using a command encoder. We call
+        functions on the encoder (wgpuCommandEncoder*) to encode the commands into a buffer that can be accessed by
+        calling wgpuCommandEncoderFinish. 
+
+    - WGPUCommandBuffer
+        When all the GPU commands are recorded, wgpuCommandEncoderFinish is called on the queue which returns a
+        command buffer. This buffer can then be submitted to the GPU using wgpuQueueSubmit.
+
+    - WGPURenderPassEncoder
+        Specifies how a render pipeline is executed. It encodes the pipeline used along with the required vertex
+        buffers, index buffers, bind groups, drawing commands, etc. Accessing these render commands is done using a
+        specialized object called a render pass encoder. It is created from a command encoder using
+        wgpuCommandEncoderBeginRenderPass. 
+
+*/
+
+struct App
 {
     GLFWwindow* window        = nullptr;
     int         surfaceWidth  = 0;
@@ -47,11 +174,11 @@ struct AppData
     WGPUDevice          device           = nullptr;
     WGPUQueue           queue            = nullptr;
     WGPUSurface         surface          = nullptr;
-    WGPUTexture         depthTexture     = nullptr;
-    WGPUTextureView     depthTextureView = nullptr;
     WGPUBuffer          vertexBuffer     = nullptr;
     WGPUBuffer          indexBuffer      = nullptr;
     WGPUBuffer          uniformBuffer    = nullptr;
+    WGPUTexture         depthTexture     = nullptr;
+    WGPUTextureView     depthTextureView = nullptr;
     WGPUTexture         texture          = nullptr;
     WGPUTextureView     textureView      = nullptr;
     WGPUSampler         sampler          = nullptr;
@@ -69,8 +196,6 @@ struct AppData
     unsigned vertexDataSize;
     unsigned indexCount;
     unsigned indexDataSize;
-
-    bool requireSurfaceReconfiguration = false;
 
     float camRotX = 0.0f;
     float camRotY = 0.0f;
@@ -102,7 +227,7 @@ static_assert(sizeof(ShaderUniformData) % 16 == 0, "uniform data size must be a 
 extern "C" void* createMetalLayer(void* window);
 #endif
 
-void reconfigureSurface(AppData& app)
+void reconfigureSurface(App& app)
 {
     // Get the window size from the GLFW window.
     glfwGetWindowSize(app.window, &app.surfaceWidth, &app.surfaceHeight);
@@ -134,7 +259,7 @@ void reconfigureSurface(AppData& app)
     WEBGPU_DEMO_LOG("[WebGPU] Depth texture view re-created");
 }
 
-void onPaint(AppData& app)
+void onPaint(App& app)
 {
     if (app.surfaceWidth == 0 || app.surfaceHeight == 0)
         return;
@@ -283,12 +408,12 @@ void onPaint(AppData& app)
 
 void onResize(GLFWwindow* window, int width, int height)
 {
-    AppData& app = *((AppData*)glfwGetWindowUserPointer(window));
+    App& app = *((App*)glfwGetWindowUserPointer(window));
     reconfigureSurface(app);
     onPaint(app);
 }
 
-void initGLFW(AppData& app)
+void initGLFW(App& app)
 {
     // === Initialize GLFW ===
 
@@ -334,7 +459,7 @@ void handleDeviceRequest(WGPURequestDeviceStatus status,
     *outDevice            = device;
 }
 
-void initWebGPU(AppData& app)
+void initWebGPU(App& app)
 {
     // === Create a WebGPU instance ===
     // The instance is the root interface to WebGPU through which we create all other WebGPU resources.
@@ -450,48 +575,36 @@ void initWebGPU(AppData& app)
         {-0.5,  0.5, -0.5, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f},
         {-0.5, -0.5, -0.5, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f},
         {-0.5,  0.5,  0.5, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f},
-        {-0.5,  0.5,  0.5, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f},
-        {-0.5, -0.5, -0.5, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f},
         {-0.5, -0.5,  0.5, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f},
 
         // right
         { 0.5,  0.5,  0.5,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f},
         { 0.5, -0.5,  0.5,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f},
         { 0.5,  0.5, -0.5,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f},
-        { 0.5,  0.5, -0.5,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f},
-        { 0.5, -0.5,  0.5,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f},
         { 0.5, -0.5, -0.5,  1.0f, 0.0f, 0.0f, 1.0f, 1.0f},
 
         // bottom
         {-0.5, -0.5,  0.5, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f},
         {-0.5, -0.5, -0.5, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f},
         { 0.5, -0.5,  0.5, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f},
-        { 0.5, -0.5,  0.5, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f},
-        {-0.5, -0.5, -0.5, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f},
         { 0.5, -0.5, -0.5, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f},
 
         // top
         {-0.5,  0.5, -0.5, 0.0f,  1.0f, 0.0f, 0.0f, 0.0f},
         {-0.5,  0.5,  0.5, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f},
         { 0.5,  0.5, -0.5, 0.0f,  1.0f, 0.0f, 1.0f, 0.0f},
-        { 0.5,  0.5, -0.5, 0.0f,  1.0f, 0.0f, 1.0f, 0.0f},
-        {-0.5,  0.5,  0.5, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f},
         { 0.5,  0.5,  0.5, 0.0f,  1.0f, 0.0f, 1.0f, 1.0f},
 
         // back
         { 0.5,  0.5, -0.5, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f},
         { 0.5, -0.5, -0.5, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f},
         {-0.5,  0.5, -0.5, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f},
-        {-0.5,  0.5, -0.5, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f},
-        { 0.5, -0.5, -0.5, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f},
         {-0.5, -0.5, -0.5, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f},
 
         // front
         {-0.5,  0.5,  0.5, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f},
         {-0.5, -0.5,  0.5, 0.0f, 0.0f,  1.0f, 0.0f, 1.0f},
         { 0.5,  0.5,  0.5, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f},
-        { 0.5,  0.5,  0.5, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f},
-        {-0.5, -0.5,  0.5, 0.0f, 0.0f,  1.0f, 0.0f, 1.0f},
         { 0.5, -0.5,  0.5, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f},
     };
     // clang-format on
@@ -513,9 +626,17 @@ void initWebGPU(AppData& app)
 
     // === Create the index buffer ===
 
-    std::vector<std::uint16_t> indexData = {};
-    for (std::uint16_t index = 0; index < 36; index++)
-        indexData.push_back(index);
+    // clang-format off
+    std::vector<std::uint16_t> indexData =
+    {
+         0,  1,  2,  2,  1,  3, // left
+         4,  5,  6,  6,  5,  7, // right
+         8,  9, 10, 10,  9, 11, // bottom
+        12, 13, 14, 14, 13, 15, // top
+        16, 17, 18, 18, 17, 19, // back
+        20, 21, 22, 22, 21, 23, // front
+    };
+    // clang-format on
 
     app.indexCount    = indexData.size();
     app.indexDataSize = indexData.size() * sizeof(std::uint16_t);
@@ -626,25 +747,6 @@ void initWebGPU(AppData& app)
 
     for (unsigned mipLevel = 0; mipLevel < textureDesc.mipLevelCount; mipLevel++)
     {
-        // === Test colors ===
-        //
-        // std::uint64_t mipLevelColors[] =
-        // {
-        //     0xFF0000FF,
-        //     0xFFFF00FF,
-        //     0x00FF00FF,
-        //     0x0000FFFF
-        // };
-        //
-        // for (unsigned y = 0; y < mipLevelSize.height; y++)
-        // {
-        //     for (unsigned x = 0; x < mipLevelSize.width; x++)
-        //     {
-        //         unsigned pixelIndex = x + y * mipLevelSize.width;
-        //         std::memcpy(&mipLevelData[4ull * pixelIndex], &mipLevelColors[mipLevel], 4);
-        //     }
-        // }
-
         cv::Mat  mipLevelImage;
         cv::Size cvSize(static_cast<int>(mipLevelSize.width), static_cast<int>(mipLevelSize.height));
         cv::resize(image, mipLevelImage, cvSize);
@@ -881,7 +983,7 @@ void initWebGPU(AppData& app)
     primitiveState.topology           = WGPUPrimitiveTopology_TriangleList;
     primitiveState.stripIndexFormat   = WGPUIndexFormat_Undefined;
     primitiveState.frontFace          = WGPUFrontFace_CCW;
-    primitiveState.cullMode           = WGPUCullMode_None;
+    primitiveState.cullMode           = WGPUCullMode_Back;
 
     // Configuration for depth testing and stencil buffer
     WGPUDepthStencilState depthStencilState    = {};
@@ -929,7 +1031,7 @@ void initWebGPU(AppData& app)
     WEBGPU_DEMO_LOG("[WebGPU] Render pipeline created");
 }
 
-void deinitWebGPU(AppData& app)
+void deinitWebGPU(App& app)
 {
     // === Release all WebGPU resources ===
 
@@ -960,7 +1062,7 @@ void deinitWebGPU(AppData& app)
     WEBGPU_DEMO_LOG("[WebGPU] Resources released");
 }
 
-void deinitGLFW(AppData& app)
+void deinitGLFW(App& app)
 {
     // === Destroy the window and terminate GLFW ===
 
@@ -971,7 +1073,7 @@ void deinitGLFW(AppData& app)
 
 int main(int argc, const char* argv[])
 {
-    AppData app;
+    App app;
     initGLFW(app);
     initWebGPU(app);
 
