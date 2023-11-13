@@ -499,7 +499,6 @@ SLNode* createComplexFire(SLAssetManager* am,
         fireFlameMesh->flipbookRows(flipbookRows);
         fireFlameMesh->doFlipBookTexture(true);
         fireFlameMesh->doCounterGap(false); // We don't want to have flickering
-        fireFlameMesh->changeTexture();     // Switch texture, need to be done, to have flipbook texture as active
 
         fireFlameMesh->doAlphaOverLT(false);
         fireFlameMesh->doSizeOverLT(false);
@@ -708,7 +707,6 @@ SLNode* createTorchFire(SLAssetManager* am,
         torchFlame->flipbookRows(flipbookRows);
         torchFlame->doFlipBookTexture(true);
         torchFlame->doCounterGap(false); // We don't want to have flickering
-        torchFlame->changeTexture();     // Switch texture, need to be done, to have flipbook texture as active
         torchFlame->doAlphaOverLT(false);
         torchFlame->doSizeOverLT(false);
         torchFlame->doRotation(false);

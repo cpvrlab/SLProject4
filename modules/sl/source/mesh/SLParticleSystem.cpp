@@ -36,6 +36,8 @@ SLParticleSystem::SLParticleSystem(SLAssetManager* assetMgr,
 
     // To be added to constructor
 
+    _assetManager = assetMgr;
+
     if (SLGLState::instance()->glHasGeometryShaders())
     {
         _renderInstanced = renderInstanced;
@@ -59,10 +61,6 @@ SLParticleSystem::SLParticleSystem(SLAssetManager* assetMgr,
 
     _textureFirst    = texC;
     _textureFlipbook = texFlipbook;
-
-    // Initialize the drawing:
-    SLMaterial* mDraw = new SLMaterial(assetMgr, "Drawing-Material", this, texC);
-    mat(mDraw);
 
     _updateTime.init(60, 0.0f);
     _drawTime.init(60, 0.0f);
@@ -328,6 +326,18 @@ void SLParticleSystem::generate()
 
     deleteDataGpu();
 
+    // Initialize the drawing:
+    if (_doFlipBookTexture)
+    {
+        SLMaterial* mDraw = new SLMaterial(_assetManager, "Drawing-Material", this, _textureFlipbook);
+        mat(mDraw);
+    }
+    else
+    {
+        SLMaterial* mDraw = new SLMaterial(_assetManager, "Drawing-Material", this, _textureFirst);
+        mat(mDraw);
+    }
+
     tempP.resize(_amount);
     tempV.resize(_amount);
     tempST.resize(_amount);
@@ -484,6 +494,9 @@ void SLParticleSystem::generate()
         I32.push_back(3);
         I32.push_back(0);
 
+
+        _renderVao1.deleteGL();
+        _renderVao2.deleteGL();
         /* Generate vao for rendering with draw instanced */
         _renderVao1.setAttrib(AT_custom0, AT_custom0, &P);
         _renderVao1.setIndices(&I32);
@@ -539,24 +552,7 @@ void SLParticleSystem::generateBernsteinPSize()
     // 1
     _bernsteinPYSize.w = StaEnd[1];
 }
-//-----------------------------------------------------------------------------
-/*!
-Change the current use texture, this will switch between the normal texture and
-the flipbook texture (and vice versa)
-*/
-void SLParticleSystem::changeTexture()
-{
-    if (_doFlipBookTexture)
-    {
-        mat()->removeTextureType(TT_diffuse);
-        mat()->addTexture(_textureFlipbook);
-    }
-    else
-    {
-        mat()->removeTextureType(TT_diffuse);
-        mat()->addTexture(_textureFirst);
-    }
-}
+
 //-----------------------------------------------------------------------------
 /*! Function called inside SLNode cull3DRec(..) which flags the particle system
  to be not visible in the view frustum. This is needed to correct later the
@@ -597,7 +593,6 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
     /////////////////////////////////////
     // Init particles vector and init VAO
     /////////////////////////////////////
-
     if (!_isGenerated)
         generate();
 
@@ -908,6 +903,27 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
     // Swap buffer
     _drawBuf = 1 - _drawBuf;
 }
+
+
+/*!
+Change the current use texture, this will switch between the normal texture and
+the flipbook texture (and vice versa)
+*/
+void SLParticleSystem::changeTexture()
+{
+    if (_doFlipBookTexture)
+    {
+        mat()->removeTextureType(TT_diffuse);
+        mat()->addTexture(_textureFlipbook);
+    }
+    else
+    {
+        mat()->removeTextureType(TT_diffuse);
+        mat()->addTexture(_textureFirst);
+    }
+}
+
+
 //-----------------------------------------------------------------------------
 //! deleteData deletes all mesh data and VAOs
 void SLParticleSystem::deleteData()
@@ -918,12 +934,7 @@ void SLParticleSystem::deleteData()
 //! deleteData deletes all mesh data and VAOs
 void SLParticleSystem::deleteDataGpu()
 {
-    _vao1.deleteGL();
-    _vao2.deleteGL();
-    _renderVao1.deleteGL();
-    _renderVao2.deleteGL();
     SLMesh::deleteDataGpu();
-    _mat->deleteDataGpu();
 }
 //-----------------------------------------------------------------------------
 /*! SLParticleSystem::buildAABB builds the passed axis-aligned bounding box in

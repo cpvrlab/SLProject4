@@ -273,6 +273,9 @@ private:
     SLVec3f getPointOnPyramid();
     SLVec3f getDirectionPyramid(SLVec3f position);
 
+    // Use to recreate material (the shader change depending if the PS is instanced or not)
+    SLAssetManager*   _assetManager;                //!< pointer to the asset manager (the owner) if available
+
     // Core values
     SLint   _amount;         //!< Amount of a particle
     SLVec3f _emitterPos;     //!< Position of the particle emitter
