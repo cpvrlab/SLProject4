@@ -3585,6 +3585,9 @@ resolution shadows near the camera and lower resolution shadows further away.");
         scene->addChild(center);
         scene->addChild(cam1);
 
+        std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+        std::default_random_engine randEngine;
+
         // create astroboys around the center astroboy
         SLint size = 4;
         for (SLint iZ = -size; iZ <= size; ++iZ)
@@ -3598,6 +3601,7 @@ resolution shadows near the camera and lower resolution shadows further away.");
                     float   zt = float(iZ) * 1.0f + ((shift) ? 0.5f : 0.0f);
                     SLNode* n  = center->copyRec();
                     n->translate(xt, 0, zt, TS_object);
+                    n->scale(0.75f + 0.5f * dist(randEngine));
                     scene->addChild(n);
                 }
             }

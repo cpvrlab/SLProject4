@@ -21,7 +21,7 @@ SLGLVertexBuffer::SLGLVertexBuffer()
     _id                = 0;
     _numVertices       = 0;
     _sizeBytes         = 0;
-    _outputInterleaved = false;
+    _outputIsInterleaved = false;
     _usage             = BU_stream;
 }
 //-----------------------------------------------------------------------------
@@ -70,7 +70,7 @@ void SLGLVertexBuffer::updateAttrib(SLGLAttributeType type,
         SL_EXIT_MSG("Attribute type does not exist in VBO.");
     if (_attribs[(SLuint)index].elementSize != elementSize)
         SL_EXIT_MSG("Attribute element size differs.");
-    if (_outputInterleaved)
+    if (_outputIsInterleaved)
         SL_EXIT_MSG("Interleaved buffers can't be updated.");
 
     // Generate the vertex buffer object if there is none
@@ -119,6 +119,7 @@ sequential vertex buffer.\n\n
 \n           |<---------- strideBytes=32 ----------->|
 </PRE>
 */
+/*
 void SLGLVertexBuffer::generate(SLuint          numVertices,
                                 SLGLBufferUsage usage,
                                 SLbool          outputInterleaved)
@@ -245,6 +246,134 @@ void SLGLVertexBuffer::generate(SLuint          numVertices,
     totalBufferSize += _sizeBytes;
     GET_GL_ERROR;
 }
+*/
+
+void SLGLVertexBuffer::generate(SLuint          numVertices,
+                                SLGLBufferUsage usage,
+                                SLbool          outputInterleaved)
+{
+    assert(numVertices);
+
+    // if buffers exist delete them first
+    deleteGL();
+
+    _numVertices       = numVertices;
+    _usage             = usage;
+    _outputIsInterleaved = outputInterleaved;
+
+    // Generate the vertex buffer object
+    if (_attribs.size())
+    {
+        glGenBuffers(1, &_id);
+        glBindBuffer(GL_ARRAY_BUFFER, _id);
+    }
+
+    // Check first if all attribute data pointer point to the same interleaved data
+    _inputIsInterleaved = false;
+    if (_attribs.size() > 1)
+    {
+        _inputIsInterleaved = true;
+        for (auto a : _attribs)
+        {
+            if (a.dataPointer != _attribs[0].dataPointer)
+            {
+                _inputIsInterleaved = false;
+                break;
+            }
+        }
+    }
+
+    ///////////////////////////////////////////////////////
+    // Calculate total VBO size & attribute stride & offset
+    ///////////////////////////////////////////////////////
+
+    _sizeBytes   = 0;
+    _strideBytes = 0;
+
+    if (_inputIsInterleaved)
+    {
+        _outputIsInterleaved = true;
+
+        for (SLuint i = 0; i < _attribs.size(); ++i)
+        {
+            SLuint elementSizeBytes     = (SLuint)_attribs[i].elementSize * sizeOfType(_attribs[i].dataType);
+            _attribs[i].offsetBytes     = _strideBytes;
+            _attribs[i].bufferSizeBytes = elementSizeBytes * _numVertices;
+            _sizeBytes += _attribs[i].bufferSizeBytes;
+            _strideBytes += elementSizeBytes;
+        }
+    }
+    else // input is in separate attribute data blocks
+    {
+        for (SLuint i = 0; i < _attribs.size(); ++i)
+        {
+            SLuint elementSizeBytes = (SLuint)_attribs[i].elementSize * sizeOfType(_attribs[i].dataType);
+            if (_outputIsInterleaved)
+                _attribs[i].offsetBytes = _strideBytes;
+            else
+                _attribs[i].offsetBytes = _sizeBytes;
+            _attribs[i].bufferSizeBytes = elementSizeBytes * _numVertices;
+            _sizeBytes += _attribs[i].bufferSizeBytes;
+            if (_outputIsInterleaved) _strideBytes += elementSizeBytes;
+        }
+    }
+
+    //////////////////////////////
+    // Generate VBO for Attributes
+    //////////////////////////////
+
+    if (_inputIsInterleaved)
+    {
+        // generate the interleaved VBO buffer on the GPU
+        glBufferData(GL_ARRAY_BUFFER, _sizeBytes, _attribs[0].dataPointer, _usage);
+    }
+    else                        // input is in separate attribute data block
+    {
+        if (_outputIsInterleaved) // Copy attribute data interleaved
+        {
+            SLVuchar data;
+            data.resize(_sizeBytes);
+            for (auto a : _attribs)
+            {
+                SLuint elementSizeBytes = (SLuint)a.elementSize * sizeOfType(a.dataType);
+
+                // Copy attributes interleaved
+                for (SLuint v = 0; v < _numVertices; ++v)
+                {
+                    SLuint iDst = v * _strideBytes + a.offsetBytes;
+                    SLuint iSrc = v * elementSizeBytes;
+                    for (SLuint b = 0; b < elementSizeBytes; ++b)
+                        data[iDst + b] = ((SLuchar*)a.dataPointer)[iSrc + b];
+                }
+
+                // generate the interleaved VBO buffer on the GPU
+                glBufferData(GL_ARRAY_BUFFER, _sizeBytes, &data[0], _usage);
+            }
+        }
+        else // copy attributes buffers sequentially
+        {
+            // allocate the VBO buffer on the GPU
+            glBufferData(GL_ARRAY_BUFFER, _sizeBytes, nullptr, _usage);
+
+            for (auto a : _attribs)
+            {
+                if (a.location > -1)
+                {
+                    // Copies the attributes data at the right offset into the VBO
+                    glBufferSubData(GL_ARRAY_BUFFER,
+                                    a.offsetBytes,
+                                    a.bufferSizeBytes,
+                                    a.dataPointer);
+                }
+            }
+        }
+    }
+
+    totalBufferCount++;
+    totalBufferSize += _sizeBytes;
+    GET_GL_ERROR;
+}
+
 
 //-----------------------------------------------------------------------------
 /*! This method is only used by SLGLVertexArray drawing methods for OpenGL
@@ -256,16 +385,14 @@ void SLGLVertexBuffer::bindAndEnableAttrib(SLuint divisor) const
     //////////////////////////////////////
     // Associate VBO to Attribute location
     //////////////////////////////////////
-
     glBindBuffer(GL_ARRAY_BUFFER, _id);
-
-    if (_outputInterleaved) // Copy attribute data interleaved
+    if (_outputIsInterleaved) // Copy attribute data interleaved
     {
         for (auto a : _attribs)
         {
             if (a.location > -1)
             { // Sets the vertex attribute data pointer to its corresponding GLSL variable
-                if (a.dataType == BT_uint)
+                if (a.dataType == BT_int || a.dataType == BT_uint)
                 {
                     glVertexAttribIPointer((SLuint)a.location,
                                            a.elementSize,
@@ -297,7 +424,7 @@ void SLGLVertexBuffer::bindAndEnableAttrib(SLuint divisor) const
             if (a.location > -1)
             {
                 // Sets the vertex attribute data pointer to its corresponding GLSL variable
-                if (a.dataType == BT_uint)
+                if (a.dataType == BT_int || a.dataType == BT_uint)
                 {
                     glVertexAttribIPointer((SLuint)a.location,
                                            a.elementSize,
@@ -322,7 +449,6 @@ void SLGLVertexBuffer::bindAndEnableAttrib(SLuint divisor) const
             }
         }
     }
-    GET_GL_ERROR;
 }
 //-----------------------------------------------------------------------------
 /*! This method is only used by SLGLVertexArray drawing methods for OpenGL
@@ -344,10 +470,11 @@ SLuint SLGLVertexBuffer::sizeOfType(SLGLBufferType type)
 {
     switch (type)
     {
-        case BT_float: return sizeof(float);
-        case BT_ubyte: return sizeof(unsigned char);
-        case BT_ushort: return sizeof(unsigned short);
-        case BT_uint: return sizeof(unsigned int);
+        case BT_float: return sizeof(SLfloat);
+        case BT_int: return sizeof(SLint);
+        case BT_ubyte: return sizeof(SLuchar);
+        case BT_ushort: return sizeof(SLushort);
+        case BT_uint: return sizeof(SLint);
         default: SL_EXIT_MSG("Invalid buffer data type");
     }
     return 0;

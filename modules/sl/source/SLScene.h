@@ -114,7 +114,8 @@ public:
 
     // Misc.
     bool         onUpdate(bool renderTypeIsRT,
-                          bool voxelsAreShown);
+                          bool voxelsAreShown,
+                          bool forceCPUSkinning);
     void         init(SLAssetManager* am);
     virtual void unInit();
     void         selectNodeMesh(SLNode* nodeToSelect, SLMesh* meshToSelect);

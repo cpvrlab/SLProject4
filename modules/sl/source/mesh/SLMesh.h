@@ -151,7 +151,8 @@ public:
     SLbool       hitTriangleOS(SLRay* ray, SLNode* node, SLuint iT);
     virtual void generateVAO(SLGLVertexArray& vao);
     void         computeHardEdgesIndices(float angleRAD, float epsilon);
-    void         transformSkin(const std::function<void(SLMesh*)>& cbInformNodes);
+    void         transformSkin(bool                                forceCPUSkinning,
+                               const std::function<void(SLMesh*)>& cbInformNodes);
     void         deselectPartialSelection();
 
 #ifdef SL_HAS_OPTIX
@@ -208,8 +209,8 @@ public:
     SLVushort IE16; //!< Vector of hard edges vertex indices 16 bit (see computeHardEdgesIndices)
     SLVuint   IE32; //!< Vector of hard edges vertex indices 32 bit (see computeHardEdgesIndices)
 
-    SLVec3f minP;   //!< min. vertex in OS
-    SLVec3f maxP;   //!< max. vertex in OS
+    SLVec3f minP; //!< min. vertex in OS
+    SLVec3f maxP; //!< max. vertex in OS
 
 private:
     void calcTangents();
@@ -243,9 +244,10 @@ protected:
 
     SLbool          _isVolume;               //!< Flag for RT if mesh is a closed volume
     SLAccelStruct*  _accelStruct;            //!< KD-tree or uniform grid
-    SLbool          _accelStructIsOutOfDate; //!< Flag id accel.struct needs update
+    SLbool          _accelStructIsOutOfDate; //!< Flag if accel. struct needs update
     SLAnimSkeleton* _skeleton;               //!< The skeleton this mesh is bound to
     SLVMat4f        _jointMatrices;          //!< Joint matrix vector for this mesh
+    SLbool          _isCPUSkinned;           //!< Flag if mesh has been skinned on CPU during update
     SLVVec3f*       _finalP;                 //!< Pointer to final vertex position vector
     SLVVec3f*       _finalN;                 //!< pointer to final vertex normal vector
 };
