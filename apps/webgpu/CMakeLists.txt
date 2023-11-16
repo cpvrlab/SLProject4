@@ -60,7 +60,7 @@ if (SYSTEM_NAME_UPPER MATCHES "DARWIN")
     set(TARGET_SPECIFIC_SOURCES metal_layer.mm)
 endif ()
 
-add_executable(webgpu-demo main.cpp ${TARGET_SPECIFIC_SOURCES})
+add_executable(webgpu-demo webgpu_demo.cpp ${TARGET_SPECIFIC_SOURCES})
 target_link_libraries(webgpu-demo PRIVATE wgpu sl_cv sl_math ${glfw_LIBS})
 
 if (SYSTEM_NAME_UPPER MATCHES "LINUX")

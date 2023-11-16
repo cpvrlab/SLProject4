@@ -1,47 +1,45 @@
-#if defined(_WIN32)
-#    define SYSTEM_WINDOWS
-#    define GLFW_EXPOSE_NATIVE_WIN32
-#    define WIN32_LEAN_AND_MEAN
-#    include <windows.h>
-#elif defined(__linux__)
-#    define SYSTEM_LINUX
-#    define GLFW_EXPOSE_NATIVE_X11
-#elif defined(__APPLE__)
-#    ifndef SYSTEM_DARWIN
-#        define SYSTEM_DARWIN
-#    endif
-#    define GLFW_EXPOSE_NATIVE_COCOA
-#endif
-
-#include <webgpu.h>
-#include <GLFW/glfw3.h>
-#include <GLFW/glfw3native.h>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/imgproc.hpp>
-#include <SLMat4.h>
-#include <SLVec4.h>
-
-#include <iostream>
-#include <vector>
-#include <cstdlib>
-#include <cstdint>
-#include <cstring>
-
-#define WEBGPU_DEMO_LOG(msg) std::cout << (msg) << std::endl
-   
-#define WEBGPU_DEMO_CHECK(condition, errorMsg) \
-    if (!(condition)) \
-    { \
-        std::cerr << (errorMsg) << std::endl; \
-        std::exit(1); \
-    }
-
 /*
-To interact with WebGPU, we create objects with a call to wgpu*Create*. This function normally takes the parent
+
+-- Overview
+
+WebGPU is a graphics API standard developed by the World Wide Web Consortium (W3C). It is an abstraction layer
+over modern graphics APIs like Vulkan, D3D12 and Metal and thus uses modern concepts such as queues, command buffers
+or pipelines. WebGPU is supposed to be 'safe' API and is generally simpler to use than Vulkan. Both graphics and
+compute functionality is available.
+
+The primary target for WebGPU was the Web as a replacement for the old WebGL API. This means that
+the specification is written for a JavaScript API. However, Google and Mozilla have decided to provide their in-browser
+implementations as native libraries, so we can use WebGPU in native apps written in C, C++ or Rust. The implementers
+have agreed on a common interface for their libraries in form of a header called `webgpu.h`
+(https://github.com/webgpu-native/webgpu-headers/).
+
+There are currently three implementations of this header:
+    - wgpu-native: Mozilla's implementation for Firefox, written in Rust
+    - Dawn: Google's implementation for Chromium, written in C++
+    - Emscripten: Translates the webgpu.h calls to JavaScript calls in the browser
+
+WebGPU uses its own shader language called WGSL (WebGPU Shader Language). This is the only shader language supported
+in the browsers even though the native implementations also support SPIR-V.
+
+To make porting to WebGPU easier, the two browser vendors provide tools for translating other shader languages to WGSL:
+    - Naga: Mozilla's shader translator, can be used only as an executable
+    - Tint: Google's shader translator, can be used as both a C++ library and an executable
+
+This demo uses the wgpu-native implementation because Mozilla releases pre-built binaries that can easily be
+downloaded from CMake. Since wgpu-native uses the same interface header as Dawn, it would also be possible to
+link Dawn instead of wgpu-native, but we would have to build and distribute it ourselves.
+
+
+-- Usage
+
+WebGPU follows a stateless design as opposed to OpenGL, where much state has to be set globally before making a
+draw call. To use WebGPU, we create objects with a call to wgpu*Create*. This function generally takes the parent
 object as a parameter and a WGPU*Descriptor that contains the specification for the object. The returned object
 is released after usage with a call to wgpuRelease*. An object can have a label that is used when reporting errors.
+We can now call functions on the object to interact with them.
 
 WebGPU concepts:
+
     - WGPUInstance
         The core interface through which all other objects are created.
     
@@ -161,7 +159,76 @@ WebGPU concepts:
         specialized object called a render pass encoder. It is created from a command encoder using
         wgpuCommandEncoderBeginRenderPass. 
 
+
+-- WebGPU vs. Vulkan
+
+Here's a list of things I've noticed are handled differently from Vulkan (as of 2023-11-26):
+
+    - There is no multithreading
+        Unlike Vukan, WebGPU is currently single-threaded and doesn't allow encoding command buffers on
+        multiple threads.
+        Status: https://gpuweb.github.io/gpuweb/explainer/#multithreading
+
+    - There is only one queue
+        Vulkan allows you to create multiple queues from different families. For example, you can create a
+        graphics and a compute queue and submit commands to them that are processed in parallel on some GPUs.
+        In WebGPU, there is only one queue that is acquired using wgpuDeviceGetQueue.
+        Discussion: https://github.com/gpuweb/gpuweb/issues/1065
+
+    - There is no manual memory allocation
+        In WebGPU, buffers take care of memory allocation internally. Awesome!
+
+    - There is no swap chain
+        The swap chain configuration is part of the surface configuration.
+
+    - Error handling is very different
+        In Vulkan, there is by default no validation and programs just silently crash and burn. It is possible
+        to enable validation layers that print errors with references to the spec. The reason for this is that
+        Vulkan wants to avoid validation overhead in release builds. In WebGPU, validation seems mostly up to the
+        implementations. We currently use the wgpu-native implementation, which seems to catch all errors and prints
+        most of the time a nice error message with a human-readable error message including the labels of the
+        problematic objects, suggests fixes and even generates a stack trace. I'm not sure what the overhead of
+        this validation is, but I excpect there to be an option to turn it off in the future. 
+
 */
+
+#if defined(_WIN32)
+#    define SYSTEM_WINDOWS
+#    define GLFW_EXPOSE_NATIVE_WIN32
+#    define WIN32_LEAN_AND_MEAN
+#    include <windows.h>
+#elif defined(__linux__)
+#    define SYSTEM_LINUX
+#    define GLFW_EXPOSE_NATIVE_X11
+#elif defined(__APPLE__)
+#    ifndef SYSTEM_DARWIN
+#        define SYSTEM_DARWIN
+#    endif
+#    define GLFW_EXPOSE_NATIVE_COCOA
+#endif
+
+#include <webgpu.h>
+#include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
+#include <SLMat4.h>
+#include <SLVec4.h>
+
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+#include <cstdint>
+#include <cstring>
+
+#define WEBGPU_DEMO_LOG(msg) std::cout << (msg) << std::endl
+   
+#define WEBGPU_DEMO_CHECK(condition, errorMsg) \
+    if (!(condition)) \
+    { \
+        std::cerr << (errorMsg) << std::endl; \
+        std::exit(1); \
+    }
 
 struct App
 {
