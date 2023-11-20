@@ -1,4 +1,5 @@
-name: Build g2o 
+name: Build g2o
+
 on:
   workflow_dispatch:
 
