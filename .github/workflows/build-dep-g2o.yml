@@ -2,6 +2,9 @@ name: Build g2o
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - build-workflow
 
 jobs:
   build:
