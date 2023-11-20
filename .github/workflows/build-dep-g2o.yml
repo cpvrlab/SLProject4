@@ -15,10 +15,10 @@ jobs:
     - uses: ilammy/msvc-dev-cmd@v1
 
     - name: Download QT
-      run: curl.exe https://download.qt.io/official_releases/qt/5.15/5.15.11/single/qt-everywhere-opensource-src-5.15.11.tar.xz -o qt.tar.xz
+      run: curl.exe https://download.qt.io/official_releases/qt/5.15/5.15.11/single/qt-everywhere-opensource-src-5.15.11.zip -o qt.zip
 
     - name: unpack QT
-      run: tar xJf qt.tar.xz
+      run: Expand-Archive -Path .\qt.zip -DestinationPath .
 
     - name: configure QT
       working-directory: qt-everywhere-src-5.15.11
