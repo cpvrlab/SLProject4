@@ -22,6 +22,7 @@ set MAX_NUM_CPU_CORES=6
 set CMAKE_GENERATOR="Visual Studio 16 2019"
 set CMAKE_ARCHITECTURE=x64
 set EIGEN_VERSION=3.3.3
+set VERSION=20170730_git
 
 :: g2o configuration flags
 set BUILD_APPS=OFF
@@ -60,7 +61,9 @@ if not exist g2o (
 ) else (
     echo g2o already exists
 )
+
 cd g2o
+git checkout %VERSION%
 mkdir %INSTALL_DIR%
 mkdir BUILD-vs
 cd BUILD-vs
