@@ -36,6 +36,6 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: prebuilt-g2o
-        path: ${{ github.workspace }}/externals/prebuild_scripts/g2o
+        path: ${{ github.workspace }}/externals/prebuild_scripts/g2o/INSTALL-vs
 
 

@@ -9,7 +9,7 @@ ZIPFILE="$ARCH"_g2o
 ZIPFOLDER="build/$ZIPFILE"
 BUILD_D=build/"$ARCH"_debug
 BUILD_R=build/"$ARCH"_release
-
+VERSION="20170730_git"
 clear
 echo "Building g2o using the sources in the thirdparty directory"
 if [ ! -d ../g2o ]
@@ -20,11 +20,14 @@ fi
 
 cd ../g2o
 
+git checkout $VERSION
+
 # Make build folder for debug version
 mkdir build
 rm -rf $BUILD_D
 mkdir "$BUILD_D"
 cd "$BUILD_D"
+
 
 # Run cmake to configure and generate the make files
 cmake \
