@@ -95,7 +95,7 @@ bool SLAssetManager::removeMesh(SLMesh* mesh)
     }
     return false;
 }
-
+//-----------------------------------------------------------------------------
 //! Removes the specified program from the meshes resource vector.
 bool SLAssetManager::removeProgram(SLGLProgram* program)
 {
