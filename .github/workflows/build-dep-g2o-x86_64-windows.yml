@@ -12,9 +12,9 @@ jobs:
       run: ./build_g2o_x64.bat
 
     - name: Archive prebuilt g2o
-        uses: actions/upload-artifact@v3
-        with:
-          name: prebuilt g2o
-          path: ${{ github.workspace }}/externals/prebuild_scripts/g2o
+      uses: actions/upload-artifact@v3
+      with:
+        name: prebuilt g2o
+        path: ${{ github.workspace }}/externals/prebuild_scripts/g2o
 
 
