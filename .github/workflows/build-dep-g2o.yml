@@ -20,7 +20,7 @@ jobs:
     - name: unpack QT
       run: tar xJf qt.tar.xz
 
-    - name: unpack QT
+    - name: configure QT
       working-directory: qt-everywhere-src-5.15.11
       run: ./configure -debug -nomake examples -nomake tests -skip qtwebengine -opensource
 
