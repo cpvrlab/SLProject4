@@ -4370,8 +4370,6 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
                         }
                     }
 
-                    ImGui::Text("Supports GPU skinning: %s", m->supportsGPUSkinning() ? "Yes" : "No");
-
                     ImGui::TreePop();
                 }
             }
