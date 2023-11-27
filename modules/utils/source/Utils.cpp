@@ -201,10 +201,10 @@ vector<string> getStringLines(const string& multiLineString)
     {
         std::string line;
         std::getline(stream, line);
-        if (!stream.good())
-            break;
         line = Utils::trimString(line, "\r");
         res.push_back(line);
+        if (!stream.good())
+            break;
     }
     return res;
 }
@@ -1391,7 +1391,7 @@ std::string ComputerInfos::get()
     // model = model;
 #    endif
 
-#elif defined(ANDROID)                                         //................................................
+#elif defined(ANDROID) //................................................
 
     os = "Android";
 
