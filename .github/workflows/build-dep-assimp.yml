@@ -21,5 +21,6 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: prebuilt-assimp-linux
-        path: ${{ github.workspace }}/externals/prebuid_scripts/assimp/linux-assimp_v5.0.0
+        path: ${{ github.workspace }}/externals/prebuilt/linux_assimp_v5.0.0
+
 

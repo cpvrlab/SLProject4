@@ -39,3 +39,26 @@ jobs:
       with:
         name: prebuilt-g2o-linux
         path: ${{ github.workspace }}/externals/prebuit/g2o
+  build-macos:
+    runs-on: macos-13
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run build script intel
+      working-directory: ${{ github.workspace }}/externals/prebuild_scripts/
+      run: arch -intel ./build_g2o_for_mac64.sh
+
+    - name: Run build script arm
+      working-directory: ${{ github.workspace }}/externals/prebuild_scripts/
+      run: arch -arm ./build_g2o_for_mac64.sh
+
+    - name: Archive prebuilt g2o intel
+      uses: actions/upload-artifact@v3
+      with:
+        name: prebuilt-g2o-mac64
+        path: ${{ github.workspace }}/externals/prebuit/mac64_g2o
+
+    - name: Archive prebuilt g2o arm
+      uses: actions/upload-artifact@v3
+      with:
+        name: prebuilt-g2o-arm64
+        path: ${{ github.workspace }}/externals/prebuit/macArm64_g2o
