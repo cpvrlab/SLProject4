@@ -94,9 +94,9 @@ if [ ! -d "../../prebuilt/" ]; then
     mkdir "../../prebuilt/"
 fi
 
-echo "$(ls .)"
-echo "$(ls ../../)"
-echo "$(ls ../../prebuilt)"
+echo "ls . : $(ls .)"
+echo "ls ../../ : $(ls ../../)"
+echo "ls ../../prebuilt : $(ls ../../prebuilt)"
 
 echo "cp -r $ZIPFOLDER ../../prebuilt"
 echo "PWD IS $PWD"
@@ -104,5 +104,5 @@ echo "../../prebuilt IS $PWD/../../prebuilt"
 
 cp "$ZIPFOLDER" "../../prebuilt/"
 
-echo "$(ls ../../prebuilt)"
+echo "prebuilt content is $(ls ../../prebuilt)"
 
