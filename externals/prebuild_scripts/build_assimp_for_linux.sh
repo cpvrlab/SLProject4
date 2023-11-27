@@ -94,6 +94,7 @@ if [ ! -d "../../prebuilt/" ]; then
     mkdir "../../prebuilt/"
 fi
 
+echo "$(ls .)"
 echo "$(ls ../../)"
 echo "$(ls ../../prebuilt)"
 
