@@ -27,7 +27,7 @@ uniform vec4   u_globalAmbi;    // Global ambient scene color
 uniform vec4   u_matAmbi;       // ambient color reflection coefficient (ka)
 uniform vec4   u_matDiff;       // diffuse color reflection coefficient (kd)
 uniform vec4   u_matSpec;       // specular color reflection coefficient (ks)
-uniform vec4   u_matEmis;       // emissive color for self-shining materials
+uniform vec4   u_matEmis;       // emissive color for self-shining materials (ke)
 uniform float  u_matShin;       // shininess exponent
 
 out     vec4   o_fragColor;     // output fragment color

@@ -90,6 +90,11 @@ public:
                    SLint             location,
                    SLVVec4f*         data) { setAttrib(type, 4, location, &data->operator[](0)); }
 
+    //! Adds a vertex attribute with vector of SLVec4i
+    void setAttrib(SLGLAttributeType type,
+                   SLint             location,
+                   SLVVec4i*         data) { setAttrib(type, 4, location, &data->operator[](0), BT_int); }
+
     //! Adds the index array for indexed element drawing
     void setIndices(SLuint         numIndicesElements,
                     SLGLBufferType indexDataType,
@@ -130,6 +135,9 @@ public:
                    indicesEdges && indicesEdges->size() ? (void*)&indicesEdges->operator[](0) : nullptr);
     }
 
+    //! Attach a VBO that has been created outside of this VAO
+    void setExternalVBO(SLGLVertexBuffer *vbo, SLuint divisor = 0);
+
     //! Updates a specific vertex attribute in the VBO
     void updateAttrib(SLGLAttributeType type,
                       SLint             elementSize,
@@ -158,12 +166,14 @@ public:
     //! Generates the VA & VB objects for a NO. of vertices
     void generate(SLuint          numVertices,
                   SLGLBufferUsage usage             = BU_static,
-                  SLbool          outputInterleaved = true);
+                  SLbool          outputInterleaved = true,
+                  SLuint          divisor           = 0);
 
     //! Generates the VA & VB & TF objects
     void generateTF(SLuint          numVertices,
                     SLGLBufferUsage usage             = BU_static,
-                    SLbool          outputInterleaved = true);
+                    SLbool          outputInterleaved = true,
+                    SLuint          divisor           = 0);
 
     //! Begin transform feedback
     void beginTF(SLuint tfoID);
@@ -181,6 +191,12 @@ public:
                      SLint             firstVertex   = 0,
                      SLsizei           countVertices = 0);
 
+    //! Draws the VAO as an array with instance primitive type
+    void drawElementsInstanced(SLGLPrimitiveType primitiveType,
+                               SLsizei           countInstance = 0,
+                               SLuint            numIndexes = 0,
+                               SLuint            indexOffset = 0);
+
     //! Draws the hard edges of the VAO with the edge indices
     void drawEdges(SLCol4f color, SLfloat lineWidth = 1.0f);
 
@@ -188,22 +204,26 @@ public:
     SLuint numVertices() const { return _numVertices; }
     SLuint numIndicesElements() const { return _numIndicesElements; }
     SLuint numIndicesEdges() const { return _numIndicesEdges; }
+    SLGLVertexBuffer* vbo() { return &_VBOf; }
 
     // Some statistics
     static SLuint totalDrawCalls;          //! static total no. of draw calls
     static SLuint totalPrimitivesRendered; //! static total no. of primitives rendered
 
 protected:
-    SLuint           _vaoID;              //! OpenGL id of vertex array object
-    SLuint           _tfoID;              //! OpenGL id of transform feedback object
-    SLuint           _numVertices;        //! NO. of vertices in array
-    SLGLVertexBuffer _VBOf;               //! Vertex buffer object for float attributes
-    SLuint           _idVBOIndices;       //! OpenGL id of index vbo
-    SLuint           _numIndicesElements; //! NO. of vertex indices in array for triangles, lines or points
-    void*            _indexDataElements;  //! Pointer to index data for elements
-    SLuint           _numIndicesEdges;    //! NO. of vertex indices in array for hard edges
-    void*            _indexDataEdges;     //! Pointer to index data for hard edges
-    SLGLBufferType   _indexDataType;      //! index data type (ubyte, ushort, uint)
+    SLuint            _instances;          //! Number of instances of drawing
+    SLuint            _vaoID;              //! OpenGL id of vertex array object
+    SLuint            _tfoID;              //! OpenGL id of transform feedback object
+    SLuint            _numVertices;        //! NO. of vertices in array
+    SLGLVertexBuffer  _VBOf;               //! Vertex buffer object for float attributes
+    SLGLVertexBuffer* _externalVBOf;       //! Vertex buffer object that has beed created outside of this VAO
+    SLuint            _externalDivisor;    //! VBO attrib divisor for the external VBO
+    SLuint            _idVBOIndices;       //! OpenGL id of index vbo
+    SLuint            _numIndicesElements; //! NO. of vertex indices in array for triangles, lines or points
+    void*             _indexDataElements;  //! Pointer to index data for elements
+    SLuint            _numIndicesEdges;    //! NO. of vertex indices in array for hard edges
+    void*             _indexDataEdges;     //! Pointer to index data for hard edges
+    SLGLBufferType    _indexDataType;      //! index data type (ubyte, ushort, uint)
 };
 //-----------------------------------------------------------------------------
 

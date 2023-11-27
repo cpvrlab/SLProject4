@@ -150,7 +150,7 @@ SLMaterial::SLMaterial(SLAssetManager* am,
                        SLGLProgram*    program) : SLObject(name)
 {
     _assetManager = am;
-    _ambient.set(0, 0, 0);                          // not used in Cook-Torrance
+    _ambient.set(0, 0, 0); // not used in Cook-Torrance
     _diffuse = diffuse;
     _specular.set(1, 1, 1);                         // not used in Cook-Torrance
     _emissive.set(0, 0, 0, 0);                      // not used in Cook-Torrance
@@ -372,12 +372,23 @@ SLMaterial::~SLMaterial()
         _errorTexture = nullptr;
     }
 }
+//------------------------------------------------------------------------------
+void SLMaterial::deleteDataGpu()
+{
+    if (_program)
+    {
+        _assetManager->removeProgram(_program);
+        _program->deleteDataGpu();
+        delete _program;
+        _program = nullptr;
+    }
+}
 //-----------------------------------------------------------------------------
 /*!
  If this material has not yet a shader program assigned (SLMaterial::_program)
  a suitable program will be generated with an instance of SLGLProgramGenerated.
  */
-void SLMaterial::generateProgramPS()
+void SLMaterial::generateProgramPS(bool renderInstanced)
 {
     // If no shader program is attached add a generated shader program
     // A 3D object can be stored without material or shader program information.
@@ -389,17 +400,24 @@ void SLMaterial::generateProgramPS()
 
         // Check first the asset manager if the requested program type already exists
         string programNameDraw;
-        SLGLProgramGenerated::buildProgramNamePS(this, programNameDraw, true);
+        SLGLProgramGenerated::buildProgramNamePS(this,
+                                                 programNameDraw,
+                                                 true,
+                                                 renderInstanced);
         _program = _assetManager->getProgramByName(programNameDraw);
 
         // If the program was not found by name generate a new one
         if (!_program)
         {
+            std::string geom = "";
+            if (!renderInstanced)
+                geom = "Geom";
+
             _program = new SLGLProgramGenerated(_assetManager,
                                                 programNameDraw,
                                                 this,
                                                 true,
-                                                "Geom");
+                                                geom);
         }
     }
 
@@ -411,7 +429,7 @@ void SLMaterial::generateProgramPS()
 
         // Check first the asset manager if the requested programTF type already exists
         string programNameUpdate;
-        SLGLProgramGenerated::buildProgramNamePS(this, programNameUpdate, false);
+        SLGLProgramGenerated::buildProgramNamePS(this, programNameUpdate, false, renderInstanced);
         _programTF = _assetManager->getProgramByName(programNameUpdate);
         if (!_programTF)
         {
@@ -460,7 +478,8 @@ void SLMaterial::generateProgramPS()
         for (int i = 0; i < TT_numTextureType; i++)
             _textures[i].clear();
         if (!_errorTexture && !_compileErrorTexFilePath.empty())
-            _errorTexture = new SLGLTexture(nullptr, _compileErrorTexFilePath);
+            _errorTexture = new SLGLTexture(nullptr,
+                                            _compileErrorTexFilePath);
         _textures[TT_diffuse].push_back(_errorTexture);
     }
 
@@ -469,7 +488,8 @@ void SLMaterial::generateProgramPS()
         for (int i = 0; i < TT_numTextureType; i++)
             _textures[i].clear();
         if (!_errorTexture && !_compileErrorTexFilePath.empty())
-            _errorTexture = new SLGLTexture(nullptr, _compileErrorTexFilePath);
+            _errorTexture = new SLGLTexture(nullptr,
+                                            _compileErrorTexFilePath);
         _textures[TT_diffuse].push_back(_errorTexture);
     }
 }

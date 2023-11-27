@@ -87,7 +87,7 @@ public:
                   SLbool          outputInterleaved = true);
 
     //! Binds & enables the vertex attribute for OpenGL < 3.0
-    void bindAndEnableAttrib();
+    void bindAndEnableAttrib(SLuint divisor = 0) const;
 
     //! disables the vertex attribute for OpenGL < 3.0
     void disableAttrib();
@@ -96,7 +96,7 @@ public:
     SLuint           id() const { return _id; }
     SLuint           size() const { return _id; }
     SLVVertexAttrib& attribs() { return _attribs; }
-    SLbool           outputInterleaved() const { return _outputInterleaved; }
+    SLbool           outputIsInterleaved() const { return _outputIsInterleaved; }
 
     // Setters
 
@@ -111,7 +111,8 @@ protected:
     SLuint          _id;                //! OpenGL id of vertex buffer object
     SLuint          _numVertices;       //! NO. of vertices in array
     SLVVertexAttrib _attribs;           //! Vector of vertex attributes
-    SLbool          _outputInterleaved; //! Flag if VBO should be generated interleaved
+    SLbool          _outputIsInterleaved; //! Flag if VBO should be generated interleaved
+    SLbool          _inputIsInterleaved; //! Flag if VBO should be generated interleaved
     SLuint          _strideBytes;       //! Distance for interleaved attributes in bytes
     SLuint          _sizeBytes;         //! Total size of float VBO in bytes
     SLGLBufferUsage _usage;             //! buffer usage (static, dynamic or stream)

@@ -29,11 +29,27 @@ SLParticleSystem::SLParticleSystem(SLAssetManager* assetMgr,
                                    const SLfloat&  timeToLive,
                                    SLGLTexture*    texC,
                                    const SLstring& name,
-                                   SLGLTexture*    texFlipbook) : SLMesh(assetMgr, name)
+                                   SLGLTexture*    texFlipbook,
+                                   const bool      renderInstanced) : SLMesh(assetMgr, name)
 {
     assert(!name.empty());
 
+    // To be added to constructor
+
+    _assetManager = assetMgr;
+
+    if (SLGLState::instance()->glHasGeometryShaders())
+    {
+        _renderInstanced = renderInstanced;
+    }
+    else
+    {
+        _renderInstanced = true;
+    }
     _primitive = PT_points;
+
+    P.push_back(SLVec3f(0, 0, 0)); // Trick SL project because it want mesh to have vertex
+    I32.push_back(0);
 
     if (amount > UINT_MAX) // Need to change for number of floats
         SL_EXIT_MSG("SLParticleSystem supports max. 2^32 vertices.");
@@ -43,17 +59,12 @@ SLParticleSystem::SLParticleSystem(SLAssetManager* assetMgr,
     _velocityRndMin = velocityRandomStart;
     _velocityRndMax = velocityRandomEnd;
 
-    P.resize(1); // To trick parent class
-
     _textureFirst    = texC;
     _textureFlipbook = texFlipbook;
 
-    // Initialize the drawing:
-    SLMaterial* mDraw = new SLMaterial(assetMgr, "Drawing-Material", this, texC);
-    mat(mDraw);
-
     _updateTime.init(60, 0.0f);
     _drawTime.init(60, 0.0f);
+
 }
 //-----------------------------------------------------------------------------
 //! Function which return a position in a sphere
@@ -308,6 +319,25 @@ void SLParticleSystem::generate()
     SLVuint  tempTexNum;
     SLVVec3f tempInitP;
 
+    if (_renderInstanced)
+        _primitive = PT_triangles;
+    else
+        _primitive = PT_points;
+
+    deleteDataGpu();
+
+    // Initialize the drawing:
+    if (_doFlipBookTexture)
+    {
+        SLMaterial* mDraw = new SLMaterial(_assetManager, "Drawing-Material", this, _textureFlipbook);
+        mat(mDraw);
+    }
+    else
+    {
+        SLMaterial* mDraw = new SLMaterial(_assetManager, "Drawing-Material", this, _textureFirst);
+        mat(mDraw);
+    }
+
     tempP.resize(_amount);
     tempV.resize(_amount);
     tempST.resize(_amount);
@@ -447,6 +477,39 @@ void SLParticleSystem::generate()
         _vao2.setAttrib(AT_initialPosition, AT_initialPosition, &tempInitP);
     _vao2.generateTF((SLuint)tempP.size());
 
+    if (_renderInstanced)
+    {
+        P.clear();
+        I32.clear();
+        /* Generate for billboard (for drawing without geometry shader)*/
+        P.push_back(SLVec3f(-1, -1, 0));
+        P.push_back(SLVec3f(1, -1, 0));
+        P.push_back(SLVec3f(1, 1, 0));
+        P.push_back(SLVec3f(-1, 1, 0));
+
+        I32.push_back(0);
+        I32.push_back(1);
+        I32.push_back(2);
+        I32.push_back(2);
+        I32.push_back(3);
+        I32.push_back(0);
+
+
+        _renderVao1.deleteGL();
+        _renderVao2.deleteGL();
+        /* Generate vao for rendering with draw instanced */
+        _renderVao1.setAttrib(AT_custom0, AT_custom0, &P);
+        _renderVao1.setIndices(&I32);
+        _renderVao1.setExternalVBO(_vao1.vbo(), 2);
+
+        _renderVao2.setAttrib(AT_custom0, AT_custom0, &P);
+        _renderVao2.setIndices(&I32);
+        _renderVao2.setExternalVBO(_vao2.vbo(), 2);
+
+        _renderVao1.generate((SLuint)P.size());
+        _renderVao2.generate((SLuint)P.size());
+    }
+
     _isGenerated = true;
 }
 //-----------------------------------------------------------------------------
@@ -489,24 +552,7 @@ void SLParticleSystem::generateBernsteinPSize()
     // 1
     _bernsteinPYSize.w = StaEnd[1];
 }
-//-----------------------------------------------------------------------------
-/*!
-Change the current use texture, this will switch between the normal texture and
-the flipbook texture (and vice versa)
-*/
-void SLParticleSystem::changeTexture()
-{
-    if (_doFlipBookTexture)
-    {
-        mat()->removeTextureType(TT_diffuse);
-        mat()->addTexture(_textureFlipbook);
-    }
-    else
-    {
-        mat()->removeTextureType(TT_diffuse);
-        mat()->addTexture(_textureFirst);
-    }
-}
+
 //-----------------------------------------------------------------------------
 /*! Function called inside SLNode cull3DRec(..) which flags the particle system
  to be not visible in the view frustum. This is needed to correct later the
@@ -542,21 +588,21 @@ void SLParticleSystem::pauseOrResume()
  * user. After I update the particle in the update pass, then and finally I
  * draw them.
  */
-void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
+void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
 {
     /////////////////////////////////////
     // Init particles vector and init VAO
     /////////////////////////////////////
-
     if (!_isGenerated)
         generate();
 
     ////////////////////
     // Generate programs
     ////////////////////
-
     if (!_mat->program() || !_mat->programTF())
-        _mat->generateProgramPS();
+    {
+        _mat->generateProgramPS(_renderInstanced);
+    }
 
     ////////////////////////////////////////////////
     // Calculate time and paused and frustum culling
@@ -680,14 +726,20 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
             _vao1.beginTF(_vao2.tfoID());
             _vao1.drawArrayAs(PT_points);
             _vao1.endTF();
-            _vao = _vao2;
+            if (_renderInstanced)
+                _vao = _renderVao1;
+            else
+                _vao = _vao2;
         }
         else
         {
             _vao2.beginTF(_vao1.tfoID());
             _vao2.drawArrayAs(PT_points);
             _vao2.endTF();
-            _vao = _vao1;
+            if (_renderInstanced)
+                _vao = _renderVao2;
+            else
+                _vao = _vao1;
         }
         _updateTime.set(GlobalTimer::timeMS() - _startUpdateTimeMS);
     }
@@ -709,7 +761,6 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
     // World space
     if (_doWorldSpace)
     {
-
         if (_billboardType == BT_Vertical)
         {
             SLMat4f vMat = stateGL->viewMatrix; // Just view matrix because world space is enabled
@@ -728,7 +779,22 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
         }
         else
         {
-            spD->uniformMatrix4fv("u_vOmvMatrix", 1, (SLfloat*)&stateGL->viewMatrix);
+
+            SLMat4f vMat = stateGL->viewMatrix; // Just view matrix because world space is enabled
+            std::cout << "vMat" << std::endl;
+            vMat.m(0, 1.0f);
+            vMat.m(1, 0.0f);
+            vMat.m(2, 0.0f);
+
+            vMat.m(3, 1.0f);
+            vMat.m(4, 0.0f);
+            vMat.m(5, 0.0f);
+
+            vMat.m(6, 0.0f);
+            vMat.m(7, 0.0f);
+            vMat.m(8, 1.0f);
+            spD->uniformMatrix4fv("u_vOmvMatrix", 1, (SLfloat*)&vMat);
+            //spD->uniformMatrix4fv("u_vOmvMatrix", 1, (SLfloat*)&stateGL->viewMatrix);
         }
     }
     else
@@ -822,7 +888,10 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
         stateGL->blendFunc(GL_SRC_ALPHA, GL_ONE);
 
     ///////////////////////
-    SLMesh::draw(sv, node);
+    if (_renderInstanced)
+        SLMesh::draw(sv, node, 2*_amount); //2 triangles per particle
+    else
+        SLMesh::draw(sv, node);
     ///////////////////////
 
     if (_doColor && _doBlendBrightness)
@@ -834,20 +903,37 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
     // Swap buffer
     _drawBuf = 1 - _drawBuf;
 }
+
+
+/*!
+Change the current use texture, this will switch between the normal texture and
+the flipbook texture (and vice versa)
+*/
+void SLParticleSystem::changeTexture()
+{
+    if (_doFlipBookTexture)
+    {
+        mat()->removeTextureType(TT_diffuse);
+        mat()->addTexture(_textureFlipbook);
+    }
+    else
+    {
+        mat()->removeTextureType(TT_diffuse);
+        mat()->addTexture(_textureFirst);
+    }
+}
+
+
 //-----------------------------------------------------------------------------
 //! deleteData deletes all mesh data and VAOs
 void SLParticleSystem::deleteData()
 {
-    _vao1.deleteGL();
-    _vao2.deleteGL();
-    SLMesh::deleteData();
+    return;
 }
 //-----------------------------------------------------------------------------
 //! deleteData deletes all mesh data and VAOs
 void SLParticleSystem::deleteDataGpu()
 {
-    _vao1.deleteGL();
-    _vao2.deleteGL();
     SLMesh::deleteDataGpu();
 }
 //-----------------------------------------------------------------------------

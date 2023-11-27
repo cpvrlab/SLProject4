@@ -81,7 +81,15 @@ public:
                     geomShader,
                     programName)
     {
-        buildProgramCodePS(mat, isDrawProg);
+
+        if (geomShader != "")
+        {
+            buildProgramCodePS(mat, isDrawProg, false);
+        }
+        else
+        {
+            buildProgramCodePS(mat, isDrawProg, true);
+        }
     }
 
     static bool lightsDoShadowMapping(SLVLight* lights);
@@ -90,9 +98,10 @@ public:
                                  string&     programName);
     static void buildProgramNamePS(SLMaterial* mat,
                                    string&     programName,
-                                   bool        isDrawProg);
+                                   bool        isDrawProg,
+                                   bool        renderInstanced);
 
-    void buildProgramCodePS(SLMaterial* mat, bool isDrawProg);
+    void buildProgramCodePS(SLMaterial* mat, bool isDrawProg, bool renderInstanced = false);
     void buildProgramCode(SLMaterial* mat,
                           SLVLight*   lights);
     void beginShader(SLCamera*   cam,
@@ -104,6 +113,7 @@ private:
     void buildPerPixCook(SLMaterial* mat, SLVLight* lights);
     void buildPerPixBlinn(SLMaterial* mat, SLVLight* lights);
     void buildPerPixParticle(SLMaterial* mat);
+    void buildPerPixParticleInstanced(SLMaterial* mat);
     void buildPerPixParticleUpdate(SLMaterial* mat);
 
     // Video background shader builder functions
@@ -118,6 +128,10 @@ private:
     static void   addCodeToShader(SLGLShader*   shader,
                                   const string& code,
                                   const string& name);
+    static void   setVariable(std::string&       code,
+                              const std::string& name,
+                              const std::string& value);
+
     static string generatedShaderPath; //! Path to write out generated shaders
 };
 //-----------------------------------------------------------------------------

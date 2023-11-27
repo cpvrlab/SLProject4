@@ -44,12 +44,18 @@ const string vertInput_PS_a_texNum        = R"(
 layout (location = 6) in uint  a_texNum;         // Particle rotation attribute)";
 const string vertInput_PS_a_initP         = R"(
 layout (location = 7) in vec3  a_initialPosition;// Particle initial position attribute)";
+const string vertInput_PS_a_positionP         = R"(
+layout (location = 8) in vec3  a_positionP;     // Particle position attribute)";
 const string vertInput_a_uv0              = R"(
 layout (location = 2) in vec2  a_uv0;            // Vertex tex.coord. 1 for diffuse color)";
 const string vertInput_a_uv1              = R"(
 layout (location = 3) in vec2  a_uv1;            // Vertex tex.coord. 2 for AO)";
 const string vertInput_a_tangent          = R"(
 layout (location = 5) in vec4  a_tangent;        // Vertex tangent attribute)";
+const string vertInput_a_skinning         = R"(
+
+layout (location = 6) in ivec4 a_jointIds;       // Vertex joint indices attributes
+layout (location = 7) in vec4  a_jointWeights;   // Vertex joint weights attributes)";
 //-----------------------------------------------------------------------------
 const string vertInput_u_matrices_all = R"(
 
@@ -58,6 +64,12 @@ uniform mat4  u_vMatrix;    // View matrix (world to camera transform)
 uniform mat4  u_pMatrix;    // Projection matrix (camera to normalize device coords.))";
 const string vertInput_u_matrix_vOmv  = R"(
 uniform mat4  u_vOmvMatrix;         // view or modelview matrix)";
+//-----------------------------------------------------------------------------
+const string vertInput_u_skinning = R"(
+
+uniform mat4 u_jointMatrices[100]; // Joint matrices for skinning
+uniform bool u_skinningEnabled;    // Flag if the shader should perform skinning
+)";
 //-----------------------------------------------------------------------------
 const string vertInput_u_lightNm = R"(
 
@@ -72,15 +84,18 @@ const string vertConstant_PS_pi = R"(
 )";
 //-----------------------------------------------------------------------------
 const string vertInput_PS_u_time               = R"(
-
 uniform float u_time;               // Simulation time
 uniform float u_difTime;            // Simulation delta time after frustum culling
 uniform float u_tTL;                // Time to live of a particle)";
+const string fragInput_PS_u_tTL               = R"(
+uniform float u_tTL;               // Time to live of a particle)";
 const string vertInput_PS_u_al_bernstein_alpha = R"(
 uniform vec4  u_al_bernstein;       // Bernstein polynomial for alpha over time)";
 const string vertInput_PS_u_al_bernstein_size  = R"(
 uniform vec4  u_si_bernstein;       // Bernstein polynomial for size over time)";
 const string vertInput_PS_u_colorOvLF          = R"(
+uniform float u_colorArr[256 * 3];  // Array of color value (for color over life))";
+const string fragInput_PS_u_colorOvLF          = R"(
 uniform float u_colorArr[256 * 3];  // Array of color value (for color over life))";
 const string vertInput_PS_u_deltaTime          = R"(
 uniform float u_deltaTime;          // Elapsed time between frames)";
@@ -103,7 +118,6 @@ uniform int   u_condFB;             // Condition to update texNum)";
 
 //-----------------------------------------------------------------------------
 const string vertOutput_v_P_VS       = R"(
-
 out     vec3  v_P_VS;                   // Point of illumination in view space (VS))";
 const string vertOutput_v_P_WS       = R"(
 out     vec3  v_P_WS;                   // Point of illumination in world space (WS))";
@@ -121,7 +135,14 @@ out     vec3  v_lightDirTS[NUM_LIGHTS]; // Vector to the light 0 in tangent spac
 out     vec3  v_spotDirTS[NUM_LIGHTS];  // Spot direction in tangent space)";
 //-----------------------------------------------------------------------------
 const string vertFunction_PS_ColorOverLT = R"(
+vec3 colorByAge(float age)
+{
+    int  cachePos = int(clamp(age, 0.0, 1.0) * 255.0) * 3;
+    vec3 color    = vec3(u_colorArr[cachePos], u_colorArr[cachePos + 1], u_colorArr[cachePos + 2]);
+    return color;
+})";
 
+const string fragFunction_PS_ColorOverLT = R"(
 vec3 colorByAge(float age)
 {
     int  cachePos = int(clamp(age, 0.0, 1.0) * 255.0) * 3;
@@ -146,6 +167,43 @@ const string vertOutput_PS_struct_texNum = R"(
     uint texNum;        // Num of texture in flipbook)";
 const string vertOutput_PS_struct_End    = R"(
 } vert; )";
+
+const string vertOutput_PS_instanced_transparency     = R"(
+out float transparency;         // transparency of a particle )";
+
+const string fragInput_PS_instanced_transparency      = R"(
+in float transparency;         // transparency of a particle )";
+
+const string fragMain_PS_v_c             = R"(
+    vec4 color = u_color;                    // Particle color)";
+const string fragMain_PS_v_doColorOverLT = R"(
+    vec4 color = vec4(vert[0].color, 1.0);   // Particle color)";
+const string fragMain_PS_instanced_v_doColorOverLT = R"(
+    vec4 color = vec4(colorByAge(v_age/u_tTL), 1.0);   // Particle color)";
+const string fragMain_PS_v_withoutColor  = R"(
+    vec4 color = vec4( 0.0, 0.0, 0.0, 1.0);  // Particle color)";
+const string fragMain_PS_instanced_c  = R"(
+    vec4 color = u_color;      // Particle color)";
+const string fragMain_PS_instanced_transparency  = R"(
+    color.w *= transparency;   // Apply transparency)";
+const string vertInput_u_matrix_p             = R"(
+uniform mat4  u_pMatrix;     // Projection matrix)";
+const string vertInput_u_matrix_vertBillboard = R"(
+uniform mat4  u_vYawPMatrix; // Projection matrix)";
+const string fragInput_PS_u_c                 = R"(
+uniform vec4  u_color;       // Particle color)";
+const string vertInput_PS_u_ScaRa             = R"(
+uniform float u_scale;       // Particle scale
+uniform float u_radiusW;     // Particle width radius)
+uniform float u_radiusH;     // Particle height radius)";
+//-----------------------------------------------------------------------------
+
+const string vertOutput_PS_color = R"(
+out    vec4 v_particleColor;         // Size of a particle )";
+
+const string vertOutput_PS_texCoord = R"(
+out    vec2 v_texCoord;              // interpolated texture coordinateA)";
+
 //-----------------------------------------------------------------------------
 const string vertOutput_PS_tf_p             = R"(
 
@@ -167,34 +225,90 @@ out     vec3  tf_initialPosition;   // To transform feedback)";
 
 //-----------------------------------------------------------------------------
 const string vertMain_Begin              = R"(
-
 void main()
 {)";
+
+const string vertMain_instanced_Begin              = R"(
+void main()
+{
+    vec3 position = a_positionP;
+)";
+
 const string vertMain_v_P_VS             = R"(
     mat4 mvMatrix = u_vMatrix * u_mMatrix;
-    v_P_VS = vec3(mvMatrix *  a_position);   // vertex position in view space)";
+    v_P_VS = vec3(mvMatrix * ${localPosition});  // vertex position in view space)";
 const string vertMain_v_P_WS_Sm          = R"(
-    v_P_WS = vec3(u_mMatrix * a_position);   // vertex position in world space)";
+    v_P_WS = vec3(u_mMatrix * ${localPosition}); // vertex position in world space)";
 const string vertMain_v_N_VS             = R"(
     mat3 invMvMatrix = mat3(inverse(mvMatrix));
     mat3 nMatrix = transpose(invMvMatrix);
-    v_N_VS = vec3(nMatrix * a_normal);       // vertex normal in view space)";
+    v_N_VS = vec3(nMatrix * ${localNormal});     // vertex normal in view space)";
 const string vertMain_v_R_OS             = R"(
     vec3 I = normalize(v_P_VS);
     vec3 N = normalize(v_N_VS);
     v_R_OS = invMvMatrix * reflect(I, N); // R = I-2.0*dot(N,I)*N;)";
 const string vertMain_v_uv0              = R"(
-
     v_uv0 = a_uv0;  // pass diffuse color tex.coord. 1 for interpolation)";
 const string vertMain_v_uv1              = R"(
     v_uv1 = a_uv1;  // pass diffuse color tex.coord. 1 for interpolation)";
+const string vertMain_skinning           = R"(
+    vec4 skinnedPosition;
+    vec3 skinnedNormal;
+
+    if (u_skinningEnabled)
+    {
+        // In skinned skeleton animation, every vertex of a mesh is transformed by
+        // max. four joints (bones) of a skeleton identified by indices. The joint
+        // matrix is a weighted sum of four joint matrices and can change per frame
+        // to animate the mesh.
+        mat4 jm = u_jointMatrices[int(a_jointIds.x)] * a_jointWeights.x
+                + u_jointMatrices[int(a_jointIds.y)] * a_jointWeights.y
+                + u_jointMatrices[int(a_jointIds.z)] * a_jointWeights.z
+                + u_jointMatrices[int(a_jointIds.w)] * a_jointWeights.w;
+    
+        skinnedPosition = jm * a_position;
+        skinnedNormal = mat3(jm) * a_normal;
+    }
+    else
+    {
+        skinnedPosition = a_position;
+        skinnedNormal = a_normal;
+    }
+)";
+const string vertMain_skinning_Nm        = R"(
+    vec4 skinnedPosition;
+    vec3 skinnedNormal;
+    vec4 skinnedTangent;
+
+    if (u_skinningEnabled)
+    {
+        // In skinned skeleton animation, every vertex of a mesh is transformed by
+        // max. four joints (bones) of a skeleton identified by indices. The joint
+        // matrix is a weighted sum of four joint matrices and can change per frame
+        // to animate the mesh.
+        mat4 jm = u_jointMatrices[int(a_jointIds.x)] * a_jointWeights.x
+                + u_jointMatrices[int(a_jointIds.y)] * a_jointWeights.y
+                + u_jointMatrices[int(a_jointIds.z)] * a_jointWeights.z
+                + u_jointMatrices[int(a_jointIds.w)] * a_jointWeights.w;
+    
+        skinnedPosition = jm * a_position;
+        skinnedNormal = mat3(jm) * a_normal;
+        skinnedTangent = vec4(mat3(jm) * a_tangent.xyz, a_tangent.w);
+    }
+    else
+    {
+        skinnedPosition = a_position;
+        skinnedNormal = a_normal;
+        skinnedTangent = a_tangent;
+    }
+)";
 const string vertMain_TBN_Nm             = R"(
 
     // Building the matrix Eye Space -> Tangent Space
     // See the math behind at: http://www.terathon.com/code/tangent.html
-    vec3 n = normalize(nMatrix * a_normal);
-    vec3 t = normalize(nMatrix * a_tangent.xyz);
-    vec3 b = cross(n, t) * a_tangent.w; // bitangent w. corrected handedness
+    vec3 n = normalize(nMatrix * ${localNormal});
+    vec3 t = normalize(nMatrix * ${localTangent}.xyz);
+    vec3 b = cross(n, t) * ${localTangent}.w; // bitangent w. corrected handedness
     mat3 TBN = mat3(t,b,n);
 
     // Transform vector to the eye into tangent space
@@ -213,8 +327,9 @@ const string vertMain_TBN_Nm             = R"(
         v_lightDirTS[i] *= TBN;
     }
 )";
-const string vertMain_PS_v_a             = R"(
-    float age = u_time - a_startTime;   // Get the age of the particle)";
+
+//-----------------------------------------------------------------------------
+// Things that goes directly to geometry shader
 const string vertMain_PS_v_t_default     = R"(
     if(age < 0.0)
         vert.transparency = 0.0; // To be discard, because the particle is to be born
@@ -244,10 +359,101 @@ const string vertMain_PS_v_s_curve       = R"(
                 pow(vert.size,2.0) * u_si_bernstein.y +
                 vert.size * u_si_bernstein.z +
                 u_si_bernstein.w;  // Get transparency by bezier curve)";
+
+const string vertMain_PS_instanced_v_r             = R"(
+    float rotation = a_rotation;)";
+
+const string vertMain_PS_instanced_v_s             = R"(
+    float size = age / u_tTL;)";
+const string vertMain_PS_instanced_v_s_curve       = R"(
+    size = pow(size,3.0) * u_si_bernstein.x +
+           pow(size,2.0) * u_si_bernstein.y +
+           size * u_si_bernstein.z +
+           u_si_bernstein.w;  // Get transparency by bezier curve)";
+
+const string vertMain_PS_instanced_v_sS       = R"(
+    position = size * position;
+    )";
+
 const string vertMain_PS_v_doColorOverLT = R"(
     vert.color = colorByAge(age/u_tTL);)";
+
+const string vertOutput_PS_age = R"(
+out float v_age; // Age of a particle)";
+
+const string fragInput_PS_age = R"(
+in float v_age; // Age of a particle)";
+
+const string vertMain_PS_v_color = R"(
+    vert.color = u_color.rgb;)";
+
 const string vertMain_PS_v_texNum        = R"(
     vert.texNum = a_texNum;)";
+
+const string vertMain_PS_v_a             = R"(
+    float age = u_time - a_startTime;   // Get the age of the particle)";
+
+const string vertMain_PS_v_tC = R"(
+    v_texCoord = 0.5 * (a_positionP.xy + vec2(1.0));)";
+
+const string vertMain_PS_v_age = R"(
+    v_age = age;)";
+
+const string vertMain_PS_v_tC_flipbook = R"(
+    uint actCI = uint(mod(float(a_texNum), float(u_col)));
+    uint actRI = (a_texNum - actCI) / u_col;
+    float actC = float(actCI);
+    float actR = float(actRI);
+
+    vec2 p = 0.5 * (a_positionP.xy + vec2(1.0));
+    v_texCoord = vec2((actC + p.x)/float(u_col), 1.0 - (actR - p.y)/float(u_row));
+)";
+
+const string vertMain_PS_instanced_v_t_default     = R"(
+    if(age < 0.0)
+        transparency = 0.0; // To be discard, because the particle is to be born
+    else
+        transparency = 1.0;)";
+const string vertMain_PS_instanced_v_t_begin       = R"(
+    if(age < 0.0)
+        transparency = 0.0; // To be discard, because the particle is to be born
+    else
+    {
+        transparency = age / u_tTL;  // Get by the ratio age:lifetime)";
+const string vertMain_PS_instanced_v_t_linear      = R"(
+        transparency = 1.0 - transparency;  // Linear)";
+const string vertMain_PS_instanced_v_t_curve       = R"(
+        transparency = pow(transparency,3.0) * u_al_bernstein.x +
+                       pow(transparency,2.0) * u_al_bernstein.y +
+                       transparency * u_al_bernstein.z +
+                       u_al_bernstein.w;  // Get transparency by bezier curve)";
+
+const string vertMain_PS_instanced_scale             = R"(
+    position = vec3(u_radiusW * position.x, u_radiusH * position.y, position.z);
+    position = u_scale * position;
+    )";
+
+const string vertMain_PS_instanced_rotate             = R"(
+    mat2 rot = mat2(cos(a_rotation),-sin(a_rotation),
+                    sin(a_rotation), cos(a_rotation)); // Matrix of rotation
+    position = vec3(rot * position.xy, position.z);
+    )";
+
+const string vertMain_PS_instanced_EndAll          = R"(
+
+    // Modelview matrix multiplication with (particle position + particle generator position)
+    // Calculate position in view space
+    gl_Position =  u_pMatrix * (u_vOmvMatrix * vec4(a_position, 1) + vec4(position, 0.0));
+}
+)";
+
+const string vertMain_PS_instanced_EndAll_VertBillboard = R"(
+    //gl_Position =  vec4(a_position + a_positionP, 1);
+    gl_Position =  u_pMatrix * u_vYawPMatrix * vec4(a_position + position, 1.0);
+}
+)";
+
+
 const string vertMain_PS_EndAll          = R"(
 
     // Modelview matrix multiplication with (particle position + particle generator position)
@@ -257,14 +463,14 @@ const string vertMain_PS_EndAll          = R"(
 )";
 
 const string vertMain_PS_EndAll_VertBillboard = R"(
-    gl_Position =  vec4(a_position, 1);
+    gl_Position = vec4(a_position, 1);
 }
 )";
 
 const string vertMain_EndAll = R"(
 
     // pass the vertex w. the fix-function transform
-    gl_Position = u_pMatrix * mvMatrix * a_position;
+    gl_Position = u_pMatrix * mvMatrix * ${localPosition};
 }
 )";
 //-----------------------------------------------------------------------------
@@ -336,6 +542,9 @@ const string vertMain_PS_U_EndAll              = R"(
         }
     }
 })";
+
+
+
 //-----------------------------------------------------------------------------
 const string geomConfig_PS = R"(
 layout (points) in;             // Primitives that we received from vertex shader
@@ -361,7 +570,6 @@ uniform mat4  u_pMatrix;     // Projection matrix)";
 const string geomInput_u_matrix_vertBillboard = R"(
 uniform mat4  u_vYawPMatrix; // Projection matrix)";
 const string geomInput_PS_u_ScaRa             = R"(
-
 uniform float u_scale;       // Particle scale
 uniform float u_radiusW;     // Particle width radius)
 uniform float u_radiusH;     // Particle height radius)";
@@ -373,9 +581,11 @@ const string geomInput_PS_u_row               = R"(
 uniform int   u_row;         // Number of row of flipbook texture)";
 //-----------------------------------------------------------------------------
 const string geomOutput_PS_v_pC = R"(
-
 out vec4 v_particleColor;   // The resulting color per vertex)";
 const string geomOutput_PS_v_tC = R"(
+out vec2 v_texCoord;        // Texture coordinate at vertex)";
+
+const string vertOutput_PS_v_tC = R"(
 out vec2 v_texCoord;        // Texture coordinate at vertex)";
 //-----------------------------------------------------------------------------
 const string geomMain_PS_Begin = R"(
@@ -633,7 +843,6 @@ const string fragInput_PS_u_wireFrame = R"(
 uniform bool        u_doWireFrame;          // Boolean for wireFrame)";
 //-----------------------------------------------------------------------------
 const string fragMain_PS_TF = R"(
-
 out     vec4     o_fragColor;               // output fragment color
 
 void main()
@@ -643,9 +852,6 @@ void main()
 )";
 //-----------------------------------------------------------------------------
 const string fragMain_PS              = R"(
-
-void main()
-{     
     // Just set the interpolated color from the vertex shader
    o_fragColor = v_particleColor;
 
@@ -655,23 +861,50 @@ void main()
 
    if(o_fragColor.a < 0.001)
         discard;
-
 )";
-const string fragMain_PS_withoutColor = R"(
+
+const string fragMain_PS_begin              = R"(
 void main()
-{     
+{
+)";
+
+const string fragMain_PS_withoutColor = R"(
    // componentwise multiply w. texture color
    if(!u_doWireFrame)
         o_fragColor = texture(u_matTextureDiffuse0, v_texCoord);
    else
         o_fragColor = vec4(0,0,0,1.0);
 
-   o_fragColor.a *= v_particleColor.a;
+    o_fragColor.a *= v_particleColor.a;
 
    if(o_fragColor.a < 0.001)
         discard;
-
 )";
+
+const string fragMain_PS_instanced_withoutColor = R"(
+   // componentwise multiply w. texture color
+   if(!u_doWireFrame)
+        o_fragColor = texture(u_matTextureDiffuse0, v_texCoord);
+   else
+        o_fragColor = vec4(0,0,0,1.0);
+
+    o_fragColor.a *= transparency;
+
+   if(o_fragColor.a < 0.001)
+        discard;
+)";
+
+const string fragMain_instanced_PS_end              = R"(
+   // Just set the interpolated color from the vertex shader
+   o_fragColor =  color;
+   // componentwise multiply w. texture color
+   if(!u_doWireFrame)
+       o_fragColor *= texture(u_matTextureDiffuse0, v_texCoord);
+
+   if(o_fragColor.a < 0.001)
+        discard;
+)";
+
 const string fragMain_PS_endAll       = R"(
     //Same color for each wireframe
     if(u_doWireFrame)
@@ -1444,7 +1677,6 @@ const string fragMainCook_2_LightLoopNmSm = R"(
     }
 )";
 const string fragMainCook_3_FragColor     = R"(
-
     // ambient lighting (note that the next IBL tutorial will replace
     // this ambient lighting with environment lighting).
     vec3 ambient = vec3(0.03) * matDiff.rgb * matOccl;
@@ -1459,7 +1691,6 @@ const string fragMainCook_3_FragColor     = R"(
     o_fragColor.a = matDiff.a;
 )";
 const string fragMainCook_3_FragColorSky  = R"(
-
     // Build diffuse reflection from environment light map
     vec3 F = fresnelSchlickRoughness(max(dot(N, E), 0.0), F0, matRough);
     vec3 kS = F;
@@ -1542,8 +1773,9 @@ void main()
 
  The shader program gets a unique name with the following pattern:
  <pre>
- genCook-D00-N00-E00-O01-RM00-Sky-C4s
-    |    |   |   |   |   |    |   |
+ genCook-D00-N00-E00-O01-RM00-Sky-C4s-S
+    |    |   |   |   |   |    |   |   |
+    |    |   |   |   |   |    |   |   + Support for GPU skinning
     |    |   |   |   |   |    |   + Directional light w. 4 shadow cascades
     |    |   |   |   |   |    + Ambient light from skybox
     |    |   |   |   |   + Roughness-metallic map with index 0 and uv 0
@@ -1582,7 +1814,7 @@ void SLGLProgramGenerated::buildProgramName(SLMaterial* mat,
             if (light->doCascadedShadows())
                 programName += "C" + std::to_string(light->shadowMap()->numCascades()); // Directional light with cascaded shadowmap
             else
-                programName += "D";                                                     // Directional light
+                programName += "D"; // Directional light
         }
         else if (light->spotCutOffDEG() < 180.0f)
             programName += "S"; // Spot light
@@ -1591,6 +1823,9 @@ void SLGLProgramGenerated::buildProgramName(SLMaterial* mat,
         if (light->createsShadows())
             programName += "s"; // Creates shadows
     }
+
+    if (mat->supportsGPUSkinning())
+        programName += "-S";
 }
 //-----------------------------------------------------------------------------
 /*! See the class information for more insights of the generated name. This
@@ -1616,7 +1851,8 @@ void SLGLProgramGenerated::buildProgramName(SLMaterial* mat,
  */
 void SLGLProgramGenerated::buildProgramNamePS(SLMaterial* mat,
                                               string&     programName,
-                                              bool        isDrawProg)
+                                              bool        isDrawProg,
+                                              bool        renderInstanced)
 {
     assert(mat && "No material pointer passed!");
     programName = "gen";
@@ -1630,6 +1866,10 @@ void SLGLProgramGenerated::buildProgramNamePS(SLMaterial* mat,
     if (isDrawProg) // Drawing program
     {
         programName += "-Draw";
+
+        if (renderInstanced)
+            programName += "-Inst";
+
         programName += mat->texturesString();
         GLint billboardType = mat->ps()->billboardType();      // Billboard type (0 -> default; 1 -> vertical billboard, 2 -> horizontal billboard)
         bool  AlOvLi        = mat->ps()->doAlphaOverLT();      // Alpha over life
@@ -1643,7 +1883,6 @@ void SLGLProgramGenerated::buildProgramNamePS(SLMaterial* mat,
         bool  rot           = mat->ps()->doRotation();         // Rotation
         programName += "-B" + std::to_string(billboardType);
         if (rot) programName += "-RT";
-
         if (AlOvLi) programName += "-AL";
         if (AlOvLi && AlOvLiCu) programName += "cu";
         if (SiOvLi) programName += "-SL";
@@ -1653,7 +1892,7 @@ void SLGLProgramGenerated::buildProgramNamePS(SLMaterial* mat,
         if (FlBoTex) programName += "-FB";
         if (WS) programName += "-WS";
     }
-    else                                                  // Updating program
+    else // Updating program
     {
         bool counterGap = mat->ps()->doCounterGap();      // Counter gap/lag
         bool acc        = mat->ps()->doAcc();             // Acceleration
@@ -1733,7 +1972,7 @@ void SLGLProgramGenerated::buildProgramCode(SLMaterial* mat,
  * @param mat Parent material pointer
  * @param isDrawProg Flag if program is for drawing instead of update
  */
-void SLGLProgramGenerated::buildProgramCodePS(SLMaterial* mat, bool isDrawProg)
+void SLGLProgramGenerated::buildProgramCodePS(SLMaterial* mat, bool isDrawProg, bool renderInstanced)
 {
     if (mat->name() == "IBLMat")
     {
@@ -1745,7 +1984,12 @@ void SLGLProgramGenerated::buildProgramCodePS(SLMaterial* mat, bool isDrawProg)
            _shaders[1]->type() == ST_fragment);
 
     if (isDrawProg)
-        buildPerPixParticle(mat);
+    {
+        if (renderInstanced)
+            buildPerPixParticleInstanced(mat);
+        else
+            buildPerPixParticle(mat);
+    }
     else
         buildPerPixParticleUpdate(mat);
 }
@@ -1775,6 +2019,9 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat, SLVLight* lights)
     bool uv1  = mat->usesUVIndex(1);
     bool sky  = mat->skybox() != nullptr;
 
+    // Check if the shader has to support skinning
+    bool skinning = mat->supportsGPUSkinning();
+
     // Assemble vertex shader code
     string vertCode;
     vertCode += shaderHeader((int)lights->size());
@@ -1783,9 +2030,11 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat, SLVLight* lights)
     vertCode += vertInput_a_pn;
     if (uv0) vertCode += vertInput_a_uv0;
     if (Nm) vertCode += vertInput_a_tangent;
+    if (skinning) vertCode += vertInput_a_skinning;
     vertCode += vertInput_u_matrices_all;
     // if (sky) vertCode += vertInput_u_matrix_invMv;
     if (Nm) vertCode += vertInput_u_lightNm;
+    if (skinning) vertCode += vertInput_u_skinning;
 
     // Vertex shader outputs
     vertCode += vertOutput_v_P_VS;
@@ -1797,6 +2046,7 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat, SLVLight* lights)
 
     // Vertex shader main loop
     vertCode += vertMain_Begin;
+    if (skinning) vertCode += Nm ? vertMain_skinning_Nm : vertMain_skinning;
     vertCode += vertMain_v_P_VS;
     if (Sm) vertCode += vertMain_v_P_WS_Sm;
     vertCode += vertMain_v_N_VS;
@@ -1804,6 +2054,11 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat, SLVLight* lights)
     if (uv0) vertCode += vertMain_v_uv0;
     if (Nm) vertCode += vertMain_TBN_Nm;
     vertCode += vertMain_EndAll;
+
+    // Vertex shader variables
+    setVariable(vertCode, "localPosition", skinning ? "skinnedPosition" : "a_position");
+    setVariable(vertCode, "localNormal", skinning ? "skinnedNormal" : "a_normal");
+    if (Nm) setVariable(vertCode, "localTangent", skinning ? "skinnedTangent" : "a_tangent");
 
     addCodeToShader(_shaders[0], vertCode, _name + ".vert");
 
@@ -1889,6 +2144,9 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
     bool uv0 = mat->usesUVIndex(0);
     bool uv1 = mat->usesUVIndex(1);
 
+    // Check if the shader has to support skinning
+    bool skinning = mat->supportsGPUSkinning();
+
     // Assemble vertex shader code
     string vertCode;
     vertCode += shaderHeader((int)lights->size());
@@ -1898,8 +2156,10 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
     if (uv0) vertCode += vertInput_a_uv0;
     if (uv1) vertCode += vertInput_a_uv1;
     if (Nm) vertCode += vertInput_a_tangent;
+    if (skinning) vertCode += vertInput_a_skinning;
     vertCode += vertInput_u_matrices_all;
     if (Nm) vertCode += vertInput_u_lightNm;
+    if (skinning) vertCode += vertInput_u_skinning;
 
     // Vertex shader outputs
     vertCode += vertOutput_v_P_VS;
@@ -1911,6 +2171,7 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
 
     // Vertex shader main loop
     vertCode += vertMain_Begin;
+    if (skinning) vertCode += Nm ? vertMain_skinning_Nm : vertMain_skinning;
     vertCode += vertMain_v_P_VS;
     if (Sm) vertCode += vertMain_v_P_WS_Sm;
     vertCode += vertMain_v_N_VS;
@@ -1918,6 +2179,11 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
     if (uv1) vertCode += vertMain_v_uv1;
     if (Nm) vertCode += vertMain_TBN_Nm;
     vertCode += vertMain_EndAll;
+
+    // Vertex shader variables
+    setVariable(vertCode, "localPosition", skinning ? "skinnedPosition" : "a_position");
+    setVariable(vertCode, "localNormal", skinning ? "skinnedNormal" : "a_normal");
+    if (Nm) setVariable(vertCode, "localTangent", skinning ? "skinnedTangent" : "a_tangent");
 
     addCodeToShader(_shaders[0], vertCode, _name + ".vert");
 
@@ -1970,6 +2236,138 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
     fragCode += Dm ? fragMainBlinn_3_FragColorDm : fragMainBlinn_3_FragColor;
     if (Sm) fragCode += fragMain_4_ColoredShadows;
     fragCode += fragMain_5_FogGammaStereo;
+
+    addCodeToShader(_shaders[1], fragCode, _name + ".frag");
+}
+//-----------------------------------------------------------------------------
+void SLGLProgramGenerated::buildPerPixParticleInstanced(SLMaterial* mat)
+{
+    assert(_shaders.size() == 2 &&
+           _shaders[0]->type() == ST_vertex &&
+           _shaders[1]->type() == ST_fragment);
+
+    // Check what textures the material has
+    bool  Dm            = mat->hasTextureType(TT_diffuse);
+    GLint billboardType = mat->ps()->billboardType();      // Billboard type (0 -> default; 1 -> vertical billboard, 2 -> horizontal billboard)
+    bool  rot           = mat->ps()->doRotation();         // Rotation
+    bool  AlOvLi        = mat->ps()->doAlphaOverLT();      // Alpha over life
+    bool  Co            = mat->ps()->doColor();            // Color over life
+    bool  CoOvLi        = mat->ps()->doColorOverLT();      // Color over life
+    bool  AlOvLiCu      = mat->ps()->doAlphaOverLTCurve(); // Alpha over life curve
+    bool  SiOvLi        = mat->ps()->doSizeOverLT();       // Size over life
+    bool  SiOvLiCu      = mat->ps()->doSizeOverLTCurve();  // Size over life curve
+    bool  FlBoTex       = mat->ps()->doFlipBookTexture();  // Flipbook texture
+
+    //////////////////////////////
+    // Assemble vertex shader code
+    //////////////////////////////
+
+    string vertCode;
+    vertCode += shaderHeader();
+
+    // Vertex shader inputs
+    vertCode += vertInput_PS_a_positionP;
+    vertCode += vertInput_PS_a_p; //position
+    vertCode += vertInput_PS_a_st; // start time
+    if (rot) vertCode += vertInput_PS_a_r; //rotation as float
+    if (FlBoTex)
+    {
+        vertCode += vertInput_PS_u_col;
+        vertCode += vertInput_PS_u_row;
+        vertCode += vertInput_PS_a_texNum; // per particle texture number
+    }
+
+    // Vertex shader uniforms
+    vertCode += vertInput_PS_u_ScaRa;
+    vertCode += vertInput_u_matrix_p;
+    vertCode += vertInput_PS_u_time;
+
+    if (billboardType == BT_Vertical)
+        vertCode += vertInput_u_matrix_vertBillboard;
+
+    vertCode += vertInput_u_matrix_vOmv;
+
+    if (AlOvLi && AlOvLiCu) vertCode += vertInput_PS_u_al_bernstein_alpha;
+    if (SiOvLi && SiOvLiCu) vertCode += vertInput_PS_u_al_bernstein_size;
+
+    // Vertex shader outputs
+    vertCode += vertOutput_PS_instanced_transparency;
+    vertCode += vertOutput_PS_v_tC;
+
+    if (CoOvLi) vertCode += vertOutput_PS_age;
+
+    // Vertex shader main loop
+    vertCode += vertMain_instanced_Begin;
+    vertCode += vertMain_PS_v_a;
+    if (FlBoTex)
+        vertCode += vertMain_PS_v_tC_flipbook;
+    else
+        vertCode += vertMain_PS_v_tC;
+
+    if (AlOvLi)
+        vertCode += vertMain_PS_instanced_v_t_begin;
+    else
+        vertCode += vertMain_PS_instanced_v_t_default;
+    if (AlOvLi) vertCode += AlOvLiCu ? vertMain_PS_instanced_v_t_curve : vertMain_PS_instanced_v_t_linear;
+    if (AlOvLi) vertCode += vertMain_PS_v_t_end;
+    vertCode += vertMain_PS_instanced_scale;
+    if (SiOvLi) vertCode += vertMain_PS_instanced_v_s;
+    if (SiOvLi && SiOvLiCu) vertCode += vertMain_PS_instanced_v_s_curve;
+    if (SiOvLi) vertCode += vertMain_PS_instanced_v_sS;
+    if (rot) vertCode += vertMain_PS_instanced_rotate;
+    if (CoOvLi) vertCode += vertMain_PS_v_age;
+
+    if (billboardType == BT_Vertical || billboardType == BT_Horizontal)
+        vertCode += vertMain_PS_instanced_EndAll_VertBillboard;
+    else
+        vertCode += vertMain_PS_instanced_EndAll;
+
+    addCodeToShader(_shaders[0], vertCode, _name + ".vert");
+
+    ////////////////////////////////
+    // Assemble fragment shader code
+    ////////////////////////////////
+
+    string fragCode;
+    fragCode += shaderHeader();
+
+    // Fragment shader inputs
+    fragCode += fragInput_PS_v_tC;
+    if (Co && !CoOvLi) fragCode += fragInput_PS_u_c;
+    if (CoOvLi)
+    {   fragCode += fragInput_PS_u_tTL;
+        fragCode += fragInput_PS_age;
+        fragCode += fragInput_PS_u_colorOvLF;
+    }
+    fragCode += fragInput_PS_instanced_transparency;
+
+    // Fragment shader uniforms
+    if (Dm) fragCode += fragInput_u_matTexDm;
+    fragCode += fragInput_PS_u_overG;
+    fragCode += fragInput_PS_u_wireFrame;
+
+    // Fragment shader outputs
+    fragCode += fragOutputs_o_fragColor;
+
+    if (CoOvLi) fragCode += fragFunction_PS_ColorOverLT;
+
+    // Fragment shader main loop
+    fragCode += fragMain_PS_begin;
+
+
+    if (Co && !CoOvLi) fragCode += fragMain_PS_instanced_c;
+
+    if (CoOvLi) fragCode += fragMain_PS_instanced_v_doColorOverLT;
+
+    if (Co || CoOvLi)
+    {
+        fragCode += fragMain_PS_instanced_transparency;
+        fragCode += fragMain_instanced_PS_end;
+    }
+    else
+        fragCode += fragMain_PS_instanced_withoutColor;
+
+    fragCode += fragMain_PS_endAll;
 
     addCodeToShader(_shaders[1], fragCode, _name + ".frag");
 }
@@ -2032,6 +2430,7 @@ void SLGLProgramGenerated::buildPerPixParticle(SLMaterial* mat)
         vertCode += vertMain_PS_v_t_begin;
     else
         vertCode += vertMain_PS_v_t_default;
+
     if (AlOvLi) vertCode += AlOvLiCu ? vertMain_PS_v_t_curve : vertMain_PS_v_t_linear;
     if (AlOvLi) vertCode += vertMain_PS_v_t_end;
     if (rot) vertCode += vertMain_PS_v_r;
@@ -2120,6 +2519,7 @@ void SLGLProgramGenerated::buildPerPixParticle(SLMaterial* mat)
     fragCode += fragOutputs_o_fragColor;
 
     // Fragment shader main loop
+    fragCode += fragMain_PS_begin;
     fragCode += Co ? fragMain_PS : fragMain_PS_withoutColor;
     fragCode += fragMain_PS_endAll;
 
@@ -2229,6 +2629,11 @@ void SLGLProgramGenerated::buildPerPixVideoBkgdSm(SLVLight* lights)
     vertCode += vertMain_v_P_WS_Sm;
     vertCode += vertMain_v_N_VS;
     vertCode += vertMain_EndAll;
+
+    // Vertex shader variables
+    setVariable(vertCode, "localPosition", "a_position");
+    setVariable(vertCode, "localNormal", "a_normal");
+
     addCodeToShader(_shaders[0], vertCode, _name + ".vert");
 
     // Assemble fragment shader code
@@ -2616,6 +3021,23 @@ void SLGLProgramGenerated::addCodeToShader(SLGLShader*   shader,
     }
 
     shader->file(generatedShaderPath + name);
+}
+//-----------------------------------------------------------------------------
+//! Sets a variable in the shader code.
+/*! A variable is specified in templates like this: ${variableName}.
+ */
+void SLGLProgramGenerated::setVariable(std::string&       code,
+                                       const std::string& name,
+                                       const std::string& value)
+{
+    std::string placeholder = "${" + name + "}";
+
+    std::string::size_type pos = 0;
+    while ((pos = code.find(placeholder)) != std::string::npos)
+    {
+        code.replace(pos, placeholder.size(), value);
+        pos += value.size();
+    }
 }
 //-----------------------------------------------------------------------------
 //! Adds shader header code
