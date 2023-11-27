@@ -102,5 +102,7 @@ echo "cp -r $ZIPFOLDER ../../prebuilt"
 echo "PWD IS $PWD"
 echo "../../prebuilt IS $PWD/../../prebuilt"
 
-mv "$ZIPFOLDER" "../../prebuilt/"
+cp "$ZIPFOLDER" "../../prebuilt/"
+
+echo "$(ls ../../prebuilt)"
 
