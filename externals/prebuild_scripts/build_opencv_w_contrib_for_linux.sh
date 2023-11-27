@@ -76,7 +76,7 @@ cmake \
 ../..
 
 # finally build it
-make -j8
+make -j16
 
 # copy all into install folder
 make install
@@ -85,8 +85,9 @@ cd ../.. # back to opencv
 # Make build folder for release version
 rm -rf $BUILD_R
 mkdir $BUILD_R
+echo "$BUILD_R and $BUILD_D"
 cd $BUILD_R
-
+#
 # Run cmake to configure and generate the make files
 cmake \
 -DCMAKE_CONFIGURATION_TYPES=Release \
@@ -110,7 +111,7 @@ cmake \
 ../..
 
 # finally build it
-make -j8
+make -j16
 
 # copy all into install folder
 make install
@@ -118,7 +119,9 @@ cd ../.. # back to opencv
 
 # Create zip folder for debug and release version
 rm -rf $ZIPFOLDER
-mkdir $ZIPFOLDER
+mkdir -p "$ZIPFOLDER"
+
+echo "$PWD/$BUILD_R/install/include $PWD/$ZIPFOLDER/include"
 cp -R $BUILD_R/install/include   $ZIPFOLDER/include
 cp -R $BUILD_R/install/lib       $ZIPFOLDER/Release
 cp -R $BUILD_D/install/lib       $ZIPFOLDER/Debug
@@ -131,8 +134,9 @@ fi
 cp LICENSE $ZIPFOLDER
 cp README.md $ZIPFOLDER
 
-if [ -d "../../prebuilt/$ZIPFILE" ]; then
-    rm -rf ../../prebuilt/$ZIPFILE
+if [ -d "../prebuilt/$ZIPFILE" ]; then
+    rm -rf "../prebuilt/$ZIPFILE"
 fi
 
-mv $ZIPFOLDER ../../prebuilt
+cp -r $ZIPFOLDER ../../prebuilt
+

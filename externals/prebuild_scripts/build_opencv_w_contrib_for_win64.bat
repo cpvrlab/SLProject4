@@ -17,7 +17,7 @@
 :: To enable downloading prebuilds copy 
 set PATH=%PATH%;C:\Program Files (x86)\Git\bin
 set MAX_NUM_CPU_CORES=6
-set CMAKE_GENERATOR="Visual Studio 16 2019"
+::set CMAKE_GENERATOR="Visual Studio 16 2019"
 set CMAKE_ARCHITECTURE=x64
 set OPENCV_VERSION=%1
 set SLPROJECT_ROOT=%2
