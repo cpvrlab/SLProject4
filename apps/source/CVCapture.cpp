@@ -101,7 +101,7 @@ CVSize2i CVCapture::open(int deviceNum)
         Utils::log("SLProject", "Exception during OpenCV video capture creation: %s", e.what());
     }
 #else
-    WebCameraFacing facing;
+    WebCameraFacing facing = WebCameraFacing::FRONT;
     if (_videoType == VT_MAIN)
         facing = WebCameraFacing::BACK;
     else if (_videoType == VT_SCND)
