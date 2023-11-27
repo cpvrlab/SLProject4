@@ -168,15 +168,11 @@ const string vertOutput_PS_struct_texNum = R"(
 const string vertOutput_PS_struct_End    = R"(
 } vert; )";
 
-const string vertOutput_PS_instanced_texNum = R"(
-out uint texNum;        // Num of texture in flipbook)";
 const string vertOutput_PS_instanced_transparency     = R"(
 out float transparency;         // transparency of a particle )";
 
 const string fragInput_PS_instanced_transparency      = R"(
 in float transparency;         // transparency of a particle )";
-const string fragInput_PS_instanced_texNum = R"(
-in uint texNum;        // Num of texture in flipbook)";
 
 const string fragMain_PS_v_c             = R"(
     vec4 color = u_color;                    // Particle color)";
@@ -2336,7 +2332,6 @@ void SLGLProgramGenerated::buildPerPixParticleInstanced(SLMaterial* mat)
     fragCode += shaderHeader();
 
     // Fragment shader inputs
-    if (FlBoTex) fragCode += fragInput_PS_instanced_texNum;
     fragCode += fragInput_PS_v_tC;
     if (Co && !CoOvLi) fragCode += fragInput_PS_u_c;
     if (CoOvLi)
