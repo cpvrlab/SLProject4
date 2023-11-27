@@ -38,4 +38,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: prebuilt-opencv-linux
-        path: ${{ github.workspace }}/externals/prebuit/linux_opencv_4.7.0
+        path: ${{ github.workspace }}/externals/prebuilt/linux_opencv_4.7.0
