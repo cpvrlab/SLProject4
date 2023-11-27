@@ -94,6 +94,9 @@ if [ ! -d "../../prebuilt/" ]; then
     mkdir "../../prebuilt/"
 fi
 
+echo "$(ls ../../)"
+echo "$(ls ../../prebuilt)"
+
 echo "cp -r $ZIPFOLDER ../../prebuilt"
 echo "PWD IS $PWD"
 echo "../../prebuilt IS $PWD/../../prebuilt"
