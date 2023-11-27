@@ -1577,38 +1577,14 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 {
                     SLstring zip = "glTF-Sample-Models.zip";
 
-                    /*if (ImGui::MenuItem("Clear Coat Test", nullptr, sid == SID_glTF_ClearCoatTest))
-                    {
-                        SLstring fileToLoad = AppDemo::configPath + "models/glTF-Sample-Models/2.0/ClearCoatTest/glTF/ClearCoatTest.gltf";
-                        if (Utils::fileExists(fileToLoad))
-                            s->onLoad(am, s, sv, SID_glTF_ClearCoatTest);
-                        else
-                            downloadModelAndLoadScene(s, sv, zip, pathSrc, pathDst, fileToLoad, SID_glTF_ClearCoatTest);
-                    }*/
                     if (ImGui::MenuItem("Damaged Helmet", nullptr, sid == SID_glTF_DamagedHelmet))
-                    {
                         s->onLoad(am, s, sv, SID_glTF_DamagedHelmet);
-                        //                        SLstring fileToLoad = AppDemo::configPath + "models/glTF-Sample-Models/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf";
-                        //                        loadSceneWithLargeModel(s, sv, zip, fileToLoad, SID_glTF_DamagedHelmet);
-                    }
                     if (ImGui::MenuItem("Flight Helmet", nullptr, sid == SID_glTF_FlightHelmet))
-                    {
                         s->onLoad(am, s, sv, SID_glTF_FlightHelmet);
-                        //                        SLstring fileToLoad = AppDemo::configPath + "models/glTF-Sample-Models/2.0/FlightHelmet/glTF/FlightHelmet.gltf";
-                        //                        loadSceneWithLargeModel(s, sv, zip, fileToLoad, SID_glTF_FlightHelmet);
-                    }
                     if (ImGui::MenuItem("Sponza Palace", nullptr, sid == SID_glTF_Sponza))
-                    {
                         s->onLoad(am, s, sv, SID_glTF_Sponza);
-                        //                        SLstring fileToLoad = AppDemo::configPath + "models/glTF-Sample-Models/2.0/Sponza/glTF/Sponza.gltf";
-                        //                        loadSceneWithLargeModel(s, sv, zip, fileToLoad, SID_glTF_Sponza);
-                    }
                     if (ImGui::MenuItem("Water Bottle", nullptr, sid == SID_glTF_WaterBottle))
-                    {
                         s->onLoad(am, s, sv, SID_glTF_WaterBottle);
-                        //                        SLstring fileToLoad = AppDemo::configPath + "models/glTF-Sample-Models/2.0/WaterBottle/glTF/WaterBottle.gltf";
-                        //                        loadSceneWithLargeModel(s, sv, zip, fileToLoad, SID_glTF_WaterBottle);
-                    }
 
                     ImGui::EndMenu();
                 }
@@ -1618,11 +1594,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                     SLstring zip = "GLTF-FanucCRX.zip";
 
                     if (ImGui::MenuItem("Fanuc-CRX", nullptr, sid == SID_Robotics_FanucCRX_FK))
-                    {
                         s->onLoad(am, s, sv, SID_Robotics_FanucCRX_FK);
-                        //                        SLstring fileToLoad = AppDemo::configPath + "models/GLTF-FanucCRX/Fanuc-CRX.gltf";
-                        //                        loadSceneWithLargeModel(s, sv, zip, fileToLoad, SID_Robotics_FanucCRX_FK);
-                    }
 
                     ImGui::EndMenu();
                 }
