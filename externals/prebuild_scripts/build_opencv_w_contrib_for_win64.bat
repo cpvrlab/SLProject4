@@ -58,7 +58,6 @@ git pull origin %OPENCV_VERSION%
 mkdir BUILD-%OPENCV_VERSION%-vs
 cd BUILD-%OPENCV_VERSION%-vs
 cmake ^
--G %CMAKE_GENERATOR% ^
 -A %CMAKE_ARCHITECTURE% ^
 -DWITH_CUDA=OFF ^
 -DOPENCV_EXTRA_MODULES_PATH=..\..\opencv_contrib\modules ^
