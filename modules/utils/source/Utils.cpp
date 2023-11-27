@@ -67,14 +67,6 @@ namespace fs = std::experimental::filesystem;
 using asio::ip::tcp;
 #endif
 
-#ifdef __EMSCRIPTEN__
-// clang-format off
-EM_JS(void, alert, (const char* string), {
-    alert(UTF8ToString(string));
-})
-// clang-format on
-#endif
-
 using std::fstream;
 
 namespace Utils
@@ -1144,8 +1136,12 @@ void exitMsg(const char* tag,
                         line,
                         file);
 #elif defined(__EMSCRIPTEN__)
-    std::string message = "SLProject error";
-    alert(message.c_str());
+    std::cerr << "--------------------------------\n"
+              << "Fatal Error\n"
+              << "Tag: " << tag << '\n'
+              << "Location: " << file << ":" << line << '\n' 
+              << "Message: " << msg << '\n'
+              << "--------------------------------" << std::endl;
 #else
     log(tag,
         "Exit %s at line %d in %s\n",
