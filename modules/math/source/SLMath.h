@@ -13,6 +13,7 @@
 
 #include <vector>
 #include <string>
+#include <cstdint>
 
 //-----------------------------------------------------------------------------
 // Redefinition of standard types for platform independence

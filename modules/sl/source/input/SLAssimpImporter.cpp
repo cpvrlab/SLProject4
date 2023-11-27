@@ -691,6 +691,7 @@ SLMaterial* SLAssimpImporter::loadMaterial(SLAssetManager* am,
 
     // Create SLMaterial instance. It is also added to the SLScene::_materials vector
     SLMaterial* slMat = new SLMaterial(am, name.c_str());
+    slMat->supportsGPUSkinning(true);
 
     // load all the textures for this aiMat and add it to the aiMat vector
     for (int tt = aiTextureType_NONE; tt <= aiTextureType_UNKNOWN; ++tt)
@@ -916,7 +917,7 @@ SLGLTexture* SLAssimpImporter::loadTexture(SLAssetManager* assetMgr,
                                            minificationFilter,
                                            GL_LINEAR,
                                            texType);
-    texture->uvIndex(uvIndex);
+    texture->uvIndex((SLbyte)uvIndex);
 
     // if texture images get deleted after build you can't do ray tracing
     if (deleteTexImgAfterBuild)
@@ -1273,7 +1274,7 @@ SLAnimation* SLAssimpImporter::loadAnimation(SLAnimManager& animManager, aiAnima
 
     // exit if we didn't load a skeleton but have animations for one
     if (!_skinnedMeshes.empty())
-        assert(_skeleton != nullptr && "The skeleton wasn't impoted correctly.");
+        assert(_skeleton != nullptr && "The skeleton wasn't imported correctly.");
 
     // create the animation
     SLAnimation* result;

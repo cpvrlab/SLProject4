@@ -149,6 +149,7 @@ SLbool SLGLShader::createAndCompile(SLVLight* lights)
         SLint     lineNum = 1;
         for (string& line : lines)
             SL_LOG("%4d: %s", lineNum++, line.c_str());
+        SL_LOG("\n");
         return false;
     }
 
