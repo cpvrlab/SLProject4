@@ -49,7 +49,7 @@ jobs:
 
     - name: Run build script arm
       working-directory: ${{ github.workspace }}/externals/prebuild_scripts/
-      run: arch -arm64 ./build_g2o_for_mac64.sh
+      run: arch -arm ./build_g2o_for_macArm64.sh
 
     - name: Archive prebuilt g2o intel
       uses: actions/upload-artifact@v3
