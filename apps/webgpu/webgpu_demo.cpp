@@ -42,47 +42,47 @@ WebGPU concepts:
 
     - WGPUInstance
         The core interface through which all other objects are created.
-    
+
     - WGPUAdapter
         Represents a physical device and is used to query its capabilities and limits.
-    
+
     - WGPUDevice
         Represents a logical device we interact with. It is created by specifying the capabilities we require
         and fails if the adapter does not support them. We cannot create more resources than specified in the
         limits at creation. This is done to prevent a function from working on one device but not on another.
-    
+
     - WGPUQueue
         The queue is where we submit the commands for the GPU to. Everything that is executed on the GPU goes
         through the queue. Examples are executing rendering or compute pipelines, writing to or reading from buffers.
-    
+
     - WGPUSurface
         The surface we draw onto. How it is acquired depends on the OS so we have to manually convert window handles
         from the different platforms to surfaces. The surface has to be reconfigured every time the window size
         changes.
-    
+
     - WGPUBuffer
         Represents a chunk of memory on the GPU. They can be used for example as vertex buffers, uniforms buffers or
         storage buffers. Buffers are created with a fixed size and usage flags that specify e.g. whether we can copy
         to this buffer or whether it is used as an index buffer. The memory for the buffer is automatically allocated
         at creation but has to be deallocated manually using wgpuBufferDestroy. wgpuQueueWriteBuffer is used to upload
         buffer data to the GPU.
-    
+
     - WGPUTexture
         Represents pixel data in the memory of the GPU. It is similar to a buffer in that memory for it is allocated at
         creation, that it has usage flags and that the memory is deallocated using wgpuTextureDestroy. Data is uploaded
         using wgpuQueueWriteTexture. A texture additionally has a size, a format, a mip level count and a sample count.
         Textures can be used in shaders or as a render attachment (e.g. the depth buffer). Mip maps have to be created
         manually.
-    
+
     - WGPUTextureView
         To use a texture, a texture view has to be created. It specifies which part of the texture is accessed
         (which base array layer, how many array layers, which base mip level, which format, ...).
-    
+
     - WGPUTextureSampler
         To read a texture in a shader, a sampler is commonly used. Textures can also be accessed directly without a
         sampler by specifying texel coordinates, which is more like reading the data from a buffer. To get access to
         features like filtering, mipmapping or clamping, a sampler is used.
-    
+
     - WGPURenderPipeline
         Represents a configuration of the GPU pipeline. It specifies completely how input data is transformed into
         output pixels by settings the configuration for the GPU pipeline stages.
@@ -107,14 +107,14 @@ WebGPU concepts:
                 A vertex buffer is specified using a WGPUVertexBufferLayout structure that contains a list of
                 attributes (WGPUVertexAttribute) along with the stride and step mode (per vertex or per instance).
                 Attributes are specified through a format, an offset in the data and a location in the shader.
-                The location is a number hard-coded for the attribute in the shader code. 
+                The location is a number hard-coded for the attribute in the shader code.
             - primitive: WGPUPrimitiveState
                 Configuration for the primitive assembly and rasterization stages.
                 Specifies the topology (triangles, triangle strips, lines, ...), what index format
                 is used, how the face orientation of triangles is defined and the cull mode.
             - depthStencil: WGPUDepthStencilState
                 Configuration for the depth test and stencil test stages.
-                Specifies the format of the depth/stencil buffer and how depth and stencil testing are performed. 
+                Specifies the format of the depth/stencil buffer and how depth and stencil testing are performed.
             - multisample: WGPUMultisampleState
                 Configuration for multisampling.
                 Specifies the number of samples per pixel as well as additional parameters for muiltisampling.
@@ -139,15 +139,15 @@ WebGPU concepts:
         A list of layouts for bind groups. A bind group references its layout and they both have to have the same
         number of entries. The entries describe the binding, which shader stages can access it as well as additional
         info depending on the type. For example, buffer bind group layout entries specify whether they are a uniform
-        buffer, a storage buffer or read-only storage. 
+        buffer, a storage buffer or read-only storage.
 
     - WGPUPipelineLayout
         Specifies the bind groups used in the pipeline.
-    
+
     - WGPUCommandEncoder
         Work for the GPU has to be recorded into a command buffer. This is done using a command encoder. We call
         functions on the encoder (wgpuCommandEncoder*) to encode the commands into a buffer that can be accessed by
-        calling wgpuCommandEncoderFinish. 
+        calling wgpuCommandEncoderFinish.
 
     - WGPUCommandBuffer
         When all the GPU commands are recorded, wgpuCommandEncoderFinish is called on the queue which returns a
@@ -157,7 +157,7 @@ WebGPU concepts:
         Specifies how a render pipeline is executed. It encodes the pipeline used along with the required vertex
         buffers, index buffers, bind groups, drawing commands, etc. Accessing these render commands is done using a
         specialized object called a render pass encoder. It is created from a command encoder using
-        wgpuCommandEncoderBeginRenderPass. 
+        wgpuCommandEncoderBeginRenderPass.
 
 
 -- WebGPU vs. Vulkan
@@ -188,7 +188,7 @@ Here's a list of things I've noticed are handled differently from Vulkan (as of 
         implementations. We currently use the wgpu-native implementation, which seems to catch all errors and prints
         most of the time a nice error message with a human-readable error message including the labels of the
         problematic objects, suggests fixes and even generates a stack trace. I'm not sure what the overhead of
-        this validation is, but I excpect there to be an option to turn it off in the future. 
+        this validation is, but I excpect there to be an option to turn it off in the future.
 
 */
 
@@ -222,7 +222,7 @@ Here's a list of things I've noticed are handled differently from Vulkan (as of 
 #include <cstring>
 
 #define WEBGPU_DEMO_LOG(msg) std::cout << (msg) << std::endl
-   
+
 #define WEBGPU_DEMO_CHECK(condition, errorMsg) \
     if (!(condition)) \
     { \
@@ -540,7 +540,12 @@ void initWebGPU(App& app)
 
     WGPURequestAdapterOptions adapterOptions = {};
 
-    wgpuInstanceRequestAdapter(app.instance, &adapterOptions, handleAdapterRequest, &app.adapter);
+    wgpuInstanceRequestAdapter(app.instance,
+                               &adapterOptions,
+                               handleAdapterRequest,
+                               &app.adapter);
+    WEBGPU_DEMO_CHECK(app.adapter, "[WebGPU] Failed to create adapter");
+    WEBGPU_DEMO_LOG("[WebGPU] Adapter created");
 
     WGPUSupportedLimits adapterLimits;
     wgpuAdapterGetLimits(app.adapter, &adapterLimits);
