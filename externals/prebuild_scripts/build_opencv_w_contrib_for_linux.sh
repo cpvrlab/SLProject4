@@ -138,6 +138,10 @@ if [ -d "../prebuilt/$ZIPFILE" ]; then
     rm -rf "../prebuilt/$ZIPFILE"
 fi
 
+if [ ! -d "../../prebuilt/" ]; then
+    mkdir "../../prebuilt/"
+fi
+
 echo "cp -r $ZIPFOLDER ../../prebuilt"
 echo "PWD IS $PWD"
 echo "../../prebuilt IS $PWD/../../prebuilt"

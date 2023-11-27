@@ -17,7 +17,7 @@ jobs:
       working-directory: ${{ github.workspace }}/externals/prebuild_scripts/
       run: ./build_assimp_for_linux.sh v5.0.0
 
-    - name: Archive prebuilt opencv
+    - name: Archive prebuilt assimp 
       uses: actions/upload-artifact@v3
       with:
         name: prebuilt-assimp-linux
