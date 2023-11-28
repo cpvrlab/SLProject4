@@ -9,4 +9,8 @@ else()
         add_subdirectory(app_demo_imgui)
         add_subdirectory(app_demo_node)
         add_subdirectory(app_demo_slproject)
+
+    if (SL_BUILD_WEBGPU_DEMO)
+        add_subdirectory(webgpu)
+    endif ()
 endif()
