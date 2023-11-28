@@ -13,19 +13,17 @@ find_library(OPENGLES OpenGLES required)
 find_library(GLKIT GLKit required)
 find_library(CORELOCATION CoreLocation required)
 
-set(target Demo-SL)
+set(target AppDemoSLProject)
 
 #if this variable is not defined, we make automatic signing with "iPhone Developer"
 if(XCODE_CODESIGNIDENTITY)
 	message(STATUS "manual signing")
 	set(APP_BUNDLE_IDENTIFIER "ch.bfh.ti.cpvrlab.demo-sl") # <== Set to your app's bundle identifier (Attention the erlebar one is with "cpvr")
-	
 	set(XCODE_PROVISIONINGPROFILE "Demo SL Development")
 	set(XCODE_DEVELOPMENTTEAM "858Y9EWZ4B")
 else()
 	message(STATUS "automatic signing")
-	#set(APP_BUNDLE_IDENTIFIER "com.${target}") # <== Set to your app's bundle identifier
-
+	set(APP_BUNDLE_IDENTIFIER "com.${target}") # <== Set to your app's bundle identifier
     set(XCODE_CODESIGNIDENTITY "iPhone Developer")
 	set(XCODE_DEVELOPMENTTEAM ${XCODE_DEVELOPMENTTEAM})
 endif()
