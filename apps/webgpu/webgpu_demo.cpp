@@ -547,7 +547,7 @@ void initWebGPU(App& app)
     WEBGPU_DEMO_CHECK(app.adapter, "[WebGPU] Failed to create adapter");
     WEBGPU_DEMO_LOG("[WebGPU] Adapter created");
 
-    WGPUSupportedLimits adapterLimits;
+    WGPUSupportedLimits adapterLimits = {};
     wgpuAdapterGetLimits(app.adapter, &adapterLimits);
 
     // === Acquire a WebGPU device ===
