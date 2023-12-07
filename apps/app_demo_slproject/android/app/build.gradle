@@ -2,10 +2,11 @@ apply plugin: 'com.android.application'
 
 android {
     signingConfigs {
+        // Please create your own release key with Build > Generate Signed Bundle or APK
         release {
-            keyAlias 'cpvrlab'
+            keyAlias 'slproject-release-key'
             keyPassword '?' // Change to your key password
-            storeFile file('../cpvrlab-release-key')
+            storeFile file('../slproject-release-key')
             storePassword '?' // Change to your store password
         }
     }
