@@ -203,7 +203,7 @@ out     float tf_rotation;          // To transform feedback)";
 const string vertOutput_PS_tf_r_angularVelo = R"(
 out     float tf_angularVelo;       // To transform feedback)";
 const string vertOutput_PS_tf_texNum        = R"(
-out     uint  tf_texNum;            // To transform feedback)";
+flat out uint  tf_texNum;            // To transform feedback)";
 const string vertOutput_PS_tf_initP         = R"(
 out     vec3  tf_initialPosition;   // To transform feedback)";
 
