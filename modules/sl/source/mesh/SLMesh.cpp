@@ -454,7 +454,9 @@ void SLMesh::draw(SLSceneView* sv, SLNode* node, SLuint instances)
         sp->uniform1i("u_skinningEnabled", skinningEnabled);
 
         if (skinningEnabled && !_jointMatrices.empty())
-            sp->uniformMatrix4fv("u_jointMatrices", _jointMatrices.size(), (SLfloat*)&_jointMatrices[0]);
+            sp->uniformMatrix4fv("u_jointMatrices", 
+                                 (SLsizei)_jointMatrices.size(),
+                                 (SLfloat*)&_jointMatrices[0]);
     }
 
     SLint locTM = sp->getUniformLocation("u_tMatrix");

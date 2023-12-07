@@ -30,25 +30,17 @@ SLParticleSystem::SLParticleSystem(SLAssetManager* assetMgr,
                                    SLGLTexture*    texC,
                                    const SLstring& name,
                                    SLGLTexture*    texFlipbook,
-                                   const bool      renderInstanced) : SLMesh(assetMgr, name)
+                                   const bool      drawInstanced) : SLMesh(assetMgr, name)
 {
     assert(!name.empty());
 
     // To be added to constructor
 
-    _assetManager = assetMgr;
+    _assetManager  = assetMgr;
+    _drawInstanced = SLGLState::instance()->glHasGeometryShaders() ? drawInstanced : true;
+    _primitive     = PT_points;
 
-    if (SLGLState::instance()->glHasGeometryShaders())
-    {
-        _renderInstanced = renderInstanced;
-    }
-    else
-    {
-        _renderInstanced = true;
-    }
-    _primitive = PT_points;
-
-    P.push_back(SLVec3f(0, 0, 0)); // Trick SL project because it want mesh to have vertex
+    P.push_back(SLVec3f(0, 0, 0)); // Trick SL project because it wants mesh to have vertex
     I32.push_back(0);
 
     if (amount > UINT_MAX) // Need to change for number of floats
@@ -64,7 +56,6 @@ SLParticleSystem::SLParticleSystem(SLAssetManager* assetMgr,
 
     _updateTime.init(60, 0.0f);
     _drawTime.init(60, 0.0f);
-
 }
 //-----------------------------------------------------------------------------
 //! Function which return a position in a sphere
@@ -176,7 +167,7 @@ SLVec3f SLParticleSystem::getPointInCone()
 {
     float y      = 0.0f;
     float radius = _shapeRadius;
-    if (!_doShapeSpawnBase)                         // Spawn inside volume
+    if (!_doShapeSpawnBase) // Spawn inside volume
     {
         y      = Utils::random(0.0f, _shapeHeight); // NEED TO HAVE MORE value near 1 when we have smaller base that top
         radius = _shapeRadius + tan(_shapeAngle * DEG2RAD) * y;
@@ -194,7 +185,7 @@ SLVec3f SLParticleSystem::getPointOnCone()
 {
     float y      = 0.0f;
     float radius = _shapeRadius;
-    if (!_doShapeSpawnBase)                         // Spawn inside volume
+    if (!_doShapeSpawnBase) // Spawn inside volume
     {
         y      = Utils::random(0.0f, _shapeHeight); // NEED TO HAVE MORE value near 1 when we have smaller base that top
         radius = _shapeRadius + tan(_shapeAngle * DEG2RAD) * y;
@@ -319,7 +310,7 @@ void SLParticleSystem::generate()
     SLVuint  tempTexNum;
     SLVVec3f tempInitP;
 
-    if (_renderInstanced)
+    if (_drawInstanced)
         _primitive = PT_triangles;
     else
         _primitive = PT_points;
@@ -357,7 +348,7 @@ void SLParticleSystem::generate()
     {
         if (_doShape && _shapeType == ST_Sphere) // Position in or on sphere
         {
-            if (!_doShapeSurface)                // In volume
+            if (!_doShapeSurface) // In volume
                 tempP[i] = getPointInSphere(_shapeRadius,
                                             SLVec3f(distribution(generator),
                                                     distribution(generator),
@@ -386,19 +377,19 @@ void SLParticleSystem::generate()
         else // Position is not a volume, spawn from start point (particle emitter position)
             tempP[i] = SLVec3f(0, 0, 0);
 
-        if (!_doDirectionSpeed)                                                   // Use normal velocity
+        if (!_doDirectionSpeed) // Use normal velocity
         {
-            if (_velocityType == 0)                                               // Random value
+            if (_velocityType == 0) // Random value
             {
                 tempV[i].x = Utils::random(_velocityRndMin.x, _velocityRndMax.x); // Random value for x velocity
                 tempV[i].y = Utils::random(_velocityRndMin.y, _velocityRndMax.y); // Random value for y velocity
                 tempV[i].z = Utils::random(_velocityRndMin.z, _velocityRndMax.z); // Random value for z velocity
             }
-            else if (_velocityType == 1)                                          // Constant
+            else if (_velocityType == 1) // Constant
             {
-                tempV[i].x = _velocityConst.x;                                    // Constant value for x velocity
-                tempV[i].y = _velocityConst.y;                                    // Constant value for y velocity
-                tempV[i].z = _velocityConst.z;                                    // Constant value for z velocity
+                tempV[i].x = _velocityConst.x; // Constant value for x velocity
+                tempV[i].y = _velocityConst.y; // Constant value for y velocity
+                tempV[i].z = _velocityConst.z; // Constant value for z velocity
             }
         }
         else // DO direction and speed
@@ -427,16 +418,16 @@ void SLParticleSystem::generate()
         // When the first particle dies the last one begin to live
         tempST[i] = GlobalTimer::timeS() + ((float)i * (_timeToLive / (float)_amount)); // Time to start
 
-        if (_doAcceleration || _doGravity)                                              // Acceleration
+        if (_doAcceleration || _doGravity) // Acceleration
             tempInitV[i] = tempV[i];
-        if (_doRotation)                                                                // Rotation (constant angular velocity)
-            tempR[i] = Utils::random(0.0f * DEG2RAD, 360.0f * DEG2RAD);                 // Start rotation of the particle
-        if (_doRotation && _doRotRange)                                                 // Random angular velocity for each particle
+        if (_doRotation)                                                // Rotation (constant angular velocity)
+            tempR[i] = Utils::random(0.0f * DEG2RAD, 360.0f * DEG2RAD); // Start rotation of the particle
+        if (_doRotation && _doRotRange)                                 // Random angular velocity for each particle
             tempAngulareVelo[i] = Utils::random(_angularVelocityRange.x * DEG2RAD,
-                                                _angularVelocityRange.y * DEG2RAD);     // Start rotation of the particle
-        if (_doFlipBookTexture)                                                         // Flipbook texture
+                                                _angularVelocityRange.y * DEG2RAD); // Start rotation of the particle
+        if (_doFlipBookTexture)                                                     // Flipbook texture
             tempTexNum[i] = Utils::random(0, _flipbookRows * _flipbookColumns - 1);
-        if (_doShape)                                                                   // Shape feature
+        if (_doShape) // Shape feature
             tempInitP[i] = tempP[i];
     }
 
@@ -477,7 +468,7 @@ void SLParticleSystem::generate()
         _vao2.setAttrib(AT_initialPosition, AT_initialPosition, &tempInitP);
     _vao2.generateTF((SLuint)tempP.size());
 
-    if (_renderInstanced)
+    if (_drawInstanced)
     {
         P.clear();
         I32.clear();
@@ -493,7 +484,6 @@ void SLParticleSystem::generate()
         I32.push_back(2);
         I32.push_back(3);
         I32.push_back(0);
-
 
         _renderVao1.deleteGL();
         _renderVao2.deleteGL();
@@ -600,9 +590,7 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
     // Generate programs
     ////////////////////
     if (!_mat->program() || !_mat->programTF())
-    {
-        _mat->generateProgramPS(_renderInstanced);
-    }
+        _mat->generateProgramPS(_drawInstanced);
 
     ////////////////////////////////////////////////
     // Calculate time and paused and frustum culling
@@ -621,17 +609,17 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
         _notVisibleTimeS      = 0.0f;              // No more culling, the difference time has been applied, no further need
         _lastTimeBeforePauseS = 0.0f;              // No more paused, the difference time has been applied, no further need
     }
-    else if (!_isVisibleInFrustum)                 // If particle system was not visible, this one is called just once when the particle is draw again (Do nothing if paused, because update call is not done)
+    else if (!_isVisibleInFrustum) // If particle system was not visible, this one is called just once when the particle is draw again (Do nothing if paused, because update call is not done)
     {
         _isVisibleInFrustum = true;
         difTime             = GlobalTimer::timeS() - _notVisibleTimeS; // Use time since the particle system was not visible
         // maybe add later average delta time (because maybe bug when fast not visible long time, visible, not visible, visible
-        deltaTime = _deltaTimeUpdateS;                                        // Last delta time, because when culled draw is not called therefore the actual delta time will be too big
-        if (_lastTimeBeforePauseS > _notVisibleTimeS)                         // If was paused when not visible. Need to take _notVisibleTimeS because it's since this value that the particle system is not drew.
-            _lastTimeBeforePauseS = _notVisibleTimeS;                         // Get the value of since the particle system is not drew
-        _notVisibleTimeS = 0.0f;                                              // No more culling, the difference time has been applied, no further need
+        deltaTime = _deltaTimeUpdateS;                // Last delta time, because when culled draw is not called therefore the actual delta time will be too big
+        if (_lastTimeBeforePauseS > _notVisibleTimeS) // If was paused when not visible. Need to take _notVisibleTimeS because it's since this value that the particle system is not drew.
+            _lastTimeBeforePauseS = _notVisibleTimeS; // Get the value of since the particle system is not drew
+        _notVisibleTimeS = 0.0f;                      // No more culling, the difference time has been applied, no further need
     }
-    else if (!_isPaused && _lastTimeBeforePauseS != 0.0f)                     // If particle system was resumed
+    else if (!_isPaused && _lastTimeBeforePauseS != 0.0f) // If particle system was resumed
     {
         difTime               = GlobalTimer::timeS() - _lastTimeBeforePauseS; // Use time since the particle system was paused
         _lastTimeBeforePauseS = 0.0f;                                         // No more paused, the difference time has been applied, no further need
@@ -726,7 +714,7 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
             _vao1.beginTF(_vao2.tfoID());
             _vao1.drawArrayAs(PT_points);
             _vao1.endTF();
-            if (_renderInstanced)
+            if (_drawInstanced)
                 _vao = _renderVao1;
             else
                 _vao = _vao2;
@@ -736,7 +724,7 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
             _vao2.beginTF(_vao1.tfoID());
             _vao2.drawArrayAs(PT_points);
             _vao2.endTF();
-            if (_renderInstanced)
+            if (_drawInstanced)
                 _vao = _renderVao2;
             else
                 _vao = _vao1;
@@ -888,8 +876,8 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
         stateGL->blendFunc(GL_SRC_ALPHA, GL_ONE);
 
     ///////////////////////
-    if (_renderInstanced)
-        SLMesh::draw(sv, node, 2*_amount); //2 triangles per particle
+    if (_drawInstanced)
+        SLMesh::draw(sv, node, 2 * _amount); //2 triangles per particle
     else
         SLMesh::draw(sv, node);
     ///////////////////////
@@ -903,7 +891,6 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
     // Swap buffer
     _drawBuf = 1 - _drawBuf;
 }
-
 
 /*!
 Change the current use texture, this will switch between the normal texture and
@@ -922,7 +909,6 @@ void SLParticleSystem::changeTexture()
         mat()->addTexture(_textureFirst);
     }
 }
-
 
 //-----------------------------------------------------------------------------
 //! deleteData deletes all mesh data and VAOs
@@ -996,7 +982,7 @@ void SLParticleSystem::buildAABB(SLAABBox& aabb, const SLMat4f& wmNode)
             minP         = SLVec3f(-radius, -0.0, -radius);
             if (!_doShapeSpawnBase) // Spawn inside volume
                 maxP = SLVec3f(radius, _shapeHeight, radius);
-            else                    // Spawn base volume
+            else // Spawn base volume
                 maxP = SLVec3f(radius, 0.0f, radius);
             if (_doDirectionSpeed && _doShapeOverride)
             {
@@ -1012,7 +998,7 @@ void SLParticleSystem::buildAABB(SLAABBox& aabb, const SLMat4f& wmNode)
             minP         = SLVec3f(-radius, -0.0, -radius);
             if (!_doShapeSpawnBase) // Spawn inside volume
                 maxP = SLVec3f(radius, _shapeHeight, radius);
-            else                    // Spawn base volume
+            else // Spawn base volume
                 maxP = SLVec3f(radius, 0.0f, radius);
 
             if (_doDirectionSpeed && _doShapeOverride)
@@ -1027,7 +1013,7 @@ void SLParticleSystem::buildAABB(SLAABBox& aabb, const SLMat4f& wmNode)
 
     if (_doAcceleration || _doGravity) // If acceleration or gravity is enabled
     {
-        if (!_doDirectionSpeed)        // If direction is not enable
+        if (!_doDirectionSpeed) // If direction is not enable
         {
             if (_velocityType == 0)
             {
@@ -1101,13 +1087,13 @@ void SLParticleSystem::buildAABB(SLAABBox& aabb, const SLMat4f& wmNode)
                 maxP.x -= maxV.x * (_timeToLive + timeForXGrav); // I remove the position  with the velocity that it will not do because it go against the velocity (becareful! here timeForXGrav is negative)
             else if (timeForXGrav > 0.0f)                        // If the gravity go with the velocity
                 maxP.x += 0.5f * _gravity.x * (_timeToLive * _timeToLive);
-            if (timeForYGrav < 0.0f)                             // If the gravity go against the velocity
+            if (timeForYGrav < 0.0f) // If the gravity go against the velocity
                 maxP.y -= maxV.y * (_timeToLive + timeForYGrav);
-            else if (timeForYGrav > 0.0f)                        // If the gravity go with the velocity
+            else if (timeForYGrav > 0.0f) // If the gravity go with the velocity
                 maxP.y += 0.5f * _gravity.y * (_timeToLive * _timeToLive);
-            if (timeForZGrav < 0.0f)                             // If the gravity go against the velocity
+            if (timeForZGrav < 0.0f) // If the gravity go against the velocity
                 maxP.z -= maxV.z * (_timeToLive + timeForZGrav);
-            else if (timeForZGrav > 0.0f)                        // If the gravity go with the velocity
+            else if (timeForZGrav > 0.0f) // If the gravity go with the velocity
                 maxP.z += 0.5f * _gravity.z * (_timeToLive * _timeToLive);
 
             // Time remaining after the gravity has nullified the velocity for the particle to die (for each axes)
@@ -1124,11 +1110,11 @@ void SLParticleSystem::buildAABB(SLAABBox& aabb, const SLMat4f& wmNode)
         }
 
         // ACCELERATION (Need to rework to work like gravity)
-        if (_doAcceleration && _doAccDiffDir)                           // Need to be rework ( for negative value)
+        if (_doAcceleration && _doAccDiffDir) // Need to be rework ( for negative value)
         {
             maxP += 0.5f * _acceleration * (_timeToLive * _timeToLive); // Apply acceleration after time
         }
-        else if (_doAcceleration && !_doAccDiffDir)                     // Need to be rework
+        else if (_doAcceleration && !_doAccDiffDir) // Need to be rework
         {
             // minP += 0.5f * _accelerationConst * (_timeToLive * _timeToLive); //Apply constant acceleration
             maxP += 0.5f * _accelerationConst * maxV * (_timeToLive * _timeToLive); // Apply constant acceleration //Not good

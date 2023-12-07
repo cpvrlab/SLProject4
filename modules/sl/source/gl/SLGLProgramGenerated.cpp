@@ -44,8 +44,8 @@ const string vertInput_PS_a_texNum        = R"(
 layout (location = 6) in uint  a_texNum;         // Particle rotation attribute)";
 const string vertInput_PS_a_initP         = R"(
 layout (location = 7) in vec3  a_initialPosition;// Particle initial position attribute)";
-const string vertInput_PS_a_positionP         = R"(
-layout (location = 8) in vec3  a_positionP;     // Particle position attribute)";
+const string vertInput_PS_a_positionP     = R"(
+layout (location = 8) in vec3  a_positionP;      // Particle position attribute)";
 const string vertInput_a_uv0              = R"(
 layout (location = 2) in vec2  a_uv0;            // Vertex tex.coord. 1 for diffuse color)";
 const string vertInput_a_uv1              = R"(
@@ -53,22 +53,21 @@ layout (location = 3) in vec2  a_uv1;            // Vertex tex.coord. 2 for AO)"
 const string vertInput_a_tangent          = R"(
 layout (location = 5) in vec4  a_tangent;        // Vertex tangent attribute)";
 const string vertInput_a_skinning         = R"(
-
 layout (location = 6) in ivec4 a_jointIds;       // Vertex joint indices attributes
 layout (location = 7) in vec4  a_jointWeights;   // Vertex joint weights attributes)";
 //-----------------------------------------------------------------------------
 const string vertInput_u_matrices_all = R"(
 
-uniform mat4  u_mMatrix;    // Model matrix (object to world transform)
-uniform mat4  u_vMatrix;    // View matrix (world to camera transform)
-uniform mat4  u_pMatrix;    // Projection matrix (camera to normalize device coords.))";
+uniform mat4  u_mMatrix;                    // Model matrix (object to world transform)
+uniform mat4  u_vMatrix;                    // View matrix (world to camera transform)
+uniform mat4  u_pMatrix;                    // Projection matrix (camera to normalize device coords.))";
 const string vertInput_u_matrix_vOmv  = R"(
-uniform mat4  u_vOmvMatrix;         // view or modelview matrix)";
+uniform mat4  u_vOmvMatrix;                 // view or modelview matrix)";
 //-----------------------------------------------------------------------------
 const string vertInput_u_skinning = R"(
 
-uniform mat4 u_jointMatrices[100]; // Joint matrices for skinning
-uniform bool u_skinningEnabled;    // Flag if the shader should perform skinning
+uniform mat4 u_jointMatrices[100];          // Joint matrices for skinning
+uniform bool u_skinningEnabled;             // Flag if the shader should perform skinning
 )";
 //-----------------------------------------------------------------------------
 const string vertInput_u_lightNm = R"(
@@ -87,8 +86,8 @@ const string vertInput_PS_u_time               = R"(
 uniform float u_time;               // Simulation time
 uniform float u_difTime;            // Simulation delta time after frustum culling
 uniform float u_tTL;                // Time to live of a particle)";
-const string fragInput_PS_u_tTL               = R"(
-uniform float u_tTL;               // Time to live of a particle)";
+const string fragInput_PS_u_tTL                = R"(
+uniform float u_tTL;                // Time to live of a particle)";
 const string vertInput_PS_u_al_bernstein_alpha = R"(
 uniform vec4  u_al_bernstein;       // Bernstein polynomial for alpha over time)";
 const string vertInput_PS_u_al_bernstein_size  = R"(
@@ -141,7 +140,7 @@ vec3 colorByAge(float age)
     vec3 color    = vec3(u_colorArr[cachePos], u_colorArr[cachePos + 1], u_colorArr[cachePos + 2]);
     return color;
 })";
-
+//-----------------------------------------------------------------------------
 const string fragFunction_PS_ColorOverLT = R"(
 vec3 colorByAge(float age)
 {
@@ -149,7 +148,6 @@ vec3 colorByAge(float age)
     vec3 color    = vec3(u_colorArr[cachePos], u_colorArr[cachePos + 1], u_colorArr[cachePos + 2]);
     return color;
 })";
-
 //-----------------------------------------------------------------------------
 const string vertOutput_PS_struct_Begin  = R"(
 
@@ -168,41 +166,27 @@ const string vertOutput_PS_struct_texNum = R"(
 const string vertOutput_PS_struct_End    = R"(
 } vert; )";
 
-const string vertOutput_PS_instanced_transparency     = R"(
-out float transparency;         // transparency of a particle )";
+const string vertOutput_PS_instanced_transparency   = R"(
+out float transparency;                 // transparency of a particle )";
+const string fragInput_PS_instanced_transparency    = R"(
+in float transparency;                  // transparency of a particle )";
 
-const string fragInput_PS_instanced_transparency      = R"(
-in float transparency;         // transparency of a particle )";
-
-const string fragMain_PS_v_c             = R"(
-    vec4 color = u_color;                    // Particle color)";
-const string fragMain_PS_v_doColorOverLT = R"(
-    vec4 color = vec4(vert[0].color, 1.0);   // Particle color)";
-const string fragMain_PS_instanced_v_doColorOverLT = R"(
+const string fragMain_PS_instanced_v_doColorOverLT  = R"(
     vec4 color = vec4(colorByAge(v_age/u_tTL), 1.0);   // Particle color)";
-const string fragMain_PS_v_withoutColor  = R"(
-    vec4 color = vec4( 0.0, 0.0, 0.0, 1.0);  // Particle color)";
-const string fragMain_PS_instanced_c  = R"(
+const string fragMain_PS_instanced_c                = R"(
     vec4 color = u_color;      // Particle color)";
-const string fragMain_PS_instanced_transparency  = R"(
+const string fragMain_PS_instanced_transparency     = R"(
     color.w *= transparency;   // Apply transparency)";
-const string vertInput_u_matrix_p             = R"(
-uniform mat4  u_pMatrix;     // Projection matrix)";
-const string vertInput_u_matrix_vertBillboard = R"(
-uniform mat4  u_vYawPMatrix; // Projection matrix)";
-const string fragInput_PS_u_c                 = R"(
-uniform vec4  u_color;       // Particle color)";
-const string vertInput_PS_u_ScaRa             = R"(
-uniform float u_scale;       // Particle scale
-uniform float u_radiusW;     // Particle width radius)
-uniform float u_radiusH;     // Particle height radius)";
-//-----------------------------------------------------------------------------
-
-const string vertOutput_PS_color = R"(
-out    vec4 v_particleColor;         // Size of a particle )";
-
-const string vertOutput_PS_texCoord = R"(
-out    vec2 v_texCoord;              // interpolated texture coordinateA)";
+const string vertInput_u_matrix_p                   = R"(
+uniform mat4  u_pMatrix;            // Projection matrix)";
+const string vertInput_u_matrix_vertBillboard       = R"(
+uniform mat4  u_vYawPMatrix;        // Projection matrix)";
+const string fragInput_PS_u_c                       = R"(
+uniform vec4  u_color;              // Particle color)";
+const string vertInput_PS_u_ScaRa                   = R"(
+uniform float u_scale;              // Particle scale
+uniform float u_radiusW;            // Particle width radius)
+uniform float u_radiusH;            // Particle height radius)";
 
 //-----------------------------------------------------------------------------
 const string vertOutput_PS_tf_p             = R"(
@@ -224,34 +208,29 @@ const string vertOutput_PS_tf_initP         = R"(
 out     vec3  tf_initialPosition;   // To transform feedback)";
 
 //-----------------------------------------------------------------------------
-const string vertMain_Begin              = R"(
+const string main_Begin                     = R"(
+//-----------------------------------------------------------------------------
 void main()
 {)";
-
-const string vertMain_instanced_Begin              = R"(
-void main()
-{
-    vec3 position = a_positionP;
-)";
-
-const string vertMain_v_P_VS             = R"(
+//-----------------------------------------------------------------------------
+const string vertMain_v_P_VS                = R"(
     mat4 mvMatrix = u_vMatrix * u_mMatrix;
     v_P_VS = vec3(mvMatrix * ${localPosition});  // vertex position in view space)";
-const string vertMain_v_P_WS_Sm          = R"(
+const string vertMain_v_P_WS_Sm             = R"(
     v_P_WS = vec3(u_mMatrix * ${localPosition}); // vertex position in world space)";
-const string vertMain_v_N_VS             = R"(
+const string vertMain_v_N_VS                = R"(
     mat3 invMvMatrix = mat3(inverse(mvMatrix));
     mat3 nMatrix = transpose(invMvMatrix);
     v_N_VS = vec3(nMatrix * ${localNormal});     // vertex normal in view space)";
-const string vertMain_v_R_OS             = R"(
+const string vertMain_v_R_OS                = R"(
     vec3 I = normalize(v_P_VS);
     vec3 N = normalize(v_N_VS);
     v_R_OS = invMvMatrix * reflect(I, N); // R = I-2.0*dot(N,I)*N;)";
-const string vertMain_v_uv0              = R"(
+const string vertMain_v_uv0                 = R"(
     v_uv0 = a_uv0;  // pass diffuse color tex.coord. 1 for interpolation)";
-const string vertMain_v_uv1              = R"(
+const string vertMain_v_uv1                 = R"(
     v_uv1 = a_uv1;  // pass diffuse color tex.coord. 1 for interpolation)";
-const string vertMain_skinning           = R"(
+const string vertMain_skinning              = R"(
     vec4 skinnedPosition;
     vec3 skinnedNormal;
 
@@ -275,7 +254,7 @@ const string vertMain_skinning           = R"(
         skinnedNormal = a_normal;
     }
 )";
-const string vertMain_skinning_Nm        = R"(
+const string vertMain_skinning_Nm           = R"(
     vec4 skinnedPosition;
     vec3 skinnedNormal;
     vec4 skinnedTangent;
@@ -302,7 +281,7 @@ const string vertMain_skinning_Nm        = R"(
         skinnedTangent = a_tangent;
     }
 )";
-const string vertMain_TBN_Nm             = R"(
+const string vertMain_TBN_Nm                = R"(
 
     // Building the matrix Eye Space -> Tangent Space
     // See the math behind at: http://www.terathon.com/code/tangent.html
@@ -330,144 +309,124 @@ const string vertMain_TBN_Nm             = R"(
 
 //-----------------------------------------------------------------------------
 // Things that goes directly to geometry shader
-const string vertMain_PS_v_t_default     = R"(
+const string vertMain_PS_v_t_default        = R"(
     if(age < 0.0)
         vert.transparency = 0.0; // To be discard, because the particle is to be born
     else
         vert.transparency = 1.0;)";
-const string vertMain_PS_v_t_begin       = R"(
+const string vertMain_PS_v_t_begin          = R"(
     if(age < 0.0)
         vert.transparency = 0.0; // To be discard, because the particle is to be born
     else
     {
         vert.transparency = age / u_tTL;  // Get by the ratio age:lifetime)";
-const string vertMain_PS_v_t_linear      = R"(
+const string vertMain_PS_v_t_linear         = R"(
         vert.transparency = 1.0 - vert.transparency;  // Linear)";
-const string vertMain_PS_v_t_curve       = R"(
+const string vertMain_PS_v_t_curve          = R"(
         vert.transparency = pow(vert.transparency,3.0) * u_al_bernstein.x +
                             pow(vert.transparency,2.0) * u_al_bernstein.y +
                             vert.transparency * u_al_bernstein.z +
                             u_al_bernstein.w;  // Get transparency by bezier curve)";
-const string vertMain_PS_v_t_end         = R"(
+const string vertMain_PS_v_t_end            = R"(
     })";
-const string vertMain_PS_v_r             = R"(
+const string vertMain_PS_v_r                = R"(
     vert.rotation = a_rotation;)";
-const string vertMain_PS_v_s             = R"(
+const string vertMain_PS_v_s                = R"(
     vert.size = age / u_tTL;)";
-const string vertMain_PS_v_s_curve       = R"(
+const string vertMain_PS_v_s_curve          = R"(
     vert.size = pow(vert.size,3.0) * u_si_bernstein.x +
                 pow(vert.size,2.0) * u_si_bernstein.y +
                 vert.size * u_si_bernstein.z +
                 u_si_bernstein.w;  // Get transparency by bezier curve)";
 
-const string vertMain_PS_instanced_v_r             = R"(
-    float rotation = a_rotation;)";
-
-const string vertMain_PS_instanced_v_s             = R"(
-    float size = age / u_tTL;)";
-const string vertMain_PS_instanced_v_s_curve       = R"(
-    size = pow(size,3.0) * u_si_bernstein.x +
-           pow(size,2.0) * u_si_bernstein.y +
-           size * u_si_bernstein.z +
-           u_si_bernstein.w;  // Get transparency by bezier curve)";
-
-const string vertMain_PS_instanced_v_sS       = R"(
-    position = size * position;
-    )";
-
-const string vertMain_PS_v_doColorOverLT = R"(
+const string vertMain_PS_v_doColorOverLT    = R"(
     vert.color = colorByAge(age/u_tTL);)";
-
-const string vertOutput_PS_age = R"(
+const string vertOutput_PS_age              = R"(
 out float v_age; // Age of a particle)";
-
-const string fragInput_PS_age = R"(
+const string fragInput_PS_age               = R"(
 in float v_age; // Age of a particle)";
-
-const string vertMain_PS_v_color = R"(
-    vert.color = u_color.rgb;)";
-
-const string vertMain_PS_v_texNum        = R"(
+const string vertMain_PS_v_texNum           = R"(
     vert.texNum = a_texNum;)";
-
-const string vertMain_PS_v_a             = R"(
+const string vertMain_PS_v_a                = R"(
     float age = u_time - a_startTime;   // Get the age of the particle)";
-
-const string vertMain_PS_v_tC = R"(
+const string vertMain_PS_v_tC               = R"(
     v_texCoord = 0.5 * (a_positionP.xy + vec2(1.0));)";
-
-const string vertMain_PS_v_age = R"(
+const string vertMain_PS_v_age              = R"(
     v_age = age;)";
-
-const string vertMain_PS_v_tC_flipbook = R"(
-    uint actCI = uint(mod(float(a_texNum), float(u_col)));
-    uint actRI = (a_texNum - actCI) / u_col;
+const string vertMain_PS_v_tC_flipbook      = R"(
+    int actCI  = int(mod(float(a_texNum), float(u_col)));
     float actC = float(actCI);
-    float actR = float(actRI);
+    float actR  = floor(float(int(a_texNum) - actCI) / float(u_col));
 
     vec2 p = 0.5 * (a_positionP.xy + vec2(1.0));
     v_texCoord = vec2((actC + p.x)/float(u_col), 1.0 - (actR - p.y)/float(u_row));
 )";
 
-const string vertMain_PS_instanced_v_t_default     = R"(
+const string vertMain_PS_instanced_position             = R"(
+    vec3 position = a_positionP;
+)";
+const string vertMain_PS_instanced_v_s                  = R"(
+    float size = age / u_tTL;)";
+const string vertMain_PS_instanced_v_s_curve            = R"(
+    size = pow(size,3.0) * u_si_bernstein.x +
+           pow(size,2.0) * u_si_bernstein.y +
+           size * u_si_bernstein.z +
+           u_si_bernstein.w;  // Get transparency by bezier curve)";
+const string vertMain_PS_instanced_v_sS                 = R"(
+    position = size * position;
+    )";
+const string vertMain_PS_instanced_v_t_default          = R"(
     if(age < 0.0)
         transparency = 0.0; // To be discard, because the particle is to be born
     else
         transparency = 1.0;)";
-const string vertMain_PS_instanced_v_t_begin       = R"(
+const string vertMain_PS_instanced_v_t_begin            = R"(
     if(age < 0.0)
         transparency = 0.0; // To be discard, because the particle is to be born
     else
     {
         transparency = age / u_tTL;  // Get by the ratio age:lifetime)";
-const string vertMain_PS_instanced_v_t_linear      = R"(
+const string vertMain_PS_instanced_v_t_linear           = R"(
         transparency = 1.0 - transparency;  // Linear)";
-const string vertMain_PS_instanced_v_t_curve       = R"(
+const string vertMain_PS_instanced_v_t_curve            = R"(
         transparency = pow(transparency,3.0) * u_al_bernstein.x +
                        pow(transparency,2.0) * u_al_bernstein.y +
                        transparency * u_al_bernstein.z +
                        u_al_bernstein.w;  // Get transparency by bezier curve)";
-
-const string vertMain_PS_instanced_scale             = R"(
+const string vertMain_PS_instanced_scale                = R"(
     position = vec3(u_radiusW * position.x, u_radiusH * position.y, position.z);
     position = u_scale * position;
     )";
-
-const string vertMain_PS_instanced_rotate             = R"(
+const string vertMain_PS_instanced_rotate               = R"(
     mat2 rot = mat2(cos(a_rotation),-sin(a_rotation),
                     sin(a_rotation), cos(a_rotation)); // Matrix of rotation
     position = vec3(rot * position.xy, position.z);
     )";
-
-const string vertMain_PS_instanced_EndAll          = R"(
+const string vertMain_PS_instanced_EndAll               = R"(
 
     // Modelview matrix multiplication with (particle position + particle generator position)
     // Calculate position in view space
     gl_Position =  u_pMatrix * (u_vOmvMatrix * vec4(a_position, 1) + vec4(position, 0.0));
 }
 )";
-
 const string vertMain_PS_instanced_EndAll_VertBillboard = R"(
     //gl_Position =  vec4(a_position + a_positionP, 1);
     gl_Position =  u_pMatrix * u_vYawPMatrix * vec4(a_position + position, 1.0);
 }
 )";
 
-
-const string vertMain_PS_EndAll          = R"(
+const string vertMain_PS_EndAll               = R"(
 
     // Modelview matrix multiplication with (particle position + particle generator position)
     // Calculate position in view space
     gl_Position =  u_vOmvMatrix * vec4(a_position, 1);
 }
 )";
-
 const string vertMain_PS_EndAll_VertBillboard = R"(
     gl_Position = vec4(a_position, 1);
 }
 )";
-
-const string vertMain_EndAll = R"(
+const string vertMain_EndAll                  = R"(
 
     // pass the vertex w. the fix-function transform
     gl_Position = u_pMatrix * mvMatrix * ${localPosition};
@@ -475,9 +434,6 @@ const string vertMain_EndAll = R"(
 )";
 //-----------------------------------------------------------------------------
 const string vertMain_PS_U_Begin                = R"(
-
-void main()
-{
     vec4 P = vec4(a_position.xyz, 1.0); // Need to be here for the compilation
     gl_Position = P;                    // Need to be here for the compilation)";
 const string vertMain_PS_U_v_init_p             = R"(
@@ -496,8 +452,7 @@ const string vertMain_PS_U_v_init_texNum        = R"(
     tf_texNum = a_texNum;               // Init the output variable)";
 const string vertMain_PS_U_v_init_initP         = R"(
     tf_initialPosition = a_initialPosition; // Init the output variable)";
-
-const string vertMain_PS_U_bornDead            = R"(
+const string vertMain_PS_U_bornDead             = R"(
     tf_startTime += u_difTime;          // Add time to resume after frustum culling
 
     if( u_time >= tf_startTime )
@@ -505,51 +460,48 @@ const string vertMain_PS_U_bornDead            = R"(
         float age = u_time - tf_startTime;   // Get the age of the particle
         if( age > u_tTL)
         {   )";
-const string vertMain_PS_U_reset_p             = R"(
+const string vertMain_PS_U_reset_p              = R"(
             // The particle is past its lifetime, recycle.
             tf_position = u_pGPosition; // Reset position)";
-const string vertMain_PS_U_reset_shape_p       = R"(
+const string vertMain_PS_U_reset_shape_p        = R"(
             // The particle is past its lifetime, recycle.
             tf_position = a_initialPosition + u_pGPosition; // Reset position)";
-const string vertMain_PS_U_reset_v             = R"(
+const string vertMain_PS_U_reset_v              = R"(
             tf_velocity = a_initialVelocity; // Reset velocity)";
-const string vertMain_PS_U_reset_st_counterGap = R"(
+const string vertMain_PS_U_reset_st_counterGap  = R"(
             tf_startTime = u_time + (age - u_tTL); // Reset start time to actual time with counter gap)";
-const string vertMain_PS_U_reset_st            = R"(
+const string vertMain_PS_U_reset_st             = R"(
             tf_startTime = u_time; // Reset start time to actual time)";
-const string vertMain_PS_U_alive_p             = R"(
+const string vertMain_PS_U_alive_p              = R"(
         } else
         {
             // The particle is alive, update.
             tf_position += tf_velocity * u_deltaTime;   // Scale the translation by the delta time)";
-const string vertMain_PS_U_v_rConst            = R"(
+const string vertMain_PS_U_v_rConst             = R"(
             tf_rotation = mod(tf_rotation + (u_angularVelo*u_deltaTime), TWOPI);)";
-const string vertMain_PS_U_v_rRange            = R"(
+const string vertMain_PS_U_v_rRange             = R"(
             tf_rotation = mod(tf_rotation + (tf_angularVelo*u_deltaTime), TWOPI);)";
-const string vertMain_PS_U_alive_a_const       = R"(
+const string vertMain_PS_U_alive_a_const        = R"(
             tf_velocity += tf_initialVelocity * u_deltaTime * u_accConst;  // Amplify the velocity)";
-const string vertMain_PS_U_alive_a_diffDir     = R"(
+const string vertMain_PS_U_alive_a_diffDir      = R"(
             tf_velocity += u_deltaTime * u_acceleration;    // Amplify the velocity)";
-const string vertMain_PS_U_alive_g             = R"(
+const string vertMain_PS_U_alive_g              = R"(
             tf_velocity += u_deltaTime * u_gravity;         // Apply gravity)";
-const string vertMain_PS_U_alive_texNum        = R"(
+const string vertMain_PS_U_alive_texNum         = R"(
             if(u_condFB == 1)
             {
                 tf_texNum++;  // Increment to draw next texture (flipbook)
                 tf_texNum = uint(mod(float(tf_texNum), float(u_col * u_row))); // Modulo to not exceed the max and reset
             })";
-const string vertMain_PS_U_EndAll              = R"(
+const string vertMain_PS_U_EndAll               = R"(
         }
     }
 })";
 
-
-
 //-----------------------------------------------------------------------------
-const string geomConfig_PS = R"(
+const string geomConfig_PS              = R"(
 layout (points) in;             // Primitives that we received from vertex shader
 layout (triangle_strip, max_vertices = 4) out;    // Primitives that we will output and number of vertex that will be output)";
-
 const string geomInput_PS_struct_Begin  = R"(
 in vertex { )";
 const string geomInput_PS_struct_t      = R"(
@@ -566,33 +518,27 @@ const string geomInput_PS_struct_End    = R"(
 } vert[]; )";
 //-----------------------------------------------------------------------------
 const string geomInput_u_matrix_p             = R"(
-uniform mat4  u_pMatrix;     // Projection matrix)";
+uniform mat4  u_pMatrix;        // Projection matrix)";
 const string geomInput_u_matrix_vertBillboard = R"(
-uniform mat4  u_vYawPMatrix; // Projection matrix)";
+uniform mat4  u_vYawPMatrix;    // Projection matrix)";
 const string geomInput_PS_u_ScaRa             = R"(
-uniform float u_scale;       // Particle scale
-uniform float u_radiusW;     // Particle width radius)
-uniform float u_radiusH;     // Particle height radius)";
+uniform float u_scale;          // Particle scale
+uniform float u_radiusW;        // Particle width radius)
+uniform float u_radiusH;        // Particle height radius)";
 const string geomInput_PS_u_c                 = R"(
-uniform vec4  u_color;       // Particle color)";
+uniform vec4  u_color;          // Particle color)";
 const string geomInput_PS_u_col               = R"(
-uniform int   u_col;         // Number of column of flipbook texture)";
+uniform int   u_col;            // Number of column of flipbook texture)";
 const string geomInput_PS_u_row               = R"(
-uniform int   u_row;         // Number of row of flipbook texture)";
+uniform int   u_row;            // Number of row of flipbook texture)";
 //-----------------------------------------------------------------------------
 const string geomOutput_PS_v_pC = R"(
-out vec4 v_particleColor;   // The resulting color per vertex)";
+out vec4 v_particleColor;       // The resulting color per vertex)";
 const string geomOutput_PS_v_tC = R"(
-out vec2 v_texCoord;        // Texture coordinate at vertex)";
-
+out vec2 v_texCoord;            // Texture coordinate at vertex)";
 const string vertOutput_PS_v_tC = R"(
-out vec2 v_texCoord;        // Texture coordinate at vertex)";
+out vec2 v_texCoord;            // Texture coordinate at vertex)";
 //-----------------------------------------------------------------------------
-const string geomMain_PS_Begin = R"(
-
-void main()
-{)";
-
 const string geomMain_PS_v_s             = R"(
     float scale = u_scale;)";
 const string geomMain_PS_v_sS            = R"(
@@ -816,42 +762,38 @@ const string geomMain_PS_EndAll = R"(
 }   )";
 //-----------------------------------------------------------------------------
 const string fragInput_v_P_VS       = R"(
-in      vec3        v_P_VS;     // Interpol. point of illumination in view space (VS))";
+in      vec3        v_P_VS;                     // Interpol. point of illumination in view space (VS))";
 const string fragInput_v_P_WS       = R"(
-in      vec3        v_P_WS;     // Interpol. point of illumination in world space (WS))";
+in      vec3        v_P_WS;                     // Interpol. point of illumination in world space (WS))";
 const string fragInput_v_N_VS       = R"(
-in      vec3        v_N_VS;     // Interpol. normal at v_P_VS in view space)";
+in      vec3        v_N_VS;                     // Interpol. normal at v_P_VS in view space)";
 const string fragInput_v_R_OS       = R"(
-in      vec3        v_R_OS;     // Interpol. reflect in object space)";
+in      vec3        v_R_OS;                     // Interpol. reflect in object space)";
 const string fragInput_v_uv0        = R"(
-in      vec2        v_uv0;      // Texture coordinate varying)";
+in      vec2        v_uv0;                      // Texture coordinate varying)";
 const string fragInput_v_uv1        = R"(
-in      vec2        v_uv1;      // Texture coordinate varying)";
+in      vec2        v_uv1;                      // Texture coordinate varying)";
 const string fragInput_v_lightVecTS = R"(
 in      vec3        v_eyeDirTS;                 // Vector to the eye in tangent space
 in      vec3        v_lightDirTS[NUM_LIGHTS];   // Vector to light 0 in tangent space
 in      vec3        v_spotDirTS[NUM_LIGHTS];    // Spot direction in tangent space)";
 //-----------------------------------------------------------------------------
 const string fragInput_PS_v_pC = R"(
-in      vec4        v_particleColor;        // interpolated color from the geometry shader)";
+in      vec4        v_particleColor;            // interpolated color from the geometry shader)";
 const string fragInput_PS_v_tC = R"(
-in      vec2        v_texCoord;             // interpolated texture coordinate)";
+in      vec2        v_texCoord;                 // interpolated texture coordinate)";
 //-----------------------------------------------------------------------------
 const string fragInput_PS_u_overG     = R"(
-uniform float       u_oneOverGamma;         // 1.0f / Gamma correction value)";
+uniform float       u_oneOverGamma;             // 1.0f / Gamma correction value)";
 const string fragInput_PS_u_wireFrame = R"(
-uniform bool        u_doWireFrame;          // Boolean for wireFrame)";
+uniform bool        u_doWireFrame;              // Boolean for wireFrame)";
 //-----------------------------------------------------------------------------
 const string fragMain_PS_TF = R"(
-out     vec4     o_fragColor;               // output fragment color
-
-void main()
-{     
    o_fragColor = vec4(0,0,0,0); // Need to be here for the compilation
 }
 )";
 //-----------------------------------------------------------------------------
-const string fragMain_PS              = R"(
+const string fragMain_PS                        = R"(
     // Just set the interpolated color from the vertex shader
    o_fragColor = v_particleColor;
 
@@ -862,13 +804,7 @@ const string fragMain_PS              = R"(
    if(o_fragColor.a < 0.001)
         discard;
 )";
-
-const string fragMain_PS_begin              = R"(
-void main()
-{
-)";
-
-const string fragMain_PS_withoutColor = R"(
+const string fragMain_PS_withoutColor           = R"(
    // componentwise multiply w. texture color
    if(!u_doWireFrame)
         o_fragColor = texture(u_matTextureDiffuse0, v_texCoord);
@@ -880,7 +816,6 @@ const string fragMain_PS_withoutColor = R"(
    if(o_fragColor.a < 0.001)
         discard;
 )";
-
 const string fragMain_PS_instanced_withoutColor = R"(
    // componentwise multiply w. texture color
    if(!u_doWireFrame)
@@ -893,8 +828,7 @@ const string fragMain_PS_instanced_withoutColor = R"(
    if(o_fragColor.a < 0.001)
         discard;
 )";
-
-const string fragMain_instanced_PS_end              = R"(
+const string fragMain_instanced_PS_end          = R"(
    // Just set the interpolated color from the vertex shader
    o_fragColor =  color;
    // componentwise multiply w. texture color
@@ -904,8 +838,7 @@ const string fragMain_instanced_PS_end              = R"(
    if(o_fragColor.a < 0.001)
         discard;
 )";
-
-const string fragMain_PS_endAll       = R"(
+const string fragMain_PS_endAll                 = R"(
     //Same color for each wireframe
     if(u_doWireFrame)
         o_fragColor =  vec4(0,0,0,1.0);
@@ -913,7 +846,7 @@ const string fragMain_PS_endAll       = R"(
    o_fragColor.rgb = pow(o_fragColor.rgb, vec3(u_oneOverGamma));
 })";
 //-----------------------------------------------------------------------------
-const string fragInput_u_lightAll    = R"(
+const string fragInput_u_lightAll           = R"(
 
 uniform bool        u_lightIsOn[NUM_LIGHTS];        // flag if light is on
 uniform vec4        u_lightPosVS[NUM_LIGHTS];       // position of light in view space
@@ -929,52 +862,52 @@ uniform bool        u_lightDoAtt[NUM_LIGHTS];       // flag if att. must be calc
 uniform vec4        u_globalAmbi;                   // Global ambient scene color
 uniform float       u_oneOverGamma;                 // 1.0f / Gamma correction value
 )";
-const string fragInput_u_matBlinnAll = R"(
+const string fragInput_u_matBlinnAll        = R"(
 uniform vec4        u_matAmbi;                      // ambient color reflection coefficient (ka)
 uniform vec4        u_matDiff;                      // diffuse color reflection coefficient (kd)
 uniform vec4        u_matSpec;                      // specular color reflection coefficient (ks)
 uniform vec4        u_matEmis;                      // emissive color for self-shining materials
 uniform float       u_matShin;                      // shininess exponent
 )";
-const string fragInput_u_matAmbi     = R"(
+const string fragInput_u_matAmbi            = R"(
 uniform vec4        u_matAmbi;                      // ambient color reflection coefficient (ka))";
-const string fragInput_u_matDiff     = R"(
+const string fragInput_u_matDiff            = R"(
 uniform vec4        u_matDiff;                      // diffuse color reflection coefficient (kd))";
-const string fragInput_u_matEmis     = R"(
+const string fragInput_u_matEmis            = R"(
 uniform vec4        u_matEmis;                      // emissive color (ke))";
-const string fragInput_u_matRough    = R"(
+const string fragInput_u_matRough           = R"(
 uniform float       u_matRough;                     // roughness factor (0-1))";
-const string fragInput_u_matMetal    = R"(
+const string fragInput_u_matMetal           = R"(
 uniform float       u_matMetal;                     // metalness factor (0-1)";
 //-----------------------------------------------------------------------------
-const string fragInput_u_matTexDm       = R"(
+const string fragInput_u_matTexDm           = R"(
 uniform sampler2D   u_matTextureDiffuse0;           // Diffuse color map)";
-const string fragInput_u_matTexNm       = R"(
+const string fragInput_u_matTexNm           = R"(
 uniform sampler2D   u_matTextureNormal0;            // Normal bump map)";
-const string fragInput_u_matTexEm       = R"(
+const string fragInput_u_matTexEm           = R"(
 uniform sampler2D   u_matTextureEmissive0;          // PBR material emissive texture)";
-const string fragInput_u_matTexOm       = R"(
+const string fragInput_u_matTexOm           = R"(
 uniform sampler2D   u_matTextureOcclusion0;         // Ambient occlusion map)";
-const string fragInput_u_matTexRm       = R"(
+const string fragInput_u_matTexRm           = R"(
 uniform sampler2D   u_matTextureRoughness0;         // PBR material roughness texture)";
-const string fragInput_u_matTexMm       = R"(
+const string fragInput_u_matTexMm           = R"(
 uniform sampler2D   u_matTextureMetallic0;          // PBR material metallic texture)";
-const string fragInput_u_matTexRmMm     = R"(
+const string fragInput_u_matTexRmMm         = R"(
 uniform sampler2D   u_matTextureRoughMetal0;        // PBR material roughness-metallic texture)";
-const string fragInput_u_matTexOmRmMm   = R"(
+const string fragInput_u_matTexOmRmMm       = R"(
 uniform sampler2D   u_matTextureOccluRoughMetal0;   // PBR material occlusion-roughness-metalic texture)";
-const string fragInput_u_matGetsSm      = R"(
+const string fragInput_u_matGetsSm          = R"(
 
 uniform bool        u_matGetsShadows;               // flag if material receives shadows)";
-const string fragInput_u_skyCookEnvMaps = R"(
-uniform samplerCube u_skyIrradianceCubemap; // PBR skybox irradiance light
-uniform samplerCube u_skyRoughnessCubemap;  // PBR skybox cubemap for rough reflections
-uniform sampler2D   u_skyBrdfLutTexture;    // PBR lighting lookup table for BRDF
-uniform float       u_skyExposure;          // PBR skybox exposure)";
+const string fragInput_u_skyCookEnvMaps     = R"(
+uniform samplerCube u_skyIrradianceCubemap;         // PBR skybox irradiance light
+uniform samplerCube u_skyRoughnessCubemap;          // PBR skybox cubemap for rough reflections
+uniform sampler2D   u_skyBrdfLutTexture;            // PBR lighting lookup table for BRDF
+uniform float       u_skyExposure;                  // PBR skybox exposure)";
 //-----------------------------------------------------------------------------
 const string fragInput_u_cam = R"(
 
-uniform int         u_camProjType;    // type of stereo
+uniform int         u_camProjType;      // type of stereo
 uniform int         u_camStereoEye;     // -1=left, 0=center, 1=right
 uniform mat3        u_camStereoColors;  // color filter matrix
 uniform bool        u_camFogIsOn;       // flag if fog is on
@@ -1318,10 +1251,6 @@ void doColoredShadows(in vec3 N)
     }
 })";
 //-----------------------------------------------------------------------------
-const string fragMain_Begin         = R"(
-//-----------------------------------------------------------------------------
-void main()
-{)";
 const string fragMain_0_Intensities = R"(
     vec4 Ia = vec4(0.0); // Accumulated ambient light intensity at v_P_VS
     vec4 Id = vec4(0.0); // Accumulated diffuse light intensity at v_P_VS
@@ -1717,8 +1646,6 @@ const string fragMainCook_3_FragColorSky  = R"(
 )";
 //-----------------------------------------------------------------------------
 const string fragMainVideoBkgd = R"(
-void main()
-{
     float x = (gl_FragCoord.x - u_camBkgdLeft) / u_camBkgdWidth;
     float y = (gl_FragCoord.y - u_camBkgdBottom) / u_camBkgdHeight;
 
@@ -1972,7 +1899,9 @@ void SLGLProgramGenerated::buildProgramCode(SLMaterial* mat,
  * @param mat Parent material pointer
  * @param isDrawProg Flag if program is for drawing instead of update
  */
-void SLGLProgramGenerated::buildProgramCodePS(SLMaterial* mat, bool isDrawProg, bool renderInstanced)
+void SLGLProgramGenerated::buildProgramCodePS(SLMaterial* mat,
+                                              bool        isDrawProg,
+                                              bool        renderInstanced)
 {
     if (mat->name() == "IBLMat")
     {
@@ -2045,7 +1974,7 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat, SLVLight* lights)
     if (Nm) vertCode += vertOutput_v_lightVecTS;
 
     // Vertex shader main loop
-    vertCode += vertMain_Begin;
+    vertCode += main_Begin;
     if (skinning) vertCode += Nm ? vertMain_skinning_Nm : vertMain_skinning;
     vertCode += vertMain_v_P_VS;
     if (Sm) vertCode += vertMain_v_P_WS_Sm;
@@ -2103,7 +2032,7 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat, SLVLight* lights)
     if (Sm) fragCode += fragFunctionDoColoredShadows;
 
     // Fragment shader main loop
-    fragCode += fragMain_Begin;
+    fragCode += main_Begin;
     fragCode += fragMain_0_Intensities;
     fragCode += Nm ? fragMain_1_EN_in_TS : fragMain_1_EN_in_VS;
     fragCode += Dm ? fragMainCook_1_matDiff_Dm : fragMainCook_1_matDiff;
@@ -2170,7 +2099,7 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
     if (Nm) vertCode += vertOutput_v_lightVecTS;
 
     // Vertex shader main loop
-    vertCode += vertMain_Begin;
+    vertCode += main_Begin;
     if (skinning) vertCode += Nm ? vertMain_skinning_Nm : vertMain_skinning;
     vertCode += vertMain_v_P_VS;
     if (Sm) vertCode += vertMain_v_P_WS_Sm;
@@ -2222,7 +2151,7 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
     if (Sm) fragCode += fragFunctionDoColoredShadows;
 
     // Fragment shader main loop
-    fragCode += fragMain_Begin;
+    fragCode += main_Begin;
     fragCode += fragMain_0_Intensities;
     fragCode += Nm ? fragMain_1_EN_in_TS : fragMain_1_EN_in_VS;
     fragCode += Em ? fragMain_1_matEmis_Em : fragMain_1_matEmis;
@@ -2267,14 +2196,14 @@ void SLGLProgramGenerated::buildPerPixParticleInstanced(SLMaterial* mat)
 
     // Vertex shader inputs
     vertCode += vertInput_PS_a_positionP;
-    vertCode += vertInput_PS_a_p; //position
-    vertCode += vertInput_PS_a_st; // start time
+    vertCode += vertInput_PS_a_p;          //position
+    vertCode += vertInput_PS_a_st;         // start time
     if (rot) vertCode += vertInput_PS_a_r; //rotation as float
     if (FlBoTex)
     {
+        vertCode += vertInput_PS_a_texNum; // per particle texture number
         vertCode += vertInput_PS_u_col;
         vertCode += vertInput_PS_u_row;
-        vertCode += vertInput_PS_a_texNum; // per particle texture number
     }
 
     // Vertex shader uniforms
@@ -2297,7 +2226,8 @@ void SLGLProgramGenerated::buildPerPixParticleInstanced(SLMaterial* mat)
     if (CoOvLi) vertCode += vertOutput_PS_age;
 
     // Vertex shader main loop
-    vertCode += vertMain_instanced_Begin;
+    vertCode += main_Begin;
+    vertCode += vertMain_PS_instanced_position;
     vertCode += vertMain_PS_v_a;
     if (FlBoTex)
         vertCode += vertMain_PS_v_tC_flipbook;
@@ -2335,7 +2265,8 @@ void SLGLProgramGenerated::buildPerPixParticleInstanced(SLMaterial* mat)
     fragCode += fragInput_PS_v_tC;
     if (Co && !CoOvLi) fragCode += fragInput_PS_u_c;
     if (CoOvLi)
-    {   fragCode += fragInput_PS_u_tTL;
+    {
+        fragCode += fragInput_PS_u_tTL;
         fragCode += fragInput_PS_age;
         fragCode += fragInput_PS_u_colorOvLF;
     }
@@ -2352,8 +2283,7 @@ void SLGLProgramGenerated::buildPerPixParticleInstanced(SLMaterial* mat)
     if (CoOvLi) fragCode += fragFunction_PS_ColorOverLT;
 
     // Fragment shader main loop
-    fragCode += fragMain_PS_begin;
-
+    fragCode += main_Begin;
 
     if (Co && !CoOvLi) fragCode += fragMain_PS_instanced_c;
 
@@ -2424,7 +2354,7 @@ void SLGLProgramGenerated::buildPerPixParticle(SLMaterial* mat)
     if (Co && CoOvLi) vertCode += vertFunction_PS_ColorOverLT;
 
     // Vertex shader main loop
-    vertCode += vertMain_Begin;
+    vertCode += main_Begin;
     vertCode += vertMain_PS_v_a;
     if (AlOvLi)
         vertCode += vertMain_PS_v_t_begin;
@@ -2479,7 +2409,7 @@ void SLGLProgramGenerated::buildPerPixParticle(SLMaterial* mat)
     geomCode += geomOutput_PS_v_tC;
 
     // geometry shader main loop
-    geomCode += geomMain_PS_Begin;
+    geomCode += main_Begin;
     geomCode += geomMain_PS_v_s;
     if (SiOvLi) geomCode += geomMain_PS_v_sS;
     geomCode += geomMain_PS_v_rad;
@@ -2519,7 +2449,7 @@ void SLGLProgramGenerated::buildPerPixParticle(SLMaterial* mat)
     fragCode += fragOutputs_o_fragColor;
 
     // Fragment shader main loop
-    fragCode += fragMain_PS_begin;
+    fragCode += main_Begin;
     fragCode += Co ? fragMain_PS : fragMain_PS_withoutColor;
     fragCode += fragMain_PS_endAll;
 
@@ -2578,6 +2508,7 @@ void SLGLProgramGenerated::buildPerPixParticleUpdate(SLMaterial* mat)
     if (rot) vertCode += vertConstant_PS_pi; // Add constant PI
 
     // Vertex shader main loop
+    vertCode += main_Begin;
     vertCode += vertMain_PS_U_Begin;
     vertCode += vertMain_PS_U_v_init_p;
     vertCode += vertMain_PS_U_v_init_v;
@@ -2605,6 +2536,8 @@ void SLGLProgramGenerated::buildPerPixParticleUpdate(SLMaterial* mat)
     fragCode += shaderHeader();
 
     // Fragment shader inputs
+    fragCode += fragOutputs_o_fragColor;
+    fragCode += main_Begin;
     fragCode += fragMain_PS_TF;
 
     addCodeToShader(_shaders[1], fragCode, _name + ".frag");
@@ -2624,7 +2557,7 @@ void SLGLProgramGenerated::buildPerPixVideoBkgdSm(SLVLight* lights)
     vertCode += vertOutput_v_P_VS;
     vertCode += vertOutput_v_P_WS;
     vertCode += vertOutput_v_N_VS;
-    vertCode += vertMain_Begin;
+    vertCode += main_Begin;
     vertCode += vertMain_v_P_VS;
     vertCode += vertMain_v_P_WS_Sm;
     vertCode += vertMain_v_N_VS;
@@ -2656,6 +2589,7 @@ in      vec3        v_N_VS;     // Interpol. normal at v_P_VS in view space
     fragCode += fragFunctionDoStereoSeparation;
     fragCode += fragFunctionShadowTest(lights);
     fragCode += fragFunctionDoColoredShadows;
+    fragCode += main_Begin;
     fragCode += fragMainVideoBkgd;
     fragCode += fragMain_5_FogGammaStereo;
     addCodeToShader(_shaders[1], fragCode, _name + ".frag");

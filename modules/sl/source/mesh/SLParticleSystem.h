@@ -24,7 +24,9 @@
  * particle vertex and orient them as a billboard to the viewer. Geometry
  * shaders are only supported under OpenGL  >= 4.0 and OpenGL ES >= 3.2. This is
  * the case on most desktop systems and on Android SDK > 24 but not on iOS which
- * has only OpenGL ES 3.0.\n.
+ * has only OpenGL ES 3.0\n.
+ * For all systems that don't support geometry shaders we use an alternative
+ * with instanced drawing\n.
  * The particle system supports many options of which many can be turned on the
  * do* methods. All options can also be modified in the UI when the mesh is
  * selected. See the different demo scenes in the app_demo_slproject under the
@@ -39,9 +41,9 @@ public:
                      const SLVec3f&  velocityRandomEnd,
                      const SLfloat&  timeToLive,
                      SLGLTexture*    texC,
-                     const SLstring& name        = "Particle system",
-                     SLGLTexture*    texFlipbook = nullptr,
-                    const bool       renderInstanced = false);
+                     const SLstring& name          = "Particle system",
+                     SLGLTexture*    texFlipbook   = nullptr,
+                     const bool      drawInstanced = false);
 
     void draw(SLSceneView* sv, SLNode* node, SLuint instances = 1);
     void deleteData();
@@ -55,10 +57,9 @@ public:
     void pauseOrResume();
     void calcNormals() { N.push_back(SLVec3f(0, 1, 0)); };
 
-
     // Getters
 
-    SLbool            renderInstanced() { return _renderInstanced; }
+    SLbool            drawInstanced() { return _drawInstanced; }
     SLVec3f           acceleration() { return _acceleration; }
     SLfloat           accelerationConst() { return _accelerationConst; }
     SLint             amount() { return _amount; }
@@ -122,7 +123,7 @@ public:
     SLVec3f           velocityRndMax() { return _velocityRndMax; }
 
     // Setters
-    void drawInstanced(bool instanced) {_renderInstanced = instanced; }
+    void drawInstanced(bool instanced) { _drawInstanced = instanced; }
     void amount(SLint i) { _amount = i; }
     void accConst(SLfloat f) { _accelerationConst = f; }
     void acceleration(SLVec3f v) { _acceleration = v; }
@@ -273,8 +274,8 @@ private:
     SLVec3f getPointOnPyramid();
     SLVec3f getDirectionPyramid(SLVec3f position);
 
-    // Use to recreate material (the shader change depending if the PS is instanced or not)
-    SLAssetManager*   _assetManager;                //!< pointer to the asset manager (the owner) if available
+    // Used to recreate material (the shader changes depending on if the PS is instanced or not)
+    SLAssetManager* _assetManager; //!< pointer to the asset manager (the owner) if available
 
     // Core values
     SLint   _amount;         //!< Amount of a particle
@@ -389,7 +390,7 @@ private:
     SLbool _doSizeOverLT       = true;  //!< Boolean for size over life time
     SLbool _doSizeOverLTCurve  = false; //!< Boolean for size over life time curve
     SLbool _doFlipBookTexture  = false; //!< Boolean for flipbook texture
-    SLbool _renderInstanced    = false; //!< Boolean for instanced rendering
+    SLbool _drawInstanced      = false; //!< Boolean for instanced rendering
 };
 //-----------------------------------------------------------------------------
 #endif

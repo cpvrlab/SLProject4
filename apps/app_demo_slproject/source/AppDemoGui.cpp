@@ -3736,11 +3736,14 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
                                 ps->isGenerated(false);
                             }
 
-                            bool renderInstanced = ps->renderInstanced();
-                            if (ImGui::Checkbox("Instanced draw", &renderInstanced))
+                            if (SLGLState::instance()->glHasGeometryShaders())
                             {
-                                ps->drawInstanced(renderInstanced);
-                                ps->isGenerated(false);
+                                bool drawInstanced = ps->drawInstanced();
+                                if (ImGui::Checkbox("Instanced draw", &drawInstanced))
+                                {
+                                    ps->drawInstanced(drawInstanced);
+                                    ps->isGenerated(false);
+                                }
                             }
 
                             // TTL (Time to live)
