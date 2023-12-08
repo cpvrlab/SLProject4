@@ -426,7 +426,8 @@ void SLParticleSystem::generate()
             tempAngulareVelo[i] = Utils::random(_angularVelocityRange.x * DEG2RAD,
                                                 _angularVelocityRange.y * DEG2RAD); // Start rotation of the particle
         if (_doFlipBookTexture)                                                     // Flipbook texture
-            tempTexNum[i] = Utils::random(0, _flipbookRows * _flipbookColumns - 1);
+            tempTexNum[i] = Utils::random(0,
+                                          _flipbookRows * _flipbookColumns - 1);
         if (_doShape) // Shape feature
             tempInitP[i] = tempP[i];
     }
@@ -439,15 +440,25 @@ void SLParticleSystem::generate()
     _vao1.setAttrib(AT_startTime, AT_startTime, &tempST);
 
     if (_doAcceleration || _doGravity)
-        _vao1.setAttrib(AT_initialVelocity, AT_initialVelocity, &tempInitV);
+        _vao1.setAttrib(AT_initialVelocity,
+                        AT_initialVelocity,
+                        &tempInitV);
     if (_doRotation)
-        _vao1.setAttrib(AT_rotation, AT_rotation, &tempR);
+        _vao1.setAttrib(AT_rotation,
+                        AT_rotation,
+                        &tempR);
     if (_doRotation && _doRotRange)
-        _vao1.setAttrib(AT_angularVelo, AT_angularVelo, &tempAngulareVelo);
+        _vao1.setAttrib(AT_angularVelo,
+                        AT_angularVelo,
+                        &tempAngulareVelo);
     if (_doFlipBookTexture)
-        _vao1.setAttrib(AT_texNum, AT_texNum, &tempTexNum);
+        _vao1.setAttrib(AT_texNum,
+                        AT_texNum,
+                        &tempTexNum);
     if (_doShape)
-        _vao1.setAttrib(AT_initialPosition, AT_initialPosition, &tempInitP);
+        _vao1.setAttrib(AT_initialPosition,
+                        AT_initialPosition,
+                        &tempInitP);
     _vao1.generateTF((SLuint)tempP.size());
 
     // Configure second VAO
@@ -457,11 +468,17 @@ void SLParticleSystem::generate()
     _vao2.setAttrib(AT_startTime, AT_startTime, &tempST);
 
     if (_doAcceleration || _doGravity)
-        _vao2.setAttrib(AT_initialVelocity, AT_initialVelocity, &tempInitV);
+        _vao2.setAttrib(AT_initialVelocity,
+                        AT_initialVelocity,
+                        &tempInitV);
     if (_doRotation)
-        _vao2.setAttrib(AT_rotation, AT_rotation, &tempR);
+        _vao2.setAttrib(AT_rotation,
+                        AT_rotation,
+                        &tempR);
     if (_doRotation && _doRotRange)
-        _vao2.setAttrib(AT_angularVelo, AT_angularVelo, &tempAngulareVelo);
+        _vao2.setAttrib(AT_angularVelo,
+                        AT_angularVelo,
+                        &tempAngulareVelo);
     if (_doFlipBookTexture)
         _vao2.setAttrib(AT_texNum, AT_texNum, &tempTexNum);
     if (_doShape)
@@ -600,34 +617,68 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
     float deltaTime = GlobalTimer::timeS() - _startUpdateTimeS; // Actual delta time
 
     // Calculate time difference for frustum culling and paused
-    if (!_isVisibleInFrustum && !_isPaused && _lastTimeBeforePauseS != 0.0f) // If particle system was not visible, and was resumed when it was not visible
+    // If particle system was not visible, and was resumed when it was not visible
+    if (!_isVisibleInFrustum && !_isPaused && _lastTimeBeforePauseS != 0.0f)
     {
         _isVisibleInFrustum = true;
-        difTime             = GlobalTimer::timeS() - min(_lastTimeBeforePauseS, _notVisibleTimeS); // Paused was set before not visible (will take _lastTimeBeforePauseS), if set after (will take _notVisibleTimeS)
-        // maybe add later average delta time (because maybe bug when fast not visible long time, visible, not visible, visible
-        deltaTime             = _deltaTimeUpdateS; // Last delta time, because when culled draw is not called therefore the actual delta time will be too big
-        _notVisibleTimeS      = 0.0f;              // No more culling, the difference time has been applied, no further need
-        _lastTimeBeforePauseS = 0.0f;              // No more paused, the difference time has been applied, no further need
+
+        // Paused was set before not visible (will take _lastTimeBeforePauseS),
+        // if set after (will take _notVisibleTimeS)
+        difTime = GlobalTimer::timeS() - min(_lastTimeBeforePauseS, _notVisibleTimeS);
+
+        // maybe add later average delta time
+        // (because maybe bug when fast not visible long time, visible, not visible, visible
+        // Last delta time, because when culled draw is not called therefore
+        // the actual delta time will be too big
+        deltaTime = _deltaTimeUpdateS;
+
+        // No more culling, the difference time has been applied, no further need
+        _notVisibleTimeS = 0.0f;
+
+        // No more paused, the difference time has been applied, no further need
+        _lastTimeBeforePauseS = 0.0f;
     }
-    else if (!_isVisibleInFrustum) // If particle system was not visible, this one is called just once when the particle is draw again (Do nothing if paused, because update call is not done)
+
+    // If particle system was not visible, this one is called just once when the
+    // particle is draw again (Do nothing if paused, because update call is not done)
+    else if (!_isVisibleInFrustum)
     {
         _isVisibleInFrustum = true;
-        difTime             = GlobalTimer::timeS() - _notVisibleTimeS; // Use time since the particle system was not visible
-        // maybe add later average delta time (because maybe bug when fast not visible long time, visible, not visible, visible
-        deltaTime = _deltaTimeUpdateS;                // Last delta time, because when culled draw is not called therefore the actual delta time will be too big
-        if (_lastTimeBeforePauseS > _notVisibleTimeS) // If was paused when not visible. Need to take _notVisibleTimeS because it's since this value that the particle system is not drew.
-            _lastTimeBeforePauseS = _notVisibleTimeS; // Get the value of since the particle system is not drew
-        _notVisibleTimeS = 0.0f;                      // No more culling, the difference time has been applied, no further need
+
+        // Use time since the particle system was not visible
+        difTime = GlobalTimer::timeS() - _notVisibleTimeS;
+
+        // maybe add later average delta time (because maybe bug when
+        // fast not visible long time, visible, not visible, visible
+        // Last delta time, because when culled draw is not called
+        // therefore the actual delta time will be too big
+        deltaTime = _deltaTimeUpdateS;
+
+        // If was paused when not visible. Need to take _notVisibleTimeS because
+        // it's since this value that the particle system is not drew.
+        if (_lastTimeBeforePauseS > _notVisibleTimeS)
+            // Get the value of since the particle system is not drew
+            _lastTimeBeforePauseS = _notVisibleTimeS;
+
+        // No more culling, the difference time has been applied, no further need
+        _notVisibleTimeS = 0.0f;
     }
-    else if (!_isPaused && _lastTimeBeforePauseS != 0.0f) // If particle system was resumed
+
+    // If particle system was resumed
+    else if (!_isPaused && _lastTimeBeforePauseS != 0.0f)
     {
-        difTime               = GlobalTimer::timeS() - _lastTimeBeforePauseS; // Use time since the particle system was paused
-        _lastTimeBeforePauseS = 0.0f;                                         // No more paused, the difference time has been applied, no further need
+        // Use time since the particle system was paused
+        difTime = GlobalTimer::timeS() - _lastTimeBeforePauseS;
 
-        // Take default delta time, because when just paused no need to take last delta time, the draw call continue to be called
+        // No more paused, the difference time has been applied, no further need
+        _lastTimeBeforePauseS = 0.0f;
+
+        // Take default delta time, because when just paused no need to
+        // take last delta time, the draw call continue to be called
     }
 
-    // Calculate the elapsed time for the updating, need to change to use a real profiler (can't measure time like this on the GPU)
+    // Calculate the elapsed time for the updating, need to change to
+    // use a real profiler (can't measure time like this on the GPU)
     _startUpdateTimeMS = GlobalTimer::timeMS();
 
     // MS above, S below
@@ -660,13 +711,20 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
         if (_doAcceleration)
         {
             if (_doAccDiffDir)
-                spTF->uniform3f("u_acceleration", _acceleration.x, _acceleration.y, _acceleration.z);
+                spTF->uniform3f("u_acceleration",
+                                _acceleration.x,
+                                _acceleration.y,
+                                _acceleration.z);
             else
-                spTF->uniform1f("u_accConst", _accelerationConst);
+                spTF->uniform1f("u_accConst",
+                                _accelerationConst);
         }
 
         if (_doGravity)
-            spTF->uniform3f("u_gravity", _gravity.x, _gravity.y, _gravity.z);
+            spTF->uniform3f("u_gravity",
+                            _gravity.x,
+                            _gravity.y,
+                            _gravity.z);
 
         spTF->uniform1f("u_tTL", _timeToLive);
 
@@ -742,7 +800,8 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
 
     SLGLState* stateGL = SLGLState::instance();
 
-    // Start calculation of the elapsed time for the drawing, need to change to use a real profiler (can't measure time like this on the GPU)
+    // Start calculation of the elapsed time for the drawing, need to change
+    // to use a real profiler (can't measure time like this on the GPU)
     _startDrawTimeMS = GlobalTimer::timeMS();
 
     // Billboard type
@@ -867,7 +926,8 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
     spD->uniform1f("u_oneOverGamma", 1.0f);
 
     // Check wireframe
-    if (sv->drawBits()->get(SL_DB_MESHWIRED) || node->drawBits()->get(SL_DB_MESHWIRED))
+    if (sv->drawBits()->get(SL_DB_MESHWIRED) ||
+        node->drawBits()->get(SL_DB_MESHWIRED))
         spD->uniform1i("u_doWireFrame", 1);
     else
         spD->uniform1i("u_doWireFrame", 0);
@@ -883,7 +943,8 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
     ///////////////////////
 
     if (_doColor && _doBlendBrightness)
-        stateGL->blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        stateGL->blendFunc(GL_SRC_ALPHA,
+                           GL_ONE_MINUS_SRC_ALPHA);
 
     // End calculation of the elapsed time for the drawing
     _drawTime.set(GlobalTimer::timeMS() - _startDrawTimeMS);
@@ -891,7 +952,7 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
     // Swap buffer
     _drawBuf = 1 - _drawBuf;
 }
-
+//-----------------------------------------------------------------------------
 /*!
 Change the current use texture, this will switch between the normal texture and
 the flipbook texture (and vice versa)
@@ -909,7 +970,6 @@ void SLParticleSystem::changeTexture()
         mat()->addTexture(_textureFirst);
     }
 }
-
 //-----------------------------------------------------------------------------
 //! deleteData deletes all mesh data and VAOs
 void SLParticleSystem::deleteData()

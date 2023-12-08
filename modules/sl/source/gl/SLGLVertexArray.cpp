@@ -89,11 +89,11 @@ void SLGLVertexArray::setAttrib(SLGLAttributeType type,
 }
 
 //-----------------------------------------------------------------------------
- void SLGLVertexArray::setExternalVBO(SLGLVertexBuffer* vbo, SLuint divisor)
- {
-    _externalVBOf = vbo;
+void SLGLVertexArray::setExternalVBO(SLGLVertexBuffer* vbo, SLuint divisor)
+{
+    _externalVBOf    = vbo;
     _externalDivisor = divisor;
- }
+}
 
 //-----------------------------------------------------------------------------
 /*! Defines the vertex indices for the element drawing. Without indices vertex
@@ -419,9 +419,13 @@ void SLGLVertexArray::drawElementsAs(SLGLPrimitiveType primitiveType,
     GET_GL_ERROR;
 }
 //-----------------------------------------------------------------------------
-/*! Draws the vertex attributes as a specified primitive type as the vertices
-are defined in the attribute arrays.
-*/
+/*!
+ * Draws the vertex attributes as a specified primitive type as the vertices
+ * are defined in the attribute arrays.
+ * @param primitiveType
+ * @param firstVertex
+ * @param countVertices
+ */
 void SLGLVertexArray::drawArrayAs(SLGLPrimitiveType primitiveType,
                                   SLint             firstVertex,
                                   SLsizei           countVertices)
@@ -433,9 +437,11 @@ void SLGLVertexArray::drawArrayAs(SLGLPrimitiveType primitiveType,
     if (countVertices == 0)
         countVertices = (SLsizei)_numVertices;
 
-    ////////////////////////////////////////////////////////
-    glDrawArrays(primitiveType, firstVertex, countVertices);
-    ////////////////////////////////////////////////////////
+    //////////////////////////////////
+    glDrawArrays(primitiveType,
+                 firstVertex,
+                 countVertices);
+    //////////////////////////////////
 
     // Update statistics
     totalDrawCalls++;
@@ -458,14 +464,22 @@ void SLGLVertexArray::drawArrayAs(SLGLPrimitiveType primitiveType,
 
     GET_GL_ERROR;
 }
-
+//-----------------------------------------------------------------------------
+/*!
+ *
+ * @param primitiveType
+ * @param countInstance
+ * @param numIndexes
+ * @param indexOffset
+ */
 void SLGLVertexArray::drawElementsInstanced(SLGLPrimitiveType primitiveType,
                                             SLsizei           countInstance,
                                             SLuint            numIndexes,
-                                            SLuint            indexOffset
-                                            )
+                                            SLuint            indexOffset)
 {
-    assert(_numIndicesElements && _idVBOIndices && "No index VBO generated for VAO");
+    assert(_numIndicesElements &&
+           _idVBOIndices &&
+           "No index VBO generated for VAO");
 
     // From OpenGL 3.0 on we have the OpenGL Vertex Arrays
     // Binding the VAO saves all the commands after the else (per draw call!)
@@ -479,8 +493,11 @@ void SLGLVertexArray::drawElementsInstanced(SLGLPrimitiveType primitiveType,
     SLuint indexTypeSize = SLGLVertexBuffer::sizeOfType(_indexDataType);
 
     ////////////////////////////////////////////////////////
-    glDrawElementsInstanced(primitiveType, (SLsizei)numIndexes ,_indexDataType, (void*)(size_t)(indexOffset * (SLuint)indexTypeSize), countInstance);
-    //glDrawElements(primitiveType, (SLsizei)numIndexes ,_indexDataType, (void*)(size_t)(indexOffset * (SLuint)indexTypeSize));
+    glDrawElementsInstanced(primitiveType,
+                            (SLsizei)numIndexes,
+                            _indexDataType,
+                            (void*)(size_t)(indexOffset * (SLuint)indexTypeSize),
+                            countInstance);
     ////////////////////////////////////////////////////////
 
     GET_GL_ERROR;
@@ -534,9 +551,11 @@ void SLGLVertexArray::drawEdges(SLCol4f color,
         glLineWidth(lineWidth);
 #endif
 
-    //////////////////////////////////////////////////////////////////
-    drawElementsAs(PT_lines, _numIndicesEdges, _numIndicesElements);
-    //////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////
+    drawElementsAs(PT_lines,
+                   _numIndicesEdges,
+                   _numIndicesElements);
+    //////////////////////////////////////////////
 
 #ifndef SL_GLES
     if (lineWidth != 1.0f)
