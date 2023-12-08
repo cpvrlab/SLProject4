@@ -109,11 +109,8 @@ public:
 
     ~SLMaterial() override;
     void  generateProgramPS(bool renderInstanced = false);
-    void  activate(SLCamera* cam,
-                   SLVLight* lights,
-                   SLSkybox* skybox = nullptr);
+    void  activate(SLCamera* cam, SLVLight* lights, SLbool supportGPUSkinning);
     SLint passToUniforms(SLGLProgram* program, SLint nextTexUnit);
-
 
     void deleteDataGpu();
 
@@ -201,7 +198,6 @@ public:
     void program(SLGLProgram* sp) { _program = sp; }
     void programTF(SLGLProgram* sp) { _programTF = sp; }
     void skybox(SLSkybox* sb) { _skybox = sb; }
-    void supportsGPUSkinning(SLbool supportsGPUSkinning) { _supportsGPUSkinning = supportsGPUSkinning; }
     void ps(SLParticleSystem* ps) { _ps = ps; }
 
     // Getters
@@ -224,7 +220,6 @@ public:
     SLGLProgram*      program() { return _program; }
     SLGLProgram*      programTF() { return _programTF; }
     SLSkybox*         skybox() { return _skybox; }
-    SLbool            supportsGPUSkinning() { return _supportsGPUSkinning; }
     SLParticleSystem* ps() { return _ps; }
     SLVNode&          nodesVisible2D() { return _nodesVisible2D; }
     SLVNode&          nodesVisible3D() { return _nodesVisible3D; }
@@ -255,7 +250,6 @@ protected:
     SLGLProgram*      _programTF{};                 //!< pointer to a GLSL shader program for transformFeedback
     SLint             _numTextures;                 //!< number of textures in all _textures vectors array
     SLSkybox*         _skybox;                      //!< pointer to the skybox
-    bool              _supportsGPUSkinning = false; //!< whether skinning is performed on the GPU or on the CPU
 
     // For particle system
     SLParticleSystem* _ps; //!< pointer to a particle system

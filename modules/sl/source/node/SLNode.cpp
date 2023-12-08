@@ -1106,10 +1106,12 @@ void SLNode::updateRec()
 /*! Do software skinning on all changed skeletons && updateRec any out of date
  acceleration structure for RT or if they're being rendered.
 */
-bool SLNode::updateMeshSkins(bool                                forceCPUSkinning,
-                             const std::function<void(SLMesh*)>& cbInformNodes)
+bool SLNode::updateMeshSkins(bool                           forceCPUSkinning,
+                             const function<void(SLMesh*)>& cbInformNodes)
 {
-    if (drawBit(SL_DB_WITHEDGES) || drawBit(SL_DB_ONLYEDGES) || drawBit(SL_DB_VOXELS))
+    if (drawBit(SL_DB_WITHEDGES) ||
+        drawBit(SL_DB_ONLYEDGES) ||
+        drawBit(SL_DB_VOXELS))
         forceCPUSkinning = true;
 
     bool hasChanges = false;

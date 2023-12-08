@@ -691,7 +691,6 @@ SLMaterial* SLAssimpImporter::loadMaterial(SLAssetManager* am,
 
     // Create SLMaterial instance. It is also added to the SLScene::_materials vector
     SLMaterial* slMat = new SLMaterial(am, name.c_str());
-    slMat->supportsGPUSkinning(true);
 
     // load all the textures for this aiMat and add it to the aiMat vector
     for (int tt = aiTextureType_NONE; tt <= aiTextureType_UNKNOWN; ++tt)
@@ -841,7 +840,6 @@ SLMaterial* SLAssimpImporter::loadMaterial(SLAssetManager* am,
     aiMat->Get(AI_MATKEY_OPACITY, opacity);
     aiMat->Get(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_METALLIC_FACTOR, metalness);
     aiMat->Get(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_ROUGHNESS_FACTOR, roughness);
-    aiString texRoughnessMetallic;
 
     // increase shininess if specular color is not low.
     // The aiMat will otherwise be too bright
@@ -1297,10 +1295,11 @@ SLAnimation* SLAssimpImporter::loadAnimation(SLAnimManager& animManager, aiAnima
         SLuint   id           = 0;
         SLbool   isJointNode  = (affectedNode == nullptr);
 
-        // @todo: this is currently a work around but it can happen that we receive normal node animationtracks and joint animationtracks
-        //        we don't allow node animation tracks in a skeleton animation, so we should split an animation in two seperate
-        //        animations if this happens. for now we just ignore node animation tracks if we already have joint tracks
-        //        ofc this will crash if the first track is a node anim but its just temporary
+        // @todo: this is currently a work around but it can happen that we receive normal node animation tracks
+        //        and joint animation tracks we don't allow node animation tracks in a skeleton animation, so we
+        //        should split an animation in two separate animations if this happens. for now we just ignore node
+        //        animation tracks if we already have joint tracks ofc this will crash if the first track is a node
+        //        anim but its just temporary
         if (!isJointNode && isSkeletonAnim)
             continue;
 
@@ -1444,7 +1443,7 @@ children has a mesh. aiNode can contain only transform or joint nodes without
 any visuals.
 
 @todo   this function doesn't look well optimized. It's currently used if the option to
-        only load nodes containing meshes somewhere in their heirarchy is enabled.
+        only load nodes containing meshes somewhere in their hierarchy is enabled.
         This means we call it on ancestor nodes first. This also means that we will
         redundantly traverse the same exact nodes multiple times. This isn't a pressing
         issue at the moment but should be tackled when this importer is being optimized

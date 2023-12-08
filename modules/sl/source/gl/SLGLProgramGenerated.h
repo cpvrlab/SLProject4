@@ -59,14 +59,15 @@ public:
     SLGLProgramGenerated(SLAssetManager* am,
                          const string&   programName,
                          SLMaterial*     mat,
-                         SLVLight*       lights)
+                         SLVLight*       lights,
+                         SLbool          supportGPUSkinning)
       : SLGLProgram(am,
                     "",
                     "",
                     "",
                     programName)
     {
-        buildProgramCode(mat, lights);
+        buildProgramCode(mat, lights, supportGPUSkinning);
     }
 
     //! ctor for generated shader program PS
@@ -95,23 +96,27 @@ public:
     static bool lightsDoShadowMapping(SLVLight* lights);
     static void buildProgramName(SLMaterial* mat,
                                  SLVLight*   lights,
+                                 SLbool      supportGPUSkinning,
                                  string&     programName);
     static void buildProgramNamePS(SLMaterial* mat,
                                    string&     programName,
                                    bool        isDrawProg,
                                    bool        renderInstanced);
 
-    void buildProgramCodePS(SLMaterial* mat, bool isDrawProg, bool renderInstanced = false);
+    void buildProgramCodePS(SLMaterial* mat,
+                            bool        isDrawProg,
+                            bool        renderInstanced = false);
     void buildProgramCode(SLMaterial* mat,
-                          SLVLight*   lights);
+                          SLVLight*   lights,
+                          SLbool      supportGPUSkinning);
     void beginShader(SLCamera*   cam,
                      SLMaterial* mat,
                      SLVLight*   lights) override { beginUse(cam, mat, lights); }
     void endShader() override { endUse(); }
 
 private:
-    void buildPerPixCook(SLMaterial* mat, SLVLight* lights);
-    void buildPerPixBlinn(SLMaterial* mat, SLVLight* lights);
+    void buildPerPixCook(SLMaterial* mat, SLVLight* lights, SLbool supportGPUSkinning);
+    void buildPerPixBlinn(SLMaterial* mat, SLVLight* lights, SLbool supportGPUSkinning);
     void buildPerPixParticle(SLMaterial* mat);
     void buildPerPixParticleInstanced(SLMaterial* mat);
     void buildPerPixParticleUpdate(SLMaterial* mat);

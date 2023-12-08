@@ -1715,10 +1715,12 @@ const string fragMainVideoBkgd = R"(
  */
 void SLGLProgramGenerated::buildProgramName(SLMaterial* mat,
                                             SLVLight*   lights,
+                                            SLbool      supportGPUSkinning,
                                             string&     programName)
 {
     assert(mat && "No material pointer passed!");
     assert(lights && !lights->empty() && "No lights passed!");
+
     programName = "gen";
 
     if (mat->hasTextureType(TT_videoBkgd))
@@ -1744,14 +1746,14 @@ void SLGLProgramGenerated::buildProgramName(SLMaterial* mat,
                 programName += "D"; // Directional light
         }
         else if (light->spotCutOffDEG() < 180.0f)
-            programName += "S"; // Spot light
+            programName += "S"; // Spotlight
         else
-            programName += "P"; // Point light
+            programName += "P"; // Pointlight
         if (light->createsShadows())
             programName += "s"; // Creates shadows
     }
 
-    if (mat->supportsGPUSkinning())
+    if (supportGPUSkinning)
         programName += "-S";
 }
 //-----------------------------------------------------------------------------
@@ -1851,7 +1853,8 @@ void SLGLProgramGenerated::buildProgramNamePS(SLMaterial* mat,
  * @param lights Pointer of vector of lights
  */
 void SLGLProgramGenerated::buildProgramCode(SLMaterial* mat,
-                                            SLVLight*   lights)
+                                            SLVLight*   lights,
+                                            SLbool      supportGPUSkinning)
 {
     if (mat->name() == "IBLMat")
     {
@@ -1876,11 +1879,11 @@ void SLGLProgramGenerated::buildProgramCode(SLMaterial* mat,
 
     if (mat->reflectionModel() == RM_BlinnPhong)
     {
-        buildPerPixBlinn(mat, lights);
+        buildPerPixBlinn(mat, lights, supportGPUSkinning);
     }
     else if (mat->reflectionModel() == RM_CookTorrance)
     {
-        buildPerPixCook(mat, lights);
+        buildPerPixCook(mat, lights, supportGPUSkinning);
     }
     else if (mat->reflectionModel() == RM_Custom)
     {
@@ -1925,7 +1928,9 @@ void SLGLProgramGenerated::buildProgramCodePS(SLMaterial* mat,
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat, SLVLight* lights)
+void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat,
+                                           SLVLight* lights,
+                                           SLbool supportGPUSkinning)
 {
     assert(mat && lights);
     assert(_shaders.size() > 1 &&
@@ -1948,9 +1953,6 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat, SLVLight* lights)
     bool uv1  = mat->usesUVIndex(1);
     bool sky  = mat->skybox() != nullptr;
 
-    // Check if the shader has to support skinning
-    bool skinning = mat->supportsGPUSkinning();
-
     // Assemble vertex shader code
     string vertCode;
     vertCode += shaderHeader((int)lights->size());
@@ -1959,11 +1961,11 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat, SLVLight* lights)
     vertCode += vertInput_a_pn;
     if (uv0) vertCode += vertInput_a_uv0;
     if (Nm) vertCode += vertInput_a_tangent;
-    if (skinning) vertCode += vertInput_a_skinning;
+    if (supportGPUSkinning) vertCode += vertInput_a_skinning;
     vertCode += vertInput_u_matrices_all;
     // if (sky) vertCode += vertInput_u_matrix_invMv;
     if (Nm) vertCode += vertInput_u_lightNm;
-    if (skinning) vertCode += vertInput_u_skinning;
+    if (supportGPUSkinning) vertCode += vertInput_u_skinning;
 
     // Vertex shader outputs
     vertCode += vertOutput_v_P_VS;
@@ -1975,7 +1977,7 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat, SLVLight* lights)
 
     // Vertex shader main loop
     vertCode += main_Begin;
-    if (skinning) vertCode += Nm ? vertMain_skinning_Nm : vertMain_skinning;
+    if (supportGPUSkinning) vertCode += Nm ? vertMain_skinning_Nm : vertMain_skinning;
     vertCode += vertMain_v_P_VS;
     if (Sm) vertCode += vertMain_v_P_WS_Sm;
     vertCode += vertMain_v_N_VS;
@@ -1985,9 +1987,9 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat, SLVLight* lights)
     vertCode += vertMain_EndAll;
 
     // Vertex shader variables
-    setVariable(vertCode, "localPosition", skinning ? "skinnedPosition" : "a_position");
-    setVariable(vertCode, "localNormal", skinning ? "skinnedNormal" : "a_normal");
-    if (Nm) setVariable(vertCode, "localTangent", skinning ? "skinnedTangent" : "a_tangent");
+    setVariable(vertCode, "localPosition", supportGPUSkinning ? "skinnedPosition" : "a_position");
+    setVariable(vertCode, "localNormal", supportGPUSkinning ? "skinnedNormal" : "a_normal");
+    if (Nm) setVariable(vertCode, "localTangent", supportGPUSkinning ? "skinnedTangent" : "a_tangent");
 
     addCodeToShader(_shaders[0], vertCode, _name + ".vert");
 
@@ -2055,7 +2057,9 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat, SLVLight* lights)
     addCodeToShader(_shaders[1], fragCode, _name + ".frag");
 }
 //-----------------------------------------------------------------------------
-void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
+void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat,
+                                            SLVLight* lights,
+                                            SLbool supportGPUSkinning)
 {
     assert(mat && lights);
     assert(_shaders.size() > 1 &&
@@ -2073,9 +2077,6 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
     bool uv0 = mat->usesUVIndex(0);
     bool uv1 = mat->usesUVIndex(1);
 
-    // Check if the shader has to support skinning
-    bool skinning = mat->supportsGPUSkinning();
-
     // Assemble vertex shader code
     string vertCode;
     vertCode += shaderHeader((int)lights->size());
@@ -2085,10 +2086,10 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
     if (uv0) vertCode += vertInput_a_uv0;
     if (uv1) vertCode += vertInput_a_uv1;
     if (Nm) vertCode += vertInput_a_tangent;
-    if (skinning) vertCode += vertInput_a_skinning;
+    if (supportGPUSkinning) vertCode += vertInput_a_skinning;
     vertCode += vertInput_u_matrices_all;
     if (Nm) vertCode += vertInput_u_lightNm;
-    if (skinning) vertCode += vertInput_u_skinning;
+    if (supportGPUSkinning) vertCode += vertInput_u_skinning;
 
     // Vertex shader outputs
     vertCode += vertOutput_v_P_VS;
@@ -2100,7 +2101,7 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
 
     // Vertex shader main loop
     vertCode += main_Begin;
-    if (skinning) vertCode += Nm ? vertMain_skinning_Nm : vertMain_skinning;
+    if (supportGPUSkinning) vertCode += Nm ? vertMain_skinning_Nm : vertMain_skinning;
     vertCode += vertMain_v_P_VS;
     if (Sm) vertCode += vertMain_v_P_WS_Sm;
     vertCode += vertMain_v_N_VS;
@@ -2110,9 +2111,9 @@ void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat, SLVLight* lights)
     vertCode += vertMain_EndAll;
 
     // Vertex shader variables
-    setVariable(vertCode, "localPosition", skinning ? "skinnedPosition" : "a_position");
-    setVariable(vertCode, "localNormal", skinning ? "skinnedNormal" : "a_normal");
-    if (Nm) setVariable(vertCode, "localTangent", skinning ? "skinnedTangent" : "a_tangent");
+    setVariable(vertCode, "localPosition", supportGPUSkinning ? "skinnedPosition" : "a_position");
+    setVariable(vertCode, "localNormal", supportGPUSkinning ? "skinnedNormal" : "a_normal");
+    if (Nm) setVariable(vertCode, "localTangent", supportGPUSkinning ? "skinnedTangent" : "a_tangent");
 
     addCodeToShader(_shaders[0], vertCode, _name + ".vert");
 

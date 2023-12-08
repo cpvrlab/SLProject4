@@ -20,8 +20,8 @@
 using std::set;
 
 #ifdef __clang__
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Weverything"
+#    pragma clang diagnostic push
+#    pragma clang diagnostic ignored "-Weverything"
 #endif
 #include <igl/remove_duplicate_vertices.h>
 #include <igl/per_face_normals.h>
@@ -438,7 +438,10 @@ void SLMesh::draw(SLSceneView* sv, SLNode* node, SLuint instances)
     /////////////////////////////
 
     // 3.a) Apply mesh material if exists & differs from current
-    _mat->activate(sv->camera(), &sv->s()->lights());
+    // If a material is not created so far, it will be created here
+    _mat->activate(sv->camera(),
+                   &sv->s()->lights(),
+                   (!Ji.empty() && !Jw.empty()));
 
     // 3.b) Pass the standard matrices to the shader program
     SLGLProgram* sp = _mat->program();
@@ -447,14 +450,14 @@ void SLMesh::draw(SLSceneView* sv, SLNode* node, SLuint instances)
     sp->uniformMatrix4fv("u_pMatrix", 1, (SLfloat*)&stateGL->projectionMatrix);
 
     // Pass skeleton joint matrices to the shader program
-    if (_mat->supportsGPUSkinning())
+    if (!Ji.empty() && !Jw.empty())
     {
         // Only perform skinning in the shader if we haven't performed CPU skinning and if there are joint IDs
-        SLbool skinningEnabled = !_isCPUSkinned && !Ji.empty();
+        SLbool skinningEnabled = !_isCPUSkinned;
         sp->uniform1i("u_skinningEnabled", skinningEnabled);
 
         if (skinningEnabled && !_jointMatrices.empty())
-            sp->uniformMatrix4fv("u_jointMatrices", 
+            sp->uniformMatrix4fv("u_jointMatrices",
                                  (SLsizei)_jointMatrices.size(),
                                  (SLfloat*)&_jointMatrices[0]);
     }
@@ -758,7 +761,7 @@ void SLMesh::generateVAO(SLGLVertexArray& vao)
     SLVVec4i jointIndicesData; // indices are passed to the shader as ivec4s
     SLVVec4f jointWeightsData; // weights are passed to the shader as vec4s
 
-    if (!Ji.empty() && _mat->supportsGPUSkinning())
+    if (!Ji.empty() && !Jw.empty())
     {
         assert(Ji.size() == P.size());
         assert(Jw.size() == P.size());
@@ -773,9 +776,9 @@ void SLMesh::generateVAO(SLGLVertexArray& vao)
             assert(!curIndices.empty());
 
             jointIndicesData[i] = SLVec4i(curIndices.size() >= 1 ? curIndices[0] : 0,
-                                     curIndices.size() >= 2 ? curIndices[1] : 0,
-                                     curIndices.size() >= 3 ? curIndices[2] : 0,
-                                     curIndices.size() >= 4 ? curIndices[3] : 0);
+                                          curIndices.size() >= 2 ? curIndices[1] : 0,
+                                          curIndices.size() >= 3 ? curIndices[2] : 0,
+                                          curIndices.size() >= 4 ? curIndices[3] : 0);
         }
 
         // create the vec4 of weights for all points
@@ -785,9 +788,9 @@ void SLMesh::generateVAO(SLGLVertexArray& vao)
             assert(curWeights.size() == Ji[i].size());
 
             jointWeightsData[i] = SLVec4f(curWeights.size() >= 1 ? curWeights[0] : 0.0f,
-                                     curWeights.size() >= 2 ? curWeights[1] : 0.0f,
-                                     curWeights.size() >= 3 ? curWeights[2] : 0.0f,
-                                     curWeights.size() >= 4 ? curWeights[3] : 0.0f);
+                                          curWeights.size() >= 2 ? curWeights[1] : 0.0f,
+                                          curWeights.size() >= 3 ? curWeights[2] : 0.0f,
+                                          curWeights.size() >= 4 ? curWeights[3] : 0.0f);
         }
         vao.setAttrib(AT_jointIndex, AT_jointIndex, &jointIndicesData);
         vao.setAttrib(AT_jointWeight, AT_jointWeight, &jointWeightsData);
@@ -909,9 +912,10 @@ SLbool SLMesh::hit(SLRay* ray, SLNode* node)
         return true;
     }
 
-    // Force the mesh to be skinned in software even if it would be normally skinned on the GPU.
-    // We need the results from the skinning on the CPU to perform the ray-triangle intersection.
-    if (_skeleton && _mat && _mat->supportsGPUSkinning() && !_isCPUSkinned)
+    // Force the mesh to be skinned in software even if it would be normally
+    // skinned on the GPU. We need the results from the skinning on the CPU to
+    // perform the ray-triangle intersection.
+    if (_skeleton && _mat && (!Ji.empty() && !Jw.empty()) && !_isCPUSkinned)
         transformSkin(true, [](SLMesh*) {});
 
     if (_accelStruct)
@@ -1599,8 +1603,8 @@ void SLMesh::transformSkin(bool                                forceCPUSkinning,
     _isCPUSkinned = forceCPUSkinning;
 
     // Perform software skinning if the material doesn't support CPU skinning or
-    // if the results of the skinning process are required somewehere else.
-    if (!_mat->supportsGPUSkinning() || forceCPUSkinning)
+    // if the results of the skinning process are required somewhere else.
+    if (forceCPUSkinning)
     {
         _finalP = &skinnedP;
         _finalN = &skinnedN;

@@ -502,9 +502,11 @@ void SLMaterial::generateProgramPS(bool renderInstanced)
  At the end the shader program will begin its usage with SLGLProgram::beginUse.
  @param cam Pointer to the active camera
  @param lights Pointer to the scene vector of lights
- @param skybox Pointer to the skybox
+ @param supportsSkinning flag if skinning in shader should be supported
  */
-void SLMaterial::activate(SLCamera* cam, SLVLight* lights, SLSkybox* skybox)
+void SLMaterial::activate(SLCamera* cam,
+                          SLVLight* lights,
+                          SLbool    supportGPUSkinning)
 {
     SLGLState* stateGL = SLGLState::instance();
 
@@ -525,12 +527,19 @@ void SLMaterial::activate(SLCamera* cam, SLVLight* lights, SLSkybox* skybox)
     {
         // Check first the asset manager if the requested program type already exists
         string programName;
-        SLGLProgramGenerated::buildProgramName(this, lights, programName);
+        SLGLProgramGenerated::buildProgramName(this,
+                                               lights,
+                                               supportGPUSkinning,
+                                               programName);
         _program = _assetManager->getProgramByName(programName);
 
         // If the program was not found by name generate a new one
         if (!_program)
-            _program = new SLGLProgramGenerated(_assetManager, programName, this, lights);
+            _program = new SLGLProgramGenerated(_assetManager,
+                                                programName,
+                                                this,
+                                                lights,
+                                                supportGPUSkinning);
     }
 
     // Check if shader had a compile error and the error texture should be shown
