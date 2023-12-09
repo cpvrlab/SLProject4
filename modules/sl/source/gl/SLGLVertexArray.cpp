@@ -22,14 +22,14 @@ SLuint SLGLVertexArray::totalPrimitivesRendered = 0;
 SLGLVertexArray::SLGLVertexArray()
 {
     _vaoID = 0;
-    _VBOf.clear();
+    _vbo.clear();
     _idVBOIndices       = 0;
     _numIndicesElements = 0;
     _numIndicesEdges    = 0;
     _numVertices        = 0;
     _indexDataElements  = nullptr;
     _indexDataEdges     = nullptr;
-    _externalVBOf       = nullptr;
+    _externalVbo        = nullptr;
 }
 //-----------------------------------------------------------------------------
 /*! Deletes the OpenGL objects for the vertex array and the vertex buffer.
@@ -41,8 +41,8 @@ void SLGLVertexArray::deleteGL()
         glDeleteVertexArrays(1, &_vaoID);
     _vaoID = 0;
 
-    if (_VBOf.id())
-        _VBOf.clear();
+    if (_vbo.id())
+        _vbo.clear();
 
     if (_idVBOIndices)
     {
@@ -74,7 +74,7 @@ void SLGLVertexArray::setAttrib(SLGLAttributeType type,
     if (type == AT_position && location == -1)
         SL_EXIT_MSG("The position attribute has no variable location.");
 
-    if (_VBOf.attribIndex(type) >= 0)
+    if (_vbo.attribIndex(type) >= 0)
         SL_EXIT_MSG("Attribute type already exists.");
 
     SLGLAttribute va;
@@ -85,16 +85,14 @@ void SLGLVertexArray::setAttrib(SLGLAttributeType type,
     va.location        = location;
     va.bufferSizeBytes = 0;
 
-    _VBOf.attribs().push_back(va);
+    _vbo.attribs().push_back(va);
 }
-
 //-----------------------------------------------------------------------------
 void SLGLVertexArray::setExternalVBO(SLGLVertexBuffer* vbo, SLuint divisor)
 {
-    _externalVBOf    = vbo;
+    _externalVbo     = vbo;
     _externalDivisor = divisor;
 }
-
 //-----------------------------------------------------------------------------
 /*! Defines the vertex indices for the element drawing. Without indices vertex
 array can only be drawn with SLGLVertexArray::drawArrayAs.
@@ -134,7 +132,7 @@ void SLGLVertexArray::updateAttrib(SLGLAttributeType type,
     assert(elementSize > 0 && elementSize < 5 && "Element size invalid");
 
     // Get attribute index and check element size
-    SLint indexf = _VBOf.attribIndex(type);
+    SLint indexf = _vbo.attribIndex(type);
     if (indexf == -1)
         SL_EXIT_MSG("Attribute type does not exist in VAO.");
 
@@ -144,7 +142,7 @@ void SLGLVertexArray::updateAttrib(SLGLAttributeType type,
 
     // update the appropriate VBO
     if (indexf > -1)
-        _VBOf.updateAttrib(type, elementSize, dataPointer);
+        _vbo.updateAttrib(type, elementSize, dataPointer);
 
     glBindVertexArray(0);
     GET_GL_ERROR;
@@ -203,15 +201,15 @@ void SLGLVertexArray::generate(SLuint          numVertices,
     ///////////////////////////////
 
     // Generate the vertex buffer object for float attributes
-    if (_VBOf.attribs().size())
+    if (_vbo.attribs().size())
     {
-        _VBOf.generate(numVertices, usage, outputInterleaved);
-        _VBOf.bindAndEnableAttrib(divisor);
+        _vbo.generate(numVertices, usage, outputInterleaved);
+        _vbo.bindAndEnableAttrib(divisor);
     }
 
-    if (_externalVBOf != nullptr)
+    if (_externalVbo != nullptr)
     {
-        _externalVBOf->bindAndEnableAttrib(_externalDivisor);
+        _externalVbo->bindAndEnableAttrib(_externalDivisor);
     }
 
     /////////////////////////////////////////////////////////////////
@@ -245,7 +243,7 @@ void SLGLVertexArray::generate(SLuint          numVertices,
         glGenBuffers(1, &_idVBOIndices);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _idVBOIndices);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                     _numIndicesElements * (SLuint)typeSize,
+                     (GLsizeiptr)_numIndicesElements * (SLuint)typeSize,
                      _indexDataElements,
                      GL_STATIC_DRAW);
         SLGLVertexBuffer::totalBufferCount++;
@@ -281,15 +279,15 @@ void SLGLVertexArray::generateTF(SLuint          numVertices,
     ///////////////////////////////
 
     // Generate the vertex buffer object for float attributes
-    if (_VBOf.attribs().size())
+    if (_vbo.attribs().size())
     {
-        _VBOf.generate(numVertices, usage, outputInterleaved);
-        _VBOf.bindAndEnableAttrib(divisor);
+        _vbo.generate(numVertices, usage, outputInterleaved);
+        _vbo.bindAndEnableAttrib(divisor);
     }
 
-    if (_externalVBOf != nullptr)
+    if (_externalVbo != nullptr)
     {
-        _externalVBOf->bindAndEnableAttrib(_externalDivisor);
+        _externalVbo->bindAndEnableAttrib(_externalDivisor);
     }
 
     ///////////////////////////////
@@ -297,7 +295,7 @@ void SLGLVertexArray::generateTF(SLuint          numVertices,
     ///////////////////////////////
 
     glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, _tfoID);
-    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, _VBOf.id());
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, _vbo.id());
 
     /////////////////////////////////////////////////////////////////
     // Create Element Array Buffer for Indices for elements and edges
@@ -330,7 +328,7 @@ void SLGLVertexArray::generateTF(SLuint          numVertices,
         glGenBuffers(1, &_idVBOIndices);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _idVBOIndices);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                     _numIndicesElements * (SLuint)typeSize,
+                     (GLsizeiptr)_numIndicesElements * (SLuint)typeSize,
                      _indexDataElements,
                      GL_STATIC_DRAW);
         SLGLVertexBuffer::totalBufferCount++;
@@ -430,7 +428,7 @@ void SLGLVertexArray::drawArrayAs(SLGLPrimitiveType primitiveType,
                                   SLint             firstVertex,
                                   SLsizei           countVertices)
 {
-    assert((_VBOf.id()) && "No VBO generated for VAO.");
+    assert((_vbo.id()) && "No VBO generated for VAO.");
 
     glBindVertexArray(_vaoID);
 
@@ -473,7 +471,7 @@ void SLGLVertexArray::drawArrayAs(SLGLPrimitiveType primitiveType,
  * @param indexOffset
  */
 void SLGLVertexArray::drawElementsInstanced(SLGLPrimitiveType primitiveType,
-                                            SLsizei           countInstance,
+                                            SLuint           countInstance,
                                             SLuint            numIndexes,
                                             SLuint            indexOffset)
 {
@@ -494,10 +492,10 @@ void SLGLVertexArray::drawElementsInstanced(SLGLPrimitiveType primitiveType,
 
     ////////////////////////////////////////////////////////
     glDrawElementsInstanced(primitiveType,
-                            (SLsizei)numIndexes,
+                            (GLsizei)numIndexes,
                             _indexDataType,
                             (void*)(size_t)(indexOffset * (SLuint)indexTypeSize),
-                            countInstance);
+                            (GLsizei )countInstance);
     ////////////////////////////////////////////////////////
 
     GET_GL_ERROR;
@@ -520,7 +518,6 @@ void SLGLVertexArray::drawElementsInstanced(SLGLPrimitiveType primitiveType,
 
     GET_GL_ERROR;
 }
-
 //-----------------------------------------------------------------------------
 /*! Draws the hard edges with the specified color.
  The VAO has no or one active index buffer. For drawArrayAs no indices are needed.
@@ -530,7 +527,7 @@ void SLGLVertexArray::drawElementsInstanced(SLGLPrimitiveType primitiveType,
 void SLGLVertexArray::drawEdges(SLCol4f color,
                                 SLfloat lineWidth)
 {
-    if (!_VBOf.id())
+    if (!_vbo.id())
         SL_EXIT_MSG("No VBO generated for VAO in drawArrayAsColored.");
 
     // Prepare shader

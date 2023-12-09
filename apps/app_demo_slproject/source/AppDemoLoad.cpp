@@ -5323,7 +5323,7 @@ resolution shadows near the camera and lower resolution shadows further away.");
         SLAssimpImporter importer;
         SLNode*          sutzK18 = importer.load(s->animManager(),
                                         am,
-                                        dataPath + "erleb-AR/models/sutzKirchrain18/Sutz-Kirchrain18.gltf",
+                                        dataPath + "erleb-AR/models/sutz/Sutz-Kirchrain18.gltf",
                                         texPath,
                                         nullptr,
                                         true,    // delete tex images after build
@@ -5375,7 +5375,7 @@ resolution shadows near the camera and lower resolution shadows further away.");
         AppDemo::devRot.offsetMode(ROM_oneFingerX);
 
         // This loads the DEM file and overwrites the altitude of originLatLonAlt and defaultLatLonAlt
-        SLstring tif = dataPath + "erleb-AR/models/sutzKirchrain18/Sutz-Kirchrain18-DEM-WGS84.tif";
+        SLstring tif = dataPath + "erleb-AR/models/sutz/Sutz-Kirchrain18-DEM-WGS84.tif";
         AppDemo::devLoc.loadGeoTiff(tif);
 
 #if defined(SL_OS_MACIOS) || defined(SL_OS_ANDROID)

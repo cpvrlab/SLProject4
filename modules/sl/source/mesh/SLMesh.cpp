@@ -846,7 +846,7 @@ void SLMesh::computeHardEdgesIndices(float angleDEG,
     {
         F.resize((Eigen::Index)I32.size() / 3, 3);
         for (int j = 0, i = 0; i < I32.size(); j++, i += 3)
-            F.row(j) << I32[i], I32[i + 1], I32[i + 2];
+            F.row(j) << (int)I32[i], (int)I32[i + 1], (int)I32[i + 2];
     }
 
     // extract sharp edges
@@ -869,9 +869,9 @@ void SLMesh::computeHardEdgesIndices(float angleDEG,
                 // ei = fi + |F| * c -> ei % |F| = fi % |F| = fi; fi is the face adjacent to ei
                 // ej = fj + |F| * c -> ej % |F| = fj % |F| = fj; fj is the face adjacent to ej
                 const int                  ei  = uE2E[u][i]; // edge i
-                const int                  fi  = ei % newF.rows();
+                const int                  fi  = ei % (int)newF.rows();
                 const int                  ej  = uE2E[u][j]; // edge j
-                const int                  fj  = ej % newF.rows();
+                const int                  fj  = ej % (int)newF.rows();
                 Eigen::Matrix<float, 1, 3> ni  = faceN.row(fi);
                 Eigen::Matrix<float, 1, 3> nj  = faceN.row(fj);
                 Eigen::Matrix<float, 1, 3> ev  = (newV.row(edges(ei, 1)) - newV.row(edges(ei, 0))).normalized();

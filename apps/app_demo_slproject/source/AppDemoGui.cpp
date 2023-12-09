@@ -1279,7 +1279,6 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                     balda_stahl = nullptr;
                     balda_glas  = nullptr;
                 }
-
                 if (AppDemo::sceneID == SID_ErlebARAugustaRauricaTmpTht ||
                     AppDemo::sceneID == SID_ErlebARAugustaRauricaTht ||
                     AppDemo::sceneID == SID_ErlebARAugustaRauricaTmp)
@@ -1302,7 +1301,6 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
 
                     ImGui::End();
                 }
-
                 if (AppDemo::sceneID == SID_ErlebARAventicumAmphiteatre)
                 {
                     ImGui::Begin("Avenche-Amphitheatre",
@@ -1323,7 +1321,6 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
 
                     ImGui::End();
                 }
-
                 if (AppDemo::sceneID == SID_ErlebARAventicumCigognier)
                 {
                     ImGui::Begin("Avenche-Cigognier",
@@ -1343,7 +1340,6 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                     }
                     ImGui::End();
                 }
-
                 if (AppDemo::sceneID == SID_ErlebARAventicumTheatre)
                 {
                     ImGui::Begin("Avenche-Theatre",
@@ -1364,7 +1360,6 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
 
                     ImGui::End();
                 }
-
                 if (AppDemo::sceneID == SID_ErlebARSutzKirchrain18)
                 {
                     ImGui::Begin("Sutz-Kirchrain18",
@@ -1774,16 +1769,14 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 SLstring modelAV1_AO = erlebarPath + "avenches/avenches-amphitheater.gltf";
                 SLstring modelAV2_AO = erlebarPath + "avenches/avenches-cigognier.gltf";
                 SLstring modelAV3    = erlebarPath + "avenches/avenches-theater.gltf";
-                SLstring modelSU1    = erlebarPath + "sutzKirchrain18/Sutz-Kirchrain18.gltf";
-                SLstring modelEV1    = erlebarPath + "evilardCheminDuRoc2/EvilardCheminDuRoc2.gltf";
+                SLstring modelSU1    = erlebarPath + "sutz/Sutz-Kirchrain18.gltf";
 
                 if (Utils::fileExists(modelAR1) ||
                     Utils::fileExists(modelAR2) ||
                     Utils::fileExists(modelAR3) ||
                     Utils::fileExists(modelAV3) ||
                     Utils::fileExists(modelBR2) ||
-                    Utils::fileExists(modelSU1) ||
-                    Utils::fileExists(modelEV1))
+                    Utils::fileExists(modelSU1))
                 {
                     if (ImGui::BeginMenu("Erleb-AR"))
                     {
