@@ -388,7 +388,7 @@ void SLMaterial::deleteDataGpu()
  If this material has not yet a shader program assigned (SLMaterial::_program)
  a suitable program will be generated with an instance of SLGLProgramGenerated.
  */
-void SLMaterial::generateProgramPS(bool renderInstanced)
+void SLMaterial::generateProgramPS(bool drawInstanced)
 {
     // If no shader program is attached add a generated shader program
     // A 3D object can be stored without material or shader program information.
@@ -403,14 +403,14 @@ void SLMaterial::generateProgramPS(bool renderInstanced)
         SLGLProgramGenerated::buildProgramNamePS(this,
                                                  programNameDraw,
                                                  true,
-                                                 renderInstanced);
+                                                 drawInstanced);
         _program = _assetManager->getProgramByName(programNameDraw);
 
         // If the program was not found by name generate a new one
         if (!_program)
         {
             std::string geom = "";
-            if (!renderInstanced)
+            if (!drawInstanced)
                 geom = "Geom";
 
             _program = new SLGLProgramGenerated(_assetManager,
@@ -429,7 +429,7 @@ void SLMaterial::generateProgramPS(bool renderInstanced)
 
         // Check first the asset manager if the requested programTF type already exists
         string programNameUpdate;
-        SLGLProgramGenerated::buildProgramNamePS(this, programNameUpdate, false, renderInstanced);
+        SLGLProgramGenerated::buildProgramNamePS(this, programNameUpdate, false, drawInstanced);
         _programTF = _assetManager->getProgramByName(programNameUpdate);
         if (!_programTF)
         {

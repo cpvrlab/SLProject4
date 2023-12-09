@@ -3584,7 +3584,7 @@ resolution shadows near the camera and lower resolution shadows further away.");
         scene->addChild(cam1);
 
         std::uniform_real_distribution<float> dist(0.0f, 1.0f);
-        std::default_random_engine randEngine;
+        std::default_random_engine            randEngine;
 
         // create astroboys around the center astroboy
         SLint size = 4;
@@ -5628,7 +5628,7 @@ resolution shadows near the camera and lower resolution shadows further away.");
 #ifndef SL_GLES
         SLuint numSamples = 10;
 #else
-        SLuint       numSamples   = 4;
+        SLuint numSamples = 4;
 #endif
 
         stringstream ss;
@@ -5720,7 +5720,7 @@ resolution shadows near the camera and lower resolution shadows further away.");
 #ifndef APP_USES_GLES
         SLuint numSamples = 10;
 #else
-        SLuint       numSamples   = 6;
+        SLuint numSamples = 6;
 #endif
 
         // Scene
@@ -5817,52 +5817,53 @@ resolution shadows near the camera and lower resolution shadows further away.");
 
         sv->camera(cam1);
     }
-    if (sceneID == SID_ParticleSystem_First) //...............................................
+
+    else if (sceneID == SID_ParticleSystem_First) //...............................................
     {
-        if (stateGL->glHasGeometryShaders())
-        {
-            // Set scene name and info string
-            s->name("First particle system");
-            s->info("First scene with a particle system");
+        // Set scene name and info string
+        s->name("First particle system");
+        s->info("First scene with a particle system");
 
-            // Create a scene group node
-            SLNode* scene = new SLNode("scene node");
-            s->root3D(scene);
+        // Create a scene group node
+        SLNode* scene = new SLNode("scene node");
+        s->root3D(scene);
 
-            // Create and add camera
-            SLCamera* cam1 = new SLCamera("Camera 1");
-            cam1->translation(0, 1.5f, 4);
-            cam1->lookAt(0, 1.5f, 0);
-            scene->addChild(cam1);
+        // Create and add camera
+        SLCamera* cam1 = new SLCamera("Camera 1");
+        cam1->translation(0, 1.5f, 4);
+        cam1->lookAt(0, 1.5f, 0);
+        scene->addChild(cam1);
 
-            // Create textures and materials
-            SLGLTexture* texC        = new SLGLTexture(am, texPath + "ParticleSmoke_08_C.png");
-            SLGLTexture* texFlipbook = new SLGLTexture(am, texPath + "ParticleSmoke_03_8x8_C.png");
+        // Create textures and materials
+        SLGLTexture* texC        = new SLGLTexture(am,
+                                            texPath + "ParticleSmoke_08_C.png");
+        SLGLTexture* texFlipbook = new SLGLTexture(am,
+                                                   texPath + "ParticleSmoke_03_8x8_C.png");
 
-            // Create a light source node
-            SLLightSpot* light1 = new SLLightSpot(am, s, 0.3f);
-            light1->translation(5, 5, 5);
-            light1->name("light node");
-            scene->addChild(light1);
+        // Create a light source node
+        SLLightSpot* light1 = new SLLightSpot(am, s, 0.3f);
+        light1->translation(5, 5, 5);
+        light1->name("light node");
+        scene->addChild(light1);
 
-            // Create meshes and nodes
-            SLParticleSystem* ps     = new SLParticleSystem(am,
-                                                        50,
-                                                        SLVec3f(0.04f, 0.4f, 0.1f),
-                                                        SLVec3f(-0.11f, 0.7f, -0.1f),
-                                                        4.0f,
-                                                        texC,
-                                                        "Particle System",
-                                                        texFlipbook);
-            SLNode*           pSNode = new SLNode(ps, "Particle system node");
-            scene->addChild(pSNode);
+        // Create meshes and nodes
+        SLParticleSystem* ps = new SLParticleSystem(am,
+                                                    50,
+                                                    SLVec3f(0.04f, 0.4f, 0.1f),
+                                                    SLVec3f(-0.11f, 0.7f, -0.1f),
+                                                    4.0f,
+                                                    texC,
+                                                    "Particle System",
+                                                    texFlipbook);
 
-            // Set background color and the root scene node
-            sv->sceneViewCamera()->background().colors(SLCol4f(0.8f, 0.8f, 0.8f),
-                                                       SLCol4f(0.2f, 0.2f, 0.2f));
-            sv->camera(cam1);
-            sv->doWaitOnIdle(false);
-        }
+        SLNode* pSNode = new SLNode(ps, "Particle system node");
+        scene->addChild(pSNode);
+
+        // Set background color and the root scene node
+        sv->sceneViewCamera()->background().colors(SLCol4f(0.8f, 0.8f, 0.8f),
+                                                   SLCol4f(0.2f, 0.2f, 0.2f));
+        sv->camera(cam1);
+        sv->doWaitOnIdle(false);
     }
     else if (sceneID == SID_ParticleSystem_Demo) //................................................
     {
@@ -6711,109 +6712,103 @@ resolution shadows near the camera and lower resolution shadows further away.");
     }
     else if (sceneID == SID_Benchmark8_ParticleSystemFireComplex) //...............................
     {
-        if (stateGL->glHasGeometryShaders())
+        s->name("Fire Complex Test Scene");
+        s->info(s->name());
+
+        SLCamera* cam1 = new SLCamera("Camera 1");
+        cam1->clipNear(0.1f);
+        cam1->clipFar(1000);
+        cam1->translation(0, 10, 40);
+        cam1->focalDist(100);
+        cam1->lookAt(0, 0, 0);
+        cam1->background().colors(SLCol4f(0.3f, 0.3f, 0.3f));
+        cam1->setInitialState();
+
+        // Root scene node
+        SLNode* root = new SLNode;
+        s->root3D(root);
+        root->addChild(cam1);
+        const int NUM_NODES = 250;
+
+        // Create textures and materials
+        SLGLTexture* texFireCld = new SLGLTexture(am, texPath + "ParticleFirecloudTransparent_C.png");
+        SLGLTexture* texFireFlm = new SLGLTexture(am, texPath + "ParticleFlames_00_8x4_C.png");
+        SLGLTexture* texCircle  = new SLGLTexture(am, texPath + "ParticleCircle_05_C.png");
+        SLGLTexture* texSmokeB  = new SLGLTexture(am, texPath + "ParticleCloudBlack_C.png");
+        SLGLTexture* texSmokeW  = new SLGLTexture(am, texPath + "ParticleCloudWhite_C.png");
+
+        SLVNode nodes(NUM_NODES);
+        for (int i = 0; i < NUM_NODES; ++i)
         {
-            s->name("Fire Complex Test Scene");
-            s->info(s->name());
-
-            SLCamera* cam1 = new SLCamera("Camera 1");
-            cam1->clipNear(0.1f);
-            cam1->clipFar(1000);
-            cam1->translation(0, 10, 40);
-            cam1->focalDist(100);
-            cam1->lookAt(0, 0, 0);
-            cam1->background().colors(SLCol4f(0.3f, 0.3f, 0.3f));
-            cam1->setInitialState();
-
-            // Root scene node
-            SLNode* root = new SLNode;
-            s->root3D(root);
-            root->addChild(cam1);
-            const int NUM_NODES = 250;
-
-            // Create textures and materials
-            SLGLTexture* texFireCld = new SLGLTexture(am, texPath + "ParticleFirecloudTransparent_C.png");
-            SLGLTexture* texFireFlm = new SLGLTexture(am, texPath + "ParticleFlames_00_8x4_C.png");
-            SLGLTexture* texCircle  = new SLGLTexture(am, texPath + "ParticleCircle_05_C.png");
-            SLGLTexture* texSmokeB  = new SLGLTexture(am, texPath + "ParticleCloudBlack_C.png");
-            SLGLTexture* texSmokeW  = new SLGLTexture(am, texPath + "ParticleCloudWhite_C.png");
-
-            SLVNode nodes(NUM_NODES);
-            for (int i = 0; i < NUM_NODES; ++i)
-            {
-                SLNode* fireComplex = createComplexFire(am,
-                                                        s,
-                                                        false,
-                                                        texFireCld,
-                                                        texFireFlm,
-                                                        8,
-                                                        4,
-                                                        texCircle,
-                                                        texSmokeB,
-                                                        texSmokeW);
-                fireComplex->translate(-20.0f + (float)(i % 20) * 2,
-                                       0.0f,
-                                       -(float)((i - (i % 20)) / 20) * 4,
-                                       TS_object);
-                root->addChild(fireComplex);
-            }
-
-            sv->camera(cam1);
-            sv->doWaitOnIdle(false);
+            SLNode* fireComplex = createComplexFire(am,
+                                                    s,
+                                                    false,
+                                                    texFireCld,
+                                                    texFireFlm,
+                                                    8,
+                                                    4,
+                                                    texCircle,
+                                                    texSmokeB,
+                                                    texSmokeW);
+            fireComplex->translate(-20.0f + (float)(i % 20) * 2,
+                                   0.0f,
+                                   -(float)((i - (float)(i % 20)) / 20) * 4,
+                                   TS_object);
+            root->addChild(fireComplex);
         }
+
+        sv->camera(cam1);
+        sv->doWaitOnIdle(false);
     }
     else if (sceneID == SID_Benchmark9_ParticleSystemManyParticles) //.............................
     {
-        if (stateGL->glHasGeometryShaders())
-        {
-            s->name("Particle System number Scene");
-            s->info(s->name());
+        s->name("Particle System number Scene");
+        s->info(s->name());
 
-            SLCamera* cam1 = new SLCamera("Camera 1");
-            cam1->clipNear(0.1f);
-            cam1->clipFar(1000);
-            cam1->translation(0, 0, 400);
-            cam1->focalDist(400);
-            cam1->lookAt(0, 0, 0);
-            cam1->background().colors(SLCol4f(0.3f, 0.3f, 0.3f));
-            cam1->setInitialState();
+        SLCamera* cam1 = new SLCamera("Camera 1");
+        cam1->clipNear(0.1f);
+        cam1->clipFar(1000);
+        cam1->translation(0, 0, 400);
+        cam1->focalDist(400);
+        cam1->lookAt(0, 0, 0);
+        cam1->background().colors(SLCol4f(0.3f, 0.3f, 0.3f));
+        cam1->setInitialState();
 
-            // Root scene node
-            SLNode* root = new SLNode;
-            root->addChild(cam1);
+        // Root scene node
+        SLNode* root = new SLNode;
+        root->addChild(cam1);
 
-            // Create textures and materials
-            SLGLTexture* texC        = new SLGLTexture(am, texPath + "ParticleSmoke_08_C.png");
-            SLGLTexture* texFlipbook = new SLGLTexture(am, texPath + "ParticleSmoke_03_8x8_C.png");
+        // Create textures and materials
+        SLGLTexture* texC        = new SLGLTexture(am, texPath + "ParticleSmoke_08_C.png");
+        SLGLTexture* texFlipbook = new SLGLTexture(am, texPath + "ParticleSmoke_03_8x8_C.png");
 
-            // Create meshes and nodes
-            SLParticleSystem* ps = new SLParticleSystem(am,
-                                                        1000000,
-                                                        SLVec3f(-10.0f, -10.0f, -10.0f),
-                                                        SLVec3f(10.0f, 10.0f, 10.0f),
-                                                        4.0f,
-                                                        texC,
-                                                        "Particle System",
-                                                        texFlipbook);
-            ps->doAlphaOverLT(false);
-            ps->doSizeOverLT(false);
-            ps->doRotation(false);
-            ps->doShape(true);
-            ps->shapeType(ST_Box);
-            ps->shapeScale(100.0f, 100.0f, 100.0f);
-            ps->doDirectionSpeed(true);
-            ps->doBlendBrightness(true);
-            ps->doColor(true);
-            ps->color(SLCol4f(0.875f, 0.156f, 0.875f, 1.0f));
-            ps->speed(0.0f);
-            SLMesh* pSMesh = ps;
-            SLNode* pSNode = new SLNode(pSMesh, "Particle system node");
-            root->addChild(pSNode);
+        // Create meshes and nodes
+        SLParticleSystem* ps = new SLParticleSystem(am,
+                                                    1000000,
+                                                    SLVec3f(-10.0f, -10.0f, -10.0f),
+                                                    SLVec3f(10.0f, 10.0f, 10.0f),
+                                                    4.0f,
+                                                    texC,
+                                                    "Particle System",
+                                                    texFlipbook);
+        ps->doAlphaOverLT(false);
+        ps->doSizeOverLT(false);
+        ps->doRotation(false);
+        ps->doShape(true);
+        ps->shapeType(ST_Box);
+        ps->shapeScale(100.0f, 100.0f, 100.0f);
+        ps->doDirectionSpeed(true);
+        ps->doBlendBrightness(true);
+        ps->doColor(true);
+        ps->color(SLCol4f(0.875f, 0.156f, 0.875f, 1.0f));
+        ps->speed(0.0f);
+        SLMesh* pSMesh = ps;
+        SLNode* pSNode = new SLNode(pSMesh, "Particle system node");
+        root->addChild(pSNode);
 
-            sv->camera(cam1);
-            sv->doWaitOnIdle(false);
-            s->root3D(root);
-        }
+        sv->camera(cam1);
+        sv->doWaitOnIdle(false);
+        s->root3D(root);
     }
 
     ////////////////////////////////////////////////////////////////////////////

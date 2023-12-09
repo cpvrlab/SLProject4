@@ -101,11 +101,11 @@ public:
     static void buildProgramNamePS(SLMaterial* mat,
                                    string&     programName,
                                    bool        isDrawProg,
-                                   bool        renderInstanced);
+                                   bool        drawInstanced);
 
     void buildProgramCodePS(SLMaterial* mat,
                             bool        isDrawProg,
-                            bool        renderInstanced = false);
+                            bool        drawInstanced = false);
     void buildProgramCode(SLMaterial* mat,
                           SLVLight*   lights,
                           SLbool      supportGPUSkinning);

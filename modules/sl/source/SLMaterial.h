@@ -108,7 +108,7 @@ public:
                SLGLProgram*    program);
 
     ~SLMaterial() override;
-    void  generateProgramPS(bool renderInstanced = false);
+    void  generateProgramPS(bool drawInstanced = false);
     void  activate(SLCamera* cam, SLVLight* lights, SLbool supportGPUSkinning);
     SLint passToUniforms(SLGLProgram* program, SLint nextTexUnit);
 

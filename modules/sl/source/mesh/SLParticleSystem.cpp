@@ -34,10 +34,8 @@ SLParticleSystem::SLParticleSystem(SLAssetManager* assetMgr,
 {
     assert(!name.empty());
 
-    // To be added to constructor
-
     _assetManager  = assetMgr;
-    _drawInstanced = SLGLState::instance()->glHasGeometryShaders() ? drawInstanced : true;
+    _drawInstanced = !SLGLState::instance()->glHasGeometryShaders() || drawInstanced;
     _primitive     = PT_points;
 
     P.push_back(SLVec3f(0, 0, 0)); // Trick SL project because it wants mesh to have vertex
@@ -559,7 +557,6 @@ void SLParticleSystem::generateBernsteinPSize()
     // 1
     _bernsteinPYSize.w = StaEnd[1];
 }
-
 //-----------------------------------------------------------------------------
 /*! Function called inside SLNode cull3DRec(..) which flags the particle system
  to be not visible in the view frustum. This is needed to correct later the

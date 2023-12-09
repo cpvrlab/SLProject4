@@ -1781,7 +1781,7 @@ void SLGLProgramGenerated::buildProgramName(SLMaterial* mat,
 void SLGLProgramGenerated::buildProgramNamePS(SLMaterial* mat,
                                               string&     programName,
                                               bool        isDrawProg,
-                                              bool        renderInstanced)
+                                              bool        drawInstanced)
 {
     assert(mat && "No material pointer passed!");
     programName = "gen";
@@ -1796,7 +1796,7 @@ void SLGLProgramGenerated::buildProgramNamePS(SLMaterial* mat,
     {
         programName += "-Draw";
 
-        if (renderInstanced)
+        if (drawInstanced)
             programName += "-Inst";
 
         programName += mat->texturesString();
@@ -1904,7 +1904,7 @@ void SLGLProgramGenerated::buildProgramCode(SLMaterial* mat,
  */
 void SLGLProgramGenerated::buildProgramCodePS(SLMaterial* mat,
                                               bool        isDrawProg,
-                                              bool        renderInstanced)
+                                              bool        drawInstanced)
 {
     if (mat->name() == "IBLMat")
     {
@@ -1917,7 +1917,7 @@ void SLGLProgramGenerated::buildProgramCodePS(SLMaterial* mat,
 
     if (isDrawProg)
     {
-        if (renderInstanced)
+        if (drawInstanced)
             buildPerPixParticleInstanced(mat);
         else
             buildPerPixParticle(mat);

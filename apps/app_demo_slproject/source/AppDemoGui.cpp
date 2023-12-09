@@ -3703,6 +3703,16 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
                             SLParticleSystem* ps = dynamic_cast<SLParticleSystem*>(singleFullMesh); // Need to check if good practice
                             ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.5f);
 
+                            if (SLGLState::instance()->glHasGeometryShaders())
+                            {
+                                bool drawInstanced = ps->drawInstanced();
+                                if (ImGui::Checkbox("Instanced draw", &drawInstanced))
+                                {
+                                    ps->drawInstanced(drawInstanced);
+                                    ps->isGenerated(false);
+                                }
+                            }
+
                             // Pause and Resume
                             bool isPaused = ps->isPaused();
                             if (isPaused)
@@ -3727,16 +3737,6 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
                                     amount = 1;
                                 ps->amount(amount);
                                 ps->isGenerated(false);
-                            }
-
-                            if (SLGLState::instance()->glHasGeometryShaders())
-                            {
-                                bool drawInstanced = ps->drawInstanced();
-                                if (ImGui::Checkbox("Instanced draw", &drawInstanced))
-                                {
-                                    ps->drawInstanced(drawInstanced);
-                                    ps->isGenerated(false);
-                                }
                             }
 
                             // TTL (Time to live)
