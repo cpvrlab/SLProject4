@@ -119,13 +119,13 @@ SLKey mapKeyToSLKey(SLint key)
         case GLFW_KEY_DOWN: return K_down;
         case GLFW_KEY_LEFT: return K_left;
         case GLFW_KEY_RIGHT: return K_right;
-        case GLFW_KEY_LEFT_SHIFT: return K_shift;
+        case GLFW_KEY_LEFT_SHIFT:
         case GLFW_KEY_RIGHT_SHIFT: return K_shift;
-        case GLFW_KEY_LEFT_CONTROL: return K_ctrl;
+        case GLFW_KEY_LEFT_CONTROL:
         case GLFW_KEY_RIGHT_CONTROL: return K_ctrl;
-        case GLFW_KEY_LEFT_ALT: return K_alt;
+        case GLFW_KEY_LEFT_ALT:
         case GLFW_KEY_RIGHT_ALT: return K_alt;
-        case GLFW_KEY_LEFT_SUPER: return K_super;  // Apple command key
+        case GLFW_KEY_LEFT_SUPER:
         case GLFW_KEY_RIGHT_SUPER: return K_super; // Apple command key
         case GLFW_KEY_TAB: return K_tab;
         case GLFW_KEY_ENTER: return K_enter;
@@ -381,6 +381,7 @@ static void onKeyPress(GLFWwindow* myWindow,
                                      AppDemo::scene,
                                      sv,
                                      SID_Empty);
+                    SL_LOG("----------------------------------------------");
                     SL_LOG("Loading SceneID: %d", AppDemo::sceneID);
                 }
                 else if (key == K_left && sv && AppDemo::sceneID > 0)
@@ -389,6 +390,7 @@ static void onKeyPress(GLFWwindow* myWindow,
                                      AppDemo::scene,
                                      sv,
                                      (SLSceneID)(AppDemo::sceneID - 1));
+                    SL_LOG("----------------------------------------------");
                     SL_LOG("Loading SceneID: %d", AppDemo::sceneID);
                 }
                 else if (key == K_right && sv && AppDemo::sceneID < SID_Maximal - 1)
@@ -397,6 +399,7 @@ static void onKeyPress(GLFWwindow* myWindow,
                                      AppDemo::scene,
                                      sv,
                                      (SLSceneID)(AppDemo::sceneID + 1));
+                    SL_LOG("----------------------------------------------");
                     SL_LOG("Loading SceneID: %d", AppDemo::sceneID);
                 }
             }
@@ -521,8 +524,9 @@ void initSL(SLVstring& cmdLineArgs)
 
     // setup platform dependent data path
     AppDemo::calibFilePath = configDir;
-    AppDemo::calibIniPath  = projectRoot + "/data/calibrations/";                                 // for calibInitPath
-    CVCapture::instance()->loadCalibrations(Utils::ComputerInfos::get(), AppDemo::calibFilePath); // for calibrations made
+    AppDemo::calibIniPath  = projectRoot + "/data/calibrations/";
+    CVCapture::instance()->loadCalibrations(Utils::ComputerInfos::get(),
+                                            AppDemo::calibFilePath);
 
     /////////////////////////////////////////////////////////
     slCreateAppAndScene(cmdLineArgs,

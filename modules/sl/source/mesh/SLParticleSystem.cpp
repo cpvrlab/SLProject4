@@ -597,12 +597,14 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
     /////////////////////////////////////
     // Init particles vector and init VAO
     /////////////////////////////////////
+
     if (!_isGenerated)
         generate();
 
     ////////////////////
     // Generate programs
     ////////////////////
+
     if (!_mat->program() || !_mat->programTF())
         _mat->generateProgramPS(_drawInstanced);
 

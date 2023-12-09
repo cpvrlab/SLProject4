@@ -166,16 +166,6 @@ enum SLSceneID
     SID_RTLens,
     SID_RTTest,
 
-    SID_ErlebARBernChristoffel,
-    SID_ErlebARBielBFH,
-    SID_ErlebARAugustaRauricaTmp,
-    SID_ErlebARAugustaRauricaTht,
-    SID_ErlebARAugustaRauricaTmpTht,
-    SID_ErlebARAventicumAmphiteatre,
-    SID_ErlebARAventicumCigognier,
-    SID_ErlebARAventicumTheatre,
-    SID_ErlebARSutzKirchrain18,
-
     SID_ParticleSystem_First,
     SID_ParticleSystem_Demo,
     SID_ParticleSystem_DustStorm,
@@ -194,7 +184,18 @@ enum SLSceneID
     SID_Benchmark8_ParticleSystemFireComplex,
     SID_Benchmark9_ParticleSystemManyParticles,
 
-    SID_Maximal
+    SID_Maximal,
+
+    // These scenes are not part of the public data
+    SID_ErlebARBernChristoffel,
+    SID_ErlebARBielBFH,
+    SID_ErlebARAugustaRauricaTmp,
+    SID_ErlebARAugustaRauricaTht,
+    SID_ErlebARAugustaRauricaTmpTht,
+    SID_ErlebARAventicumAmphiteatre,
+    SID_ErlebARAventicumCigognier,
+    SID_ErlebARAventicumTheatre,
+    SID_ErlebARSutzKirchrain18
 };
 //-----------------------------------------------------------------------------
 //! Mouse button codes
