@@ -1488,9 +1488,9 @@ SLstring SLAssimpImporter::checkFilePath(const SLstring& modelPath,
 
     if (showWarning)
     {
-        SLstring msg = "SLAssimpImporter: Texture file not found: \n" + aiTexFile +
-                       "\non model path: " + modelPath + "\n";
-        SL_WARN_MSG(msg.c_str());
+        SLstring msg = "WARNING: SLAssimpImporter: Texture file not found: \n" +
+                       aiTexFile + "\non model path: " + modelPath + "\n";
+        SL_LOG(msg.c_str());
     }
 
     // Return path for texture not found image;

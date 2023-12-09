@@ -567,6 +567,15 @@ int main(int argc, char* argv[])
     for (int i = 0; i < argc; i++)
         cmdLineArgs.push_back(SLstring(argv[i]));
 
+    // parse cmd line arguments
+    for (int i=1; i<cmdLineArgs.size(); ++i)
+    {
+        if (cmdLineArgs[i] == "-onlyErrorLogs")
+        {
+            Utils::onlyErrorLogs = true;
+        }
+    }
+
     scrWidth       = 1280;
     scrHeight      = 720;
     scrWdivH       = (float)scrWidth / (float)scrHeight;

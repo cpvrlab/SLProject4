@@ -1496,12 +1496,11 @@ SLbool SLSceneView::onDoubleClick(SLMouseButton button,
 
             _s->root3D()->hitRec(&pickRay);
             if (pickRay.hitNode)
-                cout << "NODE HIT: " << pickRay.hitNode->name() << endl;
+                SL_LOG("NODE HIT: %s", pickRay.hitNode->name().c_str());
         }
 
         if (pickRay.length < FLT_MAX)
         {
-
             if (mod & K_shift)
             {
                 _s->selectNodeMesh(pickRay.hitNode, pickRay.hitMesh);

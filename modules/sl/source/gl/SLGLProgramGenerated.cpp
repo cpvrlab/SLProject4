@@ -1856,10 +1856,6 @@ void SLGLProgramGenerated::buildProgramCode(SLMaterial* mat,
                                             SLVLight*   lights,
                                             SLbool      supportGPUSkinning)
 {
-    if (mat->name() == "IBLMat")
-    {
-        std::cout << "build program code for IBLMat" << std::endl;
-    }
     assert(mat && "No material pointer passed!");
     assert(!lights->empty() && "No lights passed!");
     assert(_shaders.size() > 1 &&
