@@ -216,7 +216,7 @@ protected:
     SLuint            _tfoID;              //! OpenGL id of transform feedback object
     SLuint            _numVertices;        //! NO. of vertices in array
     SLGLVertexBuffer  _vbo;                //! Vertex buffer object for float attributes
-    SLGLVertexBuffer* _externalVbo;        //! Vertex buffer object that has been created outside of this VAO
+    SLGLVertexBuffer* _externalVbo;        //! Vertex buffer object that has been created outside of this VAO ??? What for?
     SLuint            _externalDivisor;    //! VBO attrib divisor for the external VBO
     SLuint            _idVBOIndices;       //! OpenGL id of index vbo
     size_t            _numIndicesElements; //! NO. of vertex indices in array for triangles, lines or points

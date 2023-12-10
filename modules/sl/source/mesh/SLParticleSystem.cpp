@@ -38,7 +38,8 @@ SLParticleSystem::SLParticleSystem(SLAssetManager* assetMgr,
     _drawInstanced = !SLGLState::instance()->glHasGeometryShaders() || drawInstanced;
     _primitive     = PT_points;
 
-    P.push_back(SLVec3f(0, 0, 0)); // Trick SL project because it wants mesh to have vertex
+    // Trick SL project because it wants mesh to have vertex
+    P.push_back(SLVec3f(0, 0, 0));
     I32.push_back(0);
 
     if (amount > UINT_MAX) // Need to change for number of floats
@@ -94,7 +95,8 @@ SLVec3f SLParticleSystem::getPointOnSphere(float radius, SLVec3f randomXs)
 //! Function which return the direction towards the exterior of a sphere
 SLVec3f SLParticleSystem::getDirectionSphere(SLVec3f position)
 {
-    return (position - SLVec3f(0.0f, 0.0f, 0.0f)).normalized(); // Get unit vector center to position
+    // return a unit vector from center to position
+    return (position - SLVec3f(0.0f, 0.0f, 0.0f)).normalized();
 }
 //-----------------------------------------------------------------------------
 //! Function which return a position in a box
@@ -157,7 +159,8 @@ SLVec3f SLParticleSystem::getPointOnBox(SLVec3f boxScale)
 //! Function which return the direction towards the exterior of a box
 SLVec3f SLParticleSystem::getDirectionBox(SLVec3f position)
 {
-    return (position - SLVec3f(0.0f, 0.0f, 0.0f)).normalized(); // Get unit vector center to position
+    // return a unit vector from center to position
+    return (position - SLVec3f(0.0f, 0.0f, 0.0f)).normalized();
 }
 //-----------------------------------------------------------------------------
 //! Function which return a position in the cone define in the particle system
@@ -167,7 +170,8 @@ SLVec3f SLParticleSystem::getPointInCone()
     float radius = _shapeRadius;
     if (!_doShapeSpawnBase) // Spawn inside volume
     {
-        y      = Utils::random(0.0f, _shapeHeight); // NEED TO HAVE MORE value near 1 when we have smaller base that top
+        // NEED TO HAVE MORE value near 1 when we have smaller base that top
+        y      = Utils::random(0.0f, _shapeHeight);
         radius = _shapeRadius + tan(_shapeAngle * DEG2RAD) * y;
     }
     float r     = radius * sqrt(random(0.0f, 1.0f));
@@ -185,7 +189,8 @@ SLVec3f SLParticleSystem::getPointOnCone()
     float radius = _shapeRadius;
     if (!_doShapeSpawnBase) // Spawn inside volume
     {
-        y      = Utils::random(0.0f, _shapeHeight); // NEED TO HAVE MORE value near 1 when we have smaller base that top
+        // NEED TO HAVE MORE value near 1 when we have smaller base that top
+        y      = Utils::random(0.0f, _shapeHeight);
         radius = _shapeRadius + tan(_shapeAngle * DEG2RAD) * y;
     }
     float r     = radius;
@@ -199,15 +204,18 @@ SLVec3f SLParticleSystem::getPointOnCone()
 //! Function which return a direction following the cone shape
 SLVec3f SLParticleSystem::getDirectionCone(SLVec3f position)
 {
-    float maxRadius = _shapeRadius + tan(_shapeAngle * DEG2RAD) * _shapeHeight; // Calculate max radius
-    float percentX  = position.x / maxRadius;                                   // Calculate at which percent our x is, to know how much we need to adapt our angle
-    float percentZ  = position.z / maxRadius;                                   // Calculate at which percent our z is, to know how much we need to adapt our angle
-    float newX      = position.x + tan(_shapeAngle * percentX * DEG2RAD) * _shapeHeight;
-    float newZ      = position.z + tan(_shapeAngle * percentZ * DEG2RAD) * _shapeHeight;
+    float maxRadius = _shapeRadius + tan(_shapeAngle * DEG2RAD) * _shapeHeight;
+
+    // Calculate at which percent our x is, to know how much we need to adapt our angle
+    float percentX = position.x / maxRadius;
+    // Calculate at which percent our z is, to know how much we need to adapt our angle
+    float percentZ = position.z / maxRadius;
+    float newX     = position.x + tan(_shapeAngle * percentX * DEG2RAD) * _shapeHeight;
+    float newZ     = position.z + tan(_shapeAngle * percentZ * DEG2RAD) * _shapeHeight;
     return SLVec3f(newX, _shapeHeight, newZ).normalize();
 }
 //-----------------------------------------------------------------------------
-//! Function which return a position in the pyramid define in the particle system
+//! Function which returns a position in the pyramid that define the PS
 SLVec3f SLParticleSystem::getPointInPyramid()
 {
     float y      = 0.0f;
@@ -223,7 +231,7 @@ SLVec3f SLParticleSystem::getPointInPyramid()
     return SLVec3f(x, y, z);
 }
 //-----------------------------------------------------------------------------
-//! Function which return a position on the pyramid define in the particle system
+//! Function which return a position on the pyramid that defines the PS
 SLVec3f SLParticleSystem::getPointOnPyramid()
 {
     float y      = 0.0f;
@@ -234,12 +242,11 @@ SLVec3f SLParticleSystem::getPointOnPyramid()
         radius = _shapeWidth + tan(_shapeAngle * DEG2RAD) * y;
     }
 
-    // int   temp      = Utils::random(0, 5);
     int   temp = Utils::random(0, 3);
-    float x    = 0.0f;
-    float z    = 0.0f;
-    if (temp == 0)
-    { // LEFT
+    float x = 0.0f, z = 0.0f;
+
+    if (temp == 0) // LEFT
+    {
         x = -radius;
         z = Utils::random(-radius, radius);
     }
@@ -258,22 +265,6 @@ SLVec3f SLParticleSystem::getPointOnPyramid()
         x = Utils::random(-radius, radius);
         z = -radius;
     }
-    // Comments to have top and bottom not filled
-    /* else if (temp == 4) //TOP
-    {
-        y = _heightPyramid;
-        radius = _shapeWidth + tan(_anglePyramid * DEG2RAD) * y;
-
-        x = Utils::random(-radius, radius);
-        z = Utils::random(-radius, radius);
-    }
-    else if (temp == 5) // BOTTOM
-    {
-        y      = 0.0f;
-        radius = _shapeWidth;
-        x = Utils::random(-radius, radius);
-        z = Utils::random(-radius, radius);
-    }*/
 
     return SLVec3f(x, y, z);
 }
@@ -299,12 +290,8 @@ void SLParticleSystem::generate()
     default_random_engine      generator(seed);
     normal_distribution<float> distribution(0.0f, 1.0f);
 
-    SLVVec3f tempP;
-    SLVVec3f tempV;
-    SLVfloat tempST;
-    SLVVec3f tempInitV;
-    SLVfloat tempR;
-    SLVfloat tempAngulareVelo;
+    SLVVec3f tempP, tempV, tempInitV;
+    SLVfloat tempR, tempST, tempAngulareVelo;
     SLVuint  tempTexNum;
     SLVVec3f tempInitP;
 
@@ -313,23 +300,30 @@ void SLParticleSystem::generate()
     else
         _primitive = PT_points;
 
-    deleteDataGpu();
+    SLMesh::deleteDataGpu();
 
     // Initialize the drawing:
     if (_doFlipBookTexture)
     {
-        SLMaterial* mDraw = new SLMaterial(_assetManager, "Drawing-Material", this, _textureFlipbook);
+        SLMaterial* mDraw = new SLMaterial(_assetManager,
+                                           "Drawing-Material",
+                                           this,
+                                           _textureFlipbook);
         mat(mDraw);
     }
     else
     {
-        SLMaterial* mDraw = new SLMaterial(_assetManager, "Drawing-Material", this, _textureFirst);
+        SLMaterial* mDraw = new SLMaterial(_assetManager,
+                                           "Drawing-Material",
+                                           this,
+                                           _textureFirst);
         mat(mDraw);
     }
 
     tempP.resize(_amount);
     tempV.resize(_amount);
     tempST.resize(_amount);
+
     if (_doAcceleration || _doGravity)
         tempInitV.resize(_amount);
     if (_doRotation)
@@ -478,16 +472,21 @@ void SLParticleSystem::generate()
                         AT_angularVelo,
                         &tempAngulareVelo);
     if (_doFlipBookTexture)
-        _vao2.setAttrib(AT_texNum, AT_texNum, &tempTexNum);
+        _vao2.setAttrib(AT_texNum,
+                        AT_texNum,
+                        &tempTexNum);
     if (_doShape)
-        _vao2.setAttrib(AT_initialPosition, AT_initialPosition, &tempInitP);
+        _vao2.setAttrib(AT_initialPosition,
+                        AT_initialPosition,
+                        &tempInitP);
     _vao2.generateTF((SLuint)tempP.size());
 
     if (_drawInstanced)
     {
         P.clear();
         I32.clear();
-        /* Generate for billboard (for drawing without geometry shader)*/
+
+        // Generate for billboard (for drawing instanced without geometry shader)
         P.push_back(SLVec3f(-1, -1, 0));
         P.push_back(SLVec3f(1, -1, 0));
         P.push_back(SLVec3f(1, 1, 0));
@@ -501,17 +500,15 @@ void SLParticleSystem::generate()
         I32.push_back(0);
 
         _renderVao1.deleteGL();
-        _renderVao2.deleteGL();
-        /* Generate vao for rendering with draw instanced */
         _renderVao1.setAttrib(AT_custom0, AT_custom0, &P);
         _renderVao1.setIndices(&I32);
         _renderVao1.setExternalVBO(_vao1.vbo(), 2);
+        _renderVao1.generate((SLuint)P.size());
 
+        _renderVao2.deleteGL();
         _renderVao2.setAttrib(AT_custom0, AT_custom0, &P);
         _renderVao2.setIndices(&I32);
         _renderVao2.setExternalVBO(_vao2.vbo(), 2);
-
-        _renderVao1.generate((SLuint)P.size());
         _renderVao2.generate((SLuint)P.size());
     }
 
@@ -760,7 +757,8 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
 
         // Rotation
         if (_doRotation && !_doRotRange)
-            spTF->uniform1f("u_angularVelo", _angularVelocityConst * DEG2RAD);
+            spTF->uniform1f("u_angularVelo",
+                            _angularVelocityConst * DEG2RAD);
 
         //////////////////////
         // Draw call to update
@@ -771,20 +769,14 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
             _vao1.beginTF(_vao2.tfoID());
             _vao1.drawArrayAs(PT_points);
             _vao1.endTF();
-            if (_drawInstanced)
-                _vao = _renderVao1;
-            else
-                _vao = _vao2;
+            _vao = _drawInstanced ? _renderVao1 : _vao2; // ??? Is this correct?
         }
         else
         {
             _vao2.beginTF(_vao1.tfoID());
             _vao2.drawArrayAs(PT_points);
             _vao2.endTF();
-            if (_drawInstanced)
-                _vao = _renderVao2;
-            else
-                _vao = _vao1;
+            _vao = _drawInstanced ? _renderVao2 : _vao1; // ??? Is this correct?
         }
         _updateTime.set(GlobalTimer::timeMS() - _startUpdateTimeMS);
     }
@@ -809,7 +801,8 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
     {
         if (_billboardType == BT_Vertical)
         {
-            SLMat4f vMat = stateGL->viewMatrix; // Just view matrix because world space is enabled
+            // Just view matrix because world space is enabled
+            SLMat4f vMat = stateGL->viewMatrix;
 
             vMat.m(0, 1.0f);
             vMat.m(1, 0.0f);
@@ -821,12 +814,12 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
 
             spD->uniformMatrix4fv("u_vYawPMatrix",
                                   1,
-                                  (SLfloat*)&vMat); // TO change for custom shader generation
+                                  (SLfloat*)&vMat);
         }
         else
         {
-
-            SLMat4f vMat = stateGL->viewMatrix; // Just view matrix because world space is enabled
+            // Just view matrix because world space is enabled
+            SLMat4f vMat = stateGL->viewMatrix;
             std::cout << "vMat" << std::endl;
             vMat.m(0, 1.0f);
             vMat.m(1, 0.0f);
@@ -839,13 +832,16 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
             vMat.m(6, 0.0f);
             vMat.m(7, 0.0f);
             vMat.m(8, 1.0f);
-            spD->uniformMatrix4fv("u_vOmvMatrix", 1, (SLfloat*)&vMat);
-            //spD->uniformMatrix4fv("u_vOmvMatrix", 1, (SLfloat*)&stateGL->viewMatrix);
+
+            spD->uniformMatrix4fv("u_vOmvMatrix",
+                                  1,
+                                  (SLfloat*)&vMat);
         }
     }
     else
     {
-        SLMat4f mvMat = stateGL->viewMatrix * stateGL->modelMatrix; // Model-View Matrix
+        // Build Model-View Matrix
+        SLMat4f mvMat = stateGL->viewMatrix * stateGL->modelMatrix;
 
         if (_billboardType == BT_Vertical)
         {
@@ -859,13 +855,13 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
 
             spD->uniformMatrix4fv("u_vYawPMatrix",
                                   1,
-                                  (SLfloat*)&mvMat); // TO change for custom shader generation
+                                  (SLfloat*)&mvMat);
         }
         else
         {
             spD->uniformMatrix4fv("u_vOmvMatrix",
                                   1,
-                                  (SLfloat*)&mvMat); // TO change for custom shader generation
+                                  (SLfloat*)&mvMat);
         }
     }
 
@@ -921,7 +917,6 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
     spD->uniform1f("u_scale", _scale);
     spD->uniform1f("u_radiusW", _radiusW);
     spD->uniform1f("u_radiusH", _radiusH);
-
     spD->uniform1f("u_oneOverGamma", 1.0f);
 
     // Check wireframe
@@ -934,12 +929,12 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
     if (_doColor && _doBlendBrightness)
         stateGL->blendFunc(GL_SRC_ALPHA, GL_ONE);
 
-    ///////////////////////
+    ///////////////////////////
     if (_drawInstanced)
-        SLMesh::draw(sv, node, 2 * _amount); //2 triangles per particle
+        SLMesh::draw(sv, node, 2 * _amount); // 2 triangles per particle
     else
         SLMesh::draw(sv, node);
-    ///////////////////////
+    ///////////////////////////
 
     if (_doColor && _doBlendBrightness)
         stateGL->blendFunc(GL_SRC_ALPHA,
@@ -970,24 +965,12 @@ void SLParticleSystem::changeTexture()
     }
 }
 //-----------------------------------------------------------------------------
-//! deleteData deletes all mesh data and VAOs
-void SLParticleSystem::deleteData()
-{
-    return;
-}
-//-----------------------------------------------------------------------------
-//! deleteData deletes all mesh data and VAOs
-void SLParticleSystem::deleteDataGpu()
-{
-    SLMesh::deleteDataGpu();
-}
-//-----------------------------------------------------------------------------
 /*! SLParticleSystem::buildAABB builds the passed axis-aligned bounding box in
  OS and updates the min & max points in WS with the passed WM of the node.
  Take into account features like acceleration, gravity, shape, velocity.
  SLMesh::buildAABB builds the passed axis-aligned bounding box in OS and updates
  the min& max points in WS with the passed WM of the node.
- Todo: Can ben enhance furthermore the acceleration doesn't work wll for the moments
+ Todo: Can ben enhance furthermore the acceleration doesn't work well for the moment.
  The negative value for the acceleration are not take into account and also
  acceleration which goes against the velocity. To adapt the acceleration to
  exactly the same as the gravity not enough time to do it. Need to adapt more

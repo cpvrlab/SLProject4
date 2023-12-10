@@ -285,6 +285,7 @@ void SLGLVertexArray::generateTF(SLuint          numVertices,
         _vbo.bindAndEnableAttrib(divisor);
     }
 
+    // ???
     if (_externalVbo != nullptr)
     {
         _externalVbo->bindAndEnableAttrib(_externalDivisor);
@@ -317,7 +318,10 @@ void SLGLVertexArray::generateTF(SLuint          numVertices,
 
         glGenBuffers(1, &_idVBOIndices);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _idVBOIndices);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, tmBufSize, tmpBuf, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                     tmBufSize,
+                     tmpBuf,
+                     GL_STATIC_DRAW);
         SLGLVertexBuffer::totalBufferCount++;
         SLGLVertexBuffer::totalBufferSize += tmBufSize;
         delete[] tmpBuf;
@@ -463,7 +467,7 @@ void SLGLVertexArray::drawArrayAs(SLGLPrimitiveType primitiveType,
     GET_GL_ERROR;
 }
 //-----------------------------------------------------------------------------
-/*!
+/*! ???
  *
  * @param primitiveType
  * @param countInstance
@@ -471,7 +475,7 @@ void SLGLVertexArray::drawArrayAs(SLGLPrimitiveType primitiveType,
  * @param indexOffset
  */
 void SLGLVertexArray::drawElementsInstanced(SLGLPrimitiveType primitiveType,
-                                            SLuint           countInstance,
+                                            SLuint            countInstance,
                                             SLuint            numIndexes,
                                             SLuint            indexOffset)
 {
@@ -495,7 +499,7 @@ void SLGLVertexArray::drawElementsInstanced(SLGLPrimitiveType primitiveType,
                             (GLsizei)numIndexes,
                             _indexDataType,
                             (void*)(size_t)(indexOffset * (SLuint)indexTypeSize),
-                            (GLsizei )countInstance);
+                            (GLsizei)countInstance);
     ////////////////////////////////////////////////////////
 
     GET_GL_ERROR;

@@ -46,8 +46,6 @@ public:
                      const bool      drawInstanced = false);
 
     void draw(SLSceneView* sv, SLNode* node, SLuint instances = 1);
-    void deleteData();
-    void deleteDataGpu();
     void buildAABB(SLAABBox& aabb, const SLMat4f& wmNode);
     void generate();
     void generateBernsteinPAlpha();
@@ -310,8 +308,8 @@ private:
 
     // Color
     SLCol4f          _color = SLCol4f(0.66f, 0.0f, 0.66f, 0.2f); //!< Color for particle
-    SLfloat          _colorArr[256 * 3];                         //!< Color values of color gradient widget
-    SLVColorLUTPoint _colorPoints;                               //! Color gradient points
+    SLfloat          _colorArr[256 * 3];    //!< Color values of color gradient widget
+    SLVColorLUTPoint _colorPoints;          //! Color gradient points
 
     // Int (but boolean) to switch buffer
     int _drawBuf = 0; //!< Boolean to switch buffer
@@ -357,11 +355,10 @@ private:
     SLGLTexture* _textureFlipbook; //!< Flipbook texture with e.g. multiple flames at subsequent frames
 
     // VAOs
-    SLGLVertexArray _vao1; //!< First OpenGL Vertex Array Object for swapping between updating/drawing
-    SLGLVertexArray _vao2; //!< Second OpenGL Vertex Array Object for swapping between updating/drawing
-
-    SLGLVertexArray _renderVao1; //!< First OpenGL Vertex Array Object for swapping between updating/drawing
-    SLGLVertexArray _renderVao2; //!< Second OpenGL Vertex Array Object for swapping between updating/drawing
+    SLGLVertexArray _vao1;        //!< 1. Vertex Array Object for swapping between updating/drawing
+    SLGLVertexArray _vao2;        //!< 2. Vertex Array Object for swapping between updating/drawing
+    SLGLVertexArray _renderVao1;  //!< 1. Vertex Array Object for swapping between updating/drawing
+    SLGLVertexArray _renderVao2;  //!< 2. Vertex Array Object for swapping between updating/drawing
 
     // Boolean for generation/resume
     SLbool _isVisibleInFrustum = true;  //!< Boolean to set time since node not visible

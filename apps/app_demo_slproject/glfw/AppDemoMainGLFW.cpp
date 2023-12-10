@@ -393,7 +393,7 @@ static void onKeyPress(GLFWwindow* myWindow,
                     SL_LOG("----------------------------------------------");
                     SL_LOG("Loading SceneID: %d", AppDemo::sceneID);
                 }
-                else if (key == K_right && sv && AppDemo::sceneID < SID_Maximal - 1)
+                else if (key == K_right && sv && AppDemo::sceneID < SID_MaxNoBenchmarks - 1)
                 {
                     appDemoLoadScene(AppDemo::assetManager,
                                      AppDemo::scene,
@@ -568,7 +568,7 @@ int main(int argc, char* argv[])
         cmdLineArgs.push_back(SLstring(argv[i]));
 
     // parse cmd line arguments
-    for (int i=1; i<cmdLineArgs.size(); ++i)
+    for (int i = 1; i < cmdLineArgs.size(); ++i)
     {
         if (cmdLineArgs[i] == "-onlyErrorLogs")
         {

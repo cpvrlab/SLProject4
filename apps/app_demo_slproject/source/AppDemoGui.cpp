@@ -1938,7 +1938,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
             if (ImGui::MenuItem("Next Scene",
                                 "Shift-Alt-Right",
                                 nullptr,
-                                AppDemo::sceneID < SID_Maximal - 1))
+                                AppDemo::sceneID < SID_MaxPublicAssets - 1))
                 s->onLoad(am, s, sv, AppDemo::sceneID + 1);
 
             if (ImGui::MenuItem("Previous Scene",
