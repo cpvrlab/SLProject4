@@ -330,7 +330,7 @@ EM_BOOL emOnKeyPressed(int                            eventType,
                              (SLSceneID)(AppDemo::sceneID - 1));
             SL_LOG("Loading SceneID: %d", AppDemo::sceneID);
         }
-        else if (key == K_right && sv && AppDemo::sceneID < SID_Maximal - 1)
+        else if (key == K_right && sv && AppDemo::sceneID < SID_MaxNoBenchmarks - 1)
         {
             appDemoLoadScene(AppDemo::assetManager,
                              AppDemo::scene,
