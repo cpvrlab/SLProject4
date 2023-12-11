@@ -44,8 +44,8 @@ const string vertInput_PS_a_texNum        = R"(
 layout (location = 6) in uint  a_texNum;         // Particle rotation attribute)";
 const string vertInput_PS_a_initP         = R"(
 layout (location = 7) in vec3  a_initialPosition;// Particle initial position attribute)";
-const string vertInput_PS_a_positionP     = R"(
-layout (location = 8) in vec3  a_positionP;      // Particle position attribute)";
+const string vertInput_PS_a_InstPos       = R"(
+layout (location = 8) in vec3  a_instancePos;    // Particle instance triangle vertex position attribute)";
 const string vertInput_a_uv0              = R"(
 layout (location = 2) in vec2  a_uv0;            // Vertex tex.coord. 1 for diffuse color)";
 const string vertInput_a_uv1              = R"(
@@ -62,7 +62,7 @@ uniform mat4  u_mMatrix;                    // Model matrix (object to world tra
 uniform mat4  u_vMatrix;                    // View matrix (world to camera transform)
 uniform mat4  u_pMatrix;                    // Projection matrix (camera to normalize device coords.))";
 const string vertInput_u_matrix_vOmv  = R"(
-uniform mat4  u_vOmvMatrix;                 // view or modelview matrix)";
+uniform mat4  u_vOmvMatrix;         // view or modelview matrix)";
 //-----------------------------------------------------------------------------
 const string vertInput_u_skinning = R"(
 
@@ -167,9 +167,9 @@ const string vertOutput_PS_struct_End    = R"(
 } vert; )";
 
 const string vertOutput_PS_instanced_transparency   = R"(
-out float transparency;                 // transparency of a particle )";
+out float transparency;             // transparency of a particle )";
 const string fragInput_PS_instanced_transparency    = R"(
-in float transparency;                  // transparency of a particle )";
+in float transparency;              // transparency of a particle )";
 
 const string fragMain_PS_instanced_v_doColorOverLT  = R"(
     vec4 color = vec4(colorByAge(v_age/u_tTL), 1.0);   // Particle color)";
@@ -203,7 +203,7 @@ out     float tf_rotation;          // To transform feedback)";
 const string vertOutput_PS_tf_r_angularVelo = R"(
 out     float tf_angularVelo;       // To transform feedback)";
 const string vertOutput_PS_tf_texNum        = R"(
-flat out uint  tf_texNum;            // To transform feedback)";
+flat out uint  tf_texNum;           // To transform feedback)";
 const string vertOutput_PS_tf_initP         = R"(
 out     vec3  tf_initialPosition;   // To transform feedback)";
 
@@ -350,7 +350,7 @@ const string vertMain_PS_v_texNum           = R"(
 const string vertMain_PS_v_a                = R"(
     float age = u_time - a_startTime;   // Get the age of the particle)";
 const string vertMain_PS_v_tC               = R"(
-    v_texCoord = 0.5 * (a_positionP.xy + vec2(1.0));)";
+    v_texCoord = 0.5 * (a_instancePos.xy + vec2(1.0));)";
 const string vertMain_PS_v_age              = R"(
     v_age = age;)";
 const string vertMain_PS_v_tC_flipbook      = R"(
@@ -358,12 +358,12 @@ const string vertMain_PS_v_tC_flipbook      = R"(
     float actC = float(actCI);
     float actR  = floor(float(int(a_texNum) - actCI) / float(u_col));
 
-    vec2 p = 0.5 * (a_positionP.xy + vec2(1.0));
+    vec2 p = 0.5 * (a_instancePos.xy + vec2(1.0));
     v_texCoord = vec2((actC + p.x)/float(u_col), 1.0 - (actR - p.y)/float(u_row));
 )";
 
 const string vertMain_PS_instanced_position             = R"(
-    vec3 position = a_positionP;
+    vec3 position = a_instancePos;
 )";
 const string vertMain_PS_instanced_v_s                  = R"(
     float size = age / u_tTL;)";
@@ -410,7 +410,7 @@ const string vertMain_PS_instanced_EndAll               = R"(
 }
 )";
 const string vertMain_PS_instanced_EndAll_VertBillboard = R"(
-    //gl_Position =  vec4(a_position + a_positionP, 1);
+    //gl_Position =  vec4(a_position + a_instancePos, 1);
     gl_Position =  u_pMatrix * u_vYawPMatrix * vec4(a_position + position, 1.0);
 }
 )";
@@ -535,9 +535,9 @@ uniform int   u_row;            // Number of row of flipbook texture)";
 const string geomOutput_PS_v_pC = R"(
 out vec4 v_particleColor;       // The resulting color per vertex)";
 const string geomOutput_PS_v_tC = R"(
-out vec2 v_texCoord;            // Texture coordinate at vertex)";
+out vec2 v_texCoord;                // Texture coordinate at vertex)";
 const string vertOutput_PS_v_tC = R"(
-out vec2 v_texCoord;            // Texture coordinate at vertex)";
+out vec2 v_texCoord;                // Texture coordinate at vertex)";
 //-----------------------------------------------------------------------------
 const string geomMain_PS_v_s             = R"(
     float scale = u_scale;)";
@@ -2192,10 +2192,11 @@ void SLGLProgramGenerated::buildPerPixParticleInstanced(SLMaterial* mat)
     vertCode += shaderHeader();
 
     // Vertex shader inputs
-    vertCode += vertInput_PS_a_positionP;
-    vertCode += vertInput_PS_a_p;          //position
-    vertCode += vertInput_PS_a_st;         // start time
-    if (rot) vertCode += vertInput_PS_a_r; //rotation as float
+    vertCode += vertInput_PS_a_InstPos;     // instance position
+    vertCode += vertInput_PS_a_p;           // position
+    vertCode += vertInput_PS_a_st;          // start time
+    if (rot) vertCode += vertInput_PS_a_r;  // rotation as float
+
     if (FlBoTex)
     {
         vertCode += vertInput_PS_a_texNum; // per particle texture number

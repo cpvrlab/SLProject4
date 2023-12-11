@@ -500,13 +500,13 @@ void SLParticleSystem::generate()
         I32.push_back(0);
 
         _renderVao1.deleteGL();
-        _renderVao1.setAttrib(AT_custom0, AT_custom0, &P);
+        _renderVao1.setAttrib(AT_custom0, AT_instancePosition, &P);
         _renderVao1.setIndices(&I32);
         _renderVao1.setExternalVBO(_vao1.vbo(), 2);
         _renderVao1.generate((SLuint)P.size());
 
         _renderVao2.deleteGL();
-        _renderVao2.setAttrib(AT_custom0, AT_custom0, &P);
+        _renderVao2.setAttrib(AT_custom0, AT_instancePosition, &P);
         _renderVao2.setIndices(&I32);
         _renderVao2.setExternalVBO(_vao2.vbo(), 2);
         _renderVao2.generate((SLuint)P.size());
