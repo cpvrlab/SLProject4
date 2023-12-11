@@ -38,7 +38,7 @@ SLParticleSystem::SLParticleSystem(SLAssetManager* assetMgr,
     _drawInstanced = !SLGLState::instance()->glHasGeometryShaders() || drawInstanced;
     _primitive     = PT_points;
 
-    // Trick SL project because it wants mesh to have vertex
+    // Trick SL project because it wants the mesh to have vertex
     P.push_back(SLVec3f(0, 0, 0));
     I32.push_back(0);
 
@@ -769,14 +769,14 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
             _vao1.beginTF(_vao2.tfoID());
             _vao1.drawArrayAs(PT_points);
             _vao1.endTF();
-            _vao = _drawInstanced ? _renderVao1 : _vao2; // ??? Is this correct?
+            _vao = _drawInstanced ? _renderVao2 : _vao2;
         }
         else
         {
             _vao2.beginTF(_vao1.tfoID());
             _vao2.drawArrayAs(PT_points);
             _vao2.endTF();
-            _vao = _drawInstanced ? _renderVao2 : _vao1; // ??? Is this correct?
+            _vao = _drawInstanced ? _renderVao1 : _vao1;
         }
         _updateTime.set(GlobalTimer::timeMS() - _startUpdateTimeMS);
     }

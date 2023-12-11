@@ -385,7 +385,9 @@ void SLGLVertexBuffer::bindAndEnableAttrib(SLuint divisor) const
     //////////////////////////////////////
     // Associate VBO to Attribute location
     //////////////////////////////////////
+
     glBindBuffer(GL_ARRAY_BUFFER, _id);
+
     if (_outputIsInterleaved) // Copy attribute data interleaved
     {
         for (auto a : _attribs)

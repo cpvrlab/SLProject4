@@ -355,10 +355,10 @@ private:
     SLGLTexture* _textureFlipbook; //!< Flipbook texture with e.g. multiple flames at subsequent frames
 
     // VAOs
-    SLGLVertexArray _vao1;        //!< 1. Vertex Array Object for swapping between updating/drawing
-    SLGLVertexArray _vao2;        //!< 2. Vertex Array Object for swapping between updating/drawing
-    SLGLVertexArray _renderVao1;  //!< 1. Vertex Array Object for swapping between updating/drawing
-    SLGLVertexArray _renderVao2;  //!< 2. Vertex Array Object for swapping between updating/drawing
+    SLGLVertexArray _vao1;        //!< 1. VAO for swapping between updating/drawing
+    SLGLVertexArray _vao2;        //!< 2. VAO for swapping between updating/drawing
+    SLGLVertexArray _renderVao1;  //!< 1. VAO for instanced rendering with vao1
+    SLGLVertexArray _renderVao2;  //!< 2. VAO for instanced rendering with vao2
 
     // Boolean for generation/resume
     SLbool _isVisibleInFrustum = true;  //!< Boolean to set time since node not visible

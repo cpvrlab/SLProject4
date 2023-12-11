@@ -508,6 +508,7 @@ void SLGLVertexArray::drawElementsInstanced(SLGLPrimitiveType primitiveType,
     ////////////////////////////////////////////////////////
 
     GET_GL_ERROR;
+
     // Update statistics
     totalDrawCalls++;
     switch (primitiveType)
