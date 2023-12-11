@@ -49,7 +49,8 @@ void SLGLVertexArray::deleteGL()
         glDeleteBuffers(1, &_idVBOIndices);
         _idVBOIndices = 0;
         SLGLVertexBuffer::totalBufferCount--;
-        SLGLVertexBuffer::totalBufferSize -= _numIndicesElements * (SLuint)SLGLVertexBuffer::sizeOfType(_indexDataType);
+        SLGLVertexBuffer::totalBufferSize -= (SLuint)_numIndicesElements *
+                                             (SLuint)SLGLVertexBuffer::sizeOfType(_indexDataType);
     }
 }
 //-----------------------------------------------------------------------------
@@ -220,9 +221,10 @@ void SLGLVertexArray::generate(SLuint          numVertices,
         _numIndicesEdges && _indexDataEdges)
     {
         // create temp. buffer with both index arrays
-        SLuint   typeSize  = SLGLVertexBuffer::sizeOfType(_indexDataType);
-        SLuint   tmBufSize = (_numIndicesElements + _numIndicesEdges) * (SLuint)typeSize;
-        SLubyte* tmpBuf    = new SLubyte[tmBufSize];
+        SLuint typeSize  = SLGLVertexBuffer::sizeOfType(_indexDataType);
+        SLuint tmBufSize = (SLuint)(_numIndicesElements + _numIndicesEdges) *
+                           (SLuint)typeSize;
+        SLubyte* tmpBuf = new SLubyte[tmBufSize];
         memcpy(tmpBuf,
                _indexDataElements,
                _numIndicesElements * (SLuint)typeSize);
@@ -247,7 +249,8 @@ void SLGLVertexArray::generate(SLuint          numVertices,
                      _indexDataElements,
                      GL_STATIC_DRAW);
         SLGLVertexBuffer::totalBufferCount++;
-        SLGLVertexBuffer::totalBufferSize += _numIndicesElements * (SLuint)typeSize;
+        SLGLVertexBuffer::totalBufferSize += (SLuint)_numIndicesElements *
+                                             (SLuint)typeSize;
     }
 
     glBindVertexArray(0);
@@ -306,9 +309,10 @@ void SLGLVertexArray::generateTF(SLuint          numVertices,
         _numIndicesEdges && _indexDataEdges)
     {
         // create temp. buffer with both index arrays
-        SLuint   typeSize  = SLGLVertexBuffer::sizeOfType(_indexDataType);
-        SLuint   tmBufSize = (_numIndicesElements + _numIndicesEdges) * (SLuint)typeSize;
-        SLubyte* tmpBuf    = new SLubyte[tmBufSize];
+        SLuint typeSize  = (SLuint)SLGLVertexBuffer::sizeOfType(_indexDataType);
+        SLuint tmBufSize = (SLuint)(_numIndicesElements + _numIndicesEdges) *
+                           (SLuint)typeSize;
+        SLubyte* tmpBuf = new SLubyte[tmBufSize];
         memcpy(tmpBuf,
                _indexDataElements,
                _numIndicesElements * (SLuint)typeSize);
@@ -336,7 +340,8 @@ void SLGLVertexArray::generateTF(SLuint          numVertices,
                      _indexDataElements,
                      GL_STATIC_DRAW);
         SLGLVertexBuffer::totalBufferCount++;
-        SLGLVertexBuffer::totalBufferSize += _numIndicesElements * (SLuint)typeSize;
+        SLGLVertexBuffer::totalBufferSize += (SLuint)_numIndicesElements *
+                                             (SLuint)typeSize;
     }
 
     glBindVertexArray(0);
@@ -390,7 +395,7 @@ void SLGLVertexArray::drawElementsAs(SLGLPrimitiveType primitiveType,
 
     // Do the draw call with indices
     if (numIndexes == 0)
-        numIndexes = _numIndicesElements;
+        numIndexes = (SLuint)_numIndicesElements;
 
     SLuint indexTypeSize = SLGLVertexBuffer::sizeOfType(_indexDataType);
 
@@ -490,7 +495,7 @@ void SLGLVertexArray::drawElementsInstanced(SLGLPrimitiveType primitiveType,
 
     // Do the draw call with indices
     if (numIndexes == 0)
-        numIndexes = _numIndicesElements;
+        numIndexes = (SLuint)_numIndicesElements;
 
     SLuint indexTypeSize = SLGLVertexBuffer::sizeOfType(_indexDataType);
 
@@ -552,11 +557,11 @@ void SLGLVertexArray::drawEdges(SLCol4f color,
         glLineWidth(lineWidth);
 #endif
 
-    //////////////////////////////////////////////
+    //////////////////////////////////////////////////////
     drawElementsAs(PT_lines,
-                   _numIndicesEdges,
-                   _numIndicesElements);
-    //////////////////////////////////////////////
+                   (SLuint)_numIndicesEdges,
+                   (SLuint)_numIndicesElements);
+    //////////////////////////////////////////////////////
 
 #ifndef SL_GLES
     if (lineWidth != 1.0f)

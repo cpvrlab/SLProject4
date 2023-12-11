@@ -202,8 +202,8 @@ public:
 
     // Some getters
     SLuint            numVertices() const { return _numVertices; }
-    SLuint            numIndicesElements() const { return _numIndicesElements; }
-    SLuint            numIndicesEdges() const { return _numIndicesEdges; }
+    SLuint            numIndicesElements() const { return (SLuint)_numIndicesElements; }
+    SLuint            numIndicesEdges() const { return (SLuint)_numIndicesEdges; }
     SLGLVertexBuffer* vbo() { return &_vbo; }
 
     // Some statistics
