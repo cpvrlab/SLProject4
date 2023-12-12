@@ -55,7 +55,7 @@ extern "C" void* createMetalLayer(void* window);
 //! Application Struct WebGpuDemoApp with all global variables and documentation
 /*!
 
-**Overview**
+Overview:
 
 WebGPU is a graphics API standard developed by the World Wide Web Consortium (W3C). It is an abstraction layer
 over modern graphics APIs like Vulkan, D3D12 and Metal and thus uses modern concepts such as queues, command buffers
@@ -85,7 +85,7 @@ downloaded from CMake. Since wgpu-native uses the same interface header as Dawn,
 link Dawn instead of wgpu-native, but we would have to build and distribute it ourselves.
 
 
-**Usage**
+Usage:
 
 WebGPU follows a stateless design as opposed to OpenGL, where much state has to be set globally before making a
 draw call. To use WebGPU, we create objects with a call to wgpu*Create*. This function generally takes the parent
@@ -215,7 +215,7 @@ WebGPU concepts:
         wgpuCommandEncoderBeginRenderPass.
 
 
-**WebGPU vs. Vulkan**
+WebGPU vs. Vulkan:
 
 Here's a list of things I've noticed are handled differently from Vulkan (as of 2023-11-26):
 
