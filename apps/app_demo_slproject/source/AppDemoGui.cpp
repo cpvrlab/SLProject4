@@ -3705,10 +3705,10 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
 
                             if (SLGLState::instance()->glHasGeometryShaders())
                             {
-                                bool drawInstanced = ps->drawInstanced();
+                                bool drawInstanced = ps->doInstancedDrawing();
                                 if (ImGui::Checkbox("Instanced draw", &drawInstanced))
                                 {
-                                    ps->drawInstanced(drawInstanced);
+                                    ps->doInstancedDrawing(drawInstanced);
                                     ps->isGenerated(false);
                                 }
                             }

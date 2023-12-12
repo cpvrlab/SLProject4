@@ -30,12 +30,12 @@ SLParticleSystem::SLParticleSystem(SLAssetManager* assetMgr,
                                    SLGLTexture*    texC,
                                    const SLstring& name,
                                    SLGLTexture*    texFlipbook,
-                                   const bool      drawInstanced) : SLMesh(assetMgr, name)
+                                   const bool      doInstancedDrawing) : SLMesh(assetMgr, name)
 {
     assert(!name.empty());
 
     _assetManager  = assetMgr;
-    _drawInstanced = !SLGLState::instance()->glHasGeometryShaders() || drawInstanced;
+    _doInstancedDrawing = !SLGLState::instance()->glHasGeometryShaders() || doInstancedDrawing;
     _primitive     = PT_points;
 
     // Trick SL project because it wants the mesh to have vertex
@@ -295,7 +295,7 @@ void SLParticleSystem::generate()
     SLVuint  tempTexNum;
     SLVVec3f tempInitP;
 
-    if (_drawInstanced)
+    if (_doInstancedDrawing)
         _primitive = PT_triangles;
     else
         _primitive = PT_points;
@@ -481,7 +481,7 @@ void SLParticleSystem::generate()
                         &tempInitP);
     _vao2.generateTF((SLuint)tempP.size());
 
-    if (_drawInstanced)
+    if (_doInstancedDrawing)
     {
         P.clear();
         I32.clear();
@@ -499,17 +499,17 @@ void SLParticleSystem::generate()
         I32.push_back(3);
         I32.push_back(0);
 
-        _renderVao1.deleteGL();
-        _renderVao1.setAttrib(AT_custom0, AT_instancePosition, &P);
-        _renderVao1.setIndices(&I32);
-        _renderVao1.setExternalVBO(_vao1.vbo(), 2);
-        _renderVao1.generate((SLuint)P.size());
+        _instanceVao1.deleteGL();
+        _instanceVao1.setAttrib(AT_custom0, AT_instancePosition, &P);
+        _instanceVao1.setIndices(&I32);
+        _instanceVao1.setInstanceVBO(_vao1.vbo(), 2);
+        _instanceVao1.generate((SLuint)P.size());
 
-        _renderVao2.deleteGL();
-        _renderVao2.setAttrib(AT_custom0, AT_instancePosition, &P);
-        _renderVao2.setIndices(&I32);
-        _renderVao2.setExternalVBO(_vao2.vbo(), 2);
-        _renderVao2.generate((SLuint)P.size());
+        _instanceVao2.deleteGL();
+        _instanceVao2.setAttrib(AT_custom0, AT_instancePosition, &P);
+        _instanceVao2.setIndices(&I32);
+        _instanceVao2.setInstanceVBO(_vao2.vbo(), 2);
+        _instanceVao2.generate((SLuint)P.size());
     }
 
     _isGenerated = true;
@@ -591,23 +591,23 @@ void SLParticleSystem::pauseOrResume()
  */
 void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
 {
-    /////////////////////////////////////
-    // Init particles vector and init VAO
-    /////////////////////////////////////
+    ////////////////////////////////////////
+    // Init particles vector and init VAO //
+    ////////////////////////////////////////
 
     if (!_isGenerated)
         generate();
 
-    ////////////////////
-    // Generate programs
-    ////////////////////
+    ///////////////////////
+    // Generate programs //
+    ///////////////////////
 
     if (!_mat->program() || !_mat->programTF())
-        _mat->generateProgramPS(_drawInstanced);
+        _mat->generateProgramPS(_doInstancedDrawing);
 
-    ////////////////////////////////////////////////
-    // Calculate time and paused and frustum culling
-    ////////////////////////////////////////////////
+    ///////////////////////////////////////////////////
+    // Calculate time and paused and frustum culling //
+    ///////////////////////////////////////////////////
 
     float difTime   = 0.0f;
     float deltaTime = GlobalTimer::timeS() - _startUpdateTimeS; // Actual delta time
@@ -769,21 +769,21 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
             _vao1.beginTF(_vao2.tfoID());
             _vao1.drawArrayAs(PT_points);
             _vao1.endTF();
-            _vao = _drawInstanced ? _renderVao2 : _vao2;
+            _vao = _doInstancedDrawing ? _instanceVao2 : _vao2;
         }
         else
         {
             _vao2.beginTF(_vao1.tfoID());
             _vao2.drawArrayAs(PT_points);
             _vao2.endTF();
-            _vao = _drawInstanced ? _renderVao1 : _vao1;
+            _vao = _doInstancedDrawing ? _instanceVao1 : _vao1;
         }
         _updateTime.set(GlobalTimer::timeMS() - _startUpdateTimeMS);
     }
 
-    //////////
-    // DRAWING
-    //////////
+    /////////////
+    // DRAWING //
+    /////////////
 
     // Give uniform for drawing and find for linking vao vbo
     SLGLProgram* spD = _mat->program();
@@ -930,7 +930,7 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
         stateGL->blendFunc(GL_SRC_ALPHA, GL_ONE);
 
     ///////////////////////////
-    if (_drawInstanced)
+    if (_doInstancedDrawing)
         SLMesh::draw(sv, node, 2 * _amount); // 2 triangles per particle
     else
         SLMesh::draw(sv, node);

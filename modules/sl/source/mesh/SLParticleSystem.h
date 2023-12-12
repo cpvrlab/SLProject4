@@ -22,11 +22,11 @@
  * An OpenGL transform feedback buffer is used to update the particle positions
  * on the GPU and a geometry shader is used the create two triangles per
  * particle vertex and orient them as a billboard to the viewer. Geometry
- * shaders are only supported under OpenGL  >= 4.0 and OpenGL ES >= 3.2. This is
+ * shaders are only supported under OpenGL >= 4.0 and OpenGLES >= 3.2. This is
  * the case on most desktop systems and on Android SDK > 24 but not on iOS which
  * has only OpenGL ES 3.0\n.
  * For all systems that don't support geometry shaders we use an alternative
- * with instanced drawing\n.
+ * with instanced drawing (mainly for iOS and Emscripten with WebGL)\n.
  * The particle system supports many options of which many can be turned on the
  * do* methods. All options can also be modified in the UI when the mesh is
  * selected. See the different demo scenes in the app_demo_slproject under the
@@ -41,9 +41,9 @@ public:
                      const SLVec3f&  velocityRandomEnd,
                      const SLfloat&  timeToLive,
                      SLGLTexture*    texC,
-                     const SLstring& name          = "Particle system",
-                     SLGLTexture*    texFlipbook   = nullptr,
-                     const bool      drawInstanced = false);
+                     const SLstring& name               = "Particle System",
+                     SLGLTexture*    texFlipbook        = nullptr,
+                     const bool      doInstancedDrawing = false);
 
     void draw(SLSceneView* sv, SLNode* node, SLuint instances = 1);
     void buildAABB(SLAABBox& aabb, const SLMat4f& wmNode);
@@ -57,7 +57,6 @@ public:
 
     // Getters
 
-    SLbool            drawInstanced() { return _drawInstanced; }
     SLVec3f           acceleration() { return _acceleration; }
     SLfloat           accelerationConst() { return _accelerationConst; }
     SLint             amount() { return _amount; }
@@ -70,58 +69,61 @@ public:
     SLBillboardType   billboardType() { return _billboardType; }
     SLCol4f           color() { return _color; }
     SLVColorLUTPoint& colorPoints() { return _colorPoints; }
-    SLbool            doDirectionSpeed() { return _doDirectionSpeed; }
-    SLbool            doSpeedRange() { return _doSpeedRange; }
-    SLbool            doAcc() { return _doAcceleration; }
-    SLbool            doAccDiffDir() { return _doAccDiffDir; }
-    SLbool            doAlphaOverLT() { return _doAlphaOverLT; }
-    SLbool            doAlphaOverLTCurve() { return _doAlphaOverLTCurve; }
-    SLbool            doBlendBrightness() { return _doBlendBrightness; }
-    SLbool            doCounterGap() { return _doCounterGap; }
-    SLbool            doColor() { return _doColor; }
-    SLbool            doColorOverLT() { return _doColorOverLT; }
-    SLbool            doGravity() { return _doGravity; }
-    SLbool            doFlipBookTexture() { return _doFlipBookTexture; }
-    SLbool            doRotation() { return _doRotation; }
-    SLbool            doRotRange() { return _doRotRange; }
-    SLbool            doSizeOverLT() { return _doSizeOverLT; }
-    SLbool            doSizeOverLTCurve() { return _doSizeOverLTCurve; }
-    SLbool            doShape() { return _doShape; }
-    SLbool            doShapeSurface() { return _doShapeSurface; }
-    SLbool            doShapeOverride() { return _doShapeOverride; }
-    SLbool            doShapeSpawnBase() { return _doShapeSpawnBase; }
-    SLbool            doWorldSpace() { return _doWorldSpace; }
-    SLVec3f           direction() { return _direction; }
-    AvgFloat&         drawTime() { return _drawTime; }
-    SLVec3f           emitterPos() const { return _emitterPos; }
-    SLVec3f           gravity() { return _gravity; }
-    SLint             flipbookColumns() { return _flipbookColumns; }
-    SLint             flipbookRows() { return _flipbookRows; }
-    int               frameRateFB() { return _flipbookFPS; }
-    SLbool            isGenerated() { return _isGenerated; }
-    SLbool            isPaused() { return _isPaused; }
-    SLfloat           radiusW() { return _radiusW; }
-    SLfloat           radiusH() { return _radiusH; }
-    SLfloat           scale() { return _scale; }
-    SLShapeType       shapeType() { return _shapeType; }
-    SLfloat           shapeAngle() { return _shapeAngle; }
-    SLfloat           shapeHeight() { return _shapeHeight; }
-    SLfloat           shapeRadius() { return _shapeRadius; }
-    SLVec3f           shapeScale() { return _shapeScale; }
-    SLfloat           shapeWidth() { return _shapeWidth; }
-    SLfloat           speed() { return _speed; }
-    SLVec2f           speedRange() { return _speedRange; }
-    SLGLTexture*      textureFirst() { return _textureFirst; }
-    SLGLTexture*      textureFlipbook() { return _textureFlipbook; }
-    SLfloat           timeToLive() { return _timeToLive; }
-    AvgFloat&         updateTime() { return _updateTime; }
-    SLint             velocityType() { return _velocityType; }
-    SLVec3f           velocityConst() { return _velocityConst; }
-    SLVec3f           velocityRndMin() { return _velocityRndMin; }
-    SLVec3f           velocityRndMax() { return _velocityRndMax; }
+
+    SLbool doInstancedDrawing() { return _doInstancedDrawing; }
+    SLbool doAcc() { return _doAcceleration; }
+    SLbool doAccDiffDir() { return _doAccDiffDir; }
+    SLbool doAlphaOverLT() { return _doAlphaOverLT; }
+    SLbool doAlphaOverLTCurve() { return _doAlphaOverLTCurve; }
+    SLbool doBlendBrightness() { return _doBlendBrightness; }
+    SLbool doCounterGap() { return _doCounterGap; }
+    SLbool doColor() { return _doColor; }
+    SLbool doColorOverLT() { return _doColorOverLT; }
+    SLbool doDirectionSpeed() { return _doDirectionSpeed; }
+    SLbool doGravity() { return _doGravity; }
+    SLbool doFlipBookTexture() { return _doFlipBookTexture; }
+    SLbool doRotation() { return _doRotation; }
+    SLbool doRotRange() { return _doRotRange; }
+    SLbool doSizeOverLT() { return _doSizeOverLT; }
+    SLbool doSizeOverLTCurve() { return _doSizeOverLTCurve; }
+    SLbool doShape() { return _doShape; }
+    SLbool doShapeSurface() { return _doShapeSurface; }
+    SLbool doShapeOverride() { return _doShapeOverride; }
+    SLbool doShapeSpawnBase() { return _doShapeSpawnBase; }
+    SLbool doSpeedRange() { return _doSpeedRange; }
+    SLbool doWorldSpace() { return _doWorldSpace; }
+
+    SLVec3f      direction() { return _direction; }
+    AvgFloat&    drawTime() { return _drawTime; }
+    SLVec3f      emitterPos() const { return _emitterPos; }
+    SLVec3f      gravity() { return _gravity; }
+    SLint        flipbookColumns() { return _flipbookColumns; }
+    SLint        flipbookRows() { return _flipbookRows; }
+    int          frameRateFB() { return _flipbookFPS; }
+    SLbool       isGenerated() { return _isGenerated; }
+    SLbool       isPaused() { return _isPaused; }
+    SLfloat      radiusW() { return _radiusW; }
+    SLfloat      radiusH() { return _radiusH; }
+    SLfloat      scale() { return _scale; }
+    SLShapeType  shapeType() { return _shapeType; }
+    SLfloat      shapeAngle() { return _shapeAngle; }
+    SLfloat      shapeHeight() { return _shapeHeight; }
+    SLfloat      shapeRadius() { return _shapeRadius; }
+    SLVec3f      shapeScale() { return _shapeScale; }
+    SLfloat      shapeWidth() { return _shapeWidth; }
+    SLfloat      speed() { return _speed; }
+    SLVec2f      speedRange() { return _speedRange; }
+    SLGLTexture* textureFirst() { return _textureFirst; }
+    SLGLTexture* textureFlipbook() { return _textureFlipbook; }
+    SLfloat      timeToLive() { return _timeToLive; }
+    AvgFloat&    updateTime() { return _updateTime; }
+    SLint        velocityType() { return _velocityType; }
+    SLVec3f      velocityConst() { return _velocityConst; }
+    SLVec3f      velocityRndMin() { return _velocityRndMin; }
+    SLVec3f      velocityRndMax() { return _velocityRndMax; }
 
     // Setters
-    void drawInstanced(bool instanced) { _drawInstanced = instanced; }
+    void doInstancedDrawing(bool instanced) { _doInstancedDrawing = instanced; }
     void amount(SLint i) { _amount = i; }
     void accConst(SLfloat f) { _accelerationConst = f; }
     void acceleration(SLVec3f v) { _acceleration = v; }
@@ -308,8 +310,8 @@ private:
 
     // Color
     SLCol4f          _color = SLCol4f(0.66f, 0.0f, 0.66f, 0.2f); //!< Color for particle
-    SLfloat          _colorArr[256 * 3];    //!< Color values of color gradient widget
-    SLVColorLUTPoint _colorPoints;          //! Color gradient points
+    SLfloat          _colorArr[256 * 3];                         //!< Color values of color gradient widget
+    SLVColorLUTPoint _colorPoints;                               //! Color gradient points
 
     // Int (but boolean) to switch buffer
     int _drawBuf = 0; //!< Boolean to switch buffer
@@ -355,10 +357,10 @@ private:
     SLGLTexture* _textureFlipbook; //!< Flipbook texture with e.g. multiple flames at subsequent frames
 
     // VAOs
-    SLGLVertexArray _vao1;        //!< 1. VAO for swapping between updating/drawing
-    SLGLVertexArray _vao2;        //!< 2. VAO for swapping between updating/drawing
-    SLGLVertexArray _renderVao1;  //!< 1. VAO for instanced rendering with vao1
-    SLGLVertexArray _renderVao2;  //!< 2. VAO for instanced rendering with vao2
+    SLGLVertexArray _vao1;         //!< 1. VAO for swapping between updating/drawing
+    SLGLVertexArray _vao2;         //!< 2. VAO for swapping between updating/drawing
+    SLGLVertexArray _instanceVao1; //!< 1. VAO for instanced rendering with vao1
+    SLGLVertexArray _instanceVao2; //!< 2. VAO for instanced rendering with vao2
 
     // Boolean for generation/resume
     SLbool _isVisibleInFrustum = true;  //!< Boolean to set time since node not visible
@@ -387,7 +389,7 @@ private:
     SLbool _doSizeOverLT       = true;  //!< Boolean for size over life time
     SLbool _doSizeOverLTCurve  = false; //!< Boolean for size over life time curve
     SLbool _doFlipBookTexture  = false; //!< Boolean for flipbook texture
-    SLbool _drawInstanced      = false; //!< Boolean for instanced rendering
+    SLbool _doInstancedDrawing = false; //!< Boolean for instanced rendering
 };
 //-----------------------------------------------------------------------------
 #endif

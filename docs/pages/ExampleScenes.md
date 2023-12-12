@@ -14,3 +14,4 @@ See also \ref emscripten for more background information.
 - \subpage example-skinned-animations
 - \subpage example-raytracing
 - \subpage example-pathtracing
+- \subpage example-particles

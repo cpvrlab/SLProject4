@@ -86,7 +86,7 @@ public:
                   SLGLBufferUsage usage             = BU_static,
                   SLbool          outputInterleaved = true);
 
-    //! Binds & enables the vertex attribute for OpenGL < 3.0
+    //! Binds & enables the vertex attribute for OpenGL < 3.0 and during VAO creation
     void bindAndEnableAttrib(SLuint divisor = 0) const;
 
     //! disables the vertex attribute for OpenGL < 3.0

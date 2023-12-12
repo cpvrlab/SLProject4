@@ -29,7 +29,7 @@ SLGLVertexArray::SLGLVertexArray()
     _numVertices        = 0;
     _indexDataElements  = nullptr;
     _indexDataEdges     = nullptr;
-    _externalVbo        = nullptr;
+    _instanceVbo        = nullptr;
 }
 //-----------------------------------------------------------------------------
 /*! Deletes the OpenGL objects for the vertex array and the vertex buffer.
@@ -89,10 +89,15 @@ void SLGLVertexArray::setAttrib(SLGLAttributeType type,
     _vbo.attribs().push_back(va);
 }
 //-----------------------------------------------------------------------------
-void SLGLVertexArray::setExternalVBO(SLGLVertexBuffer* vbo, SLuint divisor)
+/*! Assignment of the additional VBO for instanced drawing. The passed vbo
+ * contains the positions for the instanced drawing done in
+ * drawElementsInstanced. This used e.g. for SLParticleSystems on systems
+ * without geometry shaders.
+ */
+void SLGLVertexArray::setInstanceVBO(SLGLVertexBuffer* vbo, SLuint divisor)
 {
-    _externalVbo     = vbo;
-    _externalDivisor = divisor;
+    _instanceVbo     = vbo;
+    _instanceDivisor = divisor;
 }
 //-----------------------------------------------------------------------------
 /*! Defines the vertex indices for the element drawing. Without indices vertex
@@ -208,9 +213,9 @@ void SLGLVertexArray::generate(SLuint          numVertices,
         _vbo.bindAndEnableAttrib(divisor);
     }
 
-    if (_externalVbo != nullptr)
+    if (_instanceVbo != nullptr)
     {
-        _externalVbo->bindAndEnableAttrib(_externalDivisor);
+        _instanceVbo->bindAndEnableAttrib(_instanceDivisor);
     }
 
     /////////////////////////////////////////////////////////////////
@@ -289,9 +294,9 @@ void SLGLVertexArray::generateTF(SLuint          numVertices,
     }
 
     // ???
-    if (_externalVbo != nullptr)
+    if (_instanceVbo != nullptr)
     {
-        _externalVbo->bindAndEnableAttrib(_externalDivisor);
+        _instanceVbo->bindAndEnableAttrib(_instanceDivisor);
     }
 
     ///////////////////////////////
@@ -472,15 +477,12 @@ void SLGLVertexArray::drawArrayAs(SLGLPrimitiveType primitiveType,
     GET_GL_ERROR;
 }
 //-----------------------------------------------------------------------------
-/*! ???
- *
- * @param primitiveType
- * @param countInstance
- * @param numIndexes
- * @param indexOffset
+/*! Wrapper around glDrawElementsInstanced using a second VBO (_instanceVbo)
+ * that contains all positions for the instances. This used e.g. for
+ * SLParticleSystems on systems without geometry shaders.
  */
 void SLGLVertexArray::drawElementsInstanced(SLGLPrimitiveType primitiveType,
-                                            SLuint            countInstance,
+                                            SLuint            countInstances,
                                             SLuint            numIndexes,
                                             SLuint            indexOffset)
 {
@@ -504,7 +506,7 @@ void SLGLVertexArray::drawElementsInstanced(SLGLPrimitiveType primitiveType,
                             (GLsizei)numIndexes,
                             _indexDataType,
                             (void*)(size_t)(indexOffset * (SLuint)indexTypeSize),
-                            (GLsizei)countInstance);
+                            (GLsizei)countInstances);
     ////////////////////////////////////////////////////////
 
     GET_GL_ERROR;

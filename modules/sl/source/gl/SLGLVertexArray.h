@@ -136,7 +136,7 @@ public:
     }
 
     //! Attach a VBO that has been created outside of this VAO
-    void setExternalVBO(SLGLVertexBuffer* vbo, SLuint divisor = 0);
+    void setInstanceVBO(SLGLVertexBuffer* vbo, SLuint divisor = 0);
 
     //! Updates a specific vertex attribute in the VBO
     void updateAttrib(SLGLAttributeType type,
@@ -216,14 +216,14 @@ protected:
     SLuint            _tfoID;              //! OpenGL id of transform feedback object
     SLuint            _numVertices;        //! NO. of vertices in array
     SLGLVertexBuffer  _vbo;                //! Vertex buffer object for float attributes
-    SLGLVertexBuffer* _externalVbo;        //! Vertex buffer object that has been created outside of this VAO
-    SLuint            _externalDivisor;    //! VBO attrib divisor for the external VBO
     SLuint            _idVBOIndices;       //! OpenGL id of index vbo
     size_t            _numIndicesElements; //! NO. of vertex indices in array for triangles, lines or points
     void*             _indexDataElements;  //! Pointer to index data for elements
     size_t            _numIndicesEdges;    //! NO. of vertex indices in array for hard edges
     void*             _indexDataEdges;     //! Pointer to index data for hard edges
     SLGLBufferType    _indexDataType;      //! index data type (ubyte, ushort, uint)
+    SLGLVertexBuffer* _instanceVbo;        //! Vertex buffer object containing the positions for instanced drawing
+    SLuint            _instanceDivisor;    //! instanceVBO divisor number
 };
 //-----------------------------------------------------------------------------
 
