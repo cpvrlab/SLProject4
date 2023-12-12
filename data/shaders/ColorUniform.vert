@@ -21,6 +21,7 @@ out     vec4  v_color;      // Resulting color per vertex
 //-----------------------------------------------------------------------------
 void main(void)
 {
+    gl_PointSize = 1.0;
     v_color = u_matDiff;
     gl_Position = u_pMatrix * u_vMatrix * u_mMatrix * a_position;
 }

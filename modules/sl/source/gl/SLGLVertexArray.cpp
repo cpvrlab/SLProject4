@@ -238,8 +238,12 @@ void SLGLVertexArray::generate(SLuint          numVertices,
                _numIndicesEdges * (SLuint)typeSize);
 
         glGenBuffers(1, &_idVBOIndices);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _idVBOIndices);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, tmBufSize, tmpBuf, GL_STATIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
+                     _idVBOIndices);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                     tmBufSize,
+                     tmpBuf,
+                     GL_STATIC_DRAW);
         SLGLVertexBuffer::totalBufferCount++;
         SLGLVertexBuffer::totalBufferSize += tmBufSize;
         delete[] tmpBuf;
@@ -434,9 +438,6 @@ void SLGLVertexArray::drawElementsAs(SLGLPrimitiveType primitiveType,
 /*!
  * Draws the vertex attributes as a specified primitive type as the vertices
  * are defined in the attribute arrays.
- * @param primitiveType
- * @param firstVertex
- * @param countVertices
  */
 void SLGLVertexArray::drawArrayAs(SLGLPrimitiveType primitiveType,
                                   SLint             firstVertex,
@@ -555,7 +556,7 @@ void SLGLVertexArray::drawEdges(SLCol4f color,
     // Set uniform color
     glUniform4fv(sp->getUniformLocation("u_matDiff"), 1, (SLfloat*)&color);
 
-#ifndef SL_GLES
+#if not defined(SL_GLES) && not defined(SL_EMSCRIPTEN)
     if (lineWidth != 1.0f)
         glLineWidth(lineWidth);
 #endif
@@ -566,9 +567,9 @@ void SLGLVertexArray::drawEdges(SLCol4f color,
                    (SLuint)_numIndicesElements);
     //////////////////////////////////////////////////////
 
-#ifndef SL_GLES
+#if not defined(SL_GLES) && not defined(SL_EMSCRIPTEN)
     if (lineWidth != 1.0f)
-        glPointSize(1.0f);
+        glLineWidth(1.0f);
 #endif
 
     GET_GL_ERROR;

@@ -67,7 +67,7 @@ void SLGLVertexArrayExt::drawArrayAsColored(SLGLPrimitiveType primitiveType,
     // Set uniform color
     glUniform4fv(sp->getUniformLocation("u_matDiff"), 1, (SLfloat*)&color);
 
-#ifndef SL_GLES
+#if not defined(SL_GLES) && not defined(SL_EMSCRIPTEN)
     if (pointSize != 1.0f)
         if (primitiveType == PT_points)
             glPointSize(pointSize);
@@ -79,7 +79,7 @@ void SLGLVertexArrayExt::drawArrayAsColored(SLGLPrimitiveType primitiveType,
                 (SLsizei)countVertices);
     //////////////////////////////////////
 
-#ifndef SL_GLES
+#if not defined(SL_GLES) && not defined(SL_EMSCRIPTEN)
     if (pointSize != 1.0f)
         if (primitiveType == PT_points)
             glPointSize(1.0f);
@@ -114,7 +114,7 @@ void SLGLVertexArrayExt::drawElementAsColored(SLGLPrimitiveType primitiveType,
     // Set uniform color
     glUniform4fv(sp->getUniformLocation("u_matDiff"), 1, (SLfloat*)&color);
 
-#ifndef SL_GLES
+#if not defined(SL_GLES) && not defined(SL_EMSCRIPTEN)
     if (pointSize != 1.0f)
         if (primitiveType == PT_points)
             glPointSize(pointSize);
@@ -126,7 +126,7 @@ void SLGLVertexArrayExt::drawElementAsColored(SLGLPrimitiveType primitiveType,
                    countVertices);
     ////////////////////////////////
 
-#ifndef SL_GLES
+#if not defined(SL_GLES) && not defined(SL_EMSCRIPTEN)
     if (pointSize != 1.0f)
         if (primitiveType == PT_points)
             glPointSize(1.0f);

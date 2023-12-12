@@ -100,9 +100,8 @@ SLLightDirect::~SLLightDirect()
 }
 //-----------------------------------------------------------------------------
 /*!
-SLLightDirect::init sets the light id, the light states & creates an
-emissive mat.
-@todo properly remove this function and find a clean way to init lights in a scene
+ * SLLightDirect::init sets the light id, the light states & creates an emissive
+ * material.
 */
 void SLLightDirect::init(SLScene* s)
 {

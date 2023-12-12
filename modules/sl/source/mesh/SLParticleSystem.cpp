@@ -588,6 +588,8 @@ void SLParticleSystem::pauseOrResume()
  * have been culled by the frustum culling or if they have been resumed by the
  * user. After I update the particle in the update pass, then and finally I
  * draw them.
+ @todo The assignment of TF buffer to a rendering buffer causes most probably
+ a warning on Emscripten-WebGL
  */
 void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
 {
@@ -760,15 +762,17 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
             spTF->uniform1f("u_angularVelo",
                             _angularVelocityConst * DEG2RAD);
 
-        //////////////////////
-        // Draw call to update
-        //////////////////////
+        /////////////////////////
+        // Draw call to update //
+        /////////////////////////
 
         if (_drawBuf == 0)
         {
             _vao1.beginTF(_vao2.tfoID());
             _vao1.drawArrayAs(PT_points);
             _vao1.endTF();
+
+            // @todo The assignment of TF buffer to a rendering buffer causes most probably a warning on Emscripten-WebGL
             _vao = _doInstancedDrawing ? _instanceVao2 : _vao2;
         }
         else
@@ -776,6 +780,8 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
             _vao2.beginTF(_vao1.tfoID());
             _vao2.drawArrayAs(PT_points);
             _vao2.endTF();
+
+            // @todo The assignment of TF buffer to a rendering buffer causes most probably a warning on Emscripten-WebGL
             _vao = _doInstancedDrawing ? _instanceVao1 : _vao1;
         }
         _updateTime.set(GlobalTimer::timeMS() - _startUpdateTimeMS);
