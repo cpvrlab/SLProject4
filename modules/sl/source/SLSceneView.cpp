@@ -651,7 +651,8 @@ SLbool SLSceneView::draw3DGL(SLfloat elapsedTimeMS)
 
     // Update camera animation separately (smooth transition on key movement)
     // todo: ghm1: this is currently only necessary for walking animation (which is somehow always enabled)
-    // A problem is also, that it only updates the current camera. This is maybe not what we want for sensor rotated camera.
+    // A problem is also, that it only updates the current camera.
+    // This is maybe not what we want for sensor rotated camera.
 
     SLbool camUpdated = _camera->camUpdate(this, elapsedTimeMS);
 
@@ -686,7 +687,8 @@ SLbool SLSceneView::draw3DGL(SLfloat elapsedTimeMS)
 
     // Render solid color, gradient or textured background from active camera
     if (!_s->skybox())
-        _camera->background().render(_viewportRect.width, _viewportRect.height);
+        _camera->background().render(_viewportRect.width,
+                                     _viewportRect.height);
 
     // Change state (only when changed)
     stateGL->multiSample(_doMultiSampling);
@@ -825,13 +827,14 @@ void SLSceneView::draw3DGLAll()
     // e) Draw helpers in overlay mode (not depth buffered)
     for (auto material : _visibleMaterials3D)
         draw3DGLLinesOverlay(material->nodesVisible3D());
+
     draw3DGLLinesOverlay(_nodesOverdrawn);
     draw3DGLLinesOverlay(_nodesOpaque3D);
 
     // f) Draw visualization lines of animation curves
     _s->animManager().drawVisuals(this);
 
-    // Turn blending off again for correct anaglyph stereo modes
+    // g) Turn blending off again for correct anaglyph stereo modes
     SLGLState* stateGL = SLGLState::instance();
     stateGL->blend(false);
     stateGL->depthMask(true);
@@ -1085,8 +1088,8 @@ void SLSceneView::draw2DGL()
             stateGL->depthMask(false); // Freeze depth buffer for blending
             stateGL->depthTest(false); // Disable depth testing
             _camera->selectRect().drawGL(SLCol4f::WHITE);
-            stateGL->depthMask(true);  // enable depth buffer writing
-            stateGL->depthTest(true);  // enable depth testing
+            stateGL->depthMask(true); // enable depth buffer writing
+            stateGL->depthTest(true); // enable depth testing
             stateGL->viewMatrix = prevViewMat;
         }
 
@@ -1100,8 +1103,8 @@ void SLSceneView::draw2DGL()
             stateGL->depthMask(false); // Freeze depth buffer for blending
             stateGL->depthTest(false); // Disable depth testing
             _camera->deselectRect().drawGL(SLCol4f::MAGENTA);
-            stateGL->depthMask(true);  // enable depth buffer writing
-            stateGL->depthTest(true);  // enable depth testing
+            stateGL->depthMask(true); // enable depth buffer writing
+            stateGL->depthTest(true); // enable depth testing
             stateGL->viewMatrix = prevViewMat;
         }
     }
@@ -2049,14 +2052,14 @@ void SLSceneView::saveFrameBufferAsImage(SLstring pathFilename,
         CVMat rgbImg = CVMat(fbH, fbW, CV_8UC3, (void*)buffer.data(), stride);
         cv::cvtColor(rgbImg, rgbImg, cv::COLOR_BGR2RGB);
 #else
-        CVMat   rgbImg     = CVMat(fbH,
+        CVMat rgbImg = CVMat(fbH,
                              fbW,
                              CV_8UC4,
                              (void*)buffer.data(),
                              stride);
         cv::cvtColor(rgbImg, rgbImg, cv::COLOR_RGBA2RGB);
-        nrChannels  = 3;
-        stride      = nrChannels * fbW;
+        nrChannels = 3;
+        stride     = nrChannels * fbW;
 #endif
 
         cv::flip(rgbImg, rgbImg, 0);

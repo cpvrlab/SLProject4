@@ -364,20 +364,19 @@ bool SLNode::removeChild(SLNode* child)
     return false;
 }
 //-----------------------------------------------------------------------------
+//! Initializer function to call SLNode::cull3DRec recursively
 void SLNode::cullChildren3D(SLSceneView* sv)
 {
     for (auto* child : _children)
         child->cull3DRec(sv);
 }
 //-----------------------------------------------------------------------------
-/*!
-Does the view frustum culling by checking whether the AABB is inside the 3D
-cameras view frustum. The check is done in world space. If a AABB is visible
-the nodes children are checked recursively.
-If a node is visible its mesh material is added to the
-SLSceneview::_visibleMaterials3D set and the node to the
-SLMaterials::nodesVisible3D vector.
-See also SLSceneView::draw3DGLAll for more details.
+/*! Does the view frustum culling by checking whether the AABB is inside the 3D
+ * cameras view frustum. The check is done in world space. If a AABB is visible
+ * the nodes children are checked recursively. If a node is visible its mesh
+ * material is added to the SLSceneview::_visibleMaterials3D set and the node
+ * to the SLMaterials::nodesVisible3D vector. See also SLSceneView::draw3DGLAll
+ * for more details.
 */
 void SLNode::cull3DRec(SLSceneView* sv)
 {
@@ -407,9 +406,7 @@ void SLNode::cull3DRec(SLSceneView* sv)
             cullChildren3D(sv);
 
             if (this->drawBit(SL_DB_OVERDRAW))
-            {
                 sv->nodesOverdrawn().push_back(this);
-            }
             else
             {
                 // All nodes with meshes get rendered sorted by their material

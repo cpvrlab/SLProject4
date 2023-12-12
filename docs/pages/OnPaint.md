@@ -19,51 +19,30 @@ timer involved.
          * 3) SLAnimManager::update: Updates all animations.
          * 4) SLNode::updateAABBRec: Updates the axis aligned bounding boxes of all nodes that have changed during animation.
    * **SLInterface.h: slPaintAllViews()**:
-      * SLSceneView::onPaint called for every sceneview:
-         * SLSceneView::draw3DGL
-            * SLCamera::camUpdate updates any camera animation (smooth transitions)
-            * All buffers are cleared (color, depth and Oculus frame buffer)
-            * **Camera Settings**:
-               * SLCamera::setProjection sets the projection
-                 (perspective, orthographic or one of the stereo projections) and viewport.
-                 On stereo the projection for the left eye is set.
-               * SLCamera::setView applies the view transform.
-            * **Frustum Culling**:
+      * **SLSceneView::onPaint** called for every sceneview:
+         * **SLSceneView::draw3DGL**
+            * 1) Render all shadow maps from the light position and direction.
+            * 2) Do camera update (smooth transitions from keyboard entries).
+            * 3) Clear color and depth buffers.
+            * 4) Set Viewports with SLCamera::setViewport depending on its projection
+            * 5) Render Background with SLCamera::background: single color, smooth gradient or video image.
+            * 6) Set SLCamera::setProjection and SLCamera::setView.
+            * 7) Frustum Culling
                * SLCamera::setFrustumPlanes set the cameras frustum planes according to the
                  current projection and view transform.
-               * SLNode::cullRec called on the root node:
-                  * All nodes are checked if they are visible.
-                     * All visible nodes without transparencies (opaque) are added to the _opaqueNodes vector.
-                     * All visible nodes with transparencies are added to the _blendNodes vector.
-            * SLSceneView::draw3DGLAll:
-               * Blending is turned off and the depth test on
-               * SLSceneView::draw3DGLNodes is called for every node in the _opaqueNodes vector:
-                  * The view matrix is applied to the modelview matrix
-                  * The nodes world matrix is applied to the modelview matrix
-                  * SLMesh::draw is called on all meshes of the node:
-                     * 1) Apply the drawing bits
-                     * 2) Apply the uniform variables to the shader
-                        * 2a) Activate a shader program if it is not yet in use and apply all its material parameters.
-                        * 2b) Pass the modelview and modelview-projection matrix to the shader.
-                        * 2c) If needed build and pass the inverse modelview and the normal matrix.
-                        * 2d) If the mesh has a skeleton and HW skinning is applied pass the joint matrices.
-                     * 3) Build the vertex attribute object once
-                     * <span style="color:red"><strong>4) Finally do the draw call</strong></span>
-                     * 5) Draw optional normals & tangents
-                     * 6) Draw optional acceleration structure
-                     * 7) Draw optional the selected node
-               * SLSceneView::draw3DGLLines: for every node in the _opaqueNodes vector:
-                 * The view matrix is applied to the modelview matrix
-                 * If the drawbit for viewing the AABBs is set SLAABBox::drawWS draws it.
-                 * If the drawbit for viewing the axis is set SLAABBox::drawAxisWS draws it.
-               * SLSceneView::draw3DGLLines: for every node in the _blendNodes vector the same as above.
-               * Blending is turned on and the depth test off.
-               * The nodes of the _blendNotes get sorted by depth for correct transparency blending.
-               * SLSceneView::draw3DGLNodes is called for every node in the _blendNodes vector (same as above).
-               * Blending is turned off and the depth test on again.
-            * SLSceneView::draw3DGLAll:
-               * ... (the same but for the right eye of stereo projections)
-         * SLSceneView::draw2DGL is called for all 2D drawing
+               * SLNode::cull3DRec gets called on the root node:
+                  * All nodes that are checked as visible get assigned to their meshes material nodesVisible3D vector.
+            * 8) Skybox Drawing: If a skybox is set, this gets drawn first around the camera with depth-buffer turned off.
+            * 9) Draw all visible nodes with **SLSceneView::draw3DGLAll**:
+               * a) Draw nodes with meshes with opaque materials and all helper lines sorted by material.
+               * b) Draw remaining opaque nodes without meshes.
+               * c) Draw nodes with meshes with blended materials sorted by material and sorted back to front.
+               * d) Draw remaining blended nodes (SLText, needs redesign).
+               * e) Draw helpers in overlay mode (not depth buffered).
+               * f) Draw visualization lines of animation curves.
+               * g) Turn blending off again for correct anaglyph stereo modes.
+            * 10) Draw right eye for stereo projection.
+         * **SLSceneView::draw2DGL** is called for all 2D drawing
             * 1) The orthographic projection and viewport in screen space is set.
             * 2) A pseudo culling step for all nodes on the _root2D scene.
             * 3) SLSceneView::draw2DGLNodes:

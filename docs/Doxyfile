@@ -921,6 +921,7 @@ INPUT                  = ../modules/sl/source \
                          pages/ExampleLevelOfDetail.md \
                          pages/ExampleNodeAnimations.md \
                          pages/ExamplePathtracing.md \
+                         pages/ExampleParticles.md \
                          pages/ExampleRaytracing.md \
                          pages/ExampleRevolver.md \
                          pages/ExampleScenes.md \
