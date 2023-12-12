@@ -11,6 +11,6 @@ else()
         add_subdirectory(app_demo_slproject)
 
     if (SL_BUILD_WEBGPU_DEMO AND NOT ("${SYSTEM_NAME_UPPER}" MATCHES "EMSCRIPTEN"))
-        add_subdirectory(webgpu)
+        add_subdirectory(app_demo_webgpu)
     endif ()
 endif()

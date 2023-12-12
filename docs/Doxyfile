@@ -914,6 +914,7 @@ INPUT                  = ../modules/sl/source \
                          ../apps/app_demo_slproject/include \
                          ../apps/app_demo_slproject/glfw \
                          ../apps/app_demo_slproject/source \
+                         ../apps/app_demo_webgpu \
                          pages/Introduction.md \
                          pages/ExampleScenes.md \
                          pages/ExampleGlTF.md \

@@ -1,5 +1,59 @@
-/*
+//#############################################################################
+//  File:      app_demo_webgpu.cpp
+//  Date:      Summer 2023
+//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
+//  Authors:   Marino von Wattenwyl
+//  License:   This software is provided under the GNU General Public License
+//             Please visit: http://opensource.org/licenses/GPL-3.0
+//#############################################################################
 
+//////////////////////////////////////////////////////////////////////////////
+// Please read the documentation for the WebGpuDemoApp struct further below //
+//////////////////////////////////////////////////////////////////////////////
+
+#if defined(_WIN32)
+#    define SYSTEM_WINDOWS
+#    define GLFW_EXPOSE_NATIVE_WIN32
+#    define WIN32_LEAN_AND_MEAN
+#    include <windows.h>
+#elif defined(__linux__)
+#    define SYSTEM_LINUX
+#    define GLFW_EXPOSE_NATIVE_X11
+#elif defined(__APPLE__)
+#    ifndef SYSTEM_DARWIN
+#        define SYSTEM_DARWIN
+#    endif
+#    define GLFW_EXPOSE_NATIVE_COCOA
+#endif
+//-----------------------------------------------------------------------------
+#include <webgpu.h>
+#include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
+#include <SLMat4.h>
+#include <SLVec4.h>
+
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+#include <cstring>
+
+#ifdef SYSTEM_DARWIN
+extern "C" void* createMetalLayer(void* window);
+#endif
+//-----------------------------------------------------------------------------
+#define WEBGPU_DEMO_LOG(msg) std::cout << (msg) << std::endl
+//-----------------------------------------------------------------------------
+#define WEBGPU_DEMO_CHECK(condition, errorMsg) \
+    if (!(condition)) \
+    { \
+        std::cerr << (errorMsg) << std::endl; \
+        std::exit(1); \
+    }
+//-----------------------------------------------------------------------------
+//! Application Struct WebGpuDemoApp with all global variables and documentation
+/*!
 -- Overview
 
 WebGPU is a graphics API standard developed by the World Wide Web Consortium (W3C). It is an abstraction layer
@@ -10,13 +64,13 @@ compute functionality is available.
 The primary target for WebGPU was the Web as a replacement for the old WebGL API. This means that
 the specification is written for a JavaScript API. However, Google and Mozilla have decided to provide their in-browser
 implementations as native libraries, so we can use WebGPU in native apps written in C, C++ or Rust. The implementers
-have agreed on a common interface for their libraries in form of a header called `webgpu.h`
+have agreed on a common interface for their libraries in form of a header called `app_demo_webgpu.h`
 (https://github.com/webgpu-native/webgpu-headers/).
 
 There are currently three implementations of this header:
     - wgpu-native: Mozilla's implementation for Firefox, written in Rust
     - Dawn: Google's implementation for Chromium, written in C++
-    - Emscripten: Translates the webgpu.h calls to JavaScript calls in the browser
+    - Emscripten: Translates the app_demo_webgpu.h calls to JavaScript calls in the browser
 
 WebGPU uses its own shader language called WGSL (WebGPU Shader Language). This is the only shader language supported
 in the browsers even though the native implementations also support SPIR-V.
@@ -189,48 +243,8 @@ Here's a list of things I've noticed are handled differently from Vulkan (as of 
         most of the time a nice error message with a human-readable error message including the labels of the
         problematic objects, suggests fixes and even generates a stack trace. I'm not sure what the overhead of
         this validation is, but I excpect there to be an option to turn it off in the future.
-
 */
-
-#if defined(_WIN32)
-#    define SYSTEM_WINDOWS
-#    define GLFW_EXPOSE_NATIVE_WIN32
-#    define WIN32_LEAN_AND_MEAN
-#    include <windows.h>
-#elif defined(__linux__)
-#    define SYSTEM_LINUX
-#    define GLFW_EXPOSE_NATIVE_X11
-#elif defined(__APPLE__)
-#    ifndef SYSTEM_DARWIN
-#        define SYSTEM_DARWIN
-#    endif
-#    define GLFW_EXPOSE_NATIVE_COCOA
-#endif
-
-#include <webgpu.h>
-#include <GLFW/glfw3.h>
-#include <GLFW/glfw3native.h>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/imgproc.hpp>
-#include <SLMat4.h>
-#include <SLVec4.h>
-
-#include <iostream>
-#include <vector>
-#include <cstdlib>
-#include <cstdint>
-#include <cstring>
-
-#define WEBGPU_DEMO_LOG(msg) std::cout << (msg) << std::endl
-
-#define WEBGPU_DEMO_CHECK(condition, errorMsg) \
-    if (!(condition)) \
-    { \
-        std::cerr << (errorMsg) << std::endl; \
-        std::exit(1); \
-    }
-
-struct App
+struct WebGpuDemoApp
 {
     GLFWwindow* window        = nullptr;
     int         surfaceWidth  = 0;
@@ -268,7 +282,7 @@ struct App
     float camRotY = 0.0f;
     float camZ    = 2.0f;
 };
-
+//-----------------------------------------------------------------------------
 struct VertexData
 {
     float positionX;
@@ -280,21 +294,17 @@ struct VertexData
     float uvX;
     float uvY;
 };
-
+//-----------------------------------------------------------------------------
 struct alignas(16) ShaderUniformData
 {
     float projectionMatrix[16];
     float viewMatrix[16];
     float modelMatrix[16];
 };
-
+//-----------------------------------------------------------------------------
 static_assert(sizeof(ShaderUniformData) % 16 == 0, "uniform data size must be a multiple of 16");
-
-#ifdef SYSTEM_DARWIN
-extern "C" void* createMetalLayer(void* window);
-#endif
-
-void reconfigureSurface(App& app)
+//-----------------------------------------------------------------------------
+void reconfigureSurface(WebGpuDemoApp& app)
 {
     // Get the window size from the GLFW window.
     glfwGetWindowSize(app.window, &app.surfaceWidth, &app.surfaceHeight);
@@ -325,8 +335,8 @@ void reconfigureSurface(App& app)
     WEBGPU_DEMO_CHECK(app.depthTextureView, "[WebGPU] Failed to re-create depth texture view");
     WEBGPU_DEMO_LOG("[WebGPU] Depth texture view re-created");
 }
-
-void onPaint(App& app)
+//-----------------------------------------------------------------------------
+void onPaint(WebGpuDemoApp& app)
 {
     if (app.surfaceWidth == 0 || app.surfaceHeight == 0)
         return;
@@ -472,15 +482,15 @@ void onPaint(App& app)
     wgpuTextureViewRelease(view);
     wgpuTextureRelease(surfaceTexture.texture);
 }
-
+//-----------------------------------------------------------------------------
 void onResize(GLFWwindow* window, int width, int height)
 {
-    App& app = *((App*)glfwGetWindowUserPointer(window));
+    WebGpuDemoApp& app = *((WebGpuDemoApp*)glfwGetWindowUserPointer(window));
     reconfigureSurface(app);
     onPaint(app);
 }
-
-void initGLFW(App& app)
+//-----------------------------------------------------------------------------
+void initGLFW(WebGpuDemoApp& app)
 {
     // === Initialize GLFW ===
 
@@ -499,7 +509,7 @@ void initGLFW(App& app)
     glfwSetWindowUserPointer(app.window, &app);
     glfwSetFramebufferSizeCallback(app.window, onResize);
 }
-
+//-----------------------------------------------------------------------------
 void handleAdapterRequest(WGPURequestAdapterStatus status,
                           WGPUAdapter              adapter,
                           char const*              message,
@@ -512,7 +522,7 @@ void handleAdapterRequest(WGPURequestAdapterStatus status,
     WGPUAdapter* outAdapter = (WGPUAdapter*)userdata;
     *outAdapter             = adapter;
 }
-
+//-----------------------------------------------------------------------------
 void handleDeviceRequest(WGPURequestDeviceStatus status,
                          WGPUDevice              device,
                          char const*             message,
@@ -525,8 +535,8 @@ void handleDeviceRequest(WGPURequestDeviceStatus status,
     WGPUDevice* outDevice = (WGPUDevice*)userdata;
     *outDevice            = device;
 }
-
-void initWebGPU(App& app)
+//-----------------------------------------------------------------------------
+void initWebGPU(WebGpuDemoApp& app)
 {
     // === Create a WebGPU instance ===
     // The instance is the root interface to WebGPU through which we create all other WebGPU resources.
@@ -1102,8 +1112,8 @@ void initWebGPU(App& app)
     WEBGPU_DEMO_CHECK(app.pipeline, "[WebGPU] Failed to create render pipeline");
     WEBGPU_DEMO_LOG("[WebGPU] Render pipeline created");
 }
-
-void deinitWebGPU(App& app)
+//-----------------------------------------------------------------------------
+void deinitWebGPU(WebGpuDemoApp& app)
 {
     // === Release all WebGPU resources ===
 
@@ -1133,8 +1143,8 @@ void deinitWebGPU(App& app)
 
     WEBGPU_DEMO_LOG("[WebGPU] Resources released");
 }
-
-void deinitGLFW(App& app)
+//-----------------------------------------------------------------------------
+void deinitGLFW(WebGpuDemoApp& app)
 {
     // === Destroy the window and terminate GLFW ===
 
@@ -1142,10 +1152,11 @@ void deinitGLFW(App& app)
     glfwTerminate();
     WEBGPU_DEMO_LOG("[GLFW] Window closed and terminated");
 }
-
+//-----------------------------------------------------------------------------
 int main(int argc, const char* argv[])
 {
-    App app;
+    WebGpuDemoApp app;
+
     initGLFW(app);
     initWebGPU(app);
 
@@ -1180,3 +1191,4 @@ int main(int argc, const char* argv[])
 
     return 0;
 }
+//-----------------------------------------------------------------------------
