@@ -1,5 +1,5 @@
 //#############################################################################
-//  File:      app_demo_webgpu.cpp
+//  File:      AppDemoWebGPU.cpp
 //  Date:      Summer 2023
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
 //  Authors:   Marino von Wattenwyl
@@ -8,7 +8,7 @@
 //#############################################################################
 
 //////////////////////////////////////////////////////////////////////////////
-// Please read the documentation for the WebGpuDemoApp struct further below //
+// Please read the documentation for the WebGPUDemoApp struct further below //
 //////////////////////////////////////////////////////////////////////////////
 
 #if defined(_WIN32)
@@ -39,6 +39,7 @@
 #include <cstdlib>
 #include <cstring>
 
+//-----------------------------------------------------------------------------
 #ifdef SYSTEM_DARWIN
 extern "C" void* createMetalLayer(void* window);
 #endif
@@ -52,7 +53,7 @@ extern "C" void* createMetalLayer(void* window);
         std::exit(1); \
     }
 //-----------------------------------------------------------------------------
-//! Application Struct WebGpuDemoApp with all global variables and documentation
+//! Application struct WebGPUDemoApp with all global variables and documentation
 /*!
 
 Overview:
@@ -65,13 +66,13 @@ compute functionality is available.
 The primary target for WebGPU was the Web as a replacement for the old WebGL API. This means that
 the specification is written for a JavaScript API. However, Google and Mozilla have decided to provide their in-browser
 implementations as native libraries, so we can use WebGPU in native apps written in C, C++ or Rust. The implementers
-have agreed on a common interface for their libraries in form of a header called `app_demo_webgpu.h`
+have agreed on a common interface for their libraries in form of a header called `webgpu.h`
 (https://github.com/webgpu-native/webgpu-headers/).
 
 There are currently three implementations of this header:
     - wgpu-native: Mozilla's implementation for Firefox, written in Rust
     - Dawn: Google's implementation for Chromium, written in C++
-    - Emscripten: Translates the app_demo_webgpu.h calls to JavaScript calls in the browser
+    - Emscripten: Translates webgpu.h calls to calls to the WebGPU JavaScript API in the browser
 
 WebGPU uses its own shader language called WGSL (WebGPU Shader Language). This is the only shader language supported
 in the browsers even though the native implementations also support SPIR-V.
@@ -245,7 +246,7 @@ Here's a list of things I've noticed are handled differently from Vulkan (as of 
         problematic objects, suggests fixes and even generates a stack trace. I'm not sure what the overhead of
         this validation is, but I excpect there to be an option to turn it off in the future.
 */
-struct WebGpuDemoApp
+struct WebGPUDemoApp
 {
     GLFWwindow* window        = nullptr;
     int         surfaceWidth  = 0;
@@ -305,7 +306,7 @@ struct alignas(16) ShaderUniformData
 //-----------------------------------------------------------------------------
 static_assert(sizeof(ShaderUniformData) % 16 == 0, "uniform data size must be a multiple of 16");
 //-----------------------------------------------------------------------------
-void reconfigureSurface(WebGpuDemoApp& app)
+void reconfigureSurface(WebGPUDemoApp& app)
 {
     // Get the window size from the GLFW window.
     glfwGetWindowSize(app.window, &app.surfaceWidth, &app.surfaceHeight);
@@ -337,7 +338,7 @@ void reconfigureSurface(WebGpuDemoApp& app)
     WEBGPU_DEMO_LOG("[WebGPU] Depth texture view re-created");
 }
 //-----------------------------------------------------------------------------
-void onPaint(WebGpuDemoApp& app)
+void onPaint(WebGPUDemoApp& app)
 {
     if (app.surfaceWidth == 0 || app.surfaceHeight == 0)
         return;
@@ -486,12 +487,12 @@ void onPaint(WebGpuDemoApp& app)
 //-----------------------------------------------------------------------------
 void onResize(GLFWwindow* window, int width, int height)
 {
-    WebGpuDemoApp& app = *((WebGpuDemoApp*)glfwGetWindowUserPointer(window));
+    WebGPUDemoApp& app = *((WebGPUDemoApp*)glfwGetWindowUserPointer(window));
     reconfigureSurface(app);
     onPaint(app);
 }
 //-----------------------------------------------------------------------------
-void initGLFW(WebGpuDemoApp& app)
+void initGLFW(WebGPUDemoApp& app)
 {
     // === Initialize GLFW ===
 
@@ -537,7 +538,7 @@ void handleDeviceRequest(WGPURequestDeviceStatus status,
     *outDevice            = device;
 }
 //-----------------------------------------------------------------------------
-void initWebGPU(WebGpuDemoApp& app)
+void initWebGPU(WebGPUDemoApp& app)
 {
     // === Create a WebGPU instance ===
     // The instance is the root interface to WebGPU through which we create all other WebGPU resources.
@@ -1114,7 +1115,7 @@ void initWebGPU(WebGpuDemoApp& app)
     WEBGPU_DEMO_LOG("[WebGPU] Render pipeline created");
 }
 //-----------------------------------------------------------------------------
-void deinitWebGPU(WebGpuDemoApp& app)
+void deinitWebGPU(WebGPUDemoApp& app)
 {
     // === Release all WebGPU resources ===
 
@@ -1145,7 +1146,7 @@ void deinitWebGPU(WebGpuDemoApp& app)
     WEBGPU_DEMO_LOG("[WebGPU] Resources released");
 }
 //-----------------------------------------------------------------------------
-void deinitGLFW(WebGpuDemoApp& app)
+void deinitGLFW(WebGPUDemoApp& app)
 {
     // === Destroy the window and terminate GLFW ===
 
@@ -1156,7 +1157,7 @@ void deinitGLFW(WebGpuDemoApp& app)
 //-----------------------------------------------------------------------------
 int main(int argc, const char* argv[])
 {
-    WebGpuDemoApp app;
+    WebGPUDemoApp app;
 
     initGLFW(app);
     initWebGPU(app);
