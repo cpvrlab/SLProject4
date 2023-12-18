@@ -17,10 +17,11 @@ then
     echo "g2o directory doesn't exists"
     git clone https://github.com/RainerKuemmerle/g2o.git ../g2o
 fi
-git checkout $VERSION
 
 echo "Building g2o using the sources in the thirdparty directory"
 cd ../g2o
+
+git checkout $VERSION
 
 # Make build folder for debug version
 mkdir build
