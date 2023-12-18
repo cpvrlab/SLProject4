@@ -55,10 +55,11 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: prebuilt-g2o-mac64
-        path: ${{ github.workspace }}/externals/prebuit/mac64_g2o
+        path: ${{ github.workspace }}/externals/prebuilt/mac64_g2o
 
     - name: Archive prebuilt g2o arm
       uses: actions/upload-artifact@v3
       with:
         name: prebuilt-g2o-arm64
-        path: ${{ github.workspace }}/externals/prebuit/macArm64_g2o
+        path: ${{ github.workspace }}/externals/prebuilt/macArm64_g2o
+

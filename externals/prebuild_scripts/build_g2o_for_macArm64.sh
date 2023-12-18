@@ -71,6 +71,7 @@ cd ../.. # back to g2o
 # Create zip folder for debug and release version
 rm -rf $ZIPFOLDER
 mkdir $ZIPFOLDER
+echo "dst is $ZIPFOLDER/"
 cp -R $BUILD_R/install/include   $ZIPFOLDER/include
 cp -R $BUILD_R/install/lib       $ZIPFOLDER/Release
 cp -R $BUILD_D/install/lib       $ZIPFOLDER/Debug
