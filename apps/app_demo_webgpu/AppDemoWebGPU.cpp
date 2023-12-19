@@ -541,7 +541,8 @@ void handleDeviceRequest(WGPURequestDeviceStatus status,
 void initWebGPU(WebGPUDemoApp& app)
 {
     // === Create a WebGPU instance ===
-    // The instance is the root interface to WebGPU through which we create all other WebGPU resources.
+    // The instance is the root interface to WebGPU through which we create
+    // all other WebGPU resources.
 
     app.instance = wgpuCreateInstance(nullptr);
     WEBGPU_DEMO_CHECK(app.instance, "[WebGPU] Failed to create instance");
@@ -591,7 +592,10 @@ void initWebGPU(WebGPUDemoApp& app)
     deviceDesc.requiredLimits       = &requiredLimits;
     deviceDesc.defaultQueue.label   = "Demo Queue";
 
-    wgpuAdapterRequestDevice(app.adapter, &deviceDesc, handleDeviceRequest, &app.device);
+    wgpuAdapterRequestDevice(app.adapter,
+                             &deviceDesc,
+                             handleDeviceRequest,
+                             &app.device);
 
     // === Acquire a WebGPU queue ===
     // The queue is where the commands for the GPU are submitted to.
@@ -633,10 +637,14 @@ void initWebGPU(WebGPUDemoApp& app)
 
     // Query the surface capabilities from the adapter.
     WGPUSurfaceCapabilities surfaceCapabilities;
-    wgpuSurfaceGetCapabilities(app.surface, app.adapter, &surfaceCapabilities);
+    wgpuSurfaceGetCapabilities(app.surface,
+                               app.adapter,
+                               &surfaceCapabilities);
 
     // Get the window size from the GLFW window.
-    glfwGetFramebufferSize(app.window, &app.surfaceWidth, &app.surfaceHeight);
+    glfwGetFramebufferSize(app.window,
+                           &app.surfaceWidth,
+                           &app.surfaceHeight);
 
     app.surfaceConfig             = {};
     app.surfaceConfig.device      = app.device;
@@ -706,7 +714,11 @@ void initWebGPU(WebGPUDemoApp& app)
     WEBGPU_DEMO_LOG("[WebGPU] Vertex buffer created");
 
     // Upload the data to the GPU.
-    wgpuQueueWriteBuffer(app.queue, app.vertexBuffer, 0, vertexData.data(), app.vertexDataSize);
+    wgpuQueueWriteBuffer(app.queue,
+                         app.vertexBuffer,
+                         0,
+                         vertexData.data(),
+                         app.vertexDataSize);
 
     // === Create the index buffer ===
 
@@ -734,7 +746,11 @@ void initWebGPU(WebGPUDemoApp& app)
     WEBGPU_DEMO_CHECK(app.indexBuffer, "[WebGPU] Failed to create index buffer");
     WEBGPU_DEMO_LOG("[WebGPU] Index buffer created");
 
-    wgpuQueueWriteBuffer(app.queue, app.indexBuffer, 0, indexData.data(), app.indexDataSize);
+    wgpuQueueWriteBuffer(app.queue,
+                         app.indexBuffer,
+                         0,
+                         indexData.data(),
+                         app.indexDataSize);
 
     // === Create the uniform buffer ===
 
@@ -748,7 +764,11 @@ void initWebGPU(WebGPUDemoApp& app)
     WEBGPU_DEMO_LOG("[WebGPU] Uniform buffer created");
 
     ShaderUniformData uniformData = {};
-    wgpuQueueWriteBuffer(app.queue, app.uniformBuffer, 0, &uniformData, sizeof(ShaderUniformData));
+    wgpuQueueWriteBuffer(app.queue,
+                         app.uniformBuffer,
+                         0,
+                         &uniformData,
+                         sizeof(ShaderUniformData));
 
     // === Create the depth texture ===
 
@@ -832,7 +852,8 @@ void initWebGPU(WebGPUDemoApp& app)
     for (unsigned mipLevel = 0; mipLevel < textureDesc.mipLevelCount; mipLevel++)
     {
         cv::Mat  mipLevelImage;
-        cv::Size cvSize(static_cast<int>(mipLevelSize.width), static_cast<int>(mipLevelSize.height));
+        cv::Size cvSize(static_cast<int>(mipLevelSize.width),
+                        static_cast<int>(mipLevelSize.height));
         cv::resize(image, mipLevelImage, cvSize);
 
         std::size_t mipLevelBytes = 4ull * mipLevelSize.width * mipLevelSize.height;
@@ -842,7 +863,12 @@ void initWebGPU(WebGPUDemoApp& app)
         pixelDataLayout.rowsPerImage = mipLevelSize.height;
 
         // Upload the data to the GPU.
-        wgpuQueueWriteTexture(app.queue, &destination, mipLevelImage.data, mipLevelBytes, &pixelDataLayout, &mipLevelSize);
+        wgpuQueueWriteTexture(app.queue,
+                              &destination,
+                              mipLevelImage.data,
+                              mipLevelBytes,
+                              &pixelDataLayout,
+                              &mipLevelSize);
 
         // Scale the image down for the next mip level.
         mipLevelSize.width /= 2;
@@ -981,7 +1007,8 @@ void initWebGPU(WebGPUDemoApp& app)
     bindGroupLayoutDesc.entryCount                    = bindGroupLayoutEntries.size();
     bindGroupLayoutDesc.entries                       = bindGroupLayoutEntries.data();
 
-    app.bindGroupLayout = wgpuDeviceCreateBindGroupLayout(app.device, &bindGroupLayoutDesc);
+    app.bindGroupLayout = wgpuDeviceCreateBindGroupLayout(app.device,
+                                                          &bindGroupLayoutDesc);
     WEBGPU_DEMO_CHECK(app.bindGroupLayout, "[WebGPU] Failed to create bind group layout");
     WEBGPU_DEMO_LOG("[WebGPU] Bind group layout created");
 
@@ -1046,7 +1073,9 @@ void initWebGPU(WebGPUDemoApp& app)
     uvAttribute.offset              = 6 * sizeof(float);
     uvAttribute.shaderLocation      = 2;
 
-    std::vector<WGPUVertexAttribute> vertexAttributes = {positionAttribute, normalAttribute, uvAttribute};
+    std::vector<WGPUVertexAttribute> vertexAttributes = {positionAttribute,
+                                                         normalAttribute,
+                                                         uvAttribute};
 
     // Description of the vertex buffer layout for the vertex shader stage
     WGPUVertexBufferLayout vertexBufferLayout = {};
@@ -1185,6 +1214,7 @@ int main(int argc, const char* argv[])
         lastCursorY = cursorY;
 
         onPaint(app);
+
         glfwPollEvents();
     }
 
