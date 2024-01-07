@@ -928,6 +928,7 @@ INPUT                  = ../modules/sl/source \
                          pages/ExampleScenes.md \
                          pages/ExampleShadowMapping.md \
                          pages/ExampleSkinnedAnimations.md \
+                         pages/ExampleVolumeRendering.md \
                          pages/OnPaint.md \
                          pages/Emscripten.md \
                          pages/BlenderToSL.md \

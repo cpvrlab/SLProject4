@@ -15,3 +15,4 @@ See also \ref emscripten for more background information.
 - \subpage example-raytracing
 - \subpage example-pathtracing
 - \subpage example-particles
+- \subpage example-volume-rendering
