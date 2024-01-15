@@ -1,4 +1,4 @@
-name: Build g2o
+name: Build Openssl
 
 on:
   workflow_dispatch:
