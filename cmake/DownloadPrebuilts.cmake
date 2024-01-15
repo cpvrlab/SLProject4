@@ -136,6 +136,7 @@ function(copy_dylibs LIBS)
     endforeach ()
 endfunction ()
 
+
 #=======================================================================================================================
 if ("${SYSTEM_NAME_UPPER}" STREQUAL "LINUX")
 
@@ -157,7 +158,13 @@ if ("${SYSTEM_NAME_UPPER}" STREQUAL "LINUX")
     set(OpenCV_LIBS ${OpenCV_LINK_LIBS})
     set(OpenCV_LIBS_DEBUG ${OpenCV_LIBS})
     
-    build_external_lib("build_opencv_w_contrib_for_linux.sh" "${OpenCV_VERSION}" "${OpenCV_PREBUILT_DIR}")
+
+    if ("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+        download_lib("${OpenCV_PREBUILT_DIR}")
+    else ()
+        build_external_lib("build_opencv_w_contrib_for_linux.sh" "${OpenCV_VERSION}" "${OpenCV_PREBUILT_DIR}")
+    endif ()
+
 
     #################
     # g2o for Linux #
@@ -175,9 +182,12 @@ if ("${SYSTEM_NAME_UPPER}" STREQUAL "LINUX")
                 INTERFACE_INCLUDE_DIRECTORIES "${g2o_INCLUDE_DIR}")
         set(g2o_LIBS ${g2o_LIBS} ${lib})
     endforeach (lib)
-    
-    build_external_lib("build_g2o_for_linux.sh" "" "${g2o_PREBUILT_DIR}")
-    download_lib("${g2o_PREBUILT_DIR}")
+
+    if ("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+        download_lib("${g2o_PREBUILT_DIR}")
+    else ()
+        build_external_lib("build_g2o_for_linux.sh" "" "${g2o_PREBUILT_DIR}")
+    endif ()
 
     ####################
     # Assimp for Linux #
@@ -203,13 +213,18 @@ if ("${SYSTEM_NAME_UPPER}" STREQUAL "LINUX")
 
     set(assimp_LIBS assimp::assimp assimp::irrxml)
     
-    build_external_lib("build_assimp_for_linux.sh" "${assimp_VERSION}" "${assimp_PREBUILT_DIR}")
+    if ("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+        download_lib("${assimp_PREBUILT_DIR}")
+    else ()
+        build_external_lib("build_assimp_for_linux.sh" "${assimp_VERSION}" "${assimp_PREBUILT_DIR}")
+    endif ()
 
     #####################
     # OpenSSL for Linux #
     #####################
 
-    set(openssl_PREBUILT_DIR "linux_openssl")
+    set(openssl_VERSION "1.1.1h")
+    set(openssl_PREBUILT_DIR "linux_openssl_${openssl_VERSION}")
     set(openssl_DIR "${PREBUILT_PATH}/${openssl_PREBUILT_DIR}")
     set(openssl_INCLUDE_DIR ${openssl_DIR}/include)
 
@@ -222,7 +237,11 @@ if ("${SYSTEM_NAME_UPPER}" STREQUAL "LINUX")
         set(openssl_LIBS ${openssl_LIBS} ${lib})
     endforeach (lib)
     
-    build_external_lib("build_openssl_for_linux.sh" "OpenSSL_1_1_1h" "${openssl_PREBUILT_DIR}")
+    #if ("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+    #    download_lib("${openssl_PREBUILT_DIR}")
+    #else ()
+    build_external_lib("build_openssl_for_linux.sh" "" "${openssl_PREBUILT_DIR}")
+    #endif ()
 
     ####################
     # Vulkan for Linux #
