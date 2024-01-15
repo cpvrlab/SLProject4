@@ -13,23 +13,26 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: ilammy/msvc-dev-cmd@v1
+    - uses: ilammy/setup-nasm@v1
 
     #- name: Install winget
     #  uses: Cyberboss/install-winget@v1
 
     #- name: Install nasm
     #  run: winget install -e --id NASM.NASM
+    #- name: Download nasm
+    #  uses: https://www.nasm.us/pub/nasm/releasebuilds/2.16.01/win64/nasm-2.16.01-win64.zip
 
-    - name: Choco install nasm
-      uses: crazy-max/ghaction-chocolatey@v3
-      with: 
-        args: install nasm
+    #- name: Choco install nasm
+    #  uses: crazy-max/ghaction-chocolatey@v3
+    #  with: 
+    #    args: install nasm
 
     - name: Run build script
       working-directory: ${{ github.workspace }}/externals/prebuild_scripts/
       run: ./build_openssl_for_win64.bat
 
-    - name: Archive prebuilt g2o
+    - name: Archive prebuilt openssl windows
       uses: actions/upload-artifact@v3
       with:
         name: prebuilt-openssl-windows
