@@ -14,11 +14,16 @@ jobs:
     - uses: actions/checkout@v3
     - uses: ilammy/msvc-dev-cmd@v1
 
-    - name: Install winget
-      uses: Cyberboss/install-winget@v1
+    #- name: Install winget
+    #  uses: Cyberboss/install-winget@v1
 
-    - name: Install nasm
-      run: winget install -e --id NASM.NASM
+    #- name: Install nasm
+    #  run: winget install -e --id NASM.NASM
+
+    - name: Choco install nasm
+      uses: crazy-max/ghaction-chocolatey@v3
+      with: 
+        args: install nasm
 
     - name: Run build script
       working-directory: ${{ github.workspace }}/externals/prebuild_scripts/
