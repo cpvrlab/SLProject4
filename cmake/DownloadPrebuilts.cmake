@@ -560,7 +560,7 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "DARWIN" AND
     # g2o for MacOS-x86_64 #
     ########################
 
-    set(g2o_PREBUILT_DIR "mac64_g2o")
+    set(g2o_PREBUILT_DIR "mac64_g2o_20170730")
     set(g2o_DIR "${PREBUILT_PATH}/${g2o_PREBUILT_DIR}")
     set(g2o_INCLUDE_DIR "${g2o_DIR}/include")
 
@@ -765,7 +765,7 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "DARWIN" AND
     # g2o for MacOS-arm64 #
     #######################
 
-    set(g2o_PREBUILT_DIR "macArm64_g2o")
+    set(g2o_PREBUILT_DIR "macArm64_g2o_20170730")
     set(g2o_DIR "${PREBUILT_PATH}/${g2o_PREBUILT_DIR}")
     set(g2o_INCLUDE_DIR "${g2o_DIR}/include")
     
