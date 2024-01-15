@@ -163,7 +163,7 @@ if ("${SYSTEM_NAME_UPPER}" STREQUAL "LINUX")
     # g2o for Linux #
     #################
     
-    set(g2o_PREBUILT_DIR "linux_g2o")
+    set(g2o_PREBUILT_DIR "linux_g2o_20170730")
     set(g2o_DIR "${PREBUILT_PATH}/${g2o_PREBUILT_DIR}")
     set(g2o_INCLUDE_DIR "${g2o_DIR}/include")
 
@@ -177,6 +177,7 @@ if ("${SYSTEM_NAME_UPPER}" STREQUAL "LINUX")
     endforeach (lib)
     
     build_external_lib("build_g2o_for_linux.sh" "" "${g2o_PREBUILT_DIR}")
+    download_lib("${g2o_PREBUILT_DIR}")
 
     ####################
     # Assimp for Linux #
@@ -345,7 +346,7 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "WINDOWS") #----------------------------
     ###################
 
     if (SL_BUILD_WAI)
-        set(g2o_PREBUILT_DIR "win64_g2o")
+        set(g2o_PREBUILT_DIR "win64_g2o_20170730")
         set(g2o_DIR "${PREBUILT_PATH}/${g2o_PREBUILT_DIR}")
         set(g2o_INCLUDE_DIR "${g2o_DIR}/include")
         set(g2o_LIB_DIR "${g2o_DIR}/lib")
