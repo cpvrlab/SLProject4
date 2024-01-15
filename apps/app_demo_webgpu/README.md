@@ -33,7 +33,7 @@ link Dawn instead of wgpu-native, but we would have to build and distribute it o
 
 WebGPU follows a stateless design as opposed to OpenGL, where much state has to be set globally before making a
 draw call. To use WebGPU, we create objects with a call to wgpu*Create*. This function generally takes the parent
-object as a parameter and a WGPU*Descriptor that contains the specification for the object. The returned object
+object as a parameter and a WGPUDescriptor that contains the specification for the object. The returned object
 is released after usage with a call to wgpuRelease*. An object can have a label that is used when reporting errors.
 We can now call functions on the object to interact with them.
 
