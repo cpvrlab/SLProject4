@@ -38,7 +38,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: prebuilt-g2o-linux
-        path: ${{ github.workspace }}/externals/prebuit/linux_g2o
+        path: ${{ github.workspace }}/externals/prebuilt/linux_g2o
   build-macos:
     runs-on: macos-13
     steps:
