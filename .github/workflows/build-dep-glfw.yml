@@ -16,6 +16,9 @@ jobs:
     - name: install xrandr
       run: sudo apt-get install -y libxrandr-dev
 
+    - name: install xrandr
+      run: sudo apt-get install -y libxinerama-dev
+
     - name: Run build script
       working-directory: ${{ github.workspace }}/externals/prebuild_scripts/
       run: ./build_glfw_for_linux.sh 3.3.2
