@@ -237,11 +237,11 @@ if ("${SYSTEM_NAME_UPPER}" STREQUAL "LINUX")
         set(openssl_LIBS ${openssl_LIBS} ${lib})
     endforeach (lib)
     
-    #if ("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
-    #    download_lib("${openssl_PREBUILT_DIR}")
-    #else ()
-    build_external_lib("build_openssl_for_linux.sh" "" "${openssl_PREBUILT_DIR}")
-    #endif ()
+    if ("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+        download_lib("${openssl_PREBUILT_DIR}")
+    else ()
+        build_external_lib("build_openssl_for_linux.sh" "" "${openssl_PREBUILT_DIR}")
+    endif ()
 
     ####################
     # Vulkan for Linux #
