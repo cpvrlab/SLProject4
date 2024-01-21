@@ -13,6 +13,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: apt update
+      run: sudo apt-get update
+
     - name: install xorg-dev
       run: sudo apt-get install -y xorg-dev
 
