@@ -37,6 +37,7 @@ cmake \
     -DCMAKE_BUILD_TYPE=Debug \
     -DCMAKE_DEBUG_POSTFIX="" \
     -DEIGEN3_INCLUDE_DIR=../eigen \
+    -DG2O_USE_OPENGL=off \
     ../..
  
 # finally build it

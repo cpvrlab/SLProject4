@@ -54,11 +54,13 @@ cd $BUILD_R
  
 # Run cmake to configure and generate the make files
 cmake \
+    -DCMAKE_OSX_ARCHITECTURES=x86_64 \
     -DCMAKE_INSTALL_PREFIX=install \
     -DG2O_BUILD_APPS=off \
     -DG2O_BUILD_EXAMPLES=off \
     -DCMAKE_BUILD_TYPE=Release \
     -DEIGEN3_INCLUDE_DIR=../eigen \
+    -DG2O_USE_OPENGL=off \
     ../..
  
 # finally build it
