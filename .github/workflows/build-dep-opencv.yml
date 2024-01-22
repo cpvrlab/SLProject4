@@ -1,0 +1,54 @@
+name: Build OpenCV
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - build-workflow
+
+jobs:
+  build-windows:
+    runs-on: windows-2022
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Run build script
+      working-directory: ${{ github.workspace }}/externals/prebuild_scripts/
+      run: ./build_opencv_w_contrib_for_win64.bat 4.7.0
+
+    - name: Archive prebuilt opencv
+      uses: actions/upload-artifact@v3
+      with:
+        name: prebuilt-opencv-windows
+        path: ${{ github.workspace }}/externals/prebuild_scripts/win64_opencv_4.7.0
+  build-linux:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Run build script
+      working-directory: ${{ github.workspace }}/externals/prebuild_scripts/
+      run: ./build_opencv_w_contrib_for_linux.sh 4.7.0
+
+    - name: Archive prebuilt opencv
+      uses: actions/upload-artifact@v3
+      with:
+        name: prebuilt-opencv-linux
+        path: ${{ github.workspace }}/externals/prebuilt/linux_opencv_4.7.0
+  build-macos:
+    runs-on: macos-13
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run build script intel
+      working-directory: ${{ github.workspace }}/externals/prebuild_scripts/
+      run: arch -x86_64 ./build_opencv_w_contrib_for_mac64.sh 4.7.0
+
+    - name: Archive prebuilt opencv intel
+      uses: actions/upload-artifact@v3
+      with:
+        name: prebuilt-opencv-mac intel
+        path: ${{ github.workspace }}/externals/prebuild_scripts/opencv/build/mac64_opencv_4.7.0
+
