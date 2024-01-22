@@ -1,10 +1,7 @@
-name: Build Openssl
+name: Build dependancy OpenSSL
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - build-workflow
 
 jobs:
   build-windows:

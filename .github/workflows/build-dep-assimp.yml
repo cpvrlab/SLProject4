@@ -1,10 +1,7 @@
-name: Build Assimp
+name: Build Dependancy Assimp
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - build-workflow
 
 jobs:
   build-linux:

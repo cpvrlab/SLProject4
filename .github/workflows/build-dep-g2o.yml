@@ -1,10 +1,7 @@
-name: Build g2o
+name: Build dependancy G2O
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - build-workflow
 
 jobs:
   build-windows:

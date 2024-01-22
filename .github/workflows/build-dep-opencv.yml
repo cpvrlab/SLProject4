@@ -1,10 +1,7 @@
-name: Build OpenCV
+name: Build dependancy OpenCV
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - build-workflow
 
 jobs:
   build-windows:
