@@ -24,6 +24,7 @@
 #include <orb_slam/Converter.h>
 #include <AverageTiming.h>
 #include <mutex>
+#include <SL.h>
 
 #define CHI2_1 5.991f
 #define CHI2_2 5.991f
