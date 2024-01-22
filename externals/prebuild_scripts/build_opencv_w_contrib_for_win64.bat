@@ -17,7 +17,7 @@
 :: To enable downloading prebuilds copy 
 set PATH=%PATH%;C:\Program Files (x86)\Git\bin
 set MAX_NUM_CPU_CORES=6
-set CMAKE_GENERATOR="Visual Studio 16 2019"
+::set CMAKE_GENERATOR="Visual Studio 16 2019"
 set CMAKE_ARCHITECTURE=x64
 set OPENCV_VERSION=%1
 set SLPROJECT_ROOT=%2
@@ -58,7 +58,6 @@ git pull origin %OPENCV_VERSION%
 mkdir BUILD-%OPENCV_VERSION%-vs
 cd BUILD-%OPENCV_VERSION%-vs
 cmake ^
--G %CMAKE_GENERATOR% ^
 -A %CMAKE_ARCHITECTURE% ^
 -DWITH_CUDA=OFF ^
 -DOPENCV_EXTRA_MODULES_PATH=..\..\opencv_contrib\modules ^
