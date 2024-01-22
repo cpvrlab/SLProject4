@@ -1,7 +1,8 @@
 # Welcome to the SLProject4
 
 [![Build Windows](https://github.com/cpvrlab/SLProject4/actions/workflows/build-x86_64-windows.yml/badge.svg)](https://github.com/cpvrlab/SLProject4/actions/workflows/build-x86_64-windows.yml)
-[![Build macOS](https://github.com/cpvrlab/SLProject4/actions/workflows/build-x86_64-macos.yml/badge.svg)](https://github.com/cpvrlab/SLProject4/actions/workflows/build-x86_64-macos.yml)
+[![Build macOS-x86](https://github.com/cpvrlab/SLProject4/actions/workflows/build-x86_64-macos.yml/badge.svg)](https://github.com/cpvrlab/SLProject4/actions/workflows/build-x86_64-macos.yml)
+[![Build macOS-arm64](https://github.com/cpvrlab/SLProject4/actions/workflows/build-arm64-macos.yml/badge.svg)](https://github.com/cpvrlab/SLProject4/actions/workflows/build-arm64-macos.yml)
 [![Build Emscripten](https://github.com/cpvrlab/SLProject4/actions/workflows/build-wasm-emscripten.yml/badge.svg)](https://github.com/cpvrlab/SLProject4/actions/workflows/build-wasm-emscripten.yml)
 [![Build Online Docs](https://github.com/cpvrlab/SLProject4/actions/workflows/build-docs.yml/badge.svg)](https://github.com/cpvrlab/SLProject4/actions/workflows/build-docs.yml)
 
