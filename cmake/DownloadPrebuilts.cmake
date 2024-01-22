@@ -132,7 +132,7 @@ function(copy_dylibs LIBS)
         get_target_property(DYLIB_PATH ${LIB} LOCATION_${CMAKE_BUILD_TYPE})
         get_filename_component(DYLIB_FILENAME ${DYLIB_PATH} NAME)
         message(STATUS "Copying ${DYLIB_FILENAME}")
-        file(COPY ${DYLIB_PATH} DESTINATION ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+        file(COPY ${DYLIB_PATH} DESTINATION ${CMAKE_BINARY_DIR})
     endforeach ()
 endfunction ()
 
@@ -587,7 +587,8 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "DARWIN" AND
     foreach (lib ${g2o_LINK_LIBS})
         add_library(${lib} SHARED IMPORTED)
         set_target_properties(${lib} PROPERTIES
-                IMPORTED_LOCATION "${g2o_DIR}/Debug/lib${lib}.dylib"
+                IMPORTED_LOCATION "${g2o_DIR}/Release/lib${lib}.dylib"
+                IMPORTED_LOCATION_DEBUG "${g2o_DIR}/Debug/lib${lib}.dylib"
                 INTERFACE_INCLUDE_DIRECTORIES "${g2o_INCLUDE_DIR}")
         set(g2o_LIBS ${g2o_LIBS} ${lib})
     endforeach (lib)
