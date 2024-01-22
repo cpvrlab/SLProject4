@@ -110,7 +110,6 @@ SLLightSpot::~SLLightSpot()
 //-----------------------------------------------------------------------------
 /*!
 SLLightSpot::init sets the light id, the light states & creates an emissive mat.
-@todo properly remove this function and find a clean way to init lights in a scene
 */
 void SLLightSpot::init(SLScene* s)
 {

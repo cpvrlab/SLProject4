@@ -47,7 +47,9 @@ CVTrackedFaces::CVTrackedFaces(string faceClassifierFilename,
         Utils::exitMsg("SLProject", msg.c_str(), __LINE__, __FILE__);
     }
 
-    _facemark = cv::face::FacemarkLBF::create();
+    cv::face::FacemarkLBF::Params facemarkParams;
+    facemarkParams.verbose = false; // no logging
+    _facemark              = cv::face::FacemarkLBF::create(facemarkParams);
     _facemark->loadModel(faceMarkModelFilename);
 
     // Init averaged 2D facial landmark points
@@ -117,7 +119,13 @@ bool CVTrackedFaces::track(CVMat          imageGray,
     int     max = (int)((float)imageGray.rows * 0.8f); // the smaller max the faster
     CVSize  minSize(min, min);
     CVSize  maxSize(max, max);
-    _faceDetector->detectMultiScale(imageGray, faces, 1.05, 3, 0, minSize, maxSize);
+    _faceDetector->detectMultiScale(imageGray,
+                                    faces,
+                                    1.05,
+                                    3,
+                                    0,
+                                    minSize,
+                                    maxSize);
 
     // Enlarge the face rect at the bottom to cover also the chin
     for (auto& face : faces)
@@ -130,8 +138,8 @@ bool CVTrackedFaces::track(CVMat          imageGray,
     // Detect Landmarks //
     //////////////////////
 
-    CVVVPoint2f landmarks;
-    bool        foundLandmarks = _facemark->fit(imageBgr, faces, landmarks);
+    CVVVPoint2f lm;
+    bool        foundLandmarks = _facemark->fit(imageBgr, faces, lm);
 
     float time3MS = _timer.elapsedTimeInMilliSec();
     CVTracked::detect2TimesMS.set(time3MS - time2MS);
@@ -139,23 +147,24 @@ bool CVTrackedFaces::track(CVMat          imageGray,
 
     if (foundLandmarks)
     {
-        for (unsigned long i = 0; i < landmarks.size(); i++)
+        for (unsigned long i = 0; i < lm.size(); i++)
         {
             // Landmark indexes from
             // https://cdn-images-1.medium.com/max/1600/1*AbEg31EgkbXSQehuNJBlWg.png
-            _avgPosePoints2D[0].set(CVVec2f(landmarks[i][30].x, landmarks[i][30].y)); // Nose tip
-            _avgPosePoints2D[1].set(CVVec2f(landmarks[i][31].x, landmarks[i][31].y)); // Nose hole left
-            _avgPosePoints2D[2].set(CVVec2f(landmarks[i][35].x, landmarks[i][35].y)); // Nose hole right
-            _avgPosePoints2D[3].set(CVVec2f(landmarks[i][36].x, landmarks[i][36].y)); // Left eye left corner
-            _avgPosePoints2D[4].set(CVVec2f(landmarks[i][39].x, landmarks[i][39].y)); // Left eye right corner
-            _avgPosePoints2D[5].set(CVVec2f(landmarks[i][42].x, landmarks[i][42].y)); // Right eye left corner
-            _avgPosePoints2D[6].set(CVVec2f(landmarks[i][45].x, landmarks[i][45].y)); // Right eye right corner
-            _avgPosePoints2D[7].set(CVVec2f(landmarks[i][48].x, landmarks[i][48].y)); // Left mouth corner
-            _avgPosePoints2D[8].set(CVVec2f(landmarks[i][54].x, landmarks[i][54].y)); // Right mouth corner
+            _avgPosePoints2D[0].set(CVVec2f(lm[i][30].x, lm[i][30].y)); // Nose tip
+            _avgPosePoints2D[1].set(CVVec2f(lm[i][31].x, lm[i][31].y)); // Nose hole left
+            _avgPosePoints2D[2].set(CVVec2f(lm[i][35].x, lm[i][35].y)); // Nose hole right
+            _avgPosePoints2D[3].set(CVVec2f(lm[i][36].x, lm[i][36].y)); // Left eye left corner
+            _avgPosePoints2D[4].set(CVVec2f(lm[i][39].x, lm[i][39].y)); // Left eye right corner
+            _avgPosePoints2D[5].set(CVVec2f(lm[i][42].x, lm[i][42].y)); // Right eye left corner
+            _avgPosePoints2D[6].set(CVVec2f(lm[i][45].x, lm[i][45].y)); // Right eye right corner
+            _avgPosePoints2D[7].set(CVVec2f(lm[i][48].x, lm[i][48].y)); // Left mouth corner
+            _avgPosePoints2D[8].set(CVVec2f(lm[i][54].x, lm[i][54].y)); // Right mouth corner
 
             // Convert averaged 2D points to OpenCV points2d
             for (unsigned long p = 0; p < _avgPosePoints2D.size(); p++)
-                _cvPosePoints2D[p] = CVPoint2f(_avgPosePoints2D[p].average()[0], _avgPosePoints2D[p].average()[1]);
+                _cvPosePoints2D[p] = CVPoint2f(_avgPosePoints2D[p].average()[0],
+                                               _avgPosePoints2D[p].average()[1]);
 
             // delaunayTriangulate(imageBgr, landmarks[i], drawDetection);
 
@@ -166,15 +175,26 @@ bool CVTrackedFaces::track(CVMat          imageGray,
             if (_drawDetection)
             {
                 // Draw rectangle of detected face
-                cv::rectangle(imageBgr, faces[i], cv::Scalar(255, 0, 0), 2);
+                cv::rectangle(imageBgr,
+                              faces[i],
+                              cv::Scalar(255, 0, 0),
+                              2);
 
                 // Draw detected landmarks
-                for (auto& j : landmarks[i])
-                    cv::circle(imageBgr, j, 2, cv::Scalar(0, 0, 255), -1);
+                for (auto& j : lm[i])
+                    cv::circle(imageBgr,
+                               j,
+                               2,
+                               cv::Scalar(0, 0, 255),
+                               -1);
 
                 // Draw averaged face points used for pose estimation
                 for (unsigned long p = 0; p < _avgPosePoints2D.size(); p++)
-                    cv::circle(imageBgr, _cvPosePoints2D[p], 5, cv::Scalar(0, 255, 0), 1);
+                    cv::circle(imageBgr,
+                               _cvPosePoints2D[p],
+                               5,
+                               cv::Scalar(0, 255, 0),
+                               1);
             }
 
             // Do pose estimation for the first face found

@@ -220,8 +220,8 @@ public:
     SLuint        depth() { return _depth; }
     SLbyte        uvIndex() { return _uvIndex; }
     SLint         bytesPerPixel() { return _bytesPerPixel; }
-    SLint         bytesOnGPU() { return _bytesOnGPU; }
-    SLint         bytesInFile() { return _bytesInFile; }
+    SLint         bytesOnGPU() { return (SLint)_bytesOnGPU; }
+    SLint         bytesInFile() { return (SLint)_bytesInFile; }
     CVVImage&     images() { return _images; }
     SLenum        target() const { return _target; }
     SLuint        texID() const { return _texID; }

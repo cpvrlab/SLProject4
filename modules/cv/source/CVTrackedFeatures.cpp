@@ -799,7 +799,9 @@ void CVTrackedFeatures::optimizeMatches()
 
 #if DO_FEATURE_BENCHMARKING
     sum_reprojection_error += reprojectionError / _marker.keypoints3D.size();
+#endif
 
+#if DO_FEATURE_BENCHMARKING
     CVMat prevRmat, currRmat;
     if (_prevFrame.foundPose)
     {

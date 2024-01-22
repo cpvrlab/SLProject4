@@ -44,7 +44,7 @@ void slCreateAppAndScene(SLVstring&      cmdLineArgs,
                          const SLstring& configPath,
                          const SLstring& applicationName,
                          void*           onSceneLoadCallback = nullptr);
-
+//-----------------------------------------------------------------------------
 SLint slCreateSceneView(SLAssetManager* am,
                         SLScene*        scene,
                         int             screenWidth,
@@ -57,7 +57,7 @@ SLint slCreateSceneView(SLAssetManager* am,
                         void*           onImGuiBuild             = nullptr,
                         void*           onImGuiLoadConfig        = nullptr,
                         void*           onImGuiSaveConfig        = nullptr);
-
+//-----------------------------------------------------------------------------
 SLSceneView* slNewSceneView(SLScene* s, int dotsPerInch, SLInputManager& inputManager);
 bool         slShouldClose();
 void         slShouldClose(bool val);
@@ -65,7 +65,7 @@ void         slTerminate();
 void         slResize(int sceneViewIndex, int width, int height);
 bool         slUpdateParallelJob();
 bool         slPaintAllViews();
-
+//-----------------------------------------------------------------------------
 void slMouseDown(int sceneViewIndex, SLMouseButton button, int x, int y, SLKey modifier);
 void slMouseMove(int sceneViewIndex, int x, int y);
 void slMouseUp(int sceneViewIndex, SLMouseButton button, int x, int y, SLKey modifier);
@@ -80,7 +80,7 @@ void slMouseWheel(int sceneViewIndex, int pos, SLKey modifier);
 void slKeyPress(int sceneViewIndex, SLKey key, SLKey modifier);
 void slKeyRelease(int sceneViewIndex, SLKey key, SLKey modifier);
 void slCharInput(int sceneViewIndex, unsigned int character);
-
+//-----------------------------------------------------------------------------
 bool   slUsesRotation();
 void   slRotationQUAT(float quatX, float quatY, float quatZ, float quatW);
 bool   slUsesLocation();

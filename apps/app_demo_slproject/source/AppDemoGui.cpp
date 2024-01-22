@@ -1279,7 +1279,6 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                     balda_stahl = nullptr;
                     balda_glas  = nullptr;
                 }
-
                 if (AppDemo::sceneID == SID_ErlebARAugustaRauricaTmpTht ||
                     AppDemo::sceneID == SID_ErlebARAugustaRauricaTht ||
                     AppDemo::sceneID == SID_ErlebARAugustaRauricaTmp)
@@ -1302,7 +1301,6 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
 
                     ImGui::End();
                 }
-
                 if (AppDemo::sceneID == SID_ErlebARAventicumAmphiteatre)
                 {
                     ImGui::Begin("Avenche-Amphitheatre",
@@ -1323,7 +1321,6 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
 
                     ImGui::End();
                 }
-
                 if (AppDemo::sceneID == SID_ErlebARAventicumCigognier)
                 {
                     ImGui::Begin("Avenche-Cigognier",
@@ -1343,7 +1340,6 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                     }
                     ImGui::End();
                 }
-
                 if (AppDemo::sceneID == SID_ErlebARAventicumTheatre)
                 {
                     ImGui::Begin("Avenche-Theatre",
@@ -1364,7 +1360,6 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
 
                     ImGui::End();
                 }
-
                 if (AppDemo::sceneID == SID_ErlebARSutzKirchrain18)
                 {
                     ImGui::Begin("Sutz-Kirchrain18",
@@ -1577,38 +1572,14 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 {
                     SLstring zip = "glTF-Sample-Models.zip";
 
-                    /*if (ImGui::MenuItem("Clear Coat Test", nullptr, sid == SID_glTF_ClearCoatTest))
-                    {
-                        SLstring fileToLoad = AppDemo::configPath + "models/glTF-Sample-Models/2.0/ClearCoatTest/glTF/ClearCoatTest.gltf";
-                        if (Utils::fileExists(fileToLoad))
-                            s->onLoad(am, s, sv, SID_glTF_ClearCoatTest);
-                        else
-                            downloadModelAndLoadScene(s, sv, zip, pathSrc, pathDst, fileToLoad, SID_glTF_ClearCoatTest);
-                    }*/
                     if (ImGui::MenuItem("Damaged Helmet", nullptr, sid == SID_glTF_DamagedHelmet))
-                    {
                         s->onLoad(am, s, sv, SID_glTF_DamagedHelmet);
-                        //                        SLstring fileToLoad = AppDemo::configPath + "models/glTF-Sample-Models/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf";
-                        //                        loadSceneWithLargeModel(s, sv, zip, fileToLoad, SID_glTF_DamagedHelmet);
-                    }
                     if (ImGui::MenuItem("Flight Helmet", nullptr, sid == SID_glTF_FlightHelmet))
-                    {
                         s->onLoad(am, s, sv, SID_glTF_FlightHelmet);
-                        //                        SLstring fileToLoad = AppDemo::configPath + "models/glTF-Sample-Models/2.0/FlightHelmet/glTF/FlightHelmet.gltf";
-                        //                        loadSceneWithLargeModel(s, sv, zip, fileToLoad, SID_glTF_FlightHelmet);
-                    }
                     if (ImGui::MenuItem("Sponza Palace", nullptr, sid == SID_glTF_Sponza))
-                    {
                         s->onLoad(am, s, sv, SID_glTF_Sponza);
-                        //                        SLstring fileToLoad = AppDemo::configPath + "models/glTF-Sample-Models/2.0/Sponza/glTF/Sponza.gltf";
-                        //                        loadSceneWithLargeModel(s, sv, zip, fileToLoad, SID_glTF_Sponza);
-                    }
                     if (ImGui::MenuItem("Water Bottle", nullptr, sid == SID_glTF_WaterBottle))
-                    {
                         s->onLoad(am, s, sv, SID_glTF_WaterBottle);
-                        //                        SLstring fileToLoad = AppDemo::configPath + "models/glTF-Sample-Models/2.0/WaterBottle/glTF/WaterBottle.gltf";
-                        //                        loadSceneWithLargeModel(s, sv, zip, fileToLoad, SID_glTF_WaterBottle);
-                    }
 
                     ImGui::EndMenu();
                 }
@@ -1618,11 +1589,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                     SLstring zip = "GLTF-FanucCRX.zip";
 
                     if (ImGui::MenuItem("Fanuc-CRX", nullptr, sid == SID_Robotics_FanucCRX_FK))
-                    {
                         s->onLoad(am, s, sv, SID_Robotics_FanucCRX_FK);
-                        //                        SLstring fileToLoad = AppDemo::configPath + "models/GLTF-FanucCRX/Fanuc-CRX.gltf";
-                        //                        loadSceneWithLargeModel(s, sv, zip, fileToLoad, SID_Robotics_FanucCRX_FK);
-                    }
 
                     ImGui::EndMenu();
                 }
@@ -1775,27 +1742,20 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
 
                 if (ImGui::BeginMenu("Particle Systems"))
                 {
-                    if (stateGL->glHasGeometryShaders())
-                    {
-                        if (ImGui::MenuItem("First Particle System", nullptr, sid == SID_ParticleSystem_First))
-                            s->onLoad(am, s, sv, SID_ParticleSystem_First);
-                        if (ImGui::MenuItem("Demo Particle System", nullptr, sid == SID_ParticleSystem_Demo))
-                            s->onLoad(am, s, sv, SID_ParticleSystem_Demo);
-                        if (ImGui::MenuItem("Dust Storm Particle System", nullptr, sid == SID_ParticleSystem_DustStorm))
-                            s->onLoad(am, s, sv, SID_ParticleSystem_DustStorm);
-                        if (ImGui::MenuItem("Fountain Particle System", nullptr, sid == SID_ParticleSystem_Fountain))
-                            s->onLoad(am, s, sv, SID_ParticleSystem_Fountain);
-                        if (ImGui::MenuItem("Sun Particle System", nullptr, sid == SID_ParticleSystem_Sun))
-                            s->onLoad(am, s, sv, SID_ParticleSystem_Sun);
-                        if (ImGui::MenuItem("Ring of Fire Particle System", nullptr, sid == SID_ParticleSystem_RingOfFire))
-                            s->onLoad(am, s, sv, SID_ParticleSystem_RingOfFire);
-                        if (ImGui::MenuItem("Complex Fire Particle System", nullptr, sid == SID_ParticleSystem_FireComplex))
-                            s->onLoad(am, s, sv, SID_ParticleSystem_FireComplex);
-                    }
-                    else
-                    {
-                        ImGui::MenuItem("Particles need OpenGL >= 4.0 or OpenGLES >= 3.1", nullptr, false, false);
-                    }
+                    if (ImGui::MenuItem("First Particle System", nullptr, sid == SID_ParticleSystem_First))
+                        s->onLoad(am, s, sv, SID_ParticleSystem_First);
+                    if (ImGui::MenuItem("Demo Particle System", nullptr, sid == SID_ParticleSystem_Demo))
+                        s->onLoad(am, s, sv, SID_ParticleSystem_Demo);
+                    if (ImGui::MenuItem("Dust Storm Particle System", nullptr, sid == SID_ParticleSystem_DustStorm))
+                        s->onLoad(am, s, sv, SID_ParticleSystem_DustStorm);
+                    if (ImGui::MenuItem("Fountain Particle System", nullptr, sid == SID_ParticleSystem_Fountain))
+                        s->onLoad(am, s, sv, SID_ParticleSystem_Fountain);
+                    if (ImGui::MenuItem("Sun Particle System", nullptr, sid == SID_ParticleSystem_Sun))
+                        s->onLoad(am, s, sv, SID_ParticleSystem_Sun);
+                    if (ImGui::MenuItem("Ring of Fire Particle System", nullptr, sid == SID_ParticleSystem_RingOfFire))
+                        s->onLoad(am, s, sv, SID_ParticleSystem_RingOfFire);
+                    if (ImGui::MenuItem("Complex Fire Particle System", nullptr, sid == SID_ParticleSystem_FireComplex))
+                        s->onLoad(am, s, sv, SID_ParticleSystem_FireComplex);
 
                     ImGui::EndMenu();
                 }
@@ -1809,16 +1769,14 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 SLstring modelAV1_AO = erlebarPath + "avenches/avenches-amphitheater.gltf";
                 SLstring modelAV2_AO = erlebarPath + "avenches/avenches-cigognier.gltf";
                 SLstring modelAV3    = erlebarPath + "avenches/avenches-theater.gltf";
-                SLstring modelSU1    = erlebarPath + "sutzKirchrain18/Sutz-Kirchrain18.gltf";
-                SLstring modelEV1    = erlebarPath + "evilardCheminDuRoc2/EvilardCheminDuRoc2.gltf";
+                SLstring modelSU1    = erlebarPath + "sutz/Sutz-Kirchrain18.gltf";
 
                 if (Utils::fileExists(modelAR1) ||
                     Utils::fileExists(modelAR2) ||
                     Utils::fileExists(modelAR3) ||
                     Utils::fileExists(modelAV3) ||
                     Utils::fileExists(modelBR2) ||
-                    Utils::fileExists(modelSU1) ||
-                    Utils::fileExists(modelEV1))
+                    Utils::fileExists(modelSU1))
                 {
                     if (ImGui::BeginMenu("Erleb-AR"))
                     {
@@ -1964,13 +1922,10 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                         s->onLoad(am, s, sv, SID_Benchmark6_ColumnsLOD);
                     if (ImGui::MenuItem("Jan's Universe", nullptr, sid == SID_Benchmark7_JansUniverse))
                         s->onLoad(am, s, sv, SID_Benchmark7_JansUniverse);
-                    if (stateGL->glHasGeometryShaders())
-                    {
-                        if (ImGui::MenuItem("Particle System lot of fire complex", nullptr, sid == SID_Benchmark8_ParticleSystemFireComplex))
-                            s->onLoad(am, s, sv, SID_Benchmark8_ParticleSystemFireComplex);
-                        if (ImGui::MenuItem("Particle System lot of particle", nullptr, sid == SID_Benchmark9_ParticleSystemManyParticles))
-                            s->onLoad(am, s, sv, SID_Benchmark9_ParticleSystemManyParticles);
-                    }
+                    if (ImGui::MenuItem("Particle System lot of fire complex", nullptr, sid == SID_Benchmark8_ParticleSystemFireComplex))
+                        s->onLoad(am, s, sv, SID_Benchmark8_ParticleSystemFireComplex);
+                    if (ImGui::MenuItem("Particle System lot of particle", nullptr, sid == SID_Benchmark9_ParticleSystemManyParticles))
+                        s->onLoad(am, s, sv, SID_Benchmark9_ParticleSystemManyParticles);
                     ImGui::EndMenu();
                 }
 
@@ -1983,7 +1938,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
             if (ImGui::MenuItem("Next Scene",
                                 "Shift-Alt-Right",
                                 nullptr,
-                                AppDemo::sceneID < SID_Maximal - 1))
+                                AppDemo::sceneID < SID_MaxPublicAssets - 1))
                 s->onLoad(am, s, sv, AppDemo::sceneID + 1);
 
             if (ImGui::MenuItem("Previous Scene",
@@ -2393,6 +2348,9 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 if (ImGui::MenuItem("Skeleton", "K", sv->drawBits()->get(SL_DB_SKELETON)))
                     sv->drawBits()->toggle(SL_DB_SKELETON);
 
+                if (ImGui::MenuItem("GPU Skinning", nullptr, sv->drawBits()->get(SL_DB_GPU_SKINNING)))
+                    sv->drawBits()->toggle(SL_DB_GPU_SKINNING);
+
                 if (ImGui::MenuItem("All off"))
                     sv->drawBits()->allOff();
 
@@ -2407,6 +2365,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                     sv->drawBits()->on(SL_DB_BBOX);
                     sv->drawBits()->on(SL_DB_SKELETON);
                     sv->drawBits()->on(SL_DB_CULLOFF);
+                    sv->drawBits()->on(SL_DB_GPU_SKINNING);
                 }
 
                 ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.65f);
@@ -3744,6 +3703,16 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
                             SLParticleSystem* ps = dynamic_cast<SLParticleSystem*>(singleFullMesh); // Need to check if good practice
                             ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.5f);
 
+                            if (SLGLState::instance()->glHasGeometryShaders())
+                            {
+                                bool drawInstanced = ps->doInstancedDrawing();
+                                if (ImGui::Checkbox("Instanced draw", &drawInstanced))
+                                {
+                                    ps->doInstancedDrawing(drawInstanced);
+                                    ps->isGenerated(false);
+                                }
+                            }
+
                             // Pause and Resume
                             bool isPaused = ps->isPaused();
                             if (isPaused)
@@ -4333,6 +4302,7 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
 
                         ImGui::TreePop();
                     }
+
                     if (m->program() != nullptr)
                     {
                         for (auto* shd : m->program()->shaders())
@@ -4367,6 +4337,7 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
                             }
                         }
                     }
+
                     ImGui::TreePop();
                 }
             }

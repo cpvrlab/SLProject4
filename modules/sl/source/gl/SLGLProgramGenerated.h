@@ -59,14 +59,15 @@ public:
     SLGLProgramGenerated(SLAssetManager* am,
                          const string&   programName,
                          SLMaterial*     mat,
-                         SLVLight*       lights)
+                         SLVLight*       lights,
+                         SLbool          supportGPUSkinning)
       : SLGLProgram(am,
                     "",
                     "",
                     "",
                     programName)
     {
-        buildProgramCode(mat, lights);
+        buildProgramCode(mat, lights, supportGPUSkinning);
     }
 
     //! ctor for generated shader program PS
@@ -81,29 +82,43 @@ public:
                     geomShader,
                     programName)
     {
-        buildProgramCodePS(mat, isDrawProg);
+
+        if (geomShader != "")
+        {
+            buildProgramCodePS(mat, isDrawProg, false);
+        }
+        else
+        {
+            buildProgramCodePS(mat, isDrawProg, true);
+        }
     }
 
     static bool lightsDoShadowMapping(SLVLight* lights);
     static void buildProgramName(SLMaterial* mat,
                                  SLVLight*   lights,
+                                 SLbool      supportGPUSkinning,
                                  string&     programName);
     static void buildProgramNamePS(SLMaterial* mat,
                                    string&     programName,
-                                   bool        isDrawProg);
+                                   bool        isDrawProg,
+                                   bool        drawInstanced);
 
-    void buildProgramCodePS(SLMaterial* mat, bool isDrawProg);
+    void buildProgramCodePS(SLMaterial* mat,
+                            bool        isDrawProg,
+                            bool        drawInstanced = false);
     void buildProgramCode(SLMaterial* mat,
-                          SLVLight*   lights);
+                          SLVLight*   lights,
+                          SLbool      supportGPUSkinning);
     void beginShader(SLCamera*   cam,
                      SLMaterial* mat,
                      SLVLight*   lights) override { beginUse(cam, mat, lights); }
     void endShader() override { endUse(); }
 
 private:
-    void buildPerPixCook(SLMaterial* mat, SLVLight* lights);
-    void buildPerPixBlinn(SLMaterial* mat, SLVLight* lights);
+    void buildPerPixCook(SLMaterial* mat, SLVLight* lights, SLbool supportGPUSkinning);
+    void buildPerPixBlinn(SLMaterial* mat, SLVLight* lights, SLbool supportGPUSkinning);
     void buildPerPixParticle(SLMaterial* mat);
+    void buildPerPixParticleInstanced(SLMaterial* mat);
     void buildPerPixParticleUpdate(SLMaterial* mat);
 
     // Video background shader builder functions
@@ -118,6 +133,10 @@ private:
     static void   addCodeToShader(SLGLShader*   shader,
                                   const string& code,
                                   const string& name);
+    static void   setVariable(std::string&       code,
+                              const std::string& name,
+                              const std::string& value);
+
     static string generatedShaderPath; //! Path to write out generated shaders
 };
 //-----------------------------------------------------------------------------

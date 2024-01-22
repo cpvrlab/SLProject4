@@ -330,7 +330,7 @@ EM_BOOL emOnKeyPressed(int                            eventType,
                              (SLSceneID)(AppDemo::sceneID - 1));
             SL_LOG("Loading SceneID: %d", AppDemo::sceneID);
         }
-        else if (key == K_right && sv && AppDemo::sceneID < SID_Maximal - 1)
+        else if (key == K_right && sv && AppDemo::sceneID < SID_MaxNoBenchmarks - 1)
         {
             appDemoLoadScene(AppDemo::assetManager,
                              AppDemo::scene,
@@ -552,6 +552,7 @@ int main(void)
     emscripten_set_beforeunload_callback(nullptr, emOnUnload);
 
     // HACK: Fixes to make this able to run in an <iframe>
+    // clang-format off
     MAIN_THREAD_EM_ASM({
         const canvas = document.querySelector("#canvas");
         
@@ -570,6 +571,7 @@ int main(void)
         canvas.addEventListener("touchend", event => event.preventDefault());
         canvas.addEventListener("touchmove", event => event.preventDefault());
     });
+    // clang-format on
 
     AppDemo::calibIniPath = "data/calibrations/";
 

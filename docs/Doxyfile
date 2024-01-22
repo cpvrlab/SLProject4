@@ -47,7 +47,7 @@ PROJECT_NAME           = SLProject
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = 4.0.000
+PROJECT_NUMBER         = 4.1.000
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -914,6 +914,7 @@ INPUT                  = ../modules/sl/source \
                          ../apps/app_demo_slproject/include \
                          ../apps/app_demo_slproject/glfw \
                          ../apps/app_demo_slproject/source \
+                         ../apps/app_demo_webgpu \
                          pages/Introduction.md \
                          pages/ExampleScenes.md \
                          pages/ExampleGlTF.md \
@@ -921,11 +922,13 @@ INPUT                  = ../modules/sl/source \
                          pages/ExampleLevelOfDetail.md \
                          pages/ExampleNodeAnimations.md \
                          pages/ExamplePathtracing.md \
+                         pages/ExampleParticles.md \
                          pages/ExampleRaytracing.md \
                          pages/ExampleRevolver.md \
                          pages/ExampleScenes.md \
                          pages/ExampleShadowMapping.md \
                          pages/ExampleSkinnedAnimations.md \
+                         pages/ExampleVolumeRendering.md \
                          pages/OnPaint.md \
                          pages/Emscripten.md \
                          pages/BlenderToSL.md \
