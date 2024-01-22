@@ -5,14 +5,15 @@
 # ####################################################
 
 
+VERSION="1.1.1h"
 openssl_VERSION="OpenSSL_1_1_1h"
-if [ -n "$1" ]
-then
-    openssl_VERSION="$1"
-fi
+#if [ -n "$1" ]
+#then
+#    openssl_VERSION="$1"
+#fi
 
 ARCH=linux
-ZIPFILE=${ARCH}_openssl
+ZIPFILE=${ARCH}_openssl_${VERSION}
 
 clear
 echo "Building openssl Version: $openssl_VERSION"
