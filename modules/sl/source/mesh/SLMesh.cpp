@@ -379,7 +379,7 @@ Optionally you can draw the normals and/or the uniform grid voxels.
 </p>
 Please view also the full process of rendering <a href="md_on_paint.html"><b>one frame</b></a>
 */
-void SLMesh::draw(SLSceneView* sv, SLNode* node)
+void SLMesh::draw(SLSceneView* sv, SLNode* node, SLuint instances)
 {
     SLGLState* stateGL = SLGLState::instance();
 
@@ -446,6 +446,17 @@ void SLMesh::draw(SLSceneView* sv, SLNode* node)
     sp->uniformMatrix4fv("u_vMatrix", 1, (SLfloat*)&stateGL->viewMatrix);
     sp->uniformMatrix4fv("u_pMatrix", 1, (SLfloat*)&stateGL->projectionMatrix);
 
+    // Pass skeleton joint matrices to the shader program
+    if (_mat->supportsGPUSkinning())
+    {
+        // Only perform skinning in the shader if we haven't performed CPU skinning and if there are joint IDs
+        SLbool skinningEnabled = !_isCPUSkinned && !Ji.empty();
+        sp->uniform1i("u_skinningEnabled", skinningEnabled);
+
+        if (skinningEnabled && !_jointMatrices.empty())
+            sp->uniformMatrix4fv("u_jointMatrices", _jointMatrices.size(), (SLfloat*)&_jointMatrices[0]);
+    }
+
     SLint locTM = sp->getUniformLocation("u_tMatrix");
     if (locTM >= 0)
     {
@@ -469,7 +480,10 @@ void SLMesh::draw(SLSceneView* sv, SLNode* node)
             _vao.drawArrayAs(PT_points);
         else
         {
-            _vao.drawElementsAs(primitiveType);
+            if (instances > 1)
+                _vao.drawElementsInstanced(primitiveType, instances);
+            else
+                _vao.drawElementsAs(primitiveType);
 
             if ((sv->drawBit(SL_DB_WITHEDGES) || node->drawBit(SL_DB_WITHEDGES)) &&
                 (!IE32.empty() || !IE16.empty()))
@@ -601,7 +615,7 @@ void SLMesh::handleRectangleSelection(SLSceneView* sv,
                    (SLfloat)vp.width,
                    (SLfloat)vp.height);
         SLMat4f     v_mvp = v * mvp;
-        set<SLuint> tempIselected;        // Temp. vector for selected vertex indices
+        set<SLuint> tempIselected; // Temp. vector for selected vertex indices
 
         if (!cam->selectRect().isEmpty()) // Do rectangle Selection
         {
@@ -739,6 +753,44 @@ void SLMesh::generateVAO(SLGLVertexArray& vao)
         }
     }
 
+    SLVVec4i jointIndicesData; // indices are passed to the shader as ivec4s
+    SLVVec4f jointWeightsData; // weights are passed to the shader as vec4s
+
+    if (!Ji.empty() && _mat->supportsGPUSkinning())
+    {
+        assert(Ji.size() == P.size());
+        assert(Jw.size() == P.size());
+
+        jointIndicesData = SLVVec4i(P.size(), SLVec4i(0, 0, 0, 0));
+        jointWeightsData = SLVVec4f(P.size(), SLVec4f(0.0f, 0.0f, 0.0f, 0.0f));
+
+        // create the vec4 of indices for all points
+        for (unsigned i = 0; i < P.size(); i++)
+        {
+            const SLVuchar& curIndices = Ji[i];
+            assert(!curIndices.empty());
+
+            jointIndicesData[i] = SLVec4i(curIndices.size() >= 1 ? curIndices[0] : 0,
+                                     curIndices.size() >= 2 ? curIndices[1] : 0,
+                                     curIndices.size() >= 3 ? curIndices[2] : 0,
+                                     curIndices.size() >= 4 ? curIndices[3] : 0);
+        }
+
+        // create the vec4 of weights for all points
+        for (unsigned i = 0; i < P.size(); i++)
+        {
+            const SLVfloat& curWeights = Jw[i];
+            assert(curWeights.size() == Ji[i].size());
+
+            jointWeightsData[i] = SLVec4f(curWeights.size() >= 1 ? curWeights[0] : 0.0f,
+                                     curWeights.size() >= 2 ? curWeights[1] : 0.0f,
+                                     curWeights.size() >= 3 ? curWeights[2] : 0.0f,
+                                     curWeights.size() >= 4 ? curWeights[3] : 0.0f);
+        }
+        vao.setAttrib(AT_jointIndex, AT_jointIndex, &jointIndicesData);
+        vao.setAttrib(AT_jointWeight, AT_jointWeight, &jointWeightsData);
+    }
+
     vao.generate((SLuint)P.size(),
                  !Ji.empty() ? BU_stream : BU_static,
                  Ji.empty());
@@ -855,8 +907,18 @@ SLbool SLMesh::hit(SLRay* ray, SLNode* node)
         return true;
     }
 
+    // Force the mesh to be skinned in software even if it would be normally skinned on the GPU.
+    // We need the results from the skinning on the CPU to perform the ray-triangle intersection.
+    if (_skeleton && _mat && _mat->supportsGPUSkinning() && !_isCPUSkinned)
+        transformSkin(true, [](SLMesh*) {});
+
     if (_accelStruct)
+    {
+        if (_accelStructIsOutOfDate)
+            updateAccelStruct();
+
         return _accelStruct->intersect(ray, node);
+    }
     else
     { // intersect against all faces
         SLbool wasHit = false;
@@ -1495,8 +1557,12 @@ a weight and an index. After the transform the VBO have to be updated.
 This skinning process can also be done (a lot faster) on the GPU.
 This software skinning is also needed for ray or path tracing.
 */
-void SLMesh::transformSkin(const std::function<void(SLMesh*)>& cbInformNodes)
+void SLMesh::transformSkin(bool                                forceCPUSkinning,
+                           const std::function<void(SLMesh*)>& cbInformNodes)
 {
+    if (_isSelected)
+        forceCPUSkinning = true;
+
     // create the secondary buffers for P and N once
     if (skinnedP.empty())
     {
@@ -1521,41 +1587,53 @@ void SLMesh::transformSkin(const std::function<void(SLMesh*)>& cbInformNodes)
     // update the joint matrix array
     _skeleton->getJointMatrices(_jointMatrices);
 
-    // notify Parent Nodes to update AABB
+    // notify parent nodes to update AABB
     cbInformNodes(this);
-
-    // temporarily set finalP and finalN
-    _finalP = &skinnedP;
-    _finalN = &skinnedN;
 
     // flag acceleration structure to be rebuilt
     _accelStructIsOutOfDate = true;
 
-    // iterate over all vertices and write to new buffers
-    for (SLulong i = 0; i < P.size(); ++i)
+    // remember if this node has been skinned on the CPU
+    _isCPUSkinned = forceCPUSkinning;
+
+    // Perform software skinning if the material doesn't support CPU skinning or
+    // if the results of the skinning process are required somewehere else.
+    if (!_mat->supportsGPUSkinning() || forceCPUSkinning)
     {
-        skinnedP[i] = SLVec3f::ZERO;
-        if (!N.empty()) skinnedN[i] = SLVec3f::ZERO;
+        _finalP = &skinnedP;
+        _finalN = &skinnedN;
 
-        // accumulate final normal and positions
-        for (SLulong j = 0; j < Ji[i].size(); ++j)
+        // iterate over all vertices and write to new buffers
+        for (SLulong i = 0; i < P.size(); ++i)
         {
-            const SLMat4f& jm      = _jointMatrices[Ji[i][j]];
-            SLVec4f        tempPos = SLVec4f(jm * P[i]);
-            skinnedP[i].x += tempPos.x * Jw[i][j];
-            skinnedP[i].y += tempPos.y * Jw[i][j];
-            skinnedP[i].z += tempPos.z * Jw[i][j];
+            skinnedP[i] = SLVec3f::ZERO;
+            if (!N.empty()) skinnedN[i] = SLVec3f::ZERO;
 
-            if (!N.empty())
+            // accumulate final normal and positions
+            for (SLulong j = 0; j < Ji[i].size(); ++j)
             {
-                // Build the 3x3 submatrix in GLSL 110 (= mat3 jt3 = mat3(jt))
-                // for the normal transform that is the normally the inverse transpose.
-                // The inverse transpose can be ignored as long as we only have
-                // rotation and uniform scaling in the 3x3 submatrix.
-                SLMat3f jnm = jm.mat3();
-                skinnedN[i] += jnm * N[i] * Jw[i][j];
+                const SLMat4f& jm      = _jointMatrices[Ji[i][j]];
+                SLVec4f        tempPos = SLVec4f(jm * P[i]);
+                skinnedP[i].x += tempPos.x * Jw[i][j];
+                skinnedP[i].y += tempPos.y * Jw[i][j];
+                skinnedP[i].z += tempPos.z * Jw[i][j];
+
+                if (!N.empty())
+                {
+                    // Build the 3x3 submatrix in GLSL 110 (= mat3 jt3 = mat3(jt))
+                    // for the normal transform that is the normally the inverse transpose.
+                    // The inverse transpose can be ignored as long as we only have
+                    // rotation and uniform scaling in the 3x3 submatrix.
+                    SLMat3f jnm = jm.mat3();
+                    skinnedN[i] += jnm * N[i] * Jw[i][j];
+                }
             }
         }
+    }
+    else
+    {
+        _finalP = &P;
+        _finalN = &N;
     }
 
     // update or create buffers

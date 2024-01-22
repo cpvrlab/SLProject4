@@ -466,22 +466,19 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "WINDOWS") #----------------------------
     # GLFW for Windows #
     ####################
 
-    set(glfw_VERSION "3.3.2")
+    set(glfw_VERSION "3.3.8")
     set(glfw_PREBUILT_DIR "win64_glfw_${glfw_VERSION}")
     set(glfw_DIR "${PREBUILT_PATH}/${glfw_PREBUILT_DIR}")
-    set(glfw_INCLUDE_DIR "${glfw_DIR}/include")
-    set(glfw_LINK_DIR "${glfw_DIR}/lib-vc2019")
 
-    add_library(glfw3dll SHARED IMPORTED)
-    set_target_properties(glfw3dll PROPERTIES
-            IMPORTED_IMPLIB "${glfw_LINK_DIR}/glfw3dll.lib"
-            IMPORTED_LOCATION "${glfw_LINK_DIR}/glfw3.dll"
-            INTERFACE_INCLUDE_DIRECTORIES "${glfw_INCLUDE_DIR}"
+    add_library(glfw3 STATIC IMPORTED)
+    set_target_properties(glfw3 PROPERTIES
+            IMPORTED_LOCATION "${glfw_DIR}/release/glfw3.lib"
+            IMPORTED_LOCATION_DEBUG "${glfw_DIR}/debug/glfw3.lib"
+            INTERFACE_INCLUDE_DIRECTORIES "${glfw_DIR}/include"
             )
-    set(glfw_LIBS glfw3dll)
+    set(glfw_LIBS glfw3)
 
     download_lib("${glfw_PREBUILT_DIR}")
-    copy_dlls("${glfw_LIBS}")
 
     ###################
     # KTX for Windows #
@@ -664,19 +661,18 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "DARWIN" AND
     # GLFW for MacOS-x86_64 #
     #########################
 
-    set(glfw_VERSION "3.3.2")
+    set(glfw_VERSION "3.3.8")
     set(glfw_PREBUILT_DIR "mac64_glfw_${glfw_VERSION}")
     set(glfw_DIR "${PREBUILT_PATH}/${glfw_PREBUILT_DIR}")
-    set(glfw_INCLUDE_DIR "${glfw_DIR}/include")
 
-    add_library(glfw SHARED IMPORTED)
-    set_target_properties(glfw PROPERTIES
-            IMPORTED_LOCATION "${glfw_DIR}/Release/libglfw.3.dylib"
-            INTERFACE_INCLUDE_DIRECTORIES "${glfw_INCLUDE_DIR}")
-    set(glfw_LIBS glfw)
+    add_library(glfw3 STATIC IMPORTED)
+    set_target_properties(glfw3 PROPERTIES
+            IMPORTED_LOCATION "${glfw_DIR}/release/libglfw3.a"
+            IMPORTED_LOCATION_DEBUG "${glfw_DIR}/debug/libglfw3.a"
+            INTERFACE_INCLUDE_DIRECTORIES "${glfw_DIR}/include")
+    set(glfw_LIBS glfw3)
 
     download_lib("${glfw_PREBUILT_DIR}")
-    copy_dylibs("${glfw_LIBS}")
 
     ########################
     # KTX for MacOS-x86_64 #
@@ -845,19 +841,18 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "DARWIN" AND
     # GLFW for MacOS-arm64 #
     ########################
 
-    set(glfw_VERSION "3.3.2")
+    set(glfw_VERSION "3.3.8")
     set(glfw_PREBUILT_DIR "macArm64_glfw_${glfw_VERSION}")
     set(glfw_DIR "${PREBUILT_PATH}/${glfw_PREBUILT_DIR}")
-    set(glfw_INCLUDE_DIR "${glfw_DIR}/include")
 
-    add_library(glfw SHARED IMPORTED)
-    set_target_properties(glfw PROPERTIES
-            IMPORTED_LOCATION "${glfw_DIR}/Release/libglfw.3.3.dylib"
-            INTERFACE_INCLUDE_DIRECTORIES "${glfw_INCLUDE_DIR}")
-    set(glfw_LIBS glfw)
+    add_library(glfw3 STATIC IMPORTED)
+    set_target_properties(glfw3 PROPERTIES
+            IMPORTED_LOCATION "${glfw_DIR}/release/libglfw3.a"
+            IMPORTED_LOCATION_DEBUG "${glfw_DIR}/debug/libglfw3.a"
+            INTERFACE_INCLUDE_DIRECTORIES "${glfw_DIR}/include")
+    set(glfw_LIBS glfw3)
 
     download_lib("${glfw_PREBUILT_DIR}")
-    copy_dylibs("${glfw_LIBS}")
 
     #######################
     # KTX for MacOS-arm64 #

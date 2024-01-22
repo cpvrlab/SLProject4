@@ -133,7 +133,9 @@ void AverageTiming::doGetTimingMessage(char* m)
     {
         blocks.push_back(block.second);
     }
-    std::sort(blocks.begin(), blocks.end(), [](AverageTimingBlock* lhs, AverageTimingBlock* rhs) -> bool
+    std::sort(blocks.begin(),
+              blocks.end(),
+              [](AverageTimingBlock* lhs, AverageTimingBlock* rhs) -> bool
               { return lhs->posV < rhs->posV; });
 
     // find reference time
@@ -142,7 +144,8 @@ void AverageTiming::doGetTimingMessage(char* m)
     {
         refTime = (*blocks.begin())->val.average();
         // insert number of measurement calls
-        snprintf(m + strlen(m), sizeof(m), "Num. calls: %i\n", (int)(*blocks.begin())->nCalls);
+        volatile int sizeofm = sizeof(m); // workaround against a warning in the next line
+        snprintf(m + strlen(m), sizeofm, "Num. calls: %i\n", (int)(*blocks.begin())->nCalls);
     }
 
     // calculate longest blockname

@@ -40,9 +40,10 @@ public:
                      const SLfloat&  timeToLive,
                      SLGLTexture*    texC,
                      const SLstring& name        = "Particle system",
-                     SLGLTexture*    texFlipbook = nullptr);
+                     SLGLTexture*    texFlipbook = nullptr,
+                    const bool       renderInstanced = false);
 
-    void draw(SLSceneView* sv, SLNode* node);
+    void draw(SLSceneView* sv, SLNode* node, SLuint instances = 1);
     void deleteData();
     void deleteDataGpu();
     void buildAABB(SLAABBox& aabb, const SLMat4f& wmNode);
@@ -52,8 +53,12 @@ public:
     void changeTexture();
     void setNotVisibleInFrustum();
     void pauseOrResume();
+    void calcNormals() { N.push_back(SLVec3f(0, 1, 0)); };
+
 
     // Getters
+
+    SLbool            renderInstanced() { return _renderInstanced; }
     SLVec3f           acceleration() { return _acceleration; }
     SLfloat           accelerationConst() { return _accelerationConst; }
     SLint             amount() { return _amount; }
@@ -117,6 +122,7 @@ public:
     SLVec3f           velocityRndMax() { return _velocityRndMax; }
 
     // Setters
+    void drawInstanced(bool instanced) {_renderInstanced = instanced; }
     void amount(SLint i) { _amount = i; }
     void accConst(SLfloat f) { _accelerationConst = f; }
     void acceleration(SLVec3f v) { _acceleration = v; }
@@ -267,6 +273,9 @@ private:
     SLVec3f getPointOnPyramid();
     SLVec3f getDirectionPyramid(SLVec3f position);
 
+    // Use to recreate material (the shader change depending if the PS is instanced or not)
+    SLAssetManager*   _assetManager;                //!< pointer to the asset manager (the owner) if available
+
     // Core values
     SLint   _amount;         //!< Amount of a particle
     SLVec3f _emitterPos;     //!< Position of the particle emitter
@@ -350,6 +359,9 @@ private:
     SLGLVertexArray _vao1; //!< First OpenGL Vertex Array Object for swapping between updating/drawing
     SLGLVertexArray _vao2; //!< Second OpenGL Vertex Array Object for swapping between updating/drawing
 
+    SLGLVertexArray _renderVao1; //!< First OpenGL Vertex Array Object for swapping between updating/drawing
+    SLGLVertexArray _renderVao2; //!< Second OpenGL Vertex Array Object for swapping between updating/drawing
+
     // Boolean for generation/resume
     SLbool _isVisibleInFrustum = true;  //!< Boolean to set time since node not visible
     SLbool _isPaused           = false; //!< Boolean to stop updating
@@ -377,6 +389,7 @@ private:
     SLbool _doSizeOverLT       = true;  //!< Boolean for size over life time
     SLbool _doSizeOverLTCurve  = false; //!< Boolean for size over life time curve
     SLbool _doFlipBookTexture  = false; //!< Boolean for flipbook texture
+    SLbool _renderInstanced    = false; //!< Boolean for instanced rendering
 };
 //-----------------------------------------------------------------------------
 #endif

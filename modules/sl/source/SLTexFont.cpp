@@ -11,6 +11,7 @@
 #include <SLTexFont.h>
 #include <SLGLProgram.h>
 #include <Utils.h>
+#include <SLFileStorage.h>
 
 #include <utility>
 
@@ -82,7 +83,7 @@ according texture coordinate.
 void SLTexFont::create(SLstring fontFilename)
 {
     // Check the font filename with path
-    if (!Utils::fileExists(fontFilename))
+    if (!SLFileStorage::exists(fontFilename, IOK_font))
     {
         SLstring msg = "SLTexFont::create: File not found: " + fontFilename;
         SL_EXIT_MSG(msg.c_str());
