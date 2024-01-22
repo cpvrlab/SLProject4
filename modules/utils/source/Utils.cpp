@@ -39,10 +39,14 @@ namespace fs = std::experimental::filesystem;
 #elif defined(__APPLE__)
 #    if defined(TARGET_OS_IOS) && (TARGET_OS_IOS == 1)
 #        include "Utils_iOS.h"
+#        include <dirent.h>   //dirent
+#        include <sys/stat.h> //dirent
+#        include <unistd.h>   //getcwd
+#    else
+#        include <filesystem>
+#        define USE_STD_FILESYSTEM
+namespace fs = std::filesystem;
 #    endif
-#    include <dirent.h>
-#    include <sys/stat.h> //dirent
-#    include <unistd.h>   //getcwd
 #elif defined(ANDROID) || defined(ANDROID_NDK)
 #    include <android/log.h>
 #    include <dirent.h>
