@@ -60,6 +60,7 @@ cmake \
     -DG2O_BUILD_EXAMPLES=off \
     -DCMAKE_BUILD_TYPE=Release \
     -DEIGEN3_INCLUDE_DIR=../eigen \
+    -DG2O_USE_OPENGL=off \
     ../..
  
 # finally build it
