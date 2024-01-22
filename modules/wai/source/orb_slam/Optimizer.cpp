@@ -1554,15 +1554,17 @@ int Optimizer::OptimizeSim3(WAIKeyFrame*          pKF1,
     vSim3->setFixed(false);
 
     //replacement because of new  g2o (maybe this leads to errors...)
-    //vSim3->_principle_point[0] = K1.at<float>(0, 2);
-    //vSim3->_principle_point[1] = K1.at<float>(1, 2);
-    //vSim3->_focal_length[0]    = K1.at<float>(0, 0);
-    //vSim3->_focal_length[1]    = K1.at<float>(1, 1);
-
+#if defined(SL_OS_ANDROID) || defined(SL_OS_MACIOS)
+    vSim3->_principle_point[0] = K1.at<float>(0, 2);
+    vSim3->_principle_point[1] = K1.at<float>(1, 2);
+    vSim3->_focal_length[0]    = K1.at<float>(0, 0);
+    vSim3->_focal_length[1]    = K1.at<float>(1, 1);
+#else
     vSim3->_principle_point1[0] = K1.at<float>(0,2);
     vSim3->_principle_point1[1] = K1.at<float>(1,2);
     vSim3->_focal_length1[0] = K1.at<float>(0,0);
     vSim3->_focal_length1[1] = K1.at<float>(1,1);
+#endif
     //vSim3->_principle_point2[0] = K2.at<float>(0,2);
     //vSim3->_principle_point2[1] = K2.at<float>(1,2);
     //vSim3->_focal_length2[0] = K2.at<float>(0,0);
