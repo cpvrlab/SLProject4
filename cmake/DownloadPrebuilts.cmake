@@ -789,7 +789,8 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "DARWIN" AND
     foreach (lib ${g2o_LINK_LIBS})
         add_library(${lib} SHARED IMPORTED)
         set_target_properties(${lib} PROPERTIES
-                IMPORTED_LOCATION "${g2o_DIR}/Debug/lib${lib}.dylib"
+                IMPORTED_LOCATION "${g2o_DIR}/Release/lib${lib}.dylib"
+                IMPORTED_LOCATION_DEBUG "${g2o_DIR}/Debug/lib${lib}.dylib"
                 INTERFACE_INCLUDE_DIRECTORIES "${g2o_INCLUDE_DIR}")
         set(g2o_LIBS ${g2o_LIBS} ${lib})
     endforeach (lib)
