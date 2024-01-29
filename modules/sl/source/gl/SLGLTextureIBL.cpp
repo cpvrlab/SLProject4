@@ -12,6 +12,8 @@
 #include <SLGLTextureIBL.h>
 
 //-----------------------------------------------------------------------------
+const SLint ROUGHNESS_NUM_MIP_LEVELS = 5; //! Number of mip levels for roughness cubemaps
+//-----------------------------------------------------------------------------
 //! ctor for generated textures from hdr textures
 SLGLTextureIBL::SLGLTextureIBL(SLAssetManager* am,
                                SLstring        shaderPath,
@@ -216,25 +218,34 @@ void SLGLTextureIBL::build(SLint texUnit)
         _bytesPerPixel  = SL_HDR_PIXEL_BYTES;
         _internalFormat = SL_HDR_GL_INTERNAL_FORMAT;
 
-        for (unsigned int i = 0; i < 6; ++i)
-        {
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-                         0,
-                         _internalFormat,
-                         _width,
-                         _height,
-                         0,
-                         SL_HDR_GL_FORMAT,
-                         SL_HDR_GL_TYPE,
-                         nullptr);
-        }
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, ROUGHNESS_NUM_MIP_LEVELS - 1);
 
-        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+        // Define textures for all mip levels of all six sides of the cube map
+        for (SLint mipLevel = 0; mipLevel < ROUGHNESS_NUM_MIP_LEVELS; mipLevel++)
+        {
+            // Calculate the size of this mip level
+            SLint mipWidth  = _width / (1 << mipLevel);
+            SLint mipHeight = _height / (1 << mipLevel);
+
+            for (SLint i = 0; i < 6; i++)
+            {
+                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+                             mipLevel,
+                             _internalFormat,
+                             mipWidth,
+                             mipHeight,
+                             0,
+                             SL_HDR_GL_FORMAT,
+                             SL_HDR_GL_TYPE,
+                             nullptr);
+            }
+        }
 
         _shaderProgram->useProgram();
 
@@ -244,17 +255,16 @@ void SLGLTextureIBL::build(SLint texUnit)
         glActiveTexture(GL_TEXTURE0 + texUnit);
         glBindTexture(_sourceTexture->target(), _sourceTexture->texID());
 
-        SLuint maxMipLevels = 5;
-        for (SLuint mip = 0; mip < maxMipLevels; ++mip)
+        for (SLint mipLevel = 0; mipLevel < ROUGHNESS_NUM_MIP_LEVELS; ++mipLevel)
         {
-            // resize framebuffer according to mip-level size
-            SLuint mipWidth  = (SLuint)(_width * pow(0.5, mip));
-            SLuint mipHeight = (SLuint)(_height * pow(0.5, mip));
+            // Resize framebuffer according to mip level size
+            SLint mipWidth  = _width / (1 << mipLevel);
+            SLint mipHeight = _height / (1 << mipLevel);
             glViewport(0, 0, mipWidth, mipHeight);
 
             glBindFramebuffer(GL_FRAMEBUFFER, fboID);
 
-            SLfloat roughness = (SLfloat)mip / (SLfloat)(maxMipLevels - 1);
+            SLfloat roughness = (SLfloat)mipLevel / (SLfloat)(ROUGHNESS_NUM_MIP_LEVELS - 1);
             _shaderProgram->uniform1f("u_roughness", roughness);
             for (SLuint i = 0; i < 6; ++i)
             {
@@ -264,7 +274,7 @@ void SLGLTextureIBL::build(SLint texUnit)
                                        GL_COLOR_ATTACHMENT0,
                                        GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
                                        _texID,
-                                       mip);
+                                       mipLevel);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
                 logFramebufferStatus();
@@ -274,7 +284,7 @@ void SLGLTextureIBL::build(SLint texUnit)
                 if (_readBackPixels)
                 {
                     string name = "roughnessCubemap_mip" +
-                                  std::to_string(mip) + "_side" +
+                                  std::to_string(mipLevel) + "_side" +
                                   std::to_string(i) + ".png";
                     readPixels(mipWidth,
                                mipHeight,
