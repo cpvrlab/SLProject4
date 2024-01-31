@@ -244,13 +244,19 @@ void SLGLTextureIBL::build(SLint texUnit)
         glActiveTexture(GL_TEXTURE0 + texUnit);
         glBindTexture(_sourceTexture->target(), _sourceTexture->texID());
 
-        SLuint maxMipLevels = 5;
+        // Get and check power of 2
+        float power = log2((float)_width);
+        if (ceil(power) != floor(power))
+            SL_EXIT_MSG("SLGLTextureIBL::build: Mipmap texture must be power of two!");
+
+        SLuint maxMipLevels = (SLuint)power + 1;
+
         for (SLuint mip = 0; mip < maxMipLevels; ++mip)
         {
             // resize framebuffer according to mip-level size
             SLuint mipWidth  = (SLuint)(_width * pow(0.5, mip));
             SLuint mipHeight = (SLuint)(_height * pow(0.5, mip));
-            glViewport(0, 0, mipWidth, mipHeight);
+            glViewport(0, 0, (SLsizei)mipWidth, (SLsizei)mipHeight);
 
             glBindFramebuffer(GL_FRAMEBUFFER, fboID);
 
@@ -264,7 +270,7 @@ void SLGLTextureIBL::build(SLint texUnit)
                                        GL_COLOR_ATTACHMENT0,
                                        GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
                                        _texID,
-                                       mip);
+                                       (SLint)mip);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
                 logFramebufferStatus();
@@ -276,8 +282,8 @@ void SLGLTextureIBL::build(SLint texUnit)
                     string name = "roughnessCubemap_mip" +
                                   std::to_string(mip) + "_side" +
                                   std::to_string(i) + ".png";
-                    readPixels(mipWidth,
-                               mipHeight,
+                    readPixels((SLint)mipWidth,
+                               (SLint)mipHeight,
                                name,
                                saveReadbackTextures);
                 }

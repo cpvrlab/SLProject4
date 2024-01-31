@@ -1991,7 +1991,15 @@ void appDemoLoadScene(SLAssetManager* am,
 
         // Add directional light with a position that corresponds roughly to the sun direction
         SLLight::gamma        = 2.2f;
-        SLLightDirect* light1 = new SLLightDirect(am, s, 4.0f, .3f, 2.0f, 0.5f, 0, 1, 1);
+        SLLightDirect* light1 = new SLLightDirect(am,
+                                                  s,
+                                                  4.0f,
+                                                  .3f,
+                                                  2.0f,
+                                                  0.5f,
+                                                  0,
+                                                  1,
+                                                  1);
         light1->lookAt(0, 0, 0);
         light1->attenuation(1, 0, 0);
         light1->createsShadows(true);
