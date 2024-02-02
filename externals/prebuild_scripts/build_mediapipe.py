@@ -13,6 +13,11 @@ BAZEL_VERSION = "6.4.0"
 MEDIAPIE_REPO_URL = "https://github.com/google/mediapipe.git"
 C_API_ROOT = "mediapipe/tasks/c"
 
+BUILD_CONFIGURATIONS = [
+    ("debug", "dbg"),
+    ("release", "opt"),
+]
+
 HEADERS = [
     "components/containers/category.h",
     "components/containers/classification_result.h",
@@ -40,10 +45,10 @@ HEADERS = [
 OPENCV_BUILD_DIR_NAME = "opencv_build"
 
 
-def run_command(command):
+def run_command(command, cwd=None):
     print(64 * "-")
     print("> " + " ".join(command))
-    result = subprocess.run(command)
+    result = subprocess.run(command, cwd=cwd)
     print(64 * "-")
     return result
 
@@ -91,11 +96,17 @@ if __name__ == "__main__":
         arch_name = "x86_64"
     elif is_aarch64:
         arch_name = "aarch64"
+    else:
+        print(f"Error: Unknown target architecture '{platform.system()}'")
+        exit(1)
 
     if is_windows:
         os_name = "windows"
     elif is_darwin:
         os_name = "darwin"
+    else:
+        print(f"Error: Unknown target system '{platform.machine()}'")
+        exit(1)
 
     output_dir = Path(f"mediapipe-{arch_name}-{os_name}").absolute()
     print(f"Output directory: {output_dir}")
@@ -266,56 +277,43 @@ if __name__ == "__main__":
     if not opencv_install_path.is_dir():
         print("Building OpenCV...")
 
-        run_command([
-            "cmake",
-            f"-B{OPENCV_BUILD_DIR_NAME}",
-            "-DBUILD_ZLIB=OFF",
-            f"-DOPENCV_EXTRA_MODULES_PATH={opencv_contrib_path}/modules",
-            f"-DCMAKE_INSTALL_PREFIX={opencv_install_path}",
-            f"{opencv_path}"
-        ])
+        if is_windows:
+            run_command([
+                "cmake",
+                f"-B{OPENCV_BUILD_DIR_NAME}",
+                "-DBUILD_ZLIB=OFF",
+                f"-DOPENCV_EXTRA_MODULES_PATH={opencv_contrib_path}/modules",
+                f"-DCMAKE_INSTALL_PREFIX={opencv_install_path}",
+                f"{opencv_path}"
+            ])
 
-        run_command([
-            "cmake",
-            "--build", OPENCV_BUILD_DIR_NAME,
-            "--target", "install",
-            "-j8"
-        ])
+            for config in ("Debug", "Release"):
+                run_command([
+                    "cmake",
+                    "--build", OPENCV_BUILD_DIR_NAME,
+                    "--target", "install",
+                    "--config", config,
+                    "-j8"
+                ])
+        else:
+            for config in ("Debug", "Release"):
+                run_command([
+                    "cmake",
+                    f"-B{OPENCV_BUILD_DIR_NAME}",
+                    f"-DCMAKE_BUILD_TYPE={config}",
+                    "-DBUILD_ZLIB=OFF",
+                    f"-DOPENCV_EXTRA_MODULES_PATH={opencv_contrib_path}/modules",
+                    f"-DCMAKE_INSTALL_PREFIX={opencv_install_path}",
+                    f"{opencv_path}"
+                ])
 
-    print("Building...")
+                run_command([
+                    "cmake",
+                    "--build", OPENCV_BUILD_DIR_NAME,
+                    "--target", "install",
+                    "-j8"
+                ])
 
-    os.chdir(repo_path)
-    bazel_python_path = str(python_path).replace("\\", "/")
-
-    if is_windows:
-        os.environ["BAZEL_SH"] = "C:/Program Files/Git/bin/sh.exe"
-
-        result = run_command([
-            str(bazel_path),
-            "build",
-            "-c", "dbg",
-            "--copt", "/DMP_EXPORT=__declspec(dllexport)",
-            "--action_env", f"PYTHON_BIN_PATH={bazel_python_path}",
-            "--define", "MEDIAPIPE_DISABLE_GPU=1",
-            "//mediapipe/tasks/c/vision:vision.dll"
-        ])
-    else:
-        result = run_command([
-            str(bazel_path),
-            "build",
-            "-c", "dbg",
-            "--action_env", f"PYTHON_BIN_PATH={bazel_python_path}",
-            "--define", "MEDIAPIPE_DISABLE_GPU=1",
-            "//mediapipe/tasks/c/vision:libvision.dylib"
-        ])
-
-    if result.returncode == 0:
-        print("Build finished!")
-    else:
-        print("Build failed!")
-        exit(1)
-
-    os.chdir(os.pardir)
 
     if output_dir.exists():
         print("Cleaning output directory...")
@@ -325,19 +323,65 @@ if __name__ == "__main__":
     
     output_dir.mkdir()
 
-    print("Copying build artifacts...")
-
-    dst_lib_dir = output_dir / "lib"
-    dst_lib_dir.mkdir()
-
     if is_windows:
-        dst_bin_dir = output_dir / "bin"
-        dst_bin_dir.mkdir()
-    
-        shutil.copyfile("mediapipe/bazel-bin/mediapipe/tasks/c/vision/vision.dll", dst_bin_dir / "vision.dll")
-        shutil.copyfile("mediapipe/bazel-bin/mediapipe/tasks/c/vision/vision.dll.if.lib", dst_lib_dir / "vision.lib")
-    elif is_darwin:
-        shutil.copyfile("mediapipe/bazel-bin/mediapipe/tasks/c/vision/libvision.dylib", dst_lib_dir / "libvision.dylib")
+        bazel_python_path = str(python_path).replace("\\", "/")
+        os.environ["BAZEL_SH"] = "C:/Program Files/Git/bin/sh.exe"
+
+        for config_name, bazel_config in BUILD_CONFIGURATIONS:
+            print(f"Building {config_name} configuration...")
+
+            result = run_command([
+                str(bazel_path),
+                "build",
+                "-c", bazel_config,
+                "--copt", "/DMP_EXPORT=__declspec(dllexport)",
+                "--action_env", f"PYTHON_BIN_PATH={bazel_python_path}",
+                "--define", "MEDIAPIPE_DISABLE_GPU=1",
+                "//mediapipe/tasks/c/vision:vision.dll"
+            ], cwd=repo_path)
+
+            if result.returncode == 0:
+                print("Build finished!")
+            else:
+                print("Build failed!")
+                exit(1)
+
+            print(f"Copying {config_name} build artifacts...")
+
+            dst_lib_dir = output_dir / config_name / "lib"
+            dst_lib_dir.mkdir(parents=True)
+
+            dst_bin_dir = output_dir / config_name / "bin"
+            dst_bin_dir.mkdir(parents=True)
+
+            shutil.copyfile("mediapipe/bazel-bin/mediapipe/tasks/c/vision/vision.dll", dst_bin_dir / "vision.dll")
+            shutil.copyfile("mediapipe/bazel-bin/mediapipe/tasks/c/vision/vision.dll.if.lib", dst_lib_dir / "vision.lib")
+    else:
+        for config_name, bazel_config in BUILD_CONFIGURATIONS:
+            print(f"Building {config_name} configuration...")
+            
+            result = run_command([
+                str(bazel_path),
+                "build",
+                "-c", bazel_config,
+                "--action_env", f"PYTHON_BIN_PATH={python_path}",
+                "--define", "MEDIAPIPE_DISABLE_GPU=1",
+                "//mediapipe/tasks/c/vision:libvision.dylib"
+            ], cwd=repo_path)
+
+            if result.returncode == 0:
+                print("Build finished!")
+            else:
+                print("Build failed!")
+                exit(1)
+
+            print(f"Copying {config_name} build artifacts...")
+
+            dst_lib_dir = output_dir / config_name / "lib"
+            dst_lib_dir.mkdir(parents=True)
+            shutil.copyfile("mediapipe/bazel-bin/mediapipe/tasks/c/vision/libvision.dylib", dst_lib_dir / "libvision.dylib")
+
+    print("Copying headers...")
 
     src_headers_dir = repo_path / C_API_ROOT
     dst_headers_dir = output_dir / "include" / C_API_ROOT
@@ -350,3 +394,8 @@ if __name__ == "__main__":
             dst_path.parent.mkdir(parents=True)
         
         shutil.copyfile(src_path, dst_path)
+    
+    print("Copying license...")
+    shutil.copyfile(repo_path / "LICENSE", output_dir / "LICENSE")
+
+    print("Done!")
