@@ -12,12 +12,13 @@
 precision highp float;
 
 //-----------------------------------------------------------------------------
-in      vec3        v_P_WS;         // sample direction
+in      vec3        v_P_WS;               // sample direction
 
-uniform samplerCube u_texture0;     // Equirectagular map
-uniform float       u_roughness;    // roughnes value
+uniform samplerCube u_environmentMap;     // environment cube map
+uniform float       u_environmentMapSize; // current mip level
+uniform float       u_roughness;          // roughnes value
 
-out     vec4        o_fragColor;    // output fragment color
+out     vec4        o_fragColor;          // output fragment color
 // ----------------------------------------------------------------------------
 const float PI = 3.14159265359;
 // ----------------------------------------------------------------------------
@@ -37,7 +38,7 @@ float DistributionGGX(vec3 N, vec3 H, float roughness)
 // ----------------------------------------------------------------------------
 #if GL_ES
 // Slow VanDerCorpus calculation when on OpenGL ES because Android drivers
-// apparently have issues with bit operations. 
+// apparently have issues with bit operations.
 float RadicalInverse_VdC(uint n, uint base)
 {
     float invBase = 1.0 / float(base);
@@ -131,13 +132,11 @@ void main()
             float HdotV = max(dot(H, V), 0.0);
             float pdf = D * NdotH / (4.0 * HdotV) + 0.0001; 
 
-            float resolution = 512.0; // resolution of source cubemap (per face)
-            float saTexel  = 4.0 * PI / (6.0 * resolution * resolution);
+            float saTexel  = 4.0 * PI / (6.0 * u_environmentMapSize * u_environmentMapSize);
             float saSample = 1.0 / (float(SAMPLE_COUNT) * pdf + 0.0001);
-
             float mipLevel = u_roughness == 0.0 ? 0.0 : 0.5 * log2(saSample / saTexel); 
             
-            prefilteredColor += textureLod(u_texture0, L, mipLevel).rgb * NdotL;
+            prefilteredColor += textureLod(u_environmentMap, L, mipLevel).rgb * NdotL;
             totalWeight      += NdotL;
         }
     }

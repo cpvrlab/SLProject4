@@ -19,7 +19,7 @@ const   float       PI = 3.14159265359;
 // ----------------------------------------------------------------------------
 #if GL_ES
 // Slow VanDerCorpus calculation when on OpenGL ES because Android drivers
-// apparently have issues with bit operations. 
+// apparently have issues with bit operations.
 float RadicalInverse_VdC(uint n, uint base)
 {
     float invBase = 1.0 / float(base);

@@ -56,15 +56,15 @@ SLGLTextureIBL::SLGLTextureIBL(SLAssetManager* am,
         _shaderProgram = new SLGLProgramGeneric(am,
                                                 shaderPath + "PBR_CubeMap.vert",
                                                 shaderPath + "PBR_CylinderToCubeMap.frag");
-    if (texType == TT_irradianceCubemap)
+    else if (texType == TT_irradianceCubemap)
         _shaderProgram = new SLGLProgramGeneric(am,
                                                 shaderPath + "PBR_CubeMap.vert",
                                                 shaderPath + "PBR_IrradianceConvolution.frag");
-    if (texType == TT_roughnessCubemap)
+    else if (texType == TT_roughnessCubemap)
         _shaderProgram = new SLGLProgramGeneric(am,
                                                 shaderPath + "PBR_CubeMap.vert",
                                                 shaderPath + "PBR_PrefilterRoughness.frag");
-    if (texType == TT_brdfLUT)
+    else if (texType == TT_brdfLUT)
         _shaderProgram = new SLGLProgramGeneric(am,
                                                 shaderPath + "PBR_BRDFIntegration.vert",
                                                 shaderPath + "PBR_BRDFIntegration.frag");
@@ -157,7 +157,7 @@ void SLGLTextureIBL::build(SLint texUnit)
         if (_sourceTexture != nullptr)
             _sourceTexture->bindActive();
 
-        _shaderProgram->uniform1i("u_texture0", texUnit);
+        _shaderProgram->uniform1i("u_environmentMap", texUnit);
 
         glActiveTexture(GL_TEXTURE0 + texUnit);
         glBindTexture(_sourceTexture->target(),
@@ -251,7 +251,10 @@ void SLGLTextureIBL::build(SLint texUnit)
 
         if (_sourceTexture != nullptr)
             _sourceTexture->bindActive();
-        _shaderProgram->uniform1i("u_texture0", texUnit);
+
+        _shaderProgram->uniform1i("u_environmentMap", texUnit);
+        _shaderProgram->uniform1f("u_environmentMapSize", (float)_sourceTexture->width());
+
         glActiveTexture(GL_TEXTURE0 + texUnit);
         glBindTexture(_sourceTexture->target(), _sourceTexture->texID());
 
@@ -266,6 +269,7 @@ void SLGLTextureIBL::build(SLint texUnit)
 
             SLfloat roughness = (SLfloat)mipLevel / (SLfloat)(ROUGHNESS_NUM_MIP_LEVELS - 1);
             _shaderProgram->uniform1f("u_roughness", roughness);
+
             for (SLuint i = 0; i < 6; ++i)
             {
                 SLMat4f mvp = _captureProjection * _captureViews[i];
