@@ -3,7 +3,7 @@
 //  Purpose:   GLSL fragment program for generating a BRDF integration map,
 //             which is the second part of the specular integral.
 //  Date:      April 2018
-//  Authors:   Carlos Arauz, Marcus Hudritsch
+//  Authors:   Carlos Arauz, Marcus Hudritsch, Marino von Wattenwyl
 //  License:   This software is provided under the GNU General Public License
 //             Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
@@ -17,9 +17,11 @@ out     vec4        o_FragColor;
 // ----------------------------------------------------------------------------
 const   float       PI = 3.14159265359;
 // ----------------------------------------------------------------------------
-#if GL_ES
+
+#if defined(GL_ES) // MacOS doesn't like #if GL_ES (!!!)
 // Slow VanDerCorpus calculation when on OpenGL ES because Android drivers
 // apparently have issues with bit operations.
+// See also: https://learnopengl.com/PBR/IBL/Specular-IBL
 float RadicalInverse_VdC(uint n, uint base)
 {
     float invBase = 1.0 / float(base);
@@ -55,11 +57,11 @@ float RadicalInverse_VdC(uint bits)
 // ----------------------------------------------------------------------------
 vec2 Hammersley(uint i, uint N)
 {
-#if GL_ES
+    #if defined(GL_ES)
     return vec2(float(i)/float(N), RadicalInverse_VdC(i, 2u));
-#else
+    #else
     return vec2(float(i)/float(N), RadicalInverse_VdC(i));
-#endif
+    #endif
 }
 // ----------------------------------------------------------------------------
 vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness)

@@ -36,7 +36,7 @@ float DistributionGGX(vec3 N, vec3 H, float roughness)
     return nom / denom;
 }
 // ----------------------------------------------------------------------------
-#if GL_ES
+#if defined(GL_ES) // MacOS doesn't like #if GL_ES (!!!)
 // Slow VanDerCorpus calculation when on OpenGL ES because Android drivers
 // apparently have issues with bit operations.
 float RadicalInverse_VdC(uint n, uint base)
@@ -74,7 +74,7 @@ float RadicalInverse_VdC(uint bits)
 // ----------------------------------------------------------------------------
 vec2 Hammersley(uint i, uint N)
 {
-#if GL_ES
+#if defined(GL_ES) // MacOS doesn't like #if GL_ES (!!!)
     return vec2(float(i)/float(N), RadicalInverse_VdC(i, 2u));
 #else
     return vec2(float(i)/float(N), RadicalInverse_VdC(i));
