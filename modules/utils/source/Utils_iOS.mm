@@ -74,8 +74,7 @@ vector<string> Utils_iOS::getAllNamesInDir(const string& dirName, bool fullPath)
 
     NSString* nsPath   = [NSString stringWithCString:path.c_str()
                                           encoding:[NSString defaultCStringEncoding]];
-    NSString* nsFolder = [NSString stringWithCString:folder.c_str()
-                                            encoding:[NSString defaultCStringEncoding]];
+    [NSString stringWithCString:folder.c_str() encoding:[NSString defaultCStringEncoding]];
 
     NSFileManager* fileManager = [NSFileManager defaultManager];
 
