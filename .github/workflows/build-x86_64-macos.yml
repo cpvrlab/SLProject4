@@ -1,4 +1,4 @@
-name: Build macOS-x86
+name: Build macOS x86-64
 
 on:
   workflow_dispatch:
