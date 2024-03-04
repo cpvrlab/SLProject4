@@ -2701,8 +2701,10 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
 
                 ImGui::Separator();
 
-                if (ImGui::SliderFloat("FOV", &fov, 1.f, 179.f))
+                if (ImGui::SliderFloat("FOV (V)", &fov, 1.f, 179.f))
                     cam->fov(fov);
+
+                ImGui::Text("FOV (H): %3.1f ", cam->fovH());
 
                 if (ImGui::SliderFloat("Near Clip", &clipN, 0.001f, 10.f))
                     cam->clipNear(clipN);
