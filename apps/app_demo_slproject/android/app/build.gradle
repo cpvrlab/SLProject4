@@ -3,10 +3,10 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         release {
-            keyAlias 'cpvrlab'
-            keyPassword '?' // Change to your key password
-            storeFile file('../cpvrlab-release-key')
-            storePassword '?' // Change to your store password
+            keyAlias 'slproject-release-key'
+            keyPassword '' // Change to your key password
+            storeFile file('../slproject-release-key')
+            storePassword '' // Change to your store password
         }
     }
     compileSdkVersion 29

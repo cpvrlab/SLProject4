@@ -5,10 +5,12 @@
 
 @echo off
 
-set OPENSSL_VERSION="OpenSSL_1_1_1h"
+::set OPENSSL_VERSION="OpenSSL_3_2_1"
+set VERSION="3.2.1"
 
 if "%1" == "" (
-    set OPENSSL_VERSION="%1"
+    set VERSION="%1"
+    ::set OPENSSL_VERSION="%1"
 )
 
 :: To enable downloading prebuilds copy 
@@ -17,21 +19,28 @@ set MAX_NUM_CPU_CORES=6
 set SLPROJECT_ROOT=%2
 set PREFIX=%cd%\..\prebuilt\win64_openssl
 
-echo Building OpenSSL Version: %OPENSSL_VERSION%
+::echo Building OpenSSL Version: %OPENSSL_VERSION%
+echo Building OpenSSL Version: %VERSION%
 echo Installation directory: %PREFIX%
 echo Using %MAX_NUM_CPU_CORES% cpu cores for build.
 
 ::-----------------------------------------------------------------::
-if not exist openssl (
-    git clone https://github.com/openssl/openssl.git
-) else (
-    echo openssl already exists
-)
-cd openssl 
-git checkout %OPENSSL_VERSION%
-git pull origin %OPENSSL_VERSION%
+::if not exist openssl (
+::    git clone https://github.com/openssl/openssl.git
+::) else (
+::    echo openssl already exists
+::)
+::cd openssl 
+::git checkout %OPENSSL_VERSION%
+::git pull origin %OPENSSL_VERSION%
+::
+::perl Configure VC-WIN64A --prefix=%PREFIX% --openssldir=%PREFIX%
 
-perl Configure VC-WIN64A --prefix=%PREFIX% --openssldir=%PREFIX%
+if [ ! -d "openssl-${VERSION}" ]; then
+    curl https://www.openssl.org/source/openssl-${VERSION}.tar.gz
+    tar -zxf openssl-${VERSION}.tar.gz
+fi
+
 
 nmake clean
 nmake

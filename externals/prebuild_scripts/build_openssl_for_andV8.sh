@@ -7,18 +7,22 @@
 # the variable TOOLCHAIN (search below). E.g. on macos it is
 # $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/darwin-x86_64/bin
 
-openssl_VERSION="OpenSSL_1_1_1h"
+ANDROID_NDK_VERSION="r20b"
+
+openssl_VERSION="3.2.1"
 if [ -n "$1" ]
 then
     openssl_VERSION="$1"
 fi
-
-if [ "$ANDROID_NDK_HOME" == "" ]
+WORK_PATH=$(cd "$(dirname "$0")";pwd)
+if [ ! -d android-ndk-r20b ]
 then
-    echo "android ndk home not defined"
-    echo "export ANDROID_NDK_HOME=/path/Android/ndk-bundle/"
-    exit
+    wget https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip
+    unzip android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip
 fi
+export ANDROID_NDK_HOME="android-ndk-r20b"
+export ANDROID_NDK_PATH=${WORK_PATH}/${ANDROID_NDK_HOME}
+export ANDROID_NDK_ROOT=${ANDROID_NDK_PATH}
 
 ARCH=andV8
 ZIPFILE=${ARCH}_openssl
@@ -26,29 +30,15 @@ ZIPFILE=${ARCH}_openssl
 clear
 echo "Building openssl Version: $openssl_VERSION"
 
-if [ ! -d "openssl/.git" ]; then
-    git clone https://github.com/openssl/openssl.git
+if [ ! -d "openssl-${openssl_VERSION}" ]; then
+    wget https://www.openssl.org/source/openssl-${openssl_VERSION}.tar.gz
+    tar -zxf openssl-${openssl_VERSION}.tar.gz
 fi
 
-# Get all assimp tags and check if the requested exists
-cd openssl 
-git tag > openssl_tags.txt
+cd openssl-${openssl_VERSION}
 
-if grep -Fx "$openssl_VERSION" openssl_tags.txt > /dev/null; then
-    git checkout $openssl_VERSION
-    git pull origin $openssl_VERSION
-else
-    echo "No valid openssl tag passed as 1st parameter !!!!!"
-    exit
-fi
-
-ls
-
-
-export CC=clang
-export TOOLCHAIN=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin
+export PATH=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin:$ANDROID_NDK_ROOT/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin:$ANDROID_NDK_ROOT/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin:$PATH
 export API=21
-export PATH=$TOOLCHAIN:$PATH
 architecture=android-arm64
 
 export PREFIX=$(pwd)/../$ZIPFILE
@@ -70,10 +60,10 @@ make install
 
 cd ..
 
-if [ -d "../prebuilt/${ARCH}_openssl" ]
+if [ -d "../prebuilt/${ARCH}_openssl-${openssl_VERSION}" ]
 then
-    rm -rf ../prebuilt/${ARCH}_openssl
+    rm -rf ../prebuilt/${ARCH}_openssl-${openssl_VERSION}
 fi
 
-mv ${ZIPFILE} ../prebuilt/${ARCH}_openssl/
+mv ${ZIPFILE} ../prebuilt/${ARCH}_openssl-${openssl_VERSION}/
 
