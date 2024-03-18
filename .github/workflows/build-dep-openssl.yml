@@ -51,7 +51,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: prebuilt-openssl-linux
-        path: ${{ github.workspace }}/externals/prebuilt/linux_openssl_1.1.1h
+        path: ${{ github.workspace }}/externals/prebuilt/linux_openssl_3.2.1
   build-macos:
     runs-on: macos-13
     steps:
@@ -71,3 +71,4 @@ jobs:
       with:
         name: prebuilt-openssl-ios
         path: ${{ github.workspace }}/externals/prebuilt/iosV8_openssl_3.2.1
+
