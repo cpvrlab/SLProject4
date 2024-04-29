@@ -6850,3 +6850,18 @@ resolution shadows near the camera and lower resolution shadows further away.");
 #endif
 }
 //-----------------------------------------------------------------------------
+void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
+{
+    SLScene*&        s  = AppDemo::scene;
+    SLAssetManager*& am = AppDemo::assetManager;
+
+    if (s)
+        delete s;
+
+    s = new SLScene("The Scene");
+    s->initOculus(AppDemo::dataPath + "shaders/");
+    sv->scene(s);
+
+    appDemoLoadScene(am, s, sv, sceneID);
+}
+//-----------------------------------------------------------------------------

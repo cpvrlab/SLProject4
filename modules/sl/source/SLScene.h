@@ -50,8 +50,7 @@ class SLScene : public SLObject
     friend class SLNode;
 
 public:
-    SLScene(const SLstring& name,
-            cbOnSceneLoad   onSceneLoadCallback);
+    SLScene(const SLstring& name);
     ~SLScene() override;
 
     void initOculus(SLstring shaderDir);
@@ -109,8 +108,6 @@ public:
     SLbool    stopAnimations() const { return _stopAnimations; }
     SLint     numSceneCameras();
     SLCamera* nextCameraInScene(SLCamera* activeSVCam);
-
-    cbOnSceneLoad onLoad; //!< C-Callback for scene load
 
     // Misc.
     bool         onUpdate(bool renderTypeIsRT,

@@ -130,7 +130,7 @@ SLint slCreateSceneView(SLAssetManager* am,
                         void*           onImGuiLoadConfig,
                         void*           onImGuiSaveConfig)
 {
-    assert(scene && "No valid scene!");
+    // assert(scene && "No valid scene!");
 
     // Use our own sceneview creator callback or the passed one.
     cbOnNewSceneView newSVCallback;
@@ -160,12 +160,12 @@ SLint slCreateSceneView(SLAssetManager* am,
              AppDemo::configPath);
 
     // Set active sceneview and load scene. This is done for the first sceneview
-    if (!scene->root3D())
+    if (!scene)
     {
         if (AppDemo::sceneID == SID_Empty)
-            scene->onLoad(am, AppDemo::scene, sv, initScene);
+            AppDemo::sceneToLoad = initScene;
         else
-            scene->onLoad(am, scene, sv, AppDemo::sceneID);
+            AppDemo::sceneToLoad = AppDemo::sceneID;
     }
     else
         sv->onInitialize();

@@ -225,8 +225,8 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
 {
     PROFILE_FUNCTION();
 
-    assert(s->assetManager() && "No asset manager assigned to scene!");
-    SLAssetManager* am = s->assetManager();
+    // assert(s->assetManager() && "No asset manager assigned to scene!");
+    SLAssetManager* am = AppDemo::assetManager;
 
     if (AppDemoGui::hideUI ||
         (sv->camera() && sv->camera()->projType() == P_stereoSideBySideD))
@@ -1441,8 +1441,8 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
 {
     PROFILE_FUNCTION();
 
-    assert(s->assetManager() && "No asset manager assigned to scene!");
-    SLAssetManager* am = s->assetManager();
+    // assert(s->assetManager() && "No asset manager assigned to scene!");
+    SLAssetManager* am = AppDemo::assetManager;
 
     SLSceneID    sid           = AppDemo::sceneID;
     SLGLState*   stateGL       = SLGLState::instance();
@@ -1465,29 +1465,29 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 if (ImGui::BeginMenu("General"))
                 {
                     if (ImGui::MenuItem("Minimal Scene", nullptr, sid == SID_Minimal))
-                        s->onLoad(am, s, sv, SID_Minimal);
+                        AppDemo::sceneToLoad = SID_Minimal;
                     if (ImGui::MenuItem("Figure Scene", nullptr, sid == SID_Figure))
-                        s->onLoad(am, s, sv, SID_Figure);
+                        AppDemo::sceneToLoad = SID_Figure;
                     if (ImGui::MenuItem("Mesh Loader", nullptr, sid == SID_MeshLoad))
-                        s->onLoad(am, s, sv, SID_MeshLoad);
+                        AppDemo::sceneToLoad = SID_MeshLoad;
                     if (ImGui::MenuItem("Revolver Meshes", nullptr, sid == SID_Revolver))
-                        s->onLoad(am, s, sv, SID_Revolver);
+                        AppDemo::sceneToLoad = SID_Revolver;
                     if (ImGui::MenuItem("Texture Blending", nullptr, sid == SID_TextureBlend))
-                        s->onLoad(am, s, sv, SID_TextureBlend);
+                        AppDemo::sceneToLoad = SID_TextureBlend;
                     if (ImGui::MenuItem("Texture Filters", nullptr, sid == SID_TextureFilter))
-                        s->onLoad(am, s, sv, SID_TextureFilter);
+                        AppDemo::sceneToLoad = SID_TextureFilter;
 #ifdef SL_BUILD_WITH_KTX
                     if (ImGui::MenuItem("Texture Compression", nullptr, sid == SID_TextureCompression))
-                        s->onLoad(am, s, sv, SID_TextureCompression);
+                        AppDemo::sceneToLoad = SID_TextureCompression;
 #endif
                     if (ImGui::MenuItem("Frustum Culling", nullptr, sid == SID_FrustumCull))
-                        s->onLoad(am, s, sv, SID_FrustumCull);
+                        AppDemo::sceneToLoad = SID_FrustumCull;
                     if (ImGui::MenuItem("2D and 3D Text", nullptr, sid == SID_2Dand3DText))
-                        s->onLoad(am, s, sv, SID_2Dand3DText);
+                        AppDemo::sceneToLoad = SID_2Dand3DText;
                     if (ImGui::MenuItem("Point Clouds", nullptr, sid == SID_PointClouds))
-                        s->onLoad(am, s, sv, SID_PointClouds);
+                        AppDemo::sceneToLoad = SID_PointClouds;
                     if (ImGui::MenuItem("Z-Fighting", nullptr, sid == SID_ZFighting))
-                        s->onLoad(am, s, sv, SID_ZFighting);
+                        AppDemo::sceneToLoad = SID_ZFighting;
 
                     ImGui::EndMenu();
                 }
@@ -1495,42 +1495,42 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 if (ImGui::BeginMenu("Shader"))
                 {
                     if (ImGui::MenuItem("Per Vertex Blinn-Phong", nullptr, sid == SID_ShaderPerVertexBlinn))
-                        s->onLoad(am, s, sv, SID_ShaderPerVertexBlinn);
+                        AppDemo::sceneToLoad = SID_ShaderPerVertexBlinn;
                     if (ImGui::MenuItem("Per Pixel Blinn-Phong", nullptr, sid == SID_ShaderPerPixelBlinn))
-                        s->onLoad(am, s, sv, SID_ShaderPerPixelBlinn);
+                        AppDemo::sceneToLoad = SID_ShaderPerPixelBlinn;
                     if (ImGui::MenuItem("Per Pixel Cook-Torrance", nullptr, sid == SID_ShaderPerPixelCook))
-                        s->onLoad(am, s, sv, SID_ShaderPerPixelCook);
+                        AppDemo::sceneToLoad = SID_ShaderPerPixelCook;
                     if (ImGui::MenuItem("Image Based Lighting", nullptr, sid == SID_ShaderIBL))
-                        s->onLoad(am, s, sv, SID_ShaderIBL);
+                        AppDemo::sceneToLoad = SID_ShaderIBL;
                     if (ImGui::MenuItem("Per Vertex Wave", nullptr, sid == SID_ShaderPerVertexWave))
-                        s->onLoad(am, s, sv, SID_ShaderPerVertexWave);
+                        AppDemo::sceneToLoad = SID_ShaderPerVertexWave;
                     if (ImGui::MenuItem("Bump Mapping", nullptr, sid == SID_ShaderBumpNormal))
-                        s->onLoad(am, s, sv, SID_ShaderBumpNormal);
+                        AppDemo::sceneToLoad = SID_ShaderBumpNormal;
                     if (ImGui::MenuItem("Parallax Mapping", nullptr, sid == SID_ShaderBumpParallax))
-                        s->onLoad(am, s, sv, SID_ShaderBumpParallax);
+                        AppDemo::sceneToLoad = SID_ShaderBumpParallax;
                     if (ImGui::MenuItem("Skybox Shader", nullptr, sid == SID_ShaderSkyBox))
-                        s->onLoad(am, s, sv, SID_ShaderSkyBox);
+                        AppDemo::sceneToLoad = SID_ShaderSkyBox;
                     if (ImGui::MenuItem("Earth Shader", nullptr, sid == SID_ShaderEarth))
-                        s->onLoad(am, s, sv, SID_ShaderEarth);
+                        AppDemo::sceneToLoad = SID_ShaderEarth;
                     ImGui::EndMenu();
                 }
 
                 if (ImGui::BeginMenu("Shadow Mapping"))
                 {
                     if (ImGui::MenuItem("Basic Scene", nullptr, sid == SID_ShadowMappingBasicScene))
-                        s->onLoad(am, s, sv, SID_ShadowMappingBasicScene);
+                        AppDemo::sceneToLoad = SID_ShadowMappingBasicScene;
                     if (ImGui::MenuItem("Light Types", nullptr, sid == SID_ShadowMappingLightTypes))
-                        s->onLoad(am, s, sv, SID_ShadowMappingLightTypes);
+                        AppDemo::sceneToLoad = SID_ShadowMappingLightTypes;
                     if (ImGui::MenuItem("8 Spot Lights", nullptr, sid == SID_ShadowMappingSpotLights))
-                        s->onLoad(am, s, sv, SID_ShadowMappingSpotLights);
+                        AppDemo::sceneToLoad = SID_ShadowMappingSpotLights;
                     if (ImGui::MenuItem("3 Point Lights", nullptr, sid == SID_ShadowMappingPointLights))
-                        s->onLoad(am, s, sv, SID_ShadowMappingPointLights);
+                        AppDemo::sceneToLoad = SID_ShadowMappingPointLights;
                     if (ImGui::MenuItem("RT Soft Shadows", nullptr, sid == SID_RTSoftShadows))
-                        s->onLoad(am, s, sv, SID_RTSoftShadows);
+                        AppDemo::sceneToLoad = SID_RTSoftShadows;
                     if (ImGui::MenuItem("Cascaded Shadows", nullptr, sid == SID_ShadowMappingCascaded))
-                        s->onLoad(am, s, sv, SID_ShadowMappingCascaded);
+                        AppDemo::sceneToLoad = SID_ShadowMappingCascaded;
                     if (ImGui::MenuItem("Columns with Cascaded Sh.", nullptr, sid == SID_Benchmark6_ColumnsLOD))
-                        s->onLoad(am, s, sv, SID_Benchmark6_ColumnsLOD);
+                        AppDemo::sceneToLoad = SID_Benchmark6_ColumnsLOD;
 
                     ImGui::EndMenu();
                 }
@@ -1538,33 +1538,33 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 if (ImGui::BeginMenu("Suzanne Lighting"))
                 {
                     if (ImGui::MenuItem("w. per Pixel Lighting (PL)", nullptr, sid == SID_SuzannePerPixBlinn))
-                        s->onLoad(am, s, sv, SID_SuzannePerPixBlinn);
+                        AppDemo::sceneToLoad = SID_SuzannePerPixBlinn;
                     if (ImGui::MenuItem("w. PL and Texture Mapping (TM)", nullptr, sid == SID_SuzannePerPixBlinnTm))
-                        s->onLoad(am, s, sv, SID_SuzannePerPixBlinnTm);
+                        AppDemo::sceneToLoad = SID_SuzannePerPixBlinnTm;
                     if (ImGui::MenuItem("w. PL and Normal Mapping (NM)", nullptr, sid == SID_SuzannePerPixBlinnNm))
-                        s->onLoad(am, s, sv, SID_SuzannePerPixBlinnNm);
+                        AppDemo::sceneToLoad = SID_SuzannePerPixBlinnNm;
                     if (ImGui::MenuItem("w. PL and Ambient Occlusion (AO)", nullptr, sid == SID_SuzannePerPixBlinnAo))
-                        s->onLoad(am, s, sv, SID_SuzannePerPixBlinnAo);
+                        AppDemo::sceneToLoad = SID_SuzannePerPixBlinnAo;
                     if (ImGui::MenuItem("w. PL and Shadow Mapping (SM)", nullptr, sid == SID_SuzannePerPixBlinnSm))
-                        s->onLoad(am, s, sv, SID_SuzannePerPixBlinnSm);
+                        AppDemo::sceneToLoad = SID_SuzannePerPixBlinnSm;
                     if (ImGui::MenuItem("w. PL, TM, NM", nullptr, sid == SID_SuzannePerPixBlinnTmNm))
-                        s->onLoad(am, s, sv, SID_SuzannePerPixBlinnTmNm);
+                        AppDemo::sceneToLoad = SID_SuzannePerPixBlinnTmNm;
                     if (ImGui::MenuItem("w. PL, TM, AO", nullptr, sid == SID_SuzannePerPixBlinnTmAo))
-                        s->onLoad(am, s, sv, SID_SuzannePerPixBlinnTmAo);
+                        AppDemo::sceneToLoad = SID_SuzannePerPixBlinnTmAo;
                     if (ImGui::MenuItem("w. PL, NM, AO", nullptr, sid == SID_SuzannePerPixBlinnNmAo))
-                        s->onLoad(am, s, sv, SID_SuzannePerPixBlinnNmAo);
+                        AppDemo::sceneToLoad = SID_SuzannePerPixBlinnNmAo;
                     if (ImGui::MenuItem("w. PL, NM, SM", nullptr, sid == SID_SuzannePerPixBlinnNmSm))
-                        s->onLoad(am, s, sv, SID_SuzannePerPixBlinnNmSm);
+                        AppDemo::sceneToLoad = SID_SuzannePerPixBlinnNmSm;
                     if (ImGui::MenuItem("w. PL, TM, SM", nullptr, sid == SID_SuzannePerPixBlinnTmSm))
-                        s->onLoad(am, s, sv, SID_SuzannePerPixBlinnTmSm);
+                        AppDemo::sceneToLoad = SID_SuzannePerPixBlinnTmSm;
                     if (ImGui::MenuItem("w. PL, AO, SM", nullptr, sid == SID_SuzannePerPixBlinnAoSm))
-                        s->onLoad(am, s, sv, SID_SuzannePerPixBlinnAoSm);
+                        AppDemo::sceneToLoad = SID_SuzannePerPixBlinnAoSm;
                     if (ImGui::MenuItem("w. PL, TM, NM, AO", nullptr, sid == SID_SuzannePerPixBlinnTmNmAo))
-                        s->onLoad(am, s, sv, SID_SuzannePerPixBlinnTmNmAo);
+                        AppDemo::sceneToLoad = SID_SuzannePerPixBlinnTmNmAo;
                     if (ImGui::MenuItem("w. PL, TM, NM, SM", nullptr, sid == SID_SuzannePerPixBlinnTmNmSm))
-                        s->onLoad(am, s, sv, SID_SuzannePerPixBlinnTmNmSm);
+                        AppDemo::sceneToLoad = SID_SuzannePerPixBlinnTmNmSm;
                     if (ImGui::MenuItem("w. PL, TM, NM, AO, SM", nullptr, sid == SID_SuzannePerPixBlinnTmNmAoSm))
-                        s->onLoad(am, s, sv, SID_SuzannePerPixBlinnTmNmAoSm);
+                        AppDemo::sceneToLoad = SID_SuzannePerPixBlinnTmNmAoSm;
                     ImGui::EndMenu();
                 }
 
@@ -1573,13 +1573,13 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                     SLstring zip = "glTF-Sample-Models.zip";
 
                     if (ImGui::MenuItem("Damaged Helmet", nullptr, sid == SID_glTF_DamagedHelmet))
-                        s->onLoad(am, s, sv, SID_glTF_DamagedHelmet);
+                        AppDemo::sceneToLoad = SID_glTF_DamagedHelmet;
                     if (ImGui::MenuItem("Flight Helmet", nullptr, sid == SID_glTF_FlightHelmet))
-                        s->onLoad(am, s, sv, SID_glTF_FlightHelmet);
+                        AppDemo::sceneToLoad = SID_glTF_FlightHelmet;
                     if (ImGui::MenuItem("Sponza Palace", nullptr, sid == SID_glTF_Sponza))
-                        s->onLoad(am, s, sv, SID_glTF_Sponza);
+                        AppDemo::sceneToLoad = SID_glTF_Sponza;
                     if (ImGui::MenuItem("Water Bottle", nullptr, sid == SID_glTF_WaterBottle))
-                        s->onLoad(am, s, sv, SID_glTF_WaterBottle);
+                        AppDemo::sceneToLoad = SID_glTF_WaterBottle;
 
                     ImGui::EndMenu();
                 }
@@ -1589,7 +1589,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                     SLstring zip = "GLTF-FanucCRX.zip";
 
                     if (ImGui::MenuItem("Fanuc-CRX", nullptr, sid == SID_Robotics_FanucCRX_FK))
-                        s->onLoad(am, s, sv, SID_Robotics_FanucCRX_FK);
+                        AppDemo::sceneToLoad = SID_Robotics_FanucCRX_FK;
 
                     ImGui::EndMenu();
                 }
@@ -1597,7 +1597,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 if (ImGui::BeginMenu("Volume Rendering"))
                 {
                     if (ImGui::MenuItem("Head MRI Ray Cast", nullptr, sid == SID_VolumeRayCast))
-                        s->onLoad(am, s, sv, SID_VolumeRayCast);
+                        AppDemo::sceneToLoad = SID_VolumeRayCast;
                     if (ImGui::MenuItem("Head MRI Ray Cast Lighted", nullptr, sid == SID_VolumeRayCastLighted))
                     {
                         auto loadMRIImages = []()
@@ -1648,7 +1648,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
 
                         auto followUpJob1 = [](SLAssetManager* am, SLScene* s, SLSceneView* sv)
                         {
-                            s->onLoad(am, s, sv, SID_VolumeRayCastLighted);
+                            AppDemo::sceneToLoad = SID_VolumeRayCastLighted;
                         };
                         function<void(void)> onLoadScene = bind(followUpJob1, am, s, sv);
 
@@ -1664,15 +1664,15 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 if (ImGui::BeginMenu("Animation"))
                 {
                     if (ImGui::MenuItem("Node Animation", nullptr, sid == SID_AnimationNode))
-                        s->onLoad(am, s, sv, SID_AnimationNode);
+                        AppDemo::sceneToLoad = SID_AnimationNode;
                     if (ImGui::MenuItem("Mass Animation", nullptr, sid == SID_AnimationMass))
-                        s->onLoad(am, s, sv, SID_AnimationMass);
+                        AppDemo::sceneToLoad = SID_AnimationMass;
                     if (ImGui::MenuItem("Skeletal Animation", nullptr, sid == SID_AnimationSkinned))
-                        s->onLoad(am, s, sv, SID_AnimationSkinned);
+                        AppDemo::sceneToLoad = SID_AnimationSkinned;
                     if (ImGui::MenuItem("AstroBoy Army", nullptr, sid == SID_AnimationAstroboyArmy))
-                        s->onLoad(am, s, sv, SID_AnimationAstroboyArmy);
+                        AppDemo::sceneToLoad = SID_AnimationAstroboyArmy;
                     if (ImGui::MenuItem("Fanuc-CRX", nullptr, sid == SID_Robotics_FanucCRX_FK))
-                        s->onLoad(am, s, sv, SID_Robotics_FanucCRX_FK);
+                        AppDemo::sceneToLoad = SID_Robotics_FanucCRX_FK;
 
                     ImGui::EndMenu();
                 }
@@ -1680,36 +1680,36 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 if (ImGui::BeginMenu("Video"))
                 {
                     if (ImGui::MenuItem("Texture from Video Live", nullptr, sid == SID_VideoTextureLive))
-                        s->onLoad(am, s, sv, SID_VideoTextureLive);
+                        AppDemo::sceneToLoad = SID_VideoTextureLive;
 #ifndef SL_EMSCRIPTEN
                     if (ImGui::MenuItem("Texture from Video File", nullptr, sid == SID_VideoTextureFile))
-                        s->onLoad(am, s, sv, SID_VideoTextureFile);
+                        AppDemo::sceneToLoad = SID_VideoTextureFile;
 #endif
                     if (ImGui::MenuItem("Track ArUco Marker (Main)", nullptr, sid == SID_VideoTrackArucoMain))
-                        s->onLoad(am, s, sv, SID_VideoTrackArucoMain);
+                        AppDemo::sceneToLoad = SID_VideoTrackArucoMain;
                     if (ImGui::MenuItem("Track ArUco Marker (Scnd)", nullptr, sid == SID_VideoTrackArucoScnd, capture->hasSecondaryCamera))
-                        s->onLoad(am, s, sv, SID_VideoTrackArucoScnd);
+                        AppDemo::sceneToLoad = SID_VideoTrackArucoScnd;
                     if (ImGui::MenuItem("Track Chessboard (Main)", nullptr, sid == SID_VideoTrackChessMain))
-                        s->onLoad(am, s, sv, SID_VideoTrackChessMain);
+                        AppDemo::sceneToLoad = SID_VideoTrackChessMain;
                     if (ImGui::MenuItem("Track Chessboard (Scnd)", nullptr, sid == SID_VideoTrackChessScnd, capture->hasSecondaryCamera))
-                        s->onLoad(am, s, sv, SID_VideoTrackChessScnd);
+                        AppDemo::sceneToLoad = SID_VideoTrackChessScnd;
                     if (ImGui::MenuItem("Track Features (Main)", nullptr, sid == SID_VideoTrackFeature2DMain))
-                        s->onLoad(am, s, sv, SID_VideoTrackFeature2DMain);
+                        AppDemo::sceneToLoad = SID_VideoTrackFeature2DMain;
 #ifndef SL_EMSCRIPTEN
                     if (ImGui::MenuItem("Track Face (Main)", nullptr, sid == SID_VideoTrackFaceMain))
-                        s->onLoad(am, s, sv, SID_VideoTrackFaceMain);
+                        AppDemo::sceneToLoad = SID_VideoTrackFaceMain;
                     if (ImGui::MenuItem("Track Face (Scnd)", nullptr, sid == SID_VideoTrackFaceScnd, capture->hasSecondaryCamera))
-                        s->onLoad(am, s, sv, SID_VideoTrackFaceScnd);
+                        AppDemo::sceneToLoad = SID_VideoTrackFaceScnd;
 #endif
 #ifdef SL_BUILD_WITH_MEDIAPIPE
                     if (ImGui::MenuItem("Track Hands w. Mediapipe (Main)", nullptr, sid == SID_VideoTrackMediaPipeHandsMain))
-                        s->onLoad(am, s, sv, SID_VideoTrackMediaPipeHandsMain);
+                        AppDemo::sceneToLoad = SID_VideoTrackMediaPipeHandsMain;
 #endif
                     if (ImGui::MenuItem("Sensor AR (Main)", nullptr, sid == SID_VideoSensorAR))
-                        s->onLoad(am, s, sv, SID_VideoSensorAR);
+                        AppDemo::sceneToLoad = SID_VideoSensorAR;
 #ifdef SL_BUILD_WAI
                     if (ImGui::MenuItem("Track WAI (Main)", nullptr, sid == SID_VideoTrackWAI))
-                        s->onLoad(am, s, sv, SID_VideoTrackWAI);
+                        AppDemo::sceneToLoad = SID_VideoTrackWAI;
 #endif
                     ImGui::EndMenu();
                 }
@@ -1717,17 +1717,17 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 if (ImGui::BeginMenu("Ray Tracing"))
                 {
                     if (ImGui::MenuItem("Spheres", nullptr, sid == SID_RTSpheres))
-                        s->onLoad(am, s, sv, SID_RTSpheres);
+                        AppDemo::sceneToLoad = SID_RTSpheres;
                     if (ImGui::MenuItem("Muttenzer Box", nullptr, sid == SID_RTMuttenzerBox))
-                        s->onLoad(am, s, sv, SID_RTMuttenzerBox);
+                        AppDemo::sceneToLoad = SID_RTMuttenzerBox;
                     if (ImGui::MenuItem("Soft Shadows", nullptr, sid == SID_RTSoftShadows))
-                        s->onLoad(am, s, sv, SID_RTSoftShadows);
+                        AppDemo::sceneToLoad = SID_RTSoftShadows;
                     if (ImGui::MenuItem("Depth of Field", nullptr, sid == SID_RTDoF))
-                        s->onLoad(am, s, sv, SID_RTDoF);
+                        AppDemo::sceneToLoad = SID_RTDoF;
                     if (ImGui::MenuItem("Lens Test", nullptr, sid == SID_RTLens))
-                        s->onLoad(am, s, sv, SID_RTLens);
+                        AppDemo::sceneToLoad = SID_RTLens;
                     if (ImGui::MenuItem("RT Test", nullptr, sid == SID_RTTest))
-                        s->onLoad(am, s, sv, SID_RTTest);
+                        AppDemo::sceneToLoad = SID_RTTest;
 
                     ImGui::EndMenu();
                 }
@@ -1735,7 +1735,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 if (ImGui::BeginMenu("Path Tracing"))
                 {
                     if (ImGui::MenuItem("Muttenzer Box", nullptr, sid == SID_RTMuttenzerBox))
-                        s->onLoad(am, s, sv, SID_RTMuttenzerBox);
+                        AppDemo::sceneToLoad = SID_RTMuttenzerBox;
 
                     ImGui::EndMenu();
                 }
@@ -1743,19 +1743,19 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 if (ImGui::BeginMenu("Particle Systems"))
                 {
                     if (ImGui::MenuItem("First Particle System", nullptr, sid == SID_ParticleSystem_First))
-                        s->onLoad(am, s, sv, SID_ParticleSystem_First);
+                        AppDemo::sceneToLoad = SID_ParticleSystem_First;
                     if (ImGui::MenuItem("Demo Particle System", nullptr, sid == SID_ParticleSystem_Demo))
-                        s->onLoad(am, s, sv, SID_ParticleSystem_Demo);
+                        AppDemo::sceneToLoad = SID_ParticleSystem_Demo;
                     if (ImGui::MenuItem("Dust Storm Particle System", nullptr, sid == SID_ParticleSystem_DustStorm))
-                        s->onLoad(am, s, sv, SID_ParticleSystem_DustStorm);
+                        AppDemo::sceneToLoad = SID_ParticleSystem_DustStorm;
                     if (ImGui::MenuItem("Fountain Particle System", nullptr, sid == SID_ParticleSystem_Fountain))
-                        s->onLoad(am, s, sv, SID_ParticleSystem_Fountain);
+                        AppDemo::sceneToLoad = SID_ParticleSystem_Fountain;
                     if (ImGui::MenuItem("Sun Particle System", nullptr, sid == SID_ParticleSystem_Sun))
-                        s->onLoad(am, s, sv, SID_ParticleSystem_Sun);
+                        AppDemo::sceneToLoad = SID_ParticleSystem_Sun;
                     if (ImGui::MenuItem("Ring of Fire Particle System", nullptr, sid == SID_ParticleSystem_RingOfFire))
-                        s->onLoad(am, s, sv, SID_ParticleSystem_RingOfFire);
+                        AppDemo::sceneToLoad = SID_ParticleSystem_RingOfFire;
                     if (ImGui::MenuItem("Complex Fire Particle System", nullptr, sid == SID_ParticleSystem_FireComplex))
-                        s->onLoad(am, s, sv, SID_ParticleSystem_FireComplex);
+                        AppDemo::sceneToLoad = SID_ParticleSystem_FireComplex;
 
                     ImGui::EndMenu();
                 }
@@ -1782,39 +1782,39 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                     {
                         if (Utils::fileExists(modelBR2))
                             if (ImGui::MenuItem("Bern: Christoffel Tower", nullptr, sid == SID_ErlebARBernChristoffel))
-                                s->onLoad(am, s, sv, SID_ErlebARBernChristoffel);
+                                AppDemo::sceneToLoad = SID_ErlebARBernChristoffel;
 
                         if (Utils::fileExists(modelBFH))
                             if (ImGui::MenuItem("Biel: BFH", nullptr, sid == SID_ErlebARBielBFH))
-                                s->onLoad(am, s, sv, SID_ErlebARBielBFH);
+                                AppDemo::sceneToLoad = SID_ErlebARBielBFH;
 
                         if (Utils::fileExists(modelAR1))
                             if (ImGui::MenuItem("Augusta Raurica Temple", nullptr, sid == SID_ErlebARAugustaRauricaTmp))
-                                s->onLoad(am, s, sv, SID_ErlebARAugustaRauricaTmp);
+                                AppDemo::sceneToLoad = SID_ErlebARAugustaRauricaTmp;
 
                         if (Utils::fileExists(modelAR2))
                             if (ImGui::MenuItem("Augusta Raurica Theater", nullptr, sid == SID_ErlebARAugustaRauricaTht))
-                                s->onLoad(am, s, sv, SID_ErlebARAugustaRauricaTht);
+                                AppDemo::sceneToLoad = SID_ErlebARAugustaRauricaTht;
 
                         if (Utils::fileExists(modelAR3))
                             if (ImGui::MenuItem("Augusta Raurica Temple & Theater", nullptr, sid == SID_ErlebARAugustaRauricaTmpTht))
-                                s->onLoad(am, s, sv, SID_ErlebARAugustaRauricaTmpTht);
+                                AppDemo::sceneToLoad = SID_ErlebARAugustaRauricaTmpTht;
 
                         if (Utils::fileExists(modelAV1_AO))
                             if (ImGui::MenuItem("Aventicum: Amphitheatre", nullptr, sid == SID_ErlebARAventicumAmphiteatre))
-                                s->onLoad(am, s, sv, SID_ErlebARAventicumAmphiteatre);
+                                AppDemo::sceneToLoad = SID_ErlebARAventicumAmphiteatre;
 
                         if (Utils::fileExists(modelAV2_AO))
                             if (ImGui::MenuItem("Aventicum: Cigognier", nullptr, sid == SID_ErlebARAventicumCigognier))
-                                s->onLoad(am, s, sv, SID_ErlebARAventicumCigognier);
+                                AppDemo::sceneToLoad = SID_ErlebARAventicumCigognier;
 
                         if (Utils::fileExists(modelAV3))
                             if (ImGui::MenuItem("Aventicum: Theatre", nullptr, sid == SID_ErlebARAventicumTheatre))
-                                s->onLoad(am, s, sv, SID_ErlebARAventicumTheatre);
+                                AppDemo::sceneToLoad = SID_ErlebARAventicumTheatre;
 
                         if (Utils::fileExists(modelSU1))
                             if (ImGui::MenuItem("Sutz: Kirchrain 18", nullptr, sid == SID_ErlebARSutzKirchrain18))
-                                s->onLoad(am, s, sv, SID_ErlebARSutzKirchrain18);
+                                AppDemo::sceneToLoad = SID_ErlebARSutzKirchrain18;
 
                         ImGui::EndMenu();
                     }
@@ -1828,7 +1828,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                     {
                         SLstring largeFile = AppDemo::configPath + "models/xyzrgb_dragon/xyzrgb_dragon.ply";
                         if (Utils::fileExists(largeFile))
-                            s->onLoad(am, s, sv, SID_Benchmark1_LargeModel);
+                            AppDemo::sceneToLoad = SID_Benchmark1_LargeModel;
                         else
                         {
                             auto downloadJobFTP = []()
@@ -1892,7 +1892,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                             auto followUpJob1 = [am, s, sv, largeFile]()
                             {
                                 if (Utils::fileExists(largeFile))
-                                    s->onLoad(am, s, sv, SID_Benchmark1_LargeModel);
+                                    AppDemo::sceneToLoad = SID_Benchmark1_LargeModel;
                             };
 
                             AppDemo::jobsToBeThreaded.emplace_back(downloadJobFTP);
@@ -1906,26 +1906,26 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                         loadSceneWithLargeModel(s, sv, "xyzrgb_dragon.zip", largeFile, SID_Benchmark1_LargeModel);
                     }
                     if (ImGui::MenuItem("Large Model", nullptr, sid == SID_Benchmark1_LargeModel))
-                        s->onLoad(am, s, sv, SID_Benchmark1_LargeModel);
+                        AppDemo::sceneToLoad = SID_Benchmark1_LargeModel;
 #endif
                     if (ImGui::MenuItem("Massive Nodes", nullptr, sid == SID_Benchmark2_MassiveNodes))
-                        s->onLoad(am, s, sv, SID_Benchmark2_MassiveNodes);
+                        AppDemo::sceneToLoad = SID_Benchmark2_MassiveNodes;
                     if (ImGui::MenuItem("Massive Node Animations", nullptr, sid == SID_Benchmark3_NodeAnimations))
-                        s->onLoad(am, s, sv, SID_Benchmark3_NodeAnimations);
+                        AppDemo::sceneToLoad = SID_Benchmark3_NodeAnimations;
                     if (ImGui::MenuItem("Jan's Universe", nullptr, sid == SID_Benchmark7_JansUniverse))
-                        s->onLoad(am, s, sv, SID_Benchmark7_JansUniverse);
+                        AppDemo::sceneToLoad = SID_Benchmark7_JansUniverse;
                     if (ImGui::MenuItem("Massive Skinned Animations", nullptr, sid == SID_Benchmark4_SkinnedAnimations))
-                        s->onLoad(am, s, sv, SID_Benchmark4_SkinnedAnimations);
+                        AppDemo::sceneToLoad = SID_Benchmark4_SkinnedAnimations;
                     if (ImGui::MenuItem("Columns without LOD", nullptr, sid == SID_Benchmark5_ColumnsNoLOD))
-                        s->onLoad(am, s, sv, SID_Benchmark5_ColumnsNoLOD);
+                        AppDemo::sceneToLoad = SID_Benchmark5_ColumnsNoLOD;
                     if (ImGui::MenuItem("Columns with LOD", nullptr, sid == SID_Benchmark6_ColumnsLOD))
-                        s->onLoad(am, s, sv, SID_Benchmark6_ColumnsLOD);
+                        AppDemo::sceneToLoad = SID_Benchmark6_ColumnsLOD;
                     if (ImGui::MenuItem("Jan's Universe", nullptr, sid == SID_Benchmark7_JansUniverse))
-                        s->onLoad(am, s, sv, SID_Benchmark7_JansUniverse);
+                        AppDemo::sceneToLoad = SID_Benchmark7_JansUniverse;
                     if (ImGui::MenuItem("Particle System lot of fire complex", nullptr, sid == SID_Benchmark8_ParticleSystemFireComplex))
-                        s->onLoad(am, s, sv, SID_Benchmark8_ParticleSystemFireComplex);
+                        AppDemo::sceneToLoad = SID_Benchmark8_ParticleSystemFireComplex;
                     if (ImGui::MenuItem("Particle System lot of particle", nullptr, sid == SID_Benchmark9_ParticleSystemManyParticles))
-                        s->onLoad(am, s, sv, SID_Benchmark9_ParticleSystemManyParticles);
+                        AppDemo::sceneToLoad = SID_Benchmark9_ParticleSystemManyParticles;
                     ImGui::EndMenu();
                 }
 
@@ -1933,19 +1933,19 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
             }
 
             if (ImGui::MenuItem("Empty Scene", "Shift-Alt-0", sid == SID_Empty))
-                s->onLoad(am, s, sv, SID_Empty);
+                AppDemo::sceneToLoad = SID_Empty;
 
             if (ImGui::MenuItem("Next Scene",
                                 "Shift-Alt-Right",
                                 nullptr,
                                 AppDemo::sceneID < SID_MaxPublicAssets - 1))
-                s->onLoad(am, s, sv, AppDemo::sceneID + 1);
+                AppDemo::sceneToLoad = static_cast<SLSceneID>(AppDemo::sceneID + 1);
 
             if (ImGui::MenuItem("Previous Scene",
                                 "Shift-Alt-Left",
                                 nullptr,
                                 AppDemo::sceneID > SID_Empty))
-                s->onLoad(am, s, sv, AppDemo::sceneID - 1);
+                AppDemo::sceneToLoad = static_cast<SLSceneID>(AppDemo::sceneID - 1);
 
 #ifndef SL_EMSCRIPTEN
             ImGui::Separator();
@@ -2191,16 +2191,16 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 {
                     if (ImGui::MenuItem("Start Calibration (Main Camera)"))
                     {
-                        s->onLoad(am, s, sv, SID_VideoCalibrateMain);
-                        showHelpCalibration = false;
-                        showInfosScene      = true;
+                        AppDemo::sceneToLoad = SID_VideoCalibrateMain;
+                        showHelpCalibration  = false;
+                        showInfosScene       = true;
                     }
 
                     if (ImGui::MenuItem("Start Calibration (Scnd. Camera)", nullptr, false, capture->hasSecondaryCamera))
                     {
-                        s->onLoad(am, s, sv, SID_VideoCalibrateScnd);
-                        showHelpCalibration = false;
-                        showInfosScene      = true;
+                        AppDemo::sceneToLoad = SID_VideoCalibrateScnd;
+                        showHelpCalibration  = false;
+                        showInfosScene       = true;
                     }
 
                     if (ImGui::MenuItem("Undistort Image", nullptr, ac->showUndistorted(), ac->calibration.state() == CS_calibrated))
@@ -2999,7 +2999,7 @@ void AppDemoGui::buildMenuEdit(SLScene* s, SLSceneView* sv)
 //! Builds context menu if right mouse click is over non-imgui area
 void AppDemoGui::buildMenuContext(SLScene* s, SLSceneView* sv)
 {
-    assert(s->assetManager() && "No asset manager assigned to scene!");
+    // assert(s->assetManager() && "No asset manager assigned to scene!");
 
     if (!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) &&
         ImGui::IsMouseReleased(1))
@@ -3050,7 +3050,7 @@ void AppDemoGui::buildSceneGraph(SLScene* s)
 {
     PROFILE_FUNCTION();
 
-    assert(s->assetManager() && "No asset manager assigned to scene!");
+    // assert(s->assetManager() && "No asset manager assigned to scene!");
 
     ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
     ImGui::Begin("Scenegraph", &showSceneGraph);
@@ -3070,7 +3070,7 @@ void AppDemoGui::addSceneGraphNode(SLScene* s, SLNode* node)
 {
     PROFILE_FUNCTION();
 
-    assert(s->assetManager() && "No asset manager assigned to scene!");
+    // assert(s->assetManager() && "No asset manager assigned to scene!");
 
     SLbool isSelectedNode = s->singleNodeSelected() == node;
     SLbool isLeafNode     = node->children().empty() && !node->mesh();
@@ -3140,7 +3140,7 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
 {
     PROFILE_FUNCTION();
 
-    assert(s->assetManager() && "No asset manager assigned to scene!");
+    // assert(s->assetManager() && "No asset manager assigned to scene!");
 
     SLNode* singleNode       = s->singleNodeSelected();
     SLMesh* singleFullMesh   = s->singleMeshFullSelected();
@@ -4850,11 +4850,11 @@ void AppDemoGui::loadSceneWithLargeModel(SLScene*     s,
 
 #ifndef SL_EMSCRIPTEN
     if (Utils::fileExists(filenameToLoad))
-        s->onLoad(s->assetManager(), s, sv, sceneIDToLoad);
+        AppDemo::sceneToLoad = sceneIDToLoad;
     else
         downloadModelAndLoadScene(s, sv, downloadFilename, pathSrc, pathDst, filenameToLoad, sceneIDToLoad);
 #else
-    s->onLoad(s->assetManager(), s, sv, sceneIDToLoad);
+    AppDemo::sceneToLoad = sceneIDToLoad;
 #endif
 }
 //-----------------------------------------------------------------------------
@@ -4923,7 +4923,7 @@ void AppDemoGui::downloadModelAndLoadScene(SLScene*     s,
     auto followUpJob1 = [=]()
     {
         if (Utils::fileExists(pathAndFileToLoad))
-            s->onLoad(am, s, sv, sceneIDToLoad);
+            AppDemo::sceneToLoad = sceneIDToLoad;
         else
             SL_LOG("*** File do load doesn't exist: %s ***",
                    pathAndFileToLoad.c_str());

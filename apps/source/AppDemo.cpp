@@ -20,16 +20,17 @@
 
 //-----------------------------------------------------------------------------
 //! Global static objects
-SLInputManager       AppDemo::inputManager;
-SLAssetManager*      AppDemo::assetManager = nullptr;
-SLScene*             AppDemo::scene        = nullptr;
-vector<SLSceneView*> AppDemo::sceneViews;
-SLGLImGui*           AppDemo::gui = nullptr;
-SLDeviceRotation     AppDemo::devRot;
-SLDeviceLocation     AppDemo::devLoc;
-SLstring             AppDemo::name    = "SLProjectApp";
-SLstring             AppDemo::appTag  = "SLProject";
-SLstring             AppDemo::version = "4.1.003";
+SLInputManager           AppDemo::inputManager;
+SLAssetManager*          AppDemo::assetManager = nullptr;
+SLScene*                 AppDemo::scene        = nullptr;
+vector<SLSceneView*>     AppDemo::sceneViews;
+SLGLImGui*               AppDemo::gui = nullptr;
+SLDeviceRotation         AppDemo::devRot;
+SLDeviceLocation         AppDemo::devLoc;
+std::optional<SLSceneID> AppDemo::sceneToLoad;
+SLstring                 AppDemo::name        = "SLProjectApp";
+SLstring                 AppDemo::appTag      = "SLProject";
+SLstring                 AppDemo::version     = "4.1.003";
 #ifdef _DEBUG
 SLstring AppDemo::configuration = "Debug";
 #else
@@ -93,8 +94,6 @@ void AppDemo::createAppAndScene(SLstring appName,
     name = std::move(appName);
     SLGLProgramManager::init(dataPath + "shaders/", configPath);
     assetManager = new SLAssetManager(AppDemo::fontPath, true);
-    scene        = new SLScene(name, (cbOnSceneLoad)onSceneLoadCallback);
-    scene->initOculus(dataPath + "shaders/");
     GlobalTimer::timerStart();
 
 #ifdef SL_HAS_OPTIX

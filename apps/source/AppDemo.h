@@ -10,6 +10,7 @@
 #ifndef SLAPPLICATION_H
 #define SLAPPLICATION_H
 
+#include "SLEnums.h"
 #include <CVTypes.h>
 #include <SLDeviceLocation.h>
 #include <SLDeviceRotation.h>
@@ -18,6 +19,7 @@
 #include <atomic>
 #include <mutex>
 #include <map>
+#include <optional>
 
 class SLScene;
 class SLGLImGui;
@@ -41,13 +43,14 @@ class AppDemo
 {
 public:
     // Major owned instances of the app
-    static SLInputManager   inputManager; //!< Input events manager
-    static SLAssetManager*  assetManager; //!< asset manager
-    static SLScene*         scene;        //!< scene pointer
-    static SLVSceneView     sceneViews;   //!< vector of sceneview pointers
-    static SLGLImGui*       gui;          //!< gui pointer
-    static SLDeviceRotation devRot;       //!< Mobile device rotation from IMU
-    static SLDeviceLocation devLoc;       //!< Mobile device location from GPS
+    static SLInputManager           inputManager; //!< Input events manager
+    static SLAssetManager*          assetManager; //!< asset manager
+    static SLScene*                 scene;        //!< scene pointer
+    static SLVSceneView             sceneViews;   //!< vector of sceneview pointers
+    static SLGLImGui*               gui;          //!< gui pointer
+    static SLDeviceRotation         devRot;       //!< Mobile device rotation from IMU
+    static SLDeviceLocation         devLoc;       //!< Mobile device location from GPS
+    static std::optional<SLSceneID> sceneToLoad;
 
     static void createAppAndScene(SLstring appName,
                                   void*    onSceneLoadCallback);
@@ -79,7 +82,7 @@ public:
     static int    jobProgressNum() { return _jobProgressNum; }
     static int    jobProgressMax() { return _jobProgressMax; }
 
-    static SLSceneID sceneID;                              //!< ID of last loaded scene
+    static SLSceneID sceneID; //!< ID of last loaded scene
 
     static map<string, string>         deviceParameter;    //!< Generic device parameter
     static deque<function<void(void)>> jobsToBeThreaded;   //!< Queue of functions to be executed in a thread
@@ -91,11 +94,11 @@ public:
     static SLstring                     calibIniPath;  //!< That's where data/calibrations folder is located
     static SLstring                     calibFilePath; //!< That's where calibrations are stored and loaded from
 
-    static const string CALIB_FTP_HOST;                //!< ftp host for calibration up and download
-    static const string CALIB_FTP_USER;                //!< ftp login user for calibration up and download
-    static const string CALIB_FTP_PWD;                 //!< ftp login pwd for calibration up and download
-    static const string CALIB_FTP_DIR;                 //!< ftp directory for calibration up and download
-    static const string PROFILE_FTP_DIR;               //!< ftp directory for profiles upload
+    static const string CALIB_FTP_HOST;  //!< ftp host for calibration up and download
+    static const string CALIB_FTP_USER;  //!< ftp login user for calibration up and download
+    static const string CALIB_FTP_PWD;   //!< ftp login pwd for calibration up and download
+    static const string CALIB_FTP_DIR;   //!< ftp directory for calibration up and download
+    static const string PROFILE_FTP_DIR; //!< ftp directory for profiles upload
 
 private:
     static string      _jobProgressMsg; //!< Text message to show during progress

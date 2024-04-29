@@ -35,8 +35,7 @@ As examples you can see it in:
   - _old/app-Demo-Qt: qtGLWidget::initializeGL()
   - _old/app-Viewer-Qt: qtGLWidget::initializeGL()
 */
-SLScene::SLScene(const SLstring& name,
-                 cbOnSceneLoad   onSceneLoadCallback)
+SLScene::SLScene(const SLstring& name)
   : SLObject(name),
     _loadTimeMS(0.0f),
     _frameTimesMS(60, 0.0f),
@@ -45,8 +44,6 @@ SLScene::SLScene(const SLstring& name,
     _updateAnimTimesMS(60, 0.0f),
     _updateDODTimesMS(60, 0.0f)
 {
-    onLoad = onSceneLoadCallback;
-
     _assetManager     = nullptr;
     _root3D           = nullptr;
     _root2D           = nullptr;

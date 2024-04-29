@@ -26,11 +26,8 @@
 
 //-----------------------------------------------------------------------------
 //! Forward declaration of the scene definition function from AppDemoLoad.cpp
-extern void appDemoLoadScene(SLAssetManager* am,
-                             SLScene*        s,
-                             SLSceneView*    sv,
-                             SLSceneID       sceneID);
-extern bool onUpdateVideo();
+void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID);
+bool onUpdateVideo();
 
 //-----------------------------------------------------------------------------
 // Global application variables
@@ -73,6 +70,12 @@ SLbool onPaint()
     if (AppDemo::sceneViews.empty())
         return false;
     SLSceneView* sv = AppDemo::sceneViews[svIndex];
+
+    if (AppDemo::sceneToLoad)
+    {
+        appDemoSwitchScene(sv, *AppDemo::sceneToLoad);
+        AppDemo::sceneToLoad = {};
+    }
 
     // If live video image is requested grab it and copy it
     if (CVCapture::instance()->videoType() != VT_NONE)
@@ -377,28 +380,19 @@ static void onKeyPress(GLFWwindow* myWindow,
             {
                 if (key == '0' && sv)
                 {
-                    appDemoLoadScene(AppDemo::assetManager,
-                                     AppDemo::scene,
-                                     sv,
-                                     SID_Empty);
+                    AppDemo::sceneToLoad = SID_Empty;
                     SL_LOG("----------------------------------------------");
                     SL_LOG("Loading SceneID: %d", AppDemo::sceneID);
                 }
                 else if (key == K_left && sv && AppDemo::sceneID > 0)
                 {
-                    appDemoLoadScene(AppDemo::assetManager,
-                                     AppDemo::scene,
-                                     sv,
-                                     (SLSceneID)(AppDemo::sceneID - 1));
+                    AppDemo::sceneToLoad = static_cast<SLSceneID>(AppDemo::sceneID - 1);
                     SL_LOG("----------------------------------------------");
                     SL_LOG("Loading SceneID: %d", AppDemo::sceneID);
                 }
                 else if (key == K_right && sv && AppDemo::sceneID < SID_MaxNoBenchmarks - 1)
                 {
-                    appDemoLoadScene(AppDemo::assetManager,
-                                     AppDemo::scene,
-                                     sv,
-                                     (SLSceneID)(AppDemo::sceneID + 1));
+                    AppDemo::sceneToLoad = static_cast<SLSceneID>(AppDemo::sceneID + 1);
                     SL_LOG("----------------------------------------------");
                     SL_LOG("Loading SceneID: %d", AppDemo::sceneID);
                 }
@@ -538,7 +532,7 @@ void initSL(SLVstring& cmdLineArgs)
                         projectRoot + "/data/videos/",
                         configDir,
                         "AppDemoGLFW",
-                        (void*)appDemoLoadScene);
+                        (void*)nullptr);
     /////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////
