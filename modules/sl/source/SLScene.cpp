@@ -62,9 +62,6 @@ SLScene::~SLScene()
 {
     unInit();
 
-    // delete global SLGLState instance
-    SLGLState::deleteInstance();
-
     SL_LOG("Destructor      : ~SLScene");
     SL_LOG("------------------------------------------------------------------");
 }
@@ -78,9 +75,6 @@ void SLScene::init(SLAssetManager* am)
     unInit();
 
     _assetManager = am;
-
-    // reset all states
-    SLGLState::instance()->initAll();
 
     // reset global light settings
     SLLight::gamma = 1.0f;
@@ -116,10 +110,6 @@ void SLScene::unInit()
 
     _selectedMeshes.clear();
     _selectedNodes.clear();
-
-    // Delete the default material that are scene dependent
-    SLMaterialDefaultGray::deleteInstance();
-    SLMaterialDefaultColorAttribute::deleteInstance();
 }
 //-----------------------------------------------------------------------------
 //! Updates animations and AABBs

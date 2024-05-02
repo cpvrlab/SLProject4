@@ -8,8 +8,11 @@
 //             Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
 
+#include <SLAssimpImporter.h>
 #include <SLAssetManager.h>
 #include <SLTexFont.h>
+
+#define SL_LOAD_ASSETS_IN_PARALLEL 1
 
 //-----------------------------------------------------------------------------
 // Initialize static font pointers
@@ -28,6 +31,60 @@ SLTexFont* SLAssetManager::font24 = nullptr;
 SLAssetManager::~SLAssetManager()
 {
     clear();
+}
+//-----------------------------------------------------------------------------
+void SLAssetManager::addTextureToLoad(SLGLTexture*& texture, SLstring path)
+{
+    // clang-format off
+    _loadTasks.push_back([this, &texture, path] { texture = new SLGLTexture(this, path); });
+    // clang-format on
+}
+//-----------------------------------------------------------------------------
+void SLAssetManager::addNodeToLoad(SLNode*&       node,
+                                   SLstring       path,
+                                   SLAnimManager& aniMan,
+                                   SLstring       texturePath,
+                                   SLSkybox*      skybox,
+                                   SLbool         deleteTexImgAfterBuild,
+                                   SLbool         loadMeshesOnly,
+                                   SLMaterial*    overrideMat,
+                                   float          ambientFactor,
+                                   SLbool         forceCookTorranceRM)
+{
+    // clang-format off
+    _loadTasks.push_back([this,
+                          &node,
+                          path,
+                          &aniMan,
+                          texturePath,
+                          skybox,
+                          deleteTexImgAfterBuild,
+                          loadMeshesOnly,
+                          overrideMat,
+                          ambientFactor,
+                          forceCookTorranceRM]
+    {
+        SLAssimpImporter importer;
+        node = importer.load(aniMan,
+                             this,
+                             path,
+                             texturePath,
+                             skybox,
+                             deleteTexImgAfterBuild,
+                             loadMeshesOnly,
+                             overrideMat,
+                             ambientFactor,
+                             forceCookTorranceRM);
+    });
+    // clang-format on
+}
+//-----------------------------------------------------------------------------
+void SLAssetManager::loadAll()
+{
+    for (const SLAssetLoadTask& task : _loadTasks)
+        task();
+
+    _loadTasks.clear();
 }
 //-----------------------------------------------------------------------------
 //! for all assets, clear gpu data

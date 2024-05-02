@@ -12,6 +12,7 @@
 #define SLASSETMANAGER_H
 
 #include <vector>
+#include <functional>
 
 #include <SL.h>
 #include <SLMaterial.h>
@@ -21,7 +22,11 @@
 class SLTexFont;
 class SLCamera;
 class SLInputManager;
+class SLAnimManager;
 
+//-----------------------------------------------------------------------------
+typedef std::function<void()>        SLAssetLoadTask;
+typedef std::vector<SLAssetLoadTask> SLVAssetLoadTask;
 //-----------------------------------------------------------------------------
 //! Toplevel holder of the assets meshes, materials, textures and shaders
 /*! All these assets can be shared among instances of SLScene, SLNode and
@@ -43,6 +48,21 @@ public:
         }
     }
     ~SLAssetManager();
+
+    void addTextureToLoad(SLGLTexture*& texture, SLstring path);
+
+    void addNodeToLoad(SLNode*&       node,
+                       SLstring       path,
+                       SLAnimManager& aniMan,
+                       SLstring       texturePath,
+                       SLSkybox*      skybox                 = nullptr,
+                       SLbool         deleteTexImgAfterBuild = false,
+                       SLbool         loadMeshesOnly         = true,
+                       SLMaterial*    overrideMat            = nullptr,
+                       float          ambientFactor          = 0.0f,
+                       SLbool         forceCookTorranceRM    = false);
+
+    void loadAll();
 
     void clear();
 
@@ -87,10 +107,11 @@ public:
     static SLTexFont* font24; //!< 24 pixel high fixed size font
 
 protected:
-    SLVMesh      _meshes;    //!< Vector of all meshes
-    SLVMaterial  _materials; //!< Vector of all materials pointers
-    SLVGLTexture _textures;  //!< Vector of all texture pointers
-    SLVGLProgram _programs;  //!< Vector of all shader program pointers
+    SLVMesh          _meshes;    //!< Vector of all meshes
+    SLVMaterial      _materials; //!< Vector of all materials pointers
+    SLVGLTexture     _textures;  //!< Vector of all texture pointers
+    SLVGLProgram     _programs;  //!< Vector of all shader program pointers
+    SLVAssetLoadTask _loadTasks;
 };
 //-----------------------------------------------------------------------------
 #endif // SLASSETMANAGER_H

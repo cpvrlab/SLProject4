@@ -7,6 +7,8 @@
 //              Please visit: http://opensource.org/licenses/GPL-3.0
 // #############################################################################
 
+#include "AppScene.h"
+#include "SLEnums.h"
 #include <SL.h>
 #include <GlobalTimer.h>
 
@@ -52,6 +54,11 @@
 #include <imgui_color_gradient.h> // For color over life, need to create own color interpolator
 #include <SLEntities.h>
 #include <SLFileStorage.h>
+
+#include "AppDemoSceneEmpty.h"
+#include "AppDemoSceneLegacy.h"
+#include "AppDemoSceneMinimal.h"
+#include "AppDemoSceneSuzanne.h"
 
 #ifdef SL_BUILD_WAI
 #    include <CVTrackedWAI.h>
@@ -741,28 +748,6 @@ void appDemoLoadScene(SLAssetManager* am,
 
     SLfloat startLoadMS = GlobalTimer::timeMS();
 
-    CVCapture::instance()->videoType(VT_NONE); // turn off any video
-
-    // Reset non CVTracked and CVCapture infos
-    CVTracked::resetTimes(); // delete all tracker times
-    delete tracker;
-    tracker = nullptr;
-
-    // Reset asset pointer from previous scenes
-    videoTexture = nullptr; // The video texture will be deleted by scene uninit
-    trackedNode  = nullptr; // The tracked node will be deleted by scene uninit
-
-    if (sceneID != SID_VolumeRayCastLighted)
-        gTexMRI3D = nullptr; // The 3D MRI texture will be deleted by scene uninit
-
-    // reset existing sceneviews
-    for (auto* sceneview : AppDemo::sceneViews)
-        sceneview->unInit();
-
-    // Clear all data in the asset manager
-    am->clear();
-
-    AppDemo::sceneID   = sceneID;
     SLGLState* stateGL = SLGLState::instance();
 
     SLstring texPath    = AppDemo::texturePath;
@@ -771,80 +756,11 @@ void appDemoLoadScene(SLAssetManager* am,
     SLstring shaderPath = AppDemo::shaderPath;
     SLstring configPath = AppDemo::configPath;
 
-    // Initialize all preloaded stuff from SLScene
-    s->init(am);
-
-    // Make sure the sv->camera doesn't
-    sv->camera(sv->sceneViewCamera());
-
-    // Clear the visible materials from the last scene
-    sv->visibleMaterials2D().clear();
-    sv->visibleMaterials3D().clear();
-
-    // clear gui stuff that depends on scene and sceneview
-    AppDemoGui::clear();
-
-    // Deactivate in general the device sensors
-    AppDemo::devRot.init();
-    AppDemo::devLoc.init();
-
 #ifdef SL_USE_ENTITIES_DEBUG
     SLScene::entities.dump(true);
 #endif
 
-    if (sceneID == SID_Empty) //...................................................................
-    {
-        s->name("No Scene loaded.");
-        s->info("No Scene loaded.");
-        s->root3D(nullptr);
-        sv->sceneViewCamera()->background().colors(SLCol4f(0.7f, 0.7f, 0.7f),
-                                                   SLCol4f(0.2f, 0.2f, 0.2f));
-        sv->camera(nullptr);
-        sv->doWaitOnIdle(true);
-    }
-    else if (sceneID == SID_Minimal) //............................................................
-    {
-        // Set scene name and info string
-        s->name("Minimal Scene Test");
-        s->info("Minimal scene with a texture mapped rectangle with a point light source.\n"
-                "You can find all other test scenes in the menu File > Load Test Scenes."
-                "You can jump to the next scene with the Shift-Alt-CursorRight.\n"
-                "You can open various info windows under the menu Infos. You can drag, dock and stack them on all sides.\n"
-                "You can rotate the scene with click and drag on the left mouse button (LMB).\n"
-                "You can zoom in/out with the mousewheel. You can pan with click and drag on the middle mouse button (MMB).\n");
-
-        // Create a scene group node
-        SLNode* scene = new SLNode("scene node");
-        s->root3D(scene);
-
-        // Create textures and materials
-        SLGLTexture* texC = new SLGLTexture(am, texPath + "earth2048_C.png");
-        SLMaterial*  m1   = new SLMaterial(am, "m1", texC);
-
-        // Create a light source node
-        SLLightSpot* light1 = new SLLightSpot(am, s, 0.3f);
-        light1->translation(0, 0, 5);
-        light1->name("light node");
-        scene->addChild(light1);
-
-        // Create meshes and nodes
-        SLMesh* rectMesh = new SLRectangle(am,
-                                           SLVec2f(-5, -5),
-                                           SLVec2f(5, 5),
-                                           25,
-                                           25,
-                                           "rectangle mesh",
-                                           m1);
-        SLNode* rectNode = new SLNode(rectMesh, "rectangle node");
-        scene->addChild(rectNode);
-
-        // Set background color and the root scene node
-        sv->sceneViewCamera()->background().colors(SLCol4f(0.7f, 0.7f, 0.7f),
-                                                   SLCol4f(0.2f, 0.2f, 0.2f));
-        // Save energy
-        sv->doWaitOnIdle(true);
-    }
-    else if (sceneID == SID_Figure) //.............................................................
+    if (sceneID == SID_Figure) //.............................................................
     {
         s->name("Hierarchical Figure Test");
         s->info("Hierarchical scenegraph with multiple subgroups in the figure. "
@@ -2726,185 +2642,6 @@ resolution shadows near the camera and lower resolution shadows further away.");
 
         sv->camera(cam1);
     }
-    else if (sceneID >= SID_SuzannePerPixBlinn &&
-             sceneID <= SID_SuzannePerPixBlinnTmNmAoSm) //.........................................
-    {
-        // Set scene name and info string
-        switch (sceneID)
-        {
-            case SID_SuzannePerPixBlinn: s->name("Suzanne with per pixel lighting and reflection colors"); break;
-            case SID_SuzannePerPixBlinnTm: s->name("Suzanne with per pixel lighting and texture mapping"); break;
-            case SID_SuzannePerPixBlinnNm: s->name("Suzanne with per pixel lighting and normal mapping"); break;
-            case SID_SuzannePerPixBlinnAo: s->name("Suzanne with per pixel lighting and ambient occlusion"); break;
-            case SID_SuzannePerPixBlinnSm: s->name("Suzanne with per pixel lighting and shadow mapping"); break;
-            case SID_SuzannePerPixBlinnTmNm: s->name("Suzanne with per pixel lighting, texture and normal mapping"); break;
-            case SID_SuzannePerPixBlinnTmAo: s->name("Suzanne with per pixel lighting, texture mapping and ambient occlusion"); break;
-            case SID_SuzannePerPixBlinnNmAo: s->name("Suzanne with per pixel lighting, normal mapping and ambient occlusion"); break;
-            case SID_SuzannePerPixBlinnTmSm: s->name("Suzanne with per pixel lighting, texture mapping and shadow mapping"); break;
-            case SID_SuzannePerPixBlinnNmSm: s->name("Suzanne with per pixel lighting, normal mapping and shadow mapping"); break;
-            case SID_SuzannePerPixBlinnAoSm: s->name("Suzanne with per pixel lighting, ambient occlusion and shadow mapping"); break;
-            case SID_SuzannePerPixBlinnTmNmAo: s->name("Suzanne with per pixel lighting and diffuse, normal, ambient occlusion and shadow mapping"); break;
-            case SID_SuzannePerPixBlinnTmNmSm: s->name("Suzanne with per pixel lighting and diffuse, normal and shadow mapping "); break;
-            case SID_SuzannePerPixBlinnTmNmAoSm: s->name("Suzanne with per pixel lighting and diffuse, normal, ambient occlusion and shadow mapping"); break;
-            default: SL_EXIT_MSG("Unknown scene id!");
-        }
-
-        s->info(s->name());
-
-        // Create a scene group node
-        SLNode* scene = new SLNode("scene node");
-        s->root3D(scene);
-
-        // Create camera in the center
-        SLCamera* cam1 = new SLCamera("Camera 1");
-        cam1->translation(0, 0.5f, 2);
-        cam1->lookAt(0, 0.5f, 0);
-        cam1->setInitialState();
-        cam1->focalDist(2);
-        scene->addChild(cam1);
-
-        // Create directional light for the sunlight
-        SLLightDirect* light = new SLLightDirect(am, s, 0.1f);
-        light->ambientPower(0.6f);
-        light->diffusePower(0.6f);
-        light->attenuation(1, 0, 0);
-        light->translate(0, 0, 0.5);
-        light->lookAt(1, -1, 0.5);
-        SLAnimation* lightAnim = s->animManager().createNodeAnimation("LightAnim", 4.0f, true, EC_inOutSine, AL_pingPongLoop);
-        lightAnim->createNodeAnimTrackForRotation(light, -180, SLVec3f(0, 1, 0));
-        scene->addChild(light);
-
-        // Add shadow mapping
-        if (sceneID == SID_SuzannePerPixBlinnSm ||
-            sceneID == SID_SuzannePerPixBlinnTmSm ||
-            sceneID == SID_SuzannePerPixBlinnNmSm ||
-            sceneID == SID_SuzannePerPixBlinnAoSm ||
-            sceneID == SID_SuzannePerPixBlinnTmNmSm ||
-            sceneID == SID_SuzannePerPixBlinnTmNmAoSm)
-        {
-            light->createsShadows(true);
-            light->createShadowMap(-3, 3, SLVec2f(5, 5), SLVec2i(2048, 2048));
-            light->doSmoothShadows(true);
-        }
-
-        // load teapot
-        SLAssimpImporter importer;
-        SLNode*          suzanneInCube = importer.load(s->animManager(),
-                                              am,
-                                              modelPath + "GLTF/AO-Baked-Test/AO-Baked-Test.gltf",
-                                              texPath,
-                                              nullptr,
-                                              false,   // delete tex images after build
-                                              true,    // load meshes only
-                                              nullptr, // override material
-                                              0.5f);   // ambient factor
-
-        SLCol4f stoneColor(0.56f, 0.50f, 0.44f);
-
-        // Remove unwanted textures
-        if (sceneID == SID_SuzannePerPixBlinn ||
-            sceneID == SID_SuzannePerPixBlinnSm)
-        {
-            auto removeAllTm = [=](SLMaterial* mat)
-            {
-                mat->removeTextureType(TT_diffuse);
-                mat->removeTextureType(TT_normal);
-                mat->removeTextureType(TT_occlusion);
-                mat->ambientDiffuse(stoneColor);
-            };
-            suzanneInCube->updateMeshMat(removeAllTm, true);
-        }
-        if (sceneID == SID_SuzannePerPixBlinnTm)
-        {
-            auto removeNmAo = [=](SLMaterial* mat)
-            {
-                mat->removeTextureType(TT_normal);
-                mat->removeTextureType(TT_occlusion);
-            };
-            suzanneInCube->updateMeshMat(removeNmAo, true);
-        }
-        if (sceneID == SID_SuzannePerPixBlinnNm)
-        {
-            auto removeNmAo = [=](SLMaterial* mat)
-            {
-                mat->ambientDiffuse(stoneColor);
-                mat->removeTextureType(TT_diffuse);
-                mat->removeTextureType(TT_occlusion);
-            };
-            suzanneInCube->updateMeshMat(removeNmAo, true);
-        }
-        if (sceneID == SID_SuzannePerPixBlinnAo)
-        {
-            auto removeNmAo = [=](SLMaterial* mat)
-            {
-                mat->ambientDiffuse(stoneColor);
-                mat->removeTextureType(TT_diffuse);
-                mat->removeTextureType(TT_normal);
-            };
-            suzanneInCube->updateMeshMat(removeNmAo, true);
-        }
-        if (sceneID == SID_SuzannePerPixBlinnTmSm)
-        {
-            auto removeTmNm = [=](SLMaterial* mat)
-            {
-                mat->removeTextureType(TT_normal);
-                mat->removeTextureType(TT_occlusion);
-            };
-            suzanneInCube->updateMeshMat(removeTmNm, true);
-        }
-        if (sceneID == SID_SuzannePerPixBlinnNmSm)
-        {
-            auto removeTmNm = [=](SLMaterial* mat)
-            {
-                mat->ambientDiffuse(stoneColor);
-                mat->removeTextureType(TT_diffuse);
-                mat->removeTextureType(TT_occlusion);
-            };
-            suzanneInCube->updateMeshMat(removeTmNm, true);
-        }
-        if (sceneID == SID_SuzannePerPixBlinnAoSm)
-        {
-            auto removeTmNm = [=](SLMaterial* mat)
-            {
-                mat->ambientDiffuse(stoneColor);
-                mat->removeTextureType(TT_diffuse);
-                mat->removeTextureType(TT_normal);
-            };
-            suzanneInCube->updateMeshMat(removeTmNm, true);
-        }
-        if (sceneID == SID_SuzannePerPixBlinnTmAo)
-        {
-            auto removeNmAo = [=](SLMaterial* mat)
-            {
-                mat->removeTextureType(TT_normal);
-            };
-            suzanneInCube->updateMeshMat(removeNmAo, true);
-        }
-        if (sceneID == SID_SuzannePerPixBlinnNmAo)
-        {
-            auto removeNmAo = [=](SLMaterial* mat)
-            {
-                mat->ambientDiffuse(stoneColor);
-                mat->removeTextureType(TT_diffuse);
-            };
-            suzanneInCube->updateMeshMat(removeNmAo, true);
-        }
-        if (sceneID == SID_SuzannePerPixBlinnTmNm ||
-            sceneID == SID_SuzannePerPixBlinnTmNmSm)
-        {
-            auto removeAo = [=](SLMaterial* mat)
-            { mat->removeTextureType(TT_occlusion); };
-            suzanneInCube->updateMeshMat(removeAo, true);
-        }
-
-        scene->addChild(suzanneInCube);
-
-        sv->camera(cam1);
-
-        // Save energy
-        sv->doWaitOnIdle(true);
-    }
-
     else if (
       sceneID == SID_glTF_DamagedHelmet ||
       sceneID == SID_glTF_FlightHelmet ||
@@ -6858,10 +6595,78 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     if (s)
         delete s;
 
-    s = new SLScene("The Scene");
+    switch (sceneID)
+    {
+        case SID_Empty: s = new AppDemoSceneEmpty(); break;
+        case SID_Minimal: s = new AppDemoSceneMinimal(); break;
+        case SID_SuzannePerPixBlinn: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and reflection colors", false, false, false, false); break;
+        case SID_SuzannePerPixBlinnTm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and texture mapping", true, false, false, false); break;
+        case SID_SuzannePerPixBlinnNm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and normal mapping", false, true, false, false); break;
+        case SID_SuzannePerPixBlinnAo: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and ambient occlusion", false, false, true, false); break;
+        case SID_SuzannePerPixBlinnSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and shadow mapping", false, false, false, true); break;
+        case SID_SuzannePerPixBlinnTmNm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting, texture and normal mapping", true, true, false, false); break;
+        case SID_SuzannePerPixBlinnTmAo: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting, texture mapping and ambient occlusion", true, false, true, false); break;
+        case SID_SuzannePerPixBlinnNmAo: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting, normal mapping and ambient occlusion", false, true, true, false); break;
+        case SID_SuzannePerPixBlinnTmSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting, texture mapping and shadow mapping", true, false, false, true); break;
+        case SID_SuzannePerPixBlinnNmSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting, normal mapping and shadow mapping", false, true, false, true); break;
+        case SID_SuzannePerPixBlinnAoSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting, ambient occlusion and shadow mapping", false, false, true, true); break;
+        case SID_SuzannePerPixBlinnTmNmAo: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and diffuse, normal, ambient occlusion and shadow mapping", true, true, true, false); break;
+        case SID_SuzannePerPixBlinnTmNmSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and diffuse, normal and shadow mapping ", true, true, false, true); break;
+        case SID_SuzannePerPixBlinnTmNmAoSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and diffuse, normal, ambient occlusion and shadow mapping", true, true, true, true); break;
+        default: s = new AppDemoSceneLegacy(sceneID); break;
+    }
+
     s->initOculus(AppDemo::dataPath + "shaders/");
     sv->scene(s);
 
-    appDemoLoadScene(am, s, sv, sceneID);
+    CVCapture::instance()->videoType(VT_NONE); // turn off any video
+
+    // Reset non CVTracked and CVCapture infos
+    CVTracked::resetTimes(); // delete all tracker times
+    delete tracker;
+    tracker = nullptr;
+
+    // Reset asset pointer from previous scenes
+    videoTexture = nullptr; // The video texture will be deleted by scene uninit
+    trackedNode  = nullptr; // The tracked node will be deleted by scene uninit
+
+    if (sceneID != SID_VolumeRayCastLighted)
+        gTexMRI3D = nullptr; // The 3D MRI texture will be deleted by scene uninit
+
+    // reset existing sceneviews
+    for (auto* sceneview : AppDemo::sceneViews)
+        sceneview->unInit();
+
+    // Clear all data in the asset manager
+    am->clear();
+
+    AppDemo::sceneID = sceneID;
+
+    // Initialize all preloaded stuff from SLScene
+    s->init(am);
+
+    // Clear the visible materials from the last scene
+    sv->visibleMaterials2D().clear();
+    sv->visibleMaterials3D().clear();
+
+    // clear gui stuff that depends on scene and sceneview
+    AppDemoGui::clear();
+
+    // Deactivate in general the device sensors
+    AppDemo::devRot.init();
+    AppDemo::devLoc.init();
+
+    // Reset the global SLGLState state
+    SLGLState::instance()->initAll();
+
+    AppScene* as = static_cast<AppScene*>(s);
+    as->recordAssetsToLoad(am);
+
+    am->loadAll();
+    as->assemble(am, sv);
+
+    // Make sure the scene view has a camera
+    if (!sv->camera())
+        sv->camera(sv->sceneViewCamera());
 }
 //-----------------------------------------------------------------------------

@@ -28,9 +28,9 @@ SLGLImGui*               AppDemo::gui = nullptr;
 SLDeviceRotation         AppDemo::devRot;
 SLDeviceLocation         AppDemo::devLoc;
 std::optional<SLSceneID> AppDemo::sceneToLoad;
-SLstring                 AppDemo::name        = "SLProjectApp";
-SLstring                 AppDemo::appTag      = "SLProject";
-SLstring                 AppDemo::version     = "4.1.003";
+SLstring                 AppDemo::name    = "SLProjectApp";
+SLstring                 AppDemo::appTag  = "SLProject";
+SLstring                 AppDemo::version = "4.1.003";
 #ifdef _DEBUG
 SLstring AppDemo::configuration = "Debug";
 #else
@@ -85,11 +85,13 @@ See examples usages in:
 /param applicationName The apps name
 /param onSceneLoadCallback C Callback function as void* pointer for the scene creation.
 */
-void AppDemo::createAppAndScene(SLstring appName,
-                                void*    onSceneLoadCallback)
+void AppDemo::createAppAndScene(SLstring appName)
 {
     assert(AppDemo::scene == nullptr &&
            "You can create only one AppDemo");
+
+    // Initialize the global SLGLState instance
+    SLGLState::instance()->initAll();
 
     name = std::move(appName);
     SLGLProgramManager::init(dataPath + "shaders/", configPath);
@@ -138,6 +140,13 @@ void AppDemo::deleteAppAndScene()
     SLGLProgramManager::deletePrograms();
     SLMaterialDefaultGray::deleteInstance();
 #endif
+
+    // Delete the default materials
+    SLMaterialDefaultGray::deleteInstance();
+    SLMaterialDefaultColorAttribute::deleteInstance();
+
+    // Delete the global SLGLState instance
+    SLGLState::deleteInstance();
 }
 //-----------------------------------------------------------------------------
 //! Starts parallel job if one is queued.

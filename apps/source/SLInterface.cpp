@@ -103,7 +103,7 @@ void slCreateAppAndScene(SLVstring&      cmdLineArgs,
     SL_LOG("OpenGL GLSL Ver. : %s (%s) ", stateGL->glSLVersion().c_str(), stateGL->getSLVersionNO().c_str());
     SL_LOG("------------------------------------------------------------------");
 
-    AppDemo::createAppAndScene(applicationName, onSceneLoadCallback);
+    AppDemo::createAppAndScene(applicationName);
 }
 //-----------------------------------------------------------------------------
 /*! Global creation function for a SLSceneview instance returning the index of

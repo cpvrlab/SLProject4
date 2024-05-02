@@ -52,8 +52,7 @@ public:
     static SLDeviceLocation         devLoc;       //!< Mobile device location from GPS
     static std::optional<SLSceneID> sceneToLoad;
 
-    static void createAppAndScene(SLstring appName,
-                                  void*    onSceneLoadCallback);
+    static void createAppAndScene(SLstring appName);
     static void deleteAppAndScene();
 
     static SLstring name;          //!< Application name
