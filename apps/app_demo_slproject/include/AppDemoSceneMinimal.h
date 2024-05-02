@@ -8,7 +8,7 @@ class AppDemoSceneMinimal : public AppScene
 {
 public:
     AppDemoSceneMinimal();
-    void recordAssetsToLoad(SLAssetManager* am) override;
+    void recordAssetsToLoad(SLAssetLoader& al) override;
     void assemble(SLAssetManager* am, SLSceneView* sv) override;
 
 private:

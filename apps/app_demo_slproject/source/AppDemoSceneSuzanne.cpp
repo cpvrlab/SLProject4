@@ -19,17 +19,15 @@ AppDemoSceneSuzanne::AppDemoSceneSuzanne(SLstring name,
     info(name);
 }
 //-----------------------------------------------------------------------------
-void AppDemoSceneSuzanne::recordAssetsToLoad(SLAssetManager* am)
+void AppDemoSceneSuzanne::recordAssetsToLoad(SLAssetLoader& al)
 {
-    am->addNodeToLoad(_suzanneInCube,
-                      AppDemo::modelPath + "GLTF/AO-Baked-Test/AO-Baked-Test.gltf",
-                      _animManager,
-                      AppDemo::texturePath,
-                      nullptr,
-                      false,   // delete tex images after build
-                      true,    // load meshes only
-                      nullptr, // override material
-                      0.5f);
+    al.addNodeToLoad(_suzanneInCube,
+                     "GLTF/AO-Baked-Test/AO-Baked-Test.gltf",
+                     nullptr,
+                     false,   // delete tex images after build
+                     true,    // load meshes only
+                     nullptr, // override material
+                     0.5f);
 }
 //-----------------------------------------------------------------------------
 void AppDemoSceneSuzanne::assemble(SLAssetManager* am, SLSceneView* sv)

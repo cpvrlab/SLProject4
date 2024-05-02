@@ -16,7 +16,7 @@ AppDemoSceneLegacy::AppDemoSceneLegacy(SLSceneID sceneID)
 {
 }
 //-----------------------------------------------------------------------------
-void AppDemoSceneLegacy::recordAssetsToLoad(SLAssetManager* am)
+void AppDemoSceneLegacy::recordAssetsToLoad(SLAssetLoader& al)
 {
 }
 //-----------------------------------------------------------------------------

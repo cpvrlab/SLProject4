@@ -10,7 +10,7 @@ AppDemoSceneEmpty::AppDemoSceneEmpty() : AppScene("Empty Scene")
     info("No Scene loaded.");
 }
 //-----------------------------------------------------------------------------
-void AppDemoSceneEmpty::recordAssetsToLoad(SLAssetManager* am)
+void AppDemoSceneEmpty::recordAssetsToLoad(SLAssetLoader& al)
 {
 }
 //-----------------------------------------------------------------------------

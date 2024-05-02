@@ -54,6 +54,7 @@
 #include <imgui_color_gradient.h> // For color over life, need to create own color interpolator
 #include <SLEntities.h>
 #include <SLFileStorage.h>
+#include <SLAssetLoader.h>
 
 #include "AppDemoSceneEmpty.h"
 #include "AppDemoSceneLegacy.h"
@@ -6659,10 +6660,11 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     // Reset the global SLGLState state
     SLGLState::instance()->initAll();
 
-    AppScene* as = static_cast<AppScene*>(s);
-    as->recordAssetsToLoad(am);
+    AppScene*     as = static_cast<AppScene*>(s);
+    SLAssetLoader al(s, AppDemo::modelPath, AppDemo::texturePath);
 
-    am->loadAll();
+    as->recordAssetsToLoad(al);
+    al.loadAll();
     as->assemble(am, sv);
 
     // Make sure the scene view has a camera

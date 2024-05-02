@@ -9,7 +9,7 @@ class AppDemoSceneLegacy : public AppScene
 {
 public:
     AppDemoSceneLegacy(SLSceneID sceneID);
-    void recordAssetsToLoad(SLAssetManager* am) override;
+    void recordAssetsToLoad(SLAssetLoader& al) override;
     void assemble(SLAssetManager* am, SLSceneView* sv) override;
 
 private:

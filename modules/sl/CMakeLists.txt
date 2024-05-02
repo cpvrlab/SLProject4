@@ -52,6 +52,8 @@ file(GLOB sources
         cuda/SLOptixHelper.h
         cuda/SLOptixVectorMath.h
         source/SL.h
+        source/SLAssetLoader.cpp
+        source/SLAssetLoader.h
         source/SLAssetManager.cpp
         source/SLAssetManager.h
         source/SLBackground.cpp
