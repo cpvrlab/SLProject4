@@ -3923,7 +3923,7 @@ resolution shadows near the camera and lower resolution shadows further away.");
 
         // Create feature tracker and let it pose the camera for AR posing
         tracker = new CVTrackedFeatures(texPath + "features_stones.jpg");
-        // tracker = new CVTrackedFeatures("features_abstract.jpg");
+        //tracker = new CVTrackedFeatures(texPath + "features_abstract.jpg");
         tracker->drawDetection(true);
         trackedNode = cam1;
 
