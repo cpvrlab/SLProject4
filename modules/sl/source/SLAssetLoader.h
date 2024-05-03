@@ -54,7 +54,7 @@ private:
 
     std::atomic_bool           _isDone;
     std::optional<std::thread> _worker;
-    std::function<void()>      _onDone;
+    std::function<void()>      _onDoneLoading;
 };
 //-----------------------------------------------------------------------------
 

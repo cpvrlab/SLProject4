@@ -2824,7 +2824,8 @@ resolution shadows near the camera and lower resolution shadows further away.");
                                           0.2f);   // 40% ambient reflection
 
             // Set missing specular color
-            robot->updateMeshMat([](SLMaterial* m) { m->specular(SLCol4f::WHITE); },
+            robot->updateMeshMat([](SLMaterial* m)
+                                 { m->specular(SLCol4f::WHITE); },
                                  true);
 
             SLNode* crx_j1 = robot->findChild<SLNode>("crx_j1");
@@ -2961,7 +2962,8 @@ resolution shadows near the camera and lower resolution shadows further away.");
                                         "mri_head_front_to_back",
                                         true);
 
-            gTexMRI3D->calc3DGradients(1, [](int progress) { AppDemo::jobProgressNum(progress); });
+            gTexMRI3D->calc3DGradients(1, [](int progress)
+                                       { AppDemo::jobProgressNum(progress); });
             // gTexMRI3D->smooth3DGradients(1, [](int progress) {AppDemo::jobProgressNum(progress);});
         }
 
@@ -5265,7 +5267,8 @@ resolution shadows near the camera and lower resolution shadows further away.");
         axis->castsShadows(false);
 
         // Set some ambient light
-        thtAndTmp->updateMeshMat([](SLMaterial* m) { m->ambient(SLCol4f(.25f, .25f, .25f)); },
+        thtAndTmp->updateMeshMat([](SLMaterial* m)
+                                 { m->ambient(SLCol4f(.25f, .25f, .25f)); },
                                  true);
         SLNode* scene = new SLNode("Scene");
         s->root3D(scene);
@@ -5410,7 +5413,8 @@ resolution shadows near the camera and lower resolution shadows further away.");
         axis->castsShadows(false);
 
         // Set some ambient light
-        thtAndTmp->updateMeshMat([](SLMaterial* m) { m->ambient(SLCol4f(.25f, .25f, .25f)); },
+        thtAndTmp->updateMeshMat([](SLMaterial* m)
+                                 { m->ambient(SLCol4f(.25f, .25f, .25f)); },
                                  true);
         SLNode* scene = new SLNode("Scene");
         s->root3D(scene);
@@ -5556,7 +5560,8 @@ resolution shadows near the camera and lower resolution shadows further away.");
         axis->castsShadows(false);
 
         // Set some ambient light
-        thtAndTmp->updateMeshMat([](SLMaterial* m) { m->ambient(SLCol4f(.25f, .25f, .25f)); },
+        thtAndTmp->updateMeshMat([](SLMaterial* m)
+                                 { m->ambient(SLCol4f(.25f, .25f, .25f)); },
                                  true);
         SLNode* scene = new SLNode("Scene");
         s->root3D(scene);
@@ -5594,7 +5599,8 @@ resolution shadows near the camera and lower resolution shadows further away.");
         tmpL2->drawBits()->set(SL_DB_HIDDEN, true);
 
         // Add level of detail switch callback lambda
-        cam1->onCamUpdateCB([=](SLSceneView* sv) {
+        cam1->onCamUpdateCB([=](SLSceneView* sv)
+                            {
                                 SLVec3f posCam     = sv->camera()->updateAndGetWM().translation();
                                 SLVec3f posAlt     = tmpAltar->updateAndGetWM().translation();
                                 SLVec3f distCamAlt = posCam - posAlt;
@@ -6660,7 +6666,8 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
 
     al->scene(s);
 
-    auto onLoaded = [s, sv] {
+    auto onDoneLoading = [s, sv]
+    {
         s->assemble(am, sv);
 
         // Make sure the scene view has a camera
@@ -6671,6 +6678,6 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     };
 
     s->recordAssetsToLoad(*al);
-    al->loadAll(onLoaded);
+    al->loadAll(onDoneLoading);
 }
 //-----------------------------------------------------------------------------

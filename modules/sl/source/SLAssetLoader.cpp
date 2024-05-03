@@ -64,9 +64,9 @@ void SLAssetLoader::addNodeToLoad(SLNode*&    node,
     // clang-format on
 }
 //-----------------------------------------------------------------------------
-void SLAssetLoader::loadAll(std::function<void()> onDone)
+void SLAssetLoader::loadAll(std::function<void()> onDoneLoading)
 {
-    _onDone = onDone;
+    _onDoneLoading = onDoneLoading;
     _isDone.store(false);
     _isLoading = true;
 
@@ -87,7 +87,7 @@ void SLAssetLoader::update()
 
         _isLoading = false;
         _loadTasks.clear();
-        _onDone();
+        _onDoneLoading();
     }
 }
 //-----------------------------------------------------------------------------
