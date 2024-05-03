@@ -5,11 +5,18 @@
 #include "SLScene.h"
 
 //-----------------------------------------------------------------------------
-SLAssetLoader::SLAssetLoader(SLScene* scene,
-                             SLstring modelPath,
+SLAssetLoader::SLAssetLoader(SLstring modelPath,
                              SLstring texturePath)
-  : _scene(scene), _modelPath(modelPath), _texturePath(texturePath)
+  : _modelPath(modelPath),
+    _texturePath(texturePath),
+    _isLoading(false)
 {
+}
+//-----------------------------------------------------------------------------
+SLAssetLoader::~SLAssetLoader()
+{
+    if (_worker)
+        _worker->join();
 }
 //-----------------------------------------------------------------------------
 void SLAssetLoader::addTextureToLoad(SLGLTexture*& texture, SLstring path)
@@ -57,11 +64,30 @@ void SLAssetLoader::addNodeToLoad(SLNode*&    node,
     // clang-format on
 }
 //-----------------------------------------------------------------------------
-void SLAssetLoader::loadAll()
+void SLAssetLoader::loadAll(std::function<void()> onDone)
 {
-    for (const SLAssetLoadTask& task : _loadTasks)
-        task();
+    _onDone = onDone;
+    _isDone.store(false);
+    _isLoading = true;
 
-    _loadTasks.clear();
+    _worker = std::thread([this] {
+        for (const SLAssetLoadTask& task : _loadTasks)
+            task();
+
+        _isDone.store(true);
+    });
+}
+//-----------------------------------------------------------------------------
+void SLAssetLoader::update()
+{
+    if (_isLoading && _isDone.load())
+    {
+        _worker->join();
+        _worker = {};
+
+        _isLoading = false;
+        _loadTasks.clear();
+        _onDone();
+    }
 }
 //-----------------------------------------------------------------------------

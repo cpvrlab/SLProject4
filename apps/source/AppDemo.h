@@ -10,18 +10,20 @@
 #ifndef SLAPPLICATION_H
 #define SLAPPLICATION_H
 
-#include "SLEnums.h"
-#include <CVTypes.h>
-#include <SLDeviceLocation.h>
-#include <SLDeviceRotation.h>
-#include <SLInputManager.h>
-#include <SLSceneView.h>
 #include <atomic>
 #include <mutex>
 #include <map>
 #include <optional>
 
+#include <CVTypes.h>
+#include <SLDeviceLocation.h>
+#include <SLDeviceRotation.h>
+#include <SLInputManager.h>
+#include <SLSceneView.h>
+#include "SLEnums.h"
+
 class SLScene;
+class SLAssetLoader;
 class SLGLImGui;
 class CVCalibrationEstimator;
 //-----------------------------------------------------------------------------
@@ -45,11 +47,12 @@ public:
     // Major owned instances of the app
     static SLInputManager           inputManager; //!< Input events manager
     static SLAssetManager*          assetManager; //!< asset manager
-    static SLScene*                 scene;        //!< scene pointer
-    static SLVSceneView             sceneViews;   //!< vector of sceneview pointers
-    static SLGLImGui*               gui;          //!< gui pointer
-    static SLDeviceRotation         devRot;       //!< Mobile device rotation from IMU
-    static SLDeviceLocation         devLoc;       //!< Mobile device location from GPS
+    static SLAssetLoader*           assetLoader;
+    static SLScene*                 scene;      //!< scene pointer
+    static SLVSceneView             sceneViews; //!< vector of sceneview pointers
+    static SLGLImGui*               gui;        //!< gui pointer
+    static SLDeviceRotation         devRot;     //!< Mobile device rotation from IMU
+    static SLDeviceLocation         devLoc;     //!< Mobile device location from GPS
     static std::optional<SLSceneID> sceneToLoad;
 
     static void createAppAndScene(SLstring appName);

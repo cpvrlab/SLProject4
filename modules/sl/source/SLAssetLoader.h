@@ -1,8 +1,12 @@
 #ifndef SLASSETLOADER_H
 #define SLASSETLOADER_H
 
+#include <condition_variable>
 #include <vector>
 #include <functional>
+#include <thread>
+#include <atomic>
+#include <optional>
 
 #include <SL.h>
 
@@ -20,10 +24,14 @@ typedef std::vector<SLAssetLoadTask> SLVAssetLoadTask;
 class SLAssetLoader
 {
 public:
-    SLAssetLoader(SLScene* scene, SLstring modelPath, SLstring texturePath);
+    SLAssetLoader(SLstring modelPath, SLstring texturePath);
+    ~SLAssetLoader();
+
+    bool isLoading() const { return _isLoading; }
+
+    void scene(SLScene* scene) { _scene = scene; }
 
     void addTextureToLoad(SLGLTexture*& texture, SLstring path);
-
     void addNodeToLoad(SLNode*&    node,
                        SLstring    path,
                        SLSkybox*   skybox                 = nullptr,
@@ -32,16 +40,21 @@ public:
                        SLMaterial* overrideMat            = nullptr,
                        float       ambientFactor          = 0.0f,
                        SLbool      forceCookTorranceRM    = false);
-
-    void loadAll();
+    void loadAll(std::function<void()> onDone);
+    void update();
 
 private:
-    SLVAssetLoadTask _loadTasks;
-
     SLScene*        _scene;
     SLAssetManager* _am;
     SLstring        _modelPath;
     SLstring        _texturePath;
+
+    SLVAssetLoadTask _loadTasks;
+    bool             _isLoading;
+
+    std::atomic_bool           _isDone;
+    std::optional<std::thread> _worker;
+    std::function<void()>      _onDone;
 };
 //-----------------------------------------------------------------------------
 

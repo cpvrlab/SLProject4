@@ -21,8 +21,9 @@
 #include <CVCapture.h>
 #include <AppDemoGui.h>
 #include <AppDemoSceneView.h>
-#include <GLFW/glfw3.h>
 #include <Profiler.h>
+#include <SLAssetLoader.h>
+#include <GLFW/glfw3.h>
 
 //-----------------------------------------------------------------------------
 //! Forward declaration of the scene definition function from AppDemoLoad.cpp
@@ -76,6 +77,9 @@ SLbool onPaint()
         appDemoSwitchScene(sv, *AppDemo::sceneToLoad);
         AppDemo::sceneToLoad = {};
     }
+
+    if (AppDemo::assetLoader->isLoading())
+        AppDemo::assetLoader->update();
 
     // If live video image is requested grab it and copy it
     if (CVCapture::instance()->videoType() != VT_NONE)

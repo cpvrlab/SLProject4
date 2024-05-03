@@ -17,11 +17,13 @@
 #include <GlobalTimer.h>
 #include <SLGLProgramManager.h>
 #include <SLOptix.h>
+#include <SLAssetLoader.h>
 
 //-----------------------------------------------------------------------------
 //! Global static objects
 SLInputManager           AppDemo::inputManager;
 SLAssetManager*          AppDemo::assetManager = nullptr;
+SLAssetLoader*           AppDemo::assetLoader  = nullptr;
 SLScene*                 AppDemo::scene        = nullptr;
 vector<SLSceneView*>     AppDemo::sceneViews;
 SLGLImGui*               AppDemo::gui = nullptr;
@@ -96,6 +98,7 @@ void AppDemo::createAppAndScene(SLstring appName)
     name = std::move(appName);
     SLGLProgramManager::init(dataPath + "shaders/", configPath);
     assetManager = new SLAssetManager(AppDemo::fontPath, true);
+    assetLoader  = new SLAssetLoader(AppDemo::modelPath, AppDemo::texturePath);
     GlobalTimer::timerStart();
 
 #ifdef SL_HAS_OPTIX
@@ -126,6 +129,9 @@ void AppDemo::deleteAppAndScene()
 
     delete assetManager;
     assetManager = nullptr;
+
+    delete assetLoader;
+    assetLoader = nullptr;
 #endif
 
     if (gui)

@@ -2824,8 +2824,7 @@ resolution shadows near the camera and lower resolution shadows further away.");
                                           0.2f);   // 40% ambient reflection
 
             // Set missing specular color
-            robot->updateMeshMat([](SLMaterial* m)
-                                 { m->specular(SLCol4f::WHITE); },
+            robot->updateMeshMat([](SLMaterial* m) { m->specular(SLCol4f::WHITE); },
                                  true);
 
             SLNode* crx_j1 = robot->findChild<SLNode>("crx_j1");
@@ -2962,8 +2961,7 @@ resolution shadows near the camera and lower resolution shadows further away.");
                                         "mri_head_front_to_back",
                                         true);
 
-            gTexMRI3D->calc3DGradients(1, [](int progress)
-                                       { AppDemo::jobProgressNum(progress); });
+            gTexMRI3D->calc3DGradients(1, [](int progress) { AppDemo::jobProgressNum(progress); });
             // gTexMRI3D->smooth3DGradients(1, [](int progress) {AppDemo::jobProgressNum(progress);});
         }
 
@@ -5267,8 +5265,7 @@ resolution shadows near the camera and lower resolution shadows further away.");
         axis->castsShadows(false);
 
         // Set some ambient light
-        thtAndTmp->updateMeshMat([](SLMaterial* m)
-                                 { m->ambient(SLCol4f(.25f, .25f, .25f)); },
+        thtAndTmp->updateMeshMat([](SLMaterial* m) { m->ambient(SLCol4f(.25f, .25f, .25f)); },
                                  true);
         SLNode* scene = new SLNode("Scene");
         s->root3D(scene);
@@ -5413,8 +5410,7 @@ resolution shadows near the camera and lower resolution shadows further away.");
         axis->castsShadows(false);
 
         // Set some ambient light
-        thtAndTmp->updateMeshMat([](SLMaterial* m)
-                                 { m->ambient(SLCol4f(.25f, .25f, .25f)); },
+        thtAndTmp->updateMeshMat([](SLMaterial* m) { m->ambient(SLCol4f(.25f, .25f, .25f)); },
                                  true);
         SLNode* scene = new SLNode("Scene");
         s->root3D(scene);
@@ -5560,8 +5556,7 @@ resolution shadows near the camera and lower resolution shadows further away.");
         axis->castsShadows(false);
 
         // Set some ambient light
-        thtAndTmp->updateMeshMat([](SLMaterial* m)
-                                 { m->ambient(SLCol4f(.25f, .25f, .25f)); },
+        thtAndTmp->updateMeshMat([](SLMaterial* m) { m->ambient(SLCol4f(.25f, .25f, .25f)); },
                                  true);
         SLNode* scene = new SLNode("Scene");
         s->root3D(scene);
@@ -5599,8 +5594,7 @@ resolution shadows near the camera and lower resolution shadows further away.");
         tmpL2->drawBits()->set(SL_DB_HIDDEN, true);
 
         // Add level of detail switch callback lambda
-        cam1->onCamUpdateCB([=](SLSceneView* sv)
-                            {
+        cam1->onCamUpdateCB([=](SLSceneView* sv) {
                                 SLVec3f posCam     = sv->camera()->updateAndGetWM().translation();
                                 SLVec3f posAlt     = tmpAltar->updateAndGetWM().translation();
                                 SLVec3f distCamAlt = posCam - posAlt;
@@ -6590,11 +6584,15 @@ resolution shadows near the camera and lower resolution shadows further away.");
 //-----------------------------------------------------------------------------
 void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
 {
-    SLScene*&        s  = AppDemo::scene;
+    AppScene*        s  = nullptr;
     SLAssetManager*& am = AppDemo::assetManager;
+    SLAssetLoader*&  al = AppDemo::assetLoader;
 
-    if (s)
-        delete s;
+    if (AppDemo::scene)
+    {
+        delete AppDemo::scene;
+        AppDemo::scene = nullptr;
+    }
 
     switch (sceneID)
     {
@@ -6660,15 +6658,19 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     // Reset the global SLGLState state
     SLGLState::instance()->initAll();
 
-    AppScene*     as = static_cast<AppScene*>(s);
-    SLAssetLoader al(s, AppDemo::modelPath, AppDemo::texturePath);
+    al->scene(s);
 
-    as->recordAssetsToLoad(al);
-    al.loadAll();
-    as->assemble(am, sv);
+    auto onLoaded = [s, sv] {
+        s->assemble(am, sv);
 
-    // Make sure the scene view has a camera
-    if (!sv->camera())
-        sv->camera(sv->sceneViewCamera());
+        // Make sure the scene view has a camera
+        if (!sv->camera())
+            sv->camera(sv->sceneViewCamera());
+
+        AppDemo::scene = s;
+    };
+
+    s->recordAssetsToLoad(*al);
+    al->loadAll(onLoaded);
 }
 //-----------------------------------------------------------------------------
