@@ -146,6 +146,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCH
             -Wno-newline-eof
             -Wno-old-style-cast
             -Wno-switch-enum
+			-Wno-unused-lambda-capture
             -Wno-unused-macros
             -Wno-unused-function
             -Wno-unused-parameter

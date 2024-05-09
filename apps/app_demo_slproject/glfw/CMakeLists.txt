@@ -7,12 +7,7 @@ set(target app-Demo-SLProject)
 set(compile_definitions SL_STARTSCENE=SID_ShaderIBL)
 
 file(GLOB headers
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoGui.h
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoSceneEmpty.h
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoSceneLegacy.h
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoSceneMinimal.h
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoSceneSuzanne.h
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoSceneView.h
+        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/*.h
 		${SL_PROJECT_ROOT}/apps/source/CVCapture.h
 		${SL_PROJECT_ROOT}/apps/source/AppDemo.h
         ${SL_PROJECT_ROOT}/apps/source/AppScene.h
@@ -21,14 +16,7 @@ file(GLOB headers
     )
 
 file(GLOB sources
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoGui.cpp
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoLoad.cpp
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoSceneEmpty.cpp
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoSceneLegacy.cpp
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoSceneMinimal.cpp
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoSceneSuzanne.cpp
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoVideo.cpp
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoSceneView.cpp
+        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/*.cpp
 		${SL_PROJECT_ROOT}/apps/source/CVCapture.cpp
 		${SL_PROJECT_ROOT}/apps/source/AppDemo.cpp
 		${SL_PROJECT_ROOT}/apps/source/SLInterface.cpp
