@@ -97,8 +97,11 @@ void AppDemo::createAppAndScene(SLstring appName)
 
     name = std::move(appName);
     SLGLProgramManager::init(dataPath + "shaders/", configPath);
-    assetManager = new SLAssetManager(AppDemo::fontPath, true);
-    assetLoader  = new SLAssetLoader(AppDemo::modelPath, AppDemo::texturePath);
+    assetManager = new SLAssetManager(AppDemo::fontPath,
+                                      true);
+    assetLoader  = new SLAssetLoader(AppDemo::modelPath,
+                                    AppDemo::texturePath,
+                                    AppDemo::shaderPath);
     GlobalTimer::timerStart();
 
 #ifdef SL_HAS_OPTIX

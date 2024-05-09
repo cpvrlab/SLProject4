@@ -6,9 +6,11 @@
 
 //-----------------------------------------------------------------------------
 SLAssetLoader::SLAssetLoader(SLstring modelPath,
-                             SLstring texturePath)
+                             SLstring texturePath,
+                             SLstring shaderPath)
   : _modelPath(modelPath),
     _texturePath(texturePath),
+    _shaderPath(shaderPath),
     _isLoading(false)
 {
 }
@@ -19,14 +21,76 @@ SLAssetLoader::~SLAssetLoader()
         _worker->join();
 }
 //-----------------------------------------------------------------------------
-void SLAssetLoader::addTextureToLoad(SLGLTexture*& texture, SLstring path)
+void SLAssetLoader::addTextureToLoad(SLGLTexture*& texture,
+                                     SLstring      imageFilename,
+                                     SLint         min_filter,
+                                     SLint         mag_filter,
+                                     SLTextureType type,
+                                     SLint         wrapS,
+                                     SLint         wrapT)
 {
-    // clang-format off
-    _loadTasks.push_back([this, &texture, path]
-    {
-        texture = new SLGLTexture(_scene->assetManager(), _texturePath + path);
-    });
-    // clang-format on
+    _loadTasks.push_back([this,
+                          &texture,
+                          imageFilename,
+                          min_filter,
+                          mag_filter,
+                          type,
+                          wrapS,
+                          wrapT]
+                         { texture = new SLGLTexture(_scene->assetManager(),
+                                                     _texturePath + imageFilename,
+                                                     min_filter,
+                                                     mag_filter,
+                                                     type,
+                                                     wrapS,
+                                                     wrapT); });
+}
+//-----------------------------------------------------------------------------
+void SLAssetLoader::addTextureToLoad(SLGLTexture*&   texture,
+                                     const SLstring& filenameXPos,
+                                     const SLstring& filenameXNeg,
+                                     const SLstring& filenameYPos,
+                                     const SLstring& filenameYNeg,
+                                     const SLstring& filenameZPos,
+                                     const SLstring& filenameZNeg,
+                                     SLint           min_filter,
+                                     SLint           mag_filter,
+                                     SLTextureType   type)
+{
+    _loadTasks.push_back([this,
+                          &texture,
+                          filenameXPos,
+                          filenameXNeg,
+                          filenameYPos,
+                          filenameYNeg,
+                          filenameZPos,
+                          filenameZNeg,
+                          min_filter,
+                          mag_filter,
+                          type]
+                         { texture = new SLGLTexture(_scene->assetManager(),
+                                                     _texturePath + filenameXPos,
+                                                     _texturePath + filenameXNeg,
+                                                     _texturePath + filenameYPos,
+                                                     _texturePath + filenameYNeg,
+                                                     _texturePath + filenameZPos,
+                                                     _texturePath + filenameZNeg,
+                                                     min_filter,
+                                                     mag_filter,
+                                                     type); });
+}
+//-----------------------------------------------------------------------------
+void SLAssetLoader::addProgramGenericToLoad(SLGLProgram*&   program,
+                                            const SLstring& vertShaderFile,
+                                            const SLstring& fragShaderFile)
+{
+    _loadTasks.push_back([this,
+                          &program,
+                          vertShaderFile,
+                          fragShaderFile]
+                         { program = new SLGLProgramGeneric(_scene->assetManager(),
+                                                            _shaderPath + vertShaderFile,
+                                                            _shaderPath + fragShaderFile); });
 }
 //-----------------------------------------------------------------------------
 void SLAssetLoader::addNodeToLoad(SLNode*&    node,
@@ -38,7 +102,6 @@ void SLAssetLoader::addNodeToLoad(SLNode*&    node,
                                   float       ambientFactor,
                                   SLbool      forceCookTorranceRM)
 {
-    // clang-format off
     _loadTasks.push_back([this,
                           &node,
                           path,
@@ -48,7 +111,7 @@ void SLAssetLoader::addNodeToLoad(SLNode*&    node,
                           overrideMat,
                           ambientFactor,
                           forceCookTorranceRM]
-    {
+                         {
         SLAssimpImporter importer;
         node = importer.load(_scene->animManager(),
                              _scene->assetManager(),
@@ -59,28 +122,26 @@ void SLAssetLoader::addNodeToLoad(SLNode*&    node,
                              loadMeshesOnly,
                              overrideMat,
                              ambientFactor,
-                             forceCookTorranceRM);
-    });
-    // clang-format on
+                             forceCookTorranceRM); });
 }
 //-----------------------------------------------------------------------------
-void SLAssetLoader::loadAll(std::function<void()> onDoneLoading)
+void SLAssetLoader::loadAll(function<void()> onDoneLoading)
 {
     _onDoneLoading = onDoneLoading;
     _isDone.store(false);
     _isLoading = true;
 
-    _worker = std::thread([this] {
+    _worker = thread([this]
+                          {
         for (const SLAssetLoadTask& task : _loadTasks)
             task();
 
-        _isDone.store(true);
-    });
+        _isDone = true; });
 }
 //-----------------------------------------------------------------------------
 void SLAssetLoader::update()
 {
-    if (_isLoading && _isDone.load())
+    if (_isLoading && _isDone)
     {
         _worker->join();
         _worker = {};

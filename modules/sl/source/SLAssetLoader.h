@@ -9,13 +9,15 @@
 #include <optional>
 
 #include <SL.h>
+#include <SLGLTexture.h>;
 
 class SLScene;
 class SLAssetManager;
-class SLGLTexture;
 class SLNode;
 class SLSkybox;
 class SLMaterial;
+
+using namespace std;
 
 //-----------------------------------------------------------------------------
 typedef std::function<void()>        SLAssetLoadTask;
@@ -24,14 +26,36 @@ typedef std::vector<SLAssetLoadTask> SLVAssetLoadTask;
 class SLAssetLoader
 {
 public:
-    SLAssetLoader(SLstring modelPath, SLstring texturePath);
+    SLAssetLoader(SLstring modelPath,
+                  SLstring texturePath,
+                  SLstring shaderPath);
     ~SLAssetLoader();
 
     bool isLoading() const { return _isLoading; }
 
     void scene(SLScene* scene) { _scene = scene; }
 
-    void addTextureToLoad(SLGLTexture*& texture, SLstring path);
+    //! add 2D textures with internal image allocation
+    void addTextureToLoad(SLGLTexture*& texture,
+                          SLstring      imageFilename,
+                          SLint         min_filter = GL_LINEAR_MIPMAP_LINEAR,
+                          SLint         mag_filter = GL_LINEAR,
+                          SLTextureType type       = TT_unknown,
+                          SLint         wrapS      = GL_REPEAT,
+                          SLint         wrapT      = GL_REPEAT);
+
+    //! add cube map texture with internal image allocation
+    void addTextureToLoad(SLGLTexture*&   texture,
+                          const SLstring& imageFilenameXPos,
+                          const SLstring& imageFilenameXNeg,
+                          const SLstring& imageFilenameYPos,
+                          const SLstring& imageFilenameYNeg,
+                          const SLstring& imageFilenameZPos,
+                          const SLstring& imageFilenameZNeg,
+                          SLint           min_filter = GL_LINEAR,
+                          SLint           mag_filter = GL_LINEAR,
+                          SLTextureType   type       = TT_unknown);
+
     void addNodeToLoad(SLNode*&    node,
                        SLstring    path,
                        SLSkybox*   skybox                 = nullptr,
@@ -40,7 +64,12 @@ public:
                        SLMaterial* overrideMat            = nullptr,
                        float       ambientFactor          = 0.5f,
                        SLbool      forceCookTorranceRM    = false);
-    void loadAll(std::function<void()> onDone);
+
+    void addProgramGenericToLoad(SLGLProgram*&   program,
+                                 const SLstring& vertShaderFile,
+                                 const SLstring& fragShaderFile);
+
+    void loadAll(function<void()> onDone);
     void update();
 
 private:
@@ -48,13 +77,14 @@ private:
     SLAssetManager* _am;
     SLstring        _modelPath;
     SLstring        _texturePath;
+    SLstring        _shaderPath;
 
     SLVAssetLoadTask _loadTasks;
     bool             _isLoading;
 
-    std::atomic_bool           _isDone;
-    std::optional<std::thread> _worker;
-    std::function<void()>      _onDoneLoading;
+    atomic<bool>     _isDone;
+    optional<thread> _worker;
+    function<void()> _onDoneLoading;
 };
 //-----------------------------------------------------------------------------
 
