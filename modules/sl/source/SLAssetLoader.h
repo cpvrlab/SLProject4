@@ -65,6 +65,17 @@ public:
                           SLint           mag_filter = GL_LINEAR,
                           SLTextureType   type       = TT_unknown);
 
+    //! add 3D texture from a single file with depth as 3rd dimension
+    void addTextureToLoad(SLGLTexture*&   texture,
+                          SLint           depth,
+                          const SLstring& imageFilename,
+                          SLint           min_filter             = GL_LINEAR,
+                          SLint           mag_filter             = GL_LINEAR,
+                          SLint           wrapS                  = GL_REPEAT,
+                          SLint           wrapT                  = GL_REPEAT,
+                          const SLstring& name                   = "3D-Texture",
+                          SLbool          loadGrayscaleIntoAlpha = false);
+
     void addNodeToLoad(SLNode*&    node,
                        SLstring    path,
                        SLSkybox*   skybox                 = nullptr,

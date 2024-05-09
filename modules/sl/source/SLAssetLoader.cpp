@@ -80,6 +80,38 @@ void SLAssetLoader::addTextureToLoad(SLGLTexture*&   texture,
                                                      type); });
 }
 //-----------------------------------------------------------------------------
+void SLAssetLoader::addTextureToLoad(SLGLTexture*&   texture,
+                                     SLint           depth,
+                                     const SLstring& imageFilename,
+                                     SLint           min_filter,
+                                     SLint           mag_filter,
+                                     SLint           wrapS,
+                                     SLint           wrapT,
+                                     const SLstring& name,
+                                     SLbool          loadGrayscaleIntoAlpha)
+
+{
+    _loadTasks.push_back([this,
+                          &texture,
+                          depth,
+                          imageFilename,
+                          min_filter,
+                          mag_filter,
+                          wrapS,
+                          wrapT,
+                          name,
+                          loadGrayscaleIntoAlpha]
+                         { texture = new SLGLTexture(_scene->assetManager(),
+                                                     depth,
+                                                     _texturePath + imageFilename,
+                                                     min_filter,
+                                                     mag_filter,
+                                                     wrapS,
+                                                     wrapT,
+                                                     name,
+                                                     loadGrayscaleIntoAlpha); });
+}
+//-----------------------------------------------------------------------------
 void SLAssetLoader::addProgramGenericToLoad(SLGLProgram*&   program,
                                             const SLstring& vertShaderFile,
                                             const SLstring& fragShaderFile)
@@ -132,7 +164,7 @@ void SLAssetLoader::loadAll(function<void()> onDoneLoading)
     _isLoading = true;
 
     _worker = thread([this]
-                          {
+                     {
         for (const SLAssetLoadTask& task : _loadTasks)
             task();
 
