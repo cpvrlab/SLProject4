@@ -19,7 +19,8 @@ AppDemoSceneSuzanne::AppDemoSceneSuzanne(SLstring name,
     info(name);
 }
 //-----------------------------------------------------------------------------
-void AppDemoSceneSuzanne::recordAssetsToLoad(SLAssetLoader& al)
+//! All assets the should be loaded in parallel must be registered in here.
+void AppDemoSceneSuzanne::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addNodeToLoad(_suzanneInCube,
                      "GLTF/AO-Baked-Test/AO-Baked-Test.gltf",
@@ -30,6 +31,7 @@ void AppDemoSceneSuzanne::recordAssetsToLoad(SLAssetLoader& al)
                      0.5f);
 }
 //-----------------------------------------------------------------------------
+//! After parallel loading of the assets the scene gets assembled in here.
 void AppDemoSceneSuzanne::assemble(SLAssetManager* am, SLSceneView* sv)
 {
     // Create a scene group node

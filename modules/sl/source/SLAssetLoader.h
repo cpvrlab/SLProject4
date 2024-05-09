@@ -1,3 +1,12 @@
+//#############################################################################
+//  File:      SLAssetLoader.h
+//  Date:      May 2024
+//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
+//  Authors:   Marino von Wattenwyl
+//  License:   This software is provided under the GNU General Public License
+//             Please visit: http://opensource.org/licenses/GPL-3.0
+//#############################################################################
+
 #ifndef SLASSETLOADER_H
 #define SLASSETLOADER_H
 
@@ -20,8 +29,8 @@ class SLMaterial;
 using namespace std;
 
 //-----------------------------------------------------------------------------
-typedef std::function<void()>        SLAssetLoadTask;
-typedef std::vector<SLAssetLoadTask> SLVAssetLoadTask;
+typedef function<void()>        SLAssetLoadTask;
+typedef vector<SLAssetLoadTask> SLVAssetLoadTask;
 //-----------------------------------------------------------------------------
 class SLAssetLoader
 {
@@ -31,8 +40,8 @@ public:
                   SLstring shaderPath);
     ~SLAssetLoader();
 
+    // Getters
     bool isLoading() const { return _isLoading; }
-
     void scene(SLScene* scene) { _scene = scene; }
 
     //! add 2D textures with internal image allocation
@@ -73,18 +82,16 @@ public:
     void update();
 
 private:
-    SLScene*        _scene;
-    SLAssetManager* _am;
-    SLstring        _modelPath;
-    SLstring        _texturePath;
-    SLstring        _shaderPath;
-
+    SLScene*         _scene;
+    SLAssetManager*  _am;
+    SLstring         _modelPath;
+    SLstring         _texturePath;
+    SLstring         _shaderPath;
     SLVAssetLoadTask _loadTasks;
     bool             _isLoading;
-
-    atomic<bool>     _isDone;
-    optional<thread> _worker;
-    function<void()> _onDoneLoading;
+    atomic<bool>     _isDone;        //!< thread save boolean for checking parallel loading
+    optional<thread> _worker;        //!< worker thread for parallel loading
+    function<void()> _onDoneLoading; //!< Callback after threaded loading
 };
 //-----------------------------------------------------------------------------
 

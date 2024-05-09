@@ -23,11 +23,13 @@ AppDemoSceneMinimal::AppDemoSceneMinimal() : AppScene("Minimal Scene")
          "You can zoom in/out with the mousewheel. You can pan with click and drag on the middle mouse button (MMB).\n");
 }
 //-----------------------------------------------------------------------------
-void AppDemoSceneMinimal::recordAssetsToLoad(SLAssetLoader& al)
+//! All assets the should be loaded in parallel must be registered in here.
+void AppDemoSceneMinimal::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_texC, "earth2048_C.png");
 }
 //-----------------------------------------------------------------------------
+//! After parallel loading of the assets the scene gets assembled in here.
 void AppDemoSceneMinimal::assemble(SLAssetManager* am, SLSceneView* sv)
 {
     // Create a scene group node

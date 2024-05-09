@@ -8,7 +8,7 @@ class AppDemoSceneEmpty : public AppScene
 {
 public:
     AppDemoSceneEmpty();
-    void recordAssetsToLoad(SLAssetLoader& al) override;
+    void registerAssetsToLoad(SLAssetLoader& al) override;
     void assemble(SLAssetManager* am, SLSceneView* sv) override;
 };
 //-----------------------------------------------------------------------------

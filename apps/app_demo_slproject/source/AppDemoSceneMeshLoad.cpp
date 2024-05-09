@@ -22,13 +22,15 @@ AppDemoSceneMeshLoad::AppDemoSceneMeshLoad() : AppScene("Mesh 3D Loader Test")
          "Try the different stereo rendering modes in the menu Camera.");
 }
 //-----------------------------------------------------------------------------
-void AppDemoSceneMeshLoad::recordAssetsToLoad(SLAssetLoader& al)
+//! All assets the should be loaded in parallel must be registered in here.
+void AppDemoSceneMeshLoad::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addNodeToLoad(_mesh3DS, "3DS/Halloween/jackolan.3ds");
     al.addNodeToLoad(_meshFBX, "FBX/Duck/duck.fbx");
     al.addNodeToLoad(_meshDAE, "DAE/AstroBoy/AstroBoy.dae");
 }
 //-----------------------------------------------------------------------------
+//! After parallel loading of the assets the scene gets assembled in here.
 void AppDemoSceneMeshLoad::assemble(SLAssetManager* am, SLSceneView* sv)
 {
     SLMaterial* matBlu = new SLMaterial(am, "Blue", SLCol4f(0, 0, 0.2f), SLCol4f(1, 1, 1), 100, 0.8f, 0);

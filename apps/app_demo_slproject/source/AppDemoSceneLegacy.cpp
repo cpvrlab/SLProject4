@@ -16,10 +16,12 @@ AppDemoSceneLegacy::AppDemoSceneLegacy(SLSceneID sceneID)
 {
 }
 //-----------------------------------------------------------------------------
-void AppDemoSceneLegacy::recordAssetsToLoad(SLAssetLoader& al)
+//! All assets the should be loaded in parallel must be registered in here.
+void AppDemoSceneLegacy::registerAssetsToLoad(SLAssetLoader& al)
 {
 }
 //-----------------------------------------------------------------------------
+//! After parallel loading of the assets the scene gets assembled in here.
 void AppDemoSceneLegacy::assemble(SLAssetManager* am, SLSceneView* sv)
 {
     appDemoLoadScene(am, this, sv, _sceneID);

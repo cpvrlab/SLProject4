@@ -13,7 +13,7 @@ public:
                         bool     occlusionMapping,
                         bool     shadowMapping);
 
-    void recordAssetsToLoad(SLAssetLoader& al) override;
+    void registerAssetsToLoad(SLAssetLoader& al) override;
     void assemble(SLAssetManager* am, SLSceneView* sv) override;
 
 private:

@@ -24,7 +24,8 @@ AppDemoSceneRevolver::AppDemoSceneRevolver() : AppScene("Revolving Mesh Test")
          "Try ray tracing with key R and come back with the ESC key.");
 }
 //-----------------------------------------------------------------------------
-void AppDemoSceneRevolver::recordAssetsToLoad(SLAssetLoader& al)
+//! All assets the should be loaded in parallel must be registered in here.
+void AppDemoSceneRevolver::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_tex1C, "Testmap_1024_C.jpg");
     al.addTextureToLoad(_tex1N, "Testmap_1024_N.jpg");
@@ -43,6 +44,7 @@ void AppDemoSceneRevolver::recordAssetsToLoad(SLAssetLoader& al)
                                "RefractReflect.frag");
 }
 //-----------------------------------------------------------------------------
+//! After parallel loading of the assets the scene gets assembled in here.
 void AppDemoSceneRevolver::assemble(SLAssetManager* am, SLSceneView* sv)
 {
     // Test map material

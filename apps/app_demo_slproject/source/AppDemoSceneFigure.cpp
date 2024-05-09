@@ -24,10 +24,12 @@ AppDemoSceneFigure::AppDemoSceneFigure() : AppScene("Hierarchical Figure Test")
          "You can view the axis aligned bounding boxes with key B and the nodes origin and axis with key X.");
 }
 //-----------------------------------------------------------------------------
-void AppDemoSceneFigure::recordAssetsToLoad(SLAssetLoader& al)
+//! All assets the should be loaded in parallel must be registered in here.
+void AppDemoSceneFigure::registerAssetsToLoad(SLAssetLoader& al)
 {
 }
 //-----------------------------------------------------------------------------
+//! After parallel loading of the assets the scene gets assembled in here.
 void AppDemoSceneFigure::assemble(SLAssetManager* am, SLSceneView* sv)
 {
     // Create textures and materials

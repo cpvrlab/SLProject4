@@ -10,10 +10,12 @@ AppDemoSceneEmpty::AppDemoSceneEmpty() : AppScene("Empty Scene")
     info("No Scene loaded.");
 }
 //-----------------------------------------------------------------------------
-void AppDemoSceneEmpty::recordAssetsToLoad(SLAssetLoader& al)
+//! All assets the should be loaded in parallel must be registered in here.
+void AppDemoSceneEmpty::registerAssetsToLoad(SLAssetLoader& al)
 {
 }
 //-----------------------------------------------------------------------------
+//! After parallel loading of the assets the scene gets assembled in here.
 void AppDemoSceneEmpty::assemble(SLAssetManager* am, SLSceneView* sv)
 {
     root3D(nullptr);

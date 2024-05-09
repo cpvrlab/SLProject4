@@ -18,7 +18,7 @@ class AppDemoSceneFigure : public AppScene
 {
 public:
     AppDemoSceneFigure();
-    void           recordAssetsToLoad(SLAssetLoader& al) override;
+    void           registerAssetsToLoad(SLAssetLoader& al) override;
     void           assemble(SLAssetManager* am, SLSceneView* sv) override;
     static SLNode* BuildFigureGroup(SLAssetManager* am,
                                     SLScene*        s,
