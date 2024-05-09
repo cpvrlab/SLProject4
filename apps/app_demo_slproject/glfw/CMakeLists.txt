@@ -7,12 +7,12 @@ set(target app-Demo-SLProject)
 set(compile_definitions SL_STARTSCENE=SID_ShaderIBL)
 
 file(GLOB headers
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/include/AppDemoGui.h
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/include/AppDemoSceneEmpty.h
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/include/AppDemoSceneLegacy.h
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/include/AppDemoSceneMinimal.h
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/include/AppDemoSceneSuzanne.h
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/include/AppDemoSceneView.h
+        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoGui.h
+        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoSceneEmpty.h
+        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoSceneLegacy.h
+        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoSceneMinimal.h
+        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoSceneSuzanne.h
+        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoSceneView.h
 		${SL_PROJECT_ROOT}/apps/source/CVCapture.h
 		${SL_PROJECT_ROOT}/apps/source/AppDemo.h
         ${SL_PROJECT_ROOT}/apps/source/AppScene.h
@@ -58,7 +58,7 @@ set_target_properties(
 target_include_directories(
         ${target}
         PRIVATE
-        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/include/
+        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/
 		${SL_PROJECT_ROOT}/apps/source
         ${OpenCV_INCLUDE_DIR}
         ${glfw_INCLUDE_DIR}
