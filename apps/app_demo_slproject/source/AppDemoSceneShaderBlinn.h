@@ -1,5 +1,5 @@
 //#############################################################################
-//  File:      AppDemoSceneSuzanne.h
+//  File:      AppDemoSceneShaderBlinn.h
 //  Date:      May 2024
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
 //  Authors:   Marino von Wattenwyl
@@ -7,30 +7,29 @@
 //             Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
 
-#ifndef APPDEMOSCENESUZANNE_H
-#define APPDEMOSCENESUZANNE_H
+#ifndef APPDEMOSCENESHADERBLINN_H
+#define APPDEMOSCENESHADERBLINN_H
 
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
-class AppDemoSceneSuzanne : public AppScene
+class AppDemoSceneShaderBlinn : public AppScene
 {
 public:
-    AppDemoSceneSuzanne(SLstring name,
-                        bool     textureMapping,
-                        bool     normalMapping,
-                        bool     occlusionMapping,
-                        bool     shadowMapping);
+    AppDemoSceneShaderBlinn(SLstring name,
+                            bool     perVertex);
 
     void registerAssetsToLoad(SLAssetLoader& al) override;
     void assemble(SLAssetManager* am, SLSceneView* sv) override;
 
 private:
-    SLNode* _suzanneInCube;
-    bool    _textureMapping;
-    bool    _normalMapping;
-    bool    _occlusionMapping;
-    bool    _shadowMapping;
+    bool         _perVertex;
+    SLGLProgram* _perVrtTm = nullptr;
+    SLGLProgram* _perVrt = nullptr;
+    SLGLProgram* _perPix = nullptr;
+    SLGLTexture* _texC = nullptr;
+    SLGLTexture* _texN = nullptr;
+    SLGLTexture* _texH = nullptr;
 };
 //-----------------------------------------------------------------------------
 

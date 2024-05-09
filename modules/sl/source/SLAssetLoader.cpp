@@ -1,6 +1,7 @@
 #include "SLAssetLoader.h"
 
 #include "SLGLTexture.h"
+#include "SLSkybox.h"
 #include "SLAssimpImporter.h"
 #include "SLScene.h"
 
@@ -155,6 +156,49 @@ void SLAssetLoader::addNodeToLoad(SLNode*&    node,
                              overrideMat,
                              ambientFactor,
                              forceCookTorranceRM); });
+}
+//-----------------------------------------------------------------------------
+void SLAssetLoader::addSkyboxToLoad(SLSkybox*&      skybox,
+                                    const SLstring& hdrImage,
+                                    SLVec2i         resolution,
+                                    SLstring        name)
+{
+    _loadTasks.push_back([this,
+                          &skybox,
+                          hdrImage,
+                          resolution,
+                          name]
+                         { skybox = new SLSkybox(_scene->assetManager(),
+                                                 _shaderPath,
+                                                 _texturePath + hdrImage,
+                                                 resolution,
+                                                 name); });
+}
+//-----------------------------------------------------------------------------
+void SLAssetLoader::addSkyboxToLoad(SLSkybox*&      skybox,
+                                    const SLstring& cubeMapXPos,
+                                    const SLstring& cubeMapXNeg,
+                                    const SLstring& cubeMapYPos,
+                                    const SLstring& cubeMapYNeg,
+                                    const SLstring& cubeMapZPos,
+                                    const SLstring& cubeMapZNeg)
+{
+    _loadTasks.push_back([this,
+                          &skybox,
+                          cubeMapXPos,
+                          cubeMapXNeg,
+                          cubeMapYPos,
+                          cubeMapYNeg,
+                          cubeMapZPos,
+                          cubeMapZNeg]
+                         { skybox = new SLSkybox(_scene->assetManager(),
+                                                 _shaderPath,
+                                                 _texturePath + cubeMapXPos,
+                                                 _texturePath + cubeMapXNeg,
+                                                 _texturePath + cubeMapYPos,
+                                                 _texturePath + cubeMapYNeg,
+                                                 _texturePath + cubeMapZPos,
+                                                 _texturePath + cubeMapZNeg); });
 }
 //-----------------------------------------------------------------------------
 void SLAssetLoader::loadAll(function<void()> onDoneLoading)

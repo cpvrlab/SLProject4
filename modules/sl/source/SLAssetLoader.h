@@ -44,7 +44,7 @@ public:
     bool isLoading() const { return _isLoading; }
     void scene(SLScene* scene) { _scene = scene; }
 
-    //! add 2D textures with internal image allocation
+    //! Add 2D textures with internal image allocation
     void addTextureToLoad(SLGLTexture*& texture,
                           SLstring      imageFilename,
                           SLint         min_filter = GL_LINEAR_MIPMAP_LINEAR,
@@ -53,7 +53,7 @@ public:
                           SLint         wrapS      = GL_REPEAT,
                           SLint         wrapT      = GL_REPEAT);
 
-    //! add cube map texture with internal image allocation
+    //! Add cube map texture with internal image allocation
     void addTextureToLoad(SLGLTexture*&   texture,
                           const SLstring& imageFilenameXPos,
                           const SLstring& imageFilenameXNeg,
@@ -65,7 +65,7 @@ public:
                           SLint           mag_filter = GL_LINEAR,
                           SLTextureType   type       = TT_unknown);
 
-    //! add 3D texture from a single file with depth as 3rd dimension
+    //! Add 3D texture from a single file with depth as 3rd dimension
     void addTextureToLoad(SLGLTexture*&   texture,
                           SLint           depth,
                           const SLstring& imageFilename,
@@ -76,6 +76,7 @@ public:
                           const SLstring& name                   = "3D-Texture",
                           SLbool          loadGrayscaleIntoAlpha = false);
 
+    //! Add mesh from file to load via assimp loader
     void addNodeToLoad(SLNode*&    node,
                        SLstring    path,
                        SLSkybox*   skybox                 = nullptr,
@@ -85,9 +86,25 @@ public:
                        float       ambientFactor          = 0.5f,
                        SLbool      forceCookTorranceRM    = false);
 
+    //! Add generic GLSL program with shader files to load
     void addProgramGenericToLoad(SLGLProgram*&   program,
                                  const SLstring& vertShaderFile,
                                  const SLstring& fragShaderFile);
+
+    //! Add skybox with HDR texture to load
+    void addSkyboxToLoad(SLSkybox*& skybox,
+                         const SLstring& hdrImage,
+                         SLVec2i  resolution,
+                         SLstring name);
+
+    //! Add skybox with 6 textures for a cubemap to load
+    void addSkyboxToLoad(SLSkybox*& skybox,
+                         const SLstring& cubeMapXPos,
+                         const SLstring& cubeMapXNeg,
+                         const SLstring& cubeMapYPos,
+                         const SLstring& cubeMapYNeg,
+                         const SLstring& cubeMapZPos,
+                         const SLstring& cubeMapZNeg);
 
     void loadAll(function<void()> onDone);
     void update();

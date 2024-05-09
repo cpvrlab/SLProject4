@@ -1,5 +1,5 @@
 //#############################################################################
-//  File:      AppDemoSceneSuzanne.h
+//  File:      AppDemoSceneShaderSkybox.h
 //  Date:      May 2024
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
 //  Authors:   Marino von Wattenwyl
@@ -7,30 +7,27 @@
 //             Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
 
-#ifndef APPDEMOSCENESUZANNE_H
-#define APPDEMOSCENESUZANNE_H
+#ifndef APPDEMOSCENESHADERSKYBOX_H
+#define APPDEMOSCENESHADERSKYBOX_H
 
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
-class AppDemoSceneSuzanne : public AppScene
+//! Class for image base lighting demo scene
+class AppDemoSceneShaderSkybox : public AppScene
 {
 public:
-    AppDemoSceneSuzanne(SLstring name,
-                        bool     textureMapping,
-                        bool     normalMapping,
-                        bool     occlusionMapping,
-                        bool     shadowMapping);
+    AppDemoSceneShaderSkybox();
 
     void registerAssetsToLoad(SLAssetLoader& al) override;
     void assemble(SLAssetManager* am, SLSceneView* sv) override;
 
 private:
-    SLNode* _suzanneInCube;
-    bool    _textureMapping;
-    bool    _normalMapping;
-    bool    _occlusionMapping;
-    bool    _shadowMapping;
+    SLSkybox*    _skybox;
+    SLGLProgram* _spRefl;
+    SLGLProgram* _spRefr;
+    SLNode*      _teapot;
+    SLNode*      _susanne;
 };
 //-----------------------------------------------------------------------------
 

@@ -1,5 +1,5 @@
 //#############################################################################
-//  File:      AppDemoSceneSuzanne.h
+//  File:      AppDemoSceneShaderIBL.h
 //  Date:      May 2024
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
 //  Authors:   Marino von Wattenwyl
@@ -7,30 +7,28 @@
 //             Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
 
-#ifndef APPDEMOSCENESUZANNE_H
-#define APPDEMOSCENESUZANNE_H
+#ifndef APPDEMOSCENESHADERIBL_H
+#define APPDEMOSCENESHADERIBL_H
 
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
-class AppDemoSceneSuzanne : public AppScene
+//! Class for image base lighting demo scene
+class AppDemoSceneShaderIBL : public AppScene
 {
 public:
-    AppDemoSceneSuzanne(SLstring name,
-                        bool     textureMapping,
-                        bool     normalMapping,
-                        bool     occlusionMapping,
-                        bool     shadowMapping);
+    AppDemoSceneShaderIBL();
 
     void registerAssetsToLoad(SLAssetLoader& al) override;
     void assemble(SLAssetManager* am, SLSceneView* sv) override;
 
 private:
-    SLNode* _suzanneInCube;
-    bool    _textureMapping;
-    bool    _normalMapping;
-    bool    _occlusionMapping;
-    bool    _shadowMapping;
+    SLGLTexture* _texC;
+    SLGLTexture* _texN;
+    SLGLTexture* _texM;
+    SLGLTexture* _texR;
+    SLGLTexture* _texA;
+    SLSkybox*    _skybox;
 };
 //-----------------------------------------------------------------------------
 

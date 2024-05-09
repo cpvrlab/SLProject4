@@ -1535,14 +1535,14 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                         AppDemo::sceneToLoad = SID_ShaderPerPixelCook;
                     if (ImGui::MenuItem("Image Based Lighting", nullptr, sid == SID_ShaderIBL))
                         AppDemo::sceneToLoad = SID_ShaderIBL;
-                    if (ImGui::MenuItem("Per Vertex Wave", nullptr, sid == SID_ShaderPerVertexWave))
-                        AppDemo::sceneToLoad = SID_ShaderPerVertexWave;
+                    if (ImGui::MenuItem("Per Vertex Wave", nullptr, sid == SID_ShaderWave))
+                        AppDemo::sceneToLoad = SID_ShaderWave;
                     if (ImGui::MenuItem("Bump Mapping", nullptr, sid == SID_ShaderBumpNormal))
                         AppDemo::sceneToLoad = SID_ShaderBumpNormal;
                     if (ImGui::MenuItem("Parallax Mapping", nullptr, sid == SID_ShaderBumpParallax))
                         AppDemo::sceneToLoad = SID_ShaderBumpParallax;
-                    if (ImGui::MenuItem("Skybox Shader", nullptr, sid == SID_ShaderSkyBox))
-                        AppDemo::sceneToLoad = SID_ShaderSkyBox;
+                    if (ImGui::MenuItem("Skybox Shader", nullptr, sid == SID_ShaderSkybox))
+                        AppDemo::sceneToLoad = SID_ShaderSkybox;
                     if (ImGui::MenuItem("Earth Shader", nullptr, sid == SID_ShaderEarth))
                         AppDemo::sceneToLoad = SID_ShaderEarth;
                     ImGui::EndMenu();
