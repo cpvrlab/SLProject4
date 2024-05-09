@@ -38,7 +38,7 @@ public:
                        SLbool      deleteTexImgAfterBuild = false,
                        SLbool      loadMeshesOnly         = true,
                        SLMaterial* overrideMat            = nullptr,
-                       float       ambientFactor          = 0.0f,
+                       float       ambientFactor          = 0.5f,
                        SLbool      forceCookTorranceRM    = false);
     void loadAll(std::function<void()> onDone);
     void update();

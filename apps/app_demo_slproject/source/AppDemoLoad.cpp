@@ -58,6 +58,7 @@
 
 #include <AppDemoSceneEmpty.h>
 #include <AppDemoSceneFigure.h>
+#include <AppDemoSceneMeshLoad.h>
 #include <AppDemoSceneMinimal.h>
 #include <AppDemoSceneLegacy.h>
 #include <AppDemoSceneSuzanne.h>
@@ -616,109 +617,7 @@ void appDemoLoadScene(SLAssetManager* am,
     SLScene::entities.dump(true);
 #endif
 
-    if (sceneID == SID_MeshLoad) //................................................................
-    {
-        s->name("Mesh 3D Loader Test");
-        s->info("We use the assimp library to load 3D file formats including materials, skeletons and animations. "
-                "You can view the skeleton with key K. You can stop all animations with SPACE key.\n"
-                "Switch between perspective and orthographic projection with key 5. "
-                "Switch to front view with key 1, to side view with key 3 and to top view with key 7.\n"
-                "Try the different stereo rendering modes in the menu Camera.");
-
-        SLMaterial* matBlu = new SLMaterial(am, "Blue", SLCol4f(0, 0, 0.2f), SLCol4f(1, 1, 1), 100, 0.8f, 0);
-        SLMaterial* matRed = new SLMaterial(am, "Red", SLCol4f(0.2f, 0, 0), SLCol4f(1, 1, 1), 100, 0.8f, 0);
-        SLMaterial* matGre = new SLMaterial(am, "Green", SLCol4f(0, 0.2f, 0), SLCol4f(1, 1, 1), 100, 0.8f, 0);
-        SLMaterial* matGra = new SLMaterial(am, "Gray", SLCol4f(0.3f, 0.3f, 0.3f), SLCol4f(1, 1, 1), 100, 0, 0);
-
-        SLCamera* cam1 = new SLCamera("Camera 1");
-        cam1->clipNear(.1f);
-        cam1->clipFar(30);
-        cam1->translation(0, 0, 12);
-        cam1->lookAt(0, 0, 0);
-        cam1->focalDist(12);
-        cam1->stereoEyeSeparation(cam1->focalDist() / 30.0f);
-        cam1->background().colors(SLCol4f(0.6f, 0.6f, 0.6f), SLCol4f(0.3f, 0.3f, 0.3f));
-        cam1->setInitialState();
-        cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-
-        SLLightSpot* light1 = new SLLightSpot(am, s, 2.5f, 2.5f, 2.5f, 0.2f);
-        light1->powers(0.1f, 1.0f, 1.0f);
-        light1->attenuation(1, 0, 0);
-        SLAnimation* anim = s->animManager().createNodeAnimation("anim_light1_backforth", 2.0f, true, EC_inOutQuad, AL_pingPongLoop);
-        anim->createNodeAnimTrackForTranslation(light1, SLVec3f(0.0f, 0.0f, -5.0f));
-
-        SLLightSpot* light2 = new SLLightSpot(am, s, -2.5f, -2.5f, 2.5f, 0.2f);
-        light2->powers(0.1f, 1.0f, 1.0f);
-        light2->attenuation(1, 0, 0);
-        anim = s->animManager().createNodeAnimation("anim_light2_updown", 2.0f, true, EC_inOutQuint, AL_pingPongLoop);
-        anim->createNodeAnimTrackForTranslation(light2, SLVec3f(0.0f, 5.0f, 0.0f));
-
-        SLAssimpImporter importer;
-
-        SLNode* mesh3DS = importer.load(s->animManager(), am, modelPath + "3DS/Halloween/jackolan.3ds", texPath);
-        SLNode* meshFBX = importer.load(s->animManager(), am, modelPath + "FBX/Duck/duck.fbx", texPath);
-        SLNode* meshDAE = importer.load(s->animManager(), am, modelPath + "DAE/AstroBoy/AstroBoy.dae", texPath);
-
-        // Start animation
-        SLAnimPlayback* charAnim = s->animManager().lastAnimPlayback();
-        charAnim->playForward();
-        charAnim->playbackRate(0.8f);
-
-        // Scale to so that the AstroBoy is about 2 (meters) high.
-        if (mesh3DS)
-        {
-            mesh3DS->scale(0.1f);
-            mesh3DS->translate(-22.0f, 1.9f, 3.5f, TS_object);
-        }
-        if (meshDAE)
-        {
-            meshDAE->translate(0, -3, 0, TS_object);
-            meshDAE->scale(2.7f);
-        }
-        if (meshFBX)
-        {
-            meshFBX->scale(0.1f);
-            meshFBX->scale(0.1f);
-            meshFBX->translate(200, 30, -30, TS_object);
-            meshFBX->rotate(-90, 0, 1, 0);
-        }
-
-        // define rectangles for the surrounding box
-        SLfloat b = 3; // edge size of rectangles
-        SLNode *rb, *rl, *rr, *rf, *rt;
-        SLuint  res = 20;
-        rb          = new SLNode(new SLRectangle(am, SLVec2f(-b, -b), SLVec2f(b, b), res, res, "rectB", matBlu), "rectBNode");
-        rb->translate(0, 0, -b, TS_object);
-        rl = new SLNode(new SLRectangle(am, SLVec2f(-b, -b), SLVec2f(b, b), res, res, "rectL", matRed), "rectLNode");
-        rl->rotate(90, 0, 1, 0);
-        rl->translate(0, 0, -b, TS_object);
-        rr = new SLNode(new SLRectangle(am, SLVec2f(-b, -b), SLVec2f(b, b), res, res, "rectR", matGre), "rectRNode");
-        rr->rotate(-90, 0, 1, 0);
-        rr->translate(0, 0, -b, TS_object);
-        rf = new SLNode(new SLRectangle(am, SLVec2f(-b, -b), SLVec2f(b, b), res, res, "rectF", matGra), "rectFNode");
-        rf->rotate(-90, 1, 0, 0);
-        rf->translate(0, 0, -b, TS_object);
-        rt = new SLNode(new SLRectangle(am, SLVec2f(-b, -b), SLVec2f(b, b), res, res, "rectT", matGra), "rectTNode");
-        rt->rotate(90, 1, 0, 0);
-        rt->translate(0, 0, -b, TS_object);
-
-        SLNode* scene = new SLNode("Scene");
-        s->root3D(scene);
-        scene->addChild(light1);
-        scene->addChild(light2);
-        scene->addChild(rb);
-        scene->addChild(rl);
-        scene->addChild(rr);
-        scene->addChild(rf);
-        scene->addChild(rt);
-        if (mesh3DS) scene->addChild(mesh3DS);
-        if (meshFBX) scene->addChild(meshFBX);
-        if (meshDAE) scene->addChild(meshDAE);
-        scene->addChild(cam1);
-
-        sv->camera(cam1);
-    }
-    else if (sceneID == SID_Revolver) //...........................................................
+    if (sceneID == SID_Revolver) //...........................................................
     {
         s->name("Revolving Mesh Test");
         s->info("Examples of revolving mesh objects constructed by rotating a 2D curve. "
@@ -6418,6 +6317,7 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         case SID_Empty: s = new AppDemoSceneEmpty(); break;
         case SID_Figure: s = new AppDemoSceneFigure(); break;
         case SID_Minimal: s = new AppDemoSceneMinimal(); break;
+        case SID_MeshLoad: s = new AppDemoSceneMeshLoad(); break;
         case SID_SuzannePerPixBlinn: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and reflection colors", false, false, false, false); break;
         case SID_SuzannePerPixBlinnTm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and texture mapping", true, false, false, false); break;
         case SID_SuzannePerPixBlinnNm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and normal mapping", false, true, false, false); break;
