@@ -63,7 +63,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: prebuilt-openssl-andV8
-        path: ${{ github.workspace }}/externals/prebuilt/andv8_openssl_3.2.1
+        path: ${{ github.workspace }}/externals/prebuilt/andV8_openssl_3.2.1
 
   build-macos:
     runs-on: macos-13
