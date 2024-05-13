@@ -26,7 +26,10 @@ class SLNode;
 class SLSkybox;
 class SLMaterial;
 
-using namespace std;
+using std::atomic;
+using std::optional;
+using std::thread;
+using std::function;
 
 //-----------------------------------------------------------------------------
 typedef function<void()>        SLAssetLoadTask;

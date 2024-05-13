@@ -69,8 +69,10 @@
 #include <AppDemoSceneShaderBlinn.h>
 #include <AppDemoSceneShaderBump.h>
 #include <AppDemoSceneShaderCook.h>
+#include <AppDemoSceneShaderEarth.h>
 #include <AppDemoSceneShaderIBL.h>
 #include <AppDemoSceneShaderParallax.h>
+#include <AppDemoSceneShaderSkybox.h>
 #include <AppDemoSceneShaderWave.h>
 #include <AppDemoSceneTextureBlend.h>
 #include <AppDemoSceneTextureCompression.h>
@@ -631,154 +633,7 @@ void appDemoLoadScene(SLAssetManager* am,
     SLScene::entities.dump(true);
 #endif
 
-    if (sceneID == SID_ShaderSkybox) //.......................................................
-    {
-        // Set scene name and info string
-        s->name("Sky Box Test");
-        s->info("Sky box cube with cubemap skybox shader");
-
-        // Create textures and materials
-        SLSkybox* skybox = new SLSkybox(am,
-                                        shaderPath,
-                                        texPath + "Desert+X1024_C.jpg",
-                                        texPath + "Desert-X1024_C.jpg",
-                                        texPath + "Desert+Y1024_C.jpg",
-                                        texPath + "Desert-Y1024_C.jpg",
-                                        texPath + "Desert+Z1024_C.jpg",
-                                        texPath + "Desert-Z1024_C.jpg");
-        // Material for mirror
-        SLMaterial* refl = new SLMaterial(am, "refl", SLCol4f::BLACK, SLCol4f::WHITE, 1000, 1.0f);
-        refl->addTexture(skybox->environmentCubemap());
-        refl->program(new SLGLProgramGeneric(am,
-                                             shaderPath + "Reflect.vert",
-                                             shaderPath + "Reflect.frag"));
-        // Material for glass
-        SLMaterial* refr = new SLMaterial(am, "refr", SLCol4f::BLACK, SLCol4f::BLACK, 100, 0.1f, 0.9f, 1.5f);
-        refr->translucency(1000);
-        refr->transmissive(SLCol4f::WHITE);
-        refr->addTexture(skybox->environmentCubemap());
-        refr->program(new SLGLProgramGeneric(am,
-                                             shaderPath + "RefractReflect.vert",
-                                             shaderPath + "RefractReflect.frag"));
-        // Create a scene group node
-        SLNode* scene = new SLNode("scene node");
-        s->root3D(scene);
-
-        // Create camera in the center
-        SLCamera* cam1 = new SLCamera("Camera 1");
-        cam1->translation(0, 0, 5);
-        cam1->setInitialState();
-        scene->addChild(cam1);
-
-        // There is no light needed in this scene. All reflections come from cube maps
-        // But ray tracing needs light sources
-        // Create directional light for the sunlight
-        SLLightDirect* light = new SLLightDirect(am, s, 0.5f);
-        light->ambientColor(SLCol4f(0.3f, 0.3f, 0.3f));
-        light->attenuation(1, 0, 0);
-        light->translate(1, 1, -1);
-        light->lookAt(-1, -1, 1);
-        scene->addChild(light);
-
-        // Center sphere
-        SLNode* sphere = new SLNode(new SLSphere(am, 0.5f, 32, 32, "Sphere", refr));
-        scene->addChild(sphere);
-
-        // load teapot
-        SLAssimpImporter importer;
-        SLNode*          teapot = importer.load(s->animManager(),
-                                       am,
-                                       modelPath + "FBX/Teapot/Teapot.fbx",
-                                       texPath,
-                                       nullptr,
-                                       false,
-                                       true,
-                                       refl);
-        teapot->translate(-1.5f, -0.5f, 0);
-        scene->addChild(teapot);
-
-        // load Suzanne
-        SLNode* suzanne = importer.load(s->animManager(),
-                                        am,
-                                        modelPath + "FBX/Suzanne/Suzanne.fbx",
-                                        texPath,
-                                        nullptr,
-                                        false,
-                                        true,
-                                        refr);
-        suzanne->translate(1.5f, -0.5f, 0);
-        scene->addChild(suzanne);
-
-        sv->camera(cam1);
-        s->skybox(skybox);
-
-        // Save energy
-        sv->doWaitOnIdle(true);
-    }
-    else if (sceneID == SID_ShaderEarth) //........................................................
-    {
-        s->name("Earth Shader Test");
-        s->info("Complex earth shader with 7 textures: day color, night color, normal, height & gloss map of earth, color & alpha-map of clouds");
-        SL_LOG("Earth Shader from Markus Knecht");
-        SL_LOG("Use (SHIFT) & key X to change scale of the parallax mapping");
-        SL_LOG("Use (SHIFT) & key O to change offset of the parallax mapping");
-
-        // Create shader program with 4 uniforms
-        SLGLProgram*   sp     = new SLGLProgramGeneric(am,
-                                                 shaderPath + "PerPixBlinnTmNm.vert",
-                                                 shaderPath + "PerPixBlinnTmNmEarth.frag");
-        SLGLUniform1f* scale  = new SLGLUniform1f(UT_const, "u_scale", 0.02f, 0.002f, 0, 1, (SLKey)'X');
-        SLGLUniform1f* offset = new SLGLUniform1f(UT_const, "u_offset", -0.02f, 0.002f, -1, 1, (SLKey)'O');
-        s->eventHandlers().push_back(scale);
-        s->eventHandlers().push_back(offset);
-        sp->addUniform1f(scale);
-        sp->addUniform1f(offset);
-
-        // Create textures
-        SLGLTexture* texC   = new SLGLTexture(am, texPath + "earth2048_C.png");            // color map
-        SLGLTexture* texN   = new SLGLTexture(am, texPath + "earth2048_N.jpg");            // normal map
-        SLGLTexture* texH   = new SLGLTexture(am, texPath + "earth2048_H.jpg");            // height map
-        SLGLTexture* texG   = new SLGLTexture(am, texPath + "earth2048_S.jpg");            // specular map
-        SLGLTexture* texNC  = new SLGLTexture(am, texPath + "earthNight2048_C.jpg");       // night color  map
-        SLGLTexture* texClC = new SLGLTexture(am, texPath + "earthCloud1024_alpha_C.png"); // cloud color map
-        // SLGLTexture* texClA = new SLGLTexture(am, texPath + "earthCloud1024_A.jpg"); // cloud alpha map
-
-        // Create materials
-        SLMaterial* matEarth = new SLMaterial(am, "matEarth", texC, texN, texH, texG, sp);
-        matEarth->addTexture(texClC);
-        // matEarth->addTexture(texClA);
-        matEarth->addTexture(texNC);
-        matEarth->shininess(4000);
-        matEarth->program(sp);
-
-        SLCamera* cam1 = new SLCamera("Camera 1");
-        cam1->translation(0, 0, 4);
-        cam1->lookAt(0, 0, 0);
-        cam1->focalDist(4);
-        cam1->background().colors(SLCol4f(0, 0, 0));
-        cam1->setInitialState();
-        cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-
-        SLLightSpot* sun = new SLLightSpot(am, s);
-        sun->powers(0.0f, 1.0f, 0.2f);
-        sun->attenuation(1, 0, 0);
-
-        SLAnimation* anim = s->animManager().createNodeAnimation("light1_anim", 24.0f);
-        anim->createNodeAnimTrackForEllipse(sun, 50.0f, A_x, 50.0f, A_z);
-
-        SLuint  res   = 30;
-        SLNode* earth = new SLNode(new SLSphere(am, 1, res, res, "Earth", matEarth));
-        earth->rotate(90, -1, 0, 0);
-
-        SLNode* scene = new SLNode;
-        s->root3D(scene);
-        scene->addChild(sun);
-        scene->addChild(earth);
-        scene->addChild(cam1);
-
-        sv->camera(cam1);
-    }
-    else if (sceneID == SID_ShadowMappingBasicScene) //............................................
+    if (sceneID == SID_ShadowMappingBasicScene) //............................................
     {
         s->name("Shadow Mapping Basic Scene");
         s->info("Shadow Mapping is a technique to render shadows.");
@@ -1245,7 +1100,6 @@ resolution shadows near the camera and lower resolution shadows further away.");
             sv->doWaitOnIdle(true); // Saves energy
         }
     }
-
     else if (sceneID == SID_Robotics_FanucCRX_FK) //...............................................
     {
         SLstring modelFile = modelPath + "GLTF/FanucCRX/Fanuc-CRX.gltf";
@@ -2388,7 +2242,6 @@ resolution shadows near the camera and lower resolution shadows further away.");
 
         sv->doWaitOnIdle(false); // for constant video feed
     }
-
     else if (sceneID == SID_ParticleSystem_First) //...............................................
     {
         // Set scene name and info string
@@ -5111,6 +4964,8 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         case SID_ShaderWave: s = new AppDemoSceneShaderWave(); break;
         case SID_ShaderBumpNormal: s = new AppDemoSceneShaderBump(); break;
         case SID_ShaderBumpParallax: s = new AppDemoSceneShaderParallax(); break;
+        case SID_ShaderSkybox: s = new AppDemoSceneShaderSkybox(); break;
+        case SID_ShaderEarth: s = new AppDemoSceneShaderEarth(); break;
         case SID_SuzannePerPixBlinn: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and reflection colors", false, false, false, false); break;
         case SID_SuzannePerPixBlinnTm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and texture mapping", true, false, false, false); break;
         case SID_SuzannePerPixBlinnNm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and normal mapping", false, true, false, false); break;

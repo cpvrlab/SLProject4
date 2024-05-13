@@ -40,18 +40,32 @@ void AppDemoSceneShaderSkybox::registerAssetsToLoad(SLAssetLoader& al)
     al.addProgramGenericToLoad(_spRefr,
                                "RefractReflect.vert",
                                "RefractReflect.frag");
+    al.addNodeToLoad(_teapot, "FBX/Teapot/Teapot.fbx");
+    al.addNodeToLoad(_suzanne, "FBX/Suzanne/Suzanne.fbx");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
 void AppDemoSceneShaderSkybox::assemble(SLAssetManager* am, SLSceneView* sv)
 {
-    /*
+
     // Material for mirror
-    SLMaterial* refl = new SLMaterial(am, "refl", SLCol4f::BLACK, SLCol4f::WHITE, 1000, 1.0f);
+    SLMaterial* refl = new SLMaterial(am,
+                                      "refl",
+                                      SLCol4f::BLACK,
+                                      SLCol4f::WHITE,
+                                      1000,
+                                      1.0f);
     refl->addTexture(_skybox->environmentCubemap());
     refl->program(_spRefl);
     // Material for glass
-    SLMaterial* refr = new SLMaterial(am, "refr", SLCol4f::BLACK, SLCol4f::BLACK, 100, 0.1f, 0.9f, 1.5f);
+    SLMaterial* refr = new SLMaterial(am,
+                                      "refr",
+                                      SLCol4f::BLACK,
+                                      SLCol4f::BLACK,
+                                      100,
+                                      0.1f,
+                                      0.9f,
+                                      1.5f);
     refr->translucency(1000);
     refr->transmissive(SLCol4f::WHITE);
     refr->addTexture(_skybox->environmentCubemap());
@@ -70,7 +84,7 @@ void AppDemoSceneShaderSkybox::assemble(SLAssetManager* am, SLSceneView* sv)
     // There is no light needed in this scene. All reflections come from cube maps
     // But ray tracing needs light sources
     // Create directional light for the sunlight
-    SLLightDirect* light = new SLLightDirect(am, s, 0.5f);
+    SLLightDirect* light = new SLLightDirect(am, this, 0.5f);
     light->ambientColor(SLCol4f(0.3f, 0.3f, 0.3f));
     light->attenuation(1, 0, 0);
     light->translate(1, 1, -1);
@@ -78,39 +92,31 @@ void AppDemoSceneShaderSkybox::assemble(SLAssetManager* am, SLSceneView* sv)
     scene->addChild(light);
 
     // Center sphere
-    SLNode* sphere = new SLNode(new SLSphere(am, 0.5f, 32, 32, "Sphere", refr));
+    SLNode* sphere = new SLNode(new SLSphere(am,
+                                             0.5f,
+                                             32,
+                                             32,
+                                             "Sphere",
+                                             refr));
     scene->addChild(sphere);
 
-    // load teapot
-    SLAssimpImporter importer;
-    SLNode*          teapot = importer.load(s->animManager(),
-                                   am,
-                                   modelPath + "FBX/Teapot/Teapot.fbx",
-                                   texPath,
-                                   nullptr,
-                                   false,
-                                   true,
-                                   refl);
-    teapot->translate(-1.5f, -0.5f, 0);
-    scene->addChild(teapot);
+    // configure teapot
+    _teapot->translate(-1.5f, -0.5f, 0);
 
-    // load Suzanne
-    SLNode* suzanne = importer.load(s->animManager(),
-                                    am,
-                                    modelPath + "FBX/Suzanne/Suzanne.fbx",
-                                    texPath,
-                                    nullptr,
-                                    false,
-                                    true,
-                                    refr);
-    suzanne->translate(1.5f, -0.5f, 0);
-    scene->addChild(suzanne);
+    SLNode* teapot = _teapot->findChild<SLNode>("Teapot");
+    teapot->setMeshMat(refl, true);
+    scene->addChild(_teapot);
+
+    // configure Suzanne
+    _suzanne->translate(1.5f, -0.5f, 0);
+    SLNode* suzanne = _suzanne->findChild<SLNode>("Suzanne");
+    suzanne->setMeshMat(refr, true);
+    scene->addChild(_suzanne);
 
     sv->camera(cam1);
-    s->skybox(skybox);
+    this->skybox(_skybox);
 
     // Save energy
     sv->doWaitOnIdle(true);
-     */
 }
 //-----------------------------------------------------------------------------
