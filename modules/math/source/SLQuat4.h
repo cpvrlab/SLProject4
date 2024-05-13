@@ -20,7 +20,6 @@
 /*!Quaternion class for angle-axis rotation representation. For rotations
 quaternions must have unit length. See http://en.wikipedia.org/wiki/Quaternion
 Quaternions can be interpolated at low cost with the method lerp or slerp.
-@todo Add more doxygen documentation.
 */
 // clang-format off
 template <class T>
@@ -737,11 +736,13 @@ inline void SLQuat4<T>::lerp(const SLQuat4<T>& q1,
 }
 
 //-----------------------------------------------------------------------------
-//! Spherical linear interpolation
+/*! Spherical linear interpolation
+@todo clean up the code below and find a working algorithm or check the
+ original shoemake implementation for errors.
+ */
 template <class T>
 inline SLQuat4<T> SLQuat4<T>::slerp(const SLQuat4<T>& q2, const T t) const
 {
-    /// @todo clean up the code below and find a working algorithm (or check the original shoemake implementation for errors)
     // Not 100% slerp, uses lerp in case of close angle! note the todo above this line!
     SLfloat factor = t;
 	// calc cosine theta

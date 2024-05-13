@@ -117,7 +117,6 @@ void SLGLOculus::renderDistortion(SLint          width,
  */
 const SLVec3f& SLGLOculus::viewAdjust(SLEyeType eye)
 {
-    //@todo find a nicer way to store this (SLEye has a -1 for left and +1 for right eye)
     if (eye == ET_left)
         return _viewAdjust[0];
     else

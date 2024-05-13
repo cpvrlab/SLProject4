@@ -22,7 +22,7 @@
  VBO of type SLGLVertexBuffer.\n
  VAOs where introduces OpenGL 3.0 and reduce the overhead per draw call.
  All vertex attributes (e.g. position, normals, texture coords, etc.) must be
- float at the input. All float attributes will be in one VBO (_VBOf).
+ float at the input. All float attributes will be in one VBO (_vbo).
  Vertices can be drawn either directly as in the array (SLGLVertexArray::drawArrayAs)
  or by element (SLGLVertexArray::drawElementsAs) with a separate indices buffer.\n
  The setup of a VAO has multiple steps:\n
@@ -49,14 +49,14 @@ public:
     void clearAttribs()
     {
         deleteGL();
-        _VBOf.clear();
+        _vbo.clear();
     }
 
     //! Returns either the VAO id or the VBO id
-    SLint vaoID() const { return _vaoID; }
+    SLuint vaoID() const { return _vaoID; }
 
     //! Returns the TFO id
-    SLint tfoID() const { return _tfoID; }
+    SLuint tfoID() const { return _tfoID; }
 
     //! Adds a vertex attribute with data pointer and an element size
     void setAttrib(SLGLAttributeType type,
@@ -89,6 +89,11 @@ public:
     void setAttrib(SLGLAttributeType type,
                    SLint             location,
                    SLVVec4f*         data) { setAttrib(type, 4, location, &data->operator[](0)); }
+
+    //! Adds a vertex attribute with vector of SLVec4i
+    void setAttrib(SLGLAttributeType type,
+                   SLint             location,
+                   SLVVec4i*         data) { setAttrib(type, 4, location, &data->operator[](0), BT_int); }
 
     //! Adds the index array for indexed element drawing
     void setIndices(SLuint         numIndicesElements,
@@ -130,6 +135,9 @@ public:
                    indicesEdges && indicesEdges->size() ? (void*)&indicesEdges->operator[](0) : nullptr);
     }
 
+    //! Attach a VBO that has been created outside of this VAO
+    void setInstanceVBO(SLGLVertexBuffer* vbo, SLuint divisor = 0);
+
     //! Updates a specific vertex attribute in the VBO
     void updateAttrib(SLGLAttributeType type,
                       SLint             elementSize,
@@ -158,12 +166,14 @@ public:
     //! Generates the VA & VB objects for a NO. of vertices
     void generate(SLuint          numVertices,
                   SLGLBufferUsage usage             = BU_static,
-                  SLbool          outputInterleaved = true);
+                  SLbool          outputInterleaved = true,
+                  SLuint          divisor           = 0);
 
     //! Generates the VA & VB & TF objects
     void generateTF(SLuint          numVertices,
                     SLGLBufferUsage usage             = BU_static,
-                    SLbool          outputInterleaved = true);
+                    SLbool          outputInterleaved = true,
+                    SLuint          divisor           = 0);
 
     //! Begin transform feedback
     void beginTF(SLuint tfoID);
@@ -181,29 +191,39 @@ public:
                      SLint             firstVertex   = 0,
                      SLsizei           countVertices = 0);
 
+    //! Draws the VAO as an array with instance primitive type
+    void drawElementsInstanced(SLGLPrimitiveType primitiveType,
+                               SLuint            countInstance = 0,
+                               SLuint            numIndexes    = 0,
+                               SLuint            indexOffset   = 0);
+
     //! Draws the hard edges of the VAO with the edge indices
     void drawEdges(SLCol4f color, SLfloat lineWidth = 1.0f);
 
     // Some getters
-    SLuint numVertices() const { return _numVertices; }
-    SLuint numIndicesElements() const { return _numIndicesElements; }
-    SLuint numIndicesEdges() const { return _numIndicesEdges; }
+    SLuint            numVertices() const { return _numVertices; }
+    SLuint            numIndicesElements() const { return (SLuint)_numIndicesElements; }
+    SLuint            numIndicesEdges() const { return (SLuint)_numIndicesEdges; }
+    SLGLVertexBuffer* vbo() { return &_vbo; }
 
     // Some statistics
     static SLuint totalDrawCalls;          //! static total no. of draw calls
     static SLuint totalPrimitivesRendered; //! static total no. of primitives rendered
 
 protected:
-    SLuint           _vaoID;              //! OpenGL id of vertex array object
-    SLuint           _tfoID;              //! OpenGL id of transform feedback object
-    SLuint           _numVertices;        //! NO. of vertices in array
-    SLGLVertexBuffer _VBOf;               //! Vertex buffer object for float attributes
-    SLuint           _idVBOIndices;       //! OpenGL id of index vbo
-    SLuint           _numIndicesElements; //! NO. of vertex indices in array for triangles, lines or points
-    void*            _indexDataElements;  //! Pointer to index data for elements
-    SLuint           _numIndicesEdges;    //! NO. of vertex indices in array for hard edges
-    void*            _indexDataEdges;     //! Pointer to index data for hard edges
-    SLGLBufferType   _indexDataType;      //! index data type (ubyte, ushort, uint)
+    SLuint            _instances;          //! Number of instances of drawing
+    SLuint            _vaoID;              //! OpenGL id of vertex array object
+    SLuint            _tfoID;              //! OpenGL id of transform feedback object
+    SLuint            _numVertices;        //! NO. of vertices in array
+    SLGLVertexBuffer  _vbo;                //! Vertex buffer object for float attributes
+    SLuint            _idVBOIndices;       //! OpenGL id of index vbo
+    size_t            _numIndicesElements; //! NO. of vertex indices in array for triangles, lines or points
+    void*             _indexDataElements;  //! Pointer to index data for elements
+    size_t            _numIndicesEdges;    //! NO. of vertex indices in array for hard edges
+    void*             _indexDataEdges;     //! Pointer to index data for hard edges
+    SLGLBufferType    _indexDataType;      //! index data type (ubyte, ushort, uint)
+    SLGLVertexBuffer* _instanceVbo;        //! Vertex buffer object containing the positions for instanced drawing
+    SLuint            _instanceDivisor;    //! instanceVBO divisor number
 };
 //-----------------------------------------------------------------------------
 

@@ -10,6 +10,7 @@ ZIPFILE="$ARCH"_opencv_"$CV_VERSION"
 ZIPFOLDER=build/$ZIPFILE
 BUILD_D=build/"$ARCH"_debug_"$CV_VERSION"
 BUILD_R=build/"$ARCH"_release_"$CV_VERSION"
+NDK_VERSION="26.2.11394342"
 
 clear
 echo "============================================================"
@@ -58,7 +59,7 @@ cd $BUILD_D
 
 # Run cmake to configure and generate the make files
 cmake \
--DCMAKE_TOOLCHAIN_FILE=~/Android/Sdk/ndk/21.3.6528147/build/cmake/android.toolchain.cmake \
+-DCMAKE_TOOLCHAIN_FILE=~/Android/Sdk/ndk/$NDK_VERSION/build/cmake/android.toolchain.cmake \
 -DCMAKE_BUILD_TYPE=Debug \
 -DANDROID_ABI=arm64-v8a \
 -DWITH_CUDA=OFF \
@@ -93,7 +94,7 @@ cd $BUILD_R
 
 # Run cmake to configure and generate the make files
 cmake \
--DCMAKE_TOOLCHAIN_FILE=~/Android/Sdk/ndk/21.3.6528147/build/cmake/android.toolchain.cmake \
+-DCMAKE_TOOLCHAIN_FILE=~/Android/Sdk/ndk/$NDK_VERSION/build/cmake/android.toolchain.cmake \
 -DCMAKE_BUILD_TYPE=Release \
 -DBUILD_WITH_DEBUG_INFO=OFF \
 -DANDROID_ABI=arm64-v8a \

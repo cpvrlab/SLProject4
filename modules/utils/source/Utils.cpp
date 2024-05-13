@@ -39,10 +39,14 @@ namespace fs = std::experimental::filesystem;
 #elif defined(__APPLE__)
 #    if defined(TARGET_OS_IOS) && (TARGET_OS_IOS == 1)
 #        include "Utils_iOS.h"
+#        include <dirent.h>   //dirent
+#        include <sys/stat.h> //dirent
+#        include <unistd.h>   //getcwd
+#    else
+#        include <filesystem>
+#        define USE_STD_FILESYSTEM
+namespace fs = std::filesystem;
 #    endif
-#    include <dirent.h>
-#    include <sys/stat.h> //dirent
-#    include <unistd.h>   //getcwd
 #elif defined(ANDROID) || defined(ANDROID_NDK)
 #    include <android/log.h>
 #    include <dirent.h>
@@ -67,14 +71,6 @@ namespace fs = std::experimental::filesystem;
 using asio::ip::tcp;
 #endif
 
-#ifdef __EMSCRIPTEN__
-// clang-format off
-EM_JS(void, alert, (const char* string), {
-    alert(UTF8ToString(string));
-})
-// clang-format on
-#endif
-
 using std::fstream;
 
 namespace Utils
@@ -82,7 +78,10 @@ namespace Utils
 ///////////////////////////////
 // Global variables          //
 ///////////////////////////////
+
 std::unique_ptr<CustomLog> customLog;
+
+bool onlyErrorLogs = false;
 
 ///////////////////////////////
 // String Handling Functions //
@@ -149,7 +148,7 @@ string trimLeftString(const string& s, const string& drop)
     return r;
 }
 //-----------------------------------------------------------------------------
-// Splits an input string at a delimeter character into a string vector
+// Splits an input string at a delimiter character into a string vector
 void splitString(const string&   s,
                  char            delimiter,
                  vector<string>& splits)
@@ -167,7 +166,7 @@ void splitString(const string&   s,
     }
 }
 //-----------------------------------------------------------------------------
-// Replaces in the source string the from string by the to string
+// Replaces in the source-string the from-string by the to-string
 void replaceString(string&       source,
                    const string& from,
                    const string& to)
@@ -201,10 +200,10 @@ vector<string> getStringLines(const string& multiLineString)
     {
         std::string line;
         std::getline(stream, line);
-        if (!stream.good())
-            break;
         line = Utils::trimString(line, "\r");
         res.push_back(line);
+        if (!stream.good())
+            break;
     }
     return res;
 }
@@ -1123,6 +1122,9 @@ void log(const char* tag, const char* format, ...)
     if (customLog)
         customLog->post(msg);
 
+    if (Utils::onlyErrorLogs)
+        return;
+
 #if defined(ANDROID) || defined(ANDROID_NDK)
     __android_log_print(ANDROID_LOG_INFO, tag, msg);
 #else
@@ -1136,24 +1138,7 @@ void exitMsg(const char* tag,
              const int   line,
              const char* file)
 {
-#if defined(ANDROID) || defined(ANDROID_NDK)
-    __android_log_print(ANDROID_LOG_FATAL,
-                        tag,
-                        "Exit %s at line %d in %s\n",
-                        msg,
-                        line,
-                        file);
-#elif defined(__EMSCRIPTEN__)
-    std::string message = "SLProject error";
-    alert(message.c_str());
-#else
-    log(tag,
-        "Exit %s at line %d in %s\n",
-        msg,
-        line,
-        file);
-#endif
-
+    errorMsg(tag, msg, line, file);
     exit(-1);
 }
 //-----------------------------------------------------------------------------
@@ -1171,11 +1156,12 @@ void warnMsg(const char* tag,
                         line,
                         file);
 #else
-    log(tag,
-        "Warning %s at line %d in %s\n",
-        msg,
-        line,
-        file);
+    std::cout << "--------------------------------\n"
+              << "Warning:\n"
+              << "Tag: " << tag << '\n'
+              << "Location: " << file << ":" << line << '\n'
+              << "Message: " << msg << '\n'
+              << "--------------------------------" << std::endl;
 #endif
 }
 //-----------------------------------------------------------------------------
@@ -1193,11 +1179,12 @@ void errorMsg(const char* tag,
                         line,
                         file);
 #else
-    log(tag,
-        "Error %s at line %d in %s\n",
-        msg,
-        line,
-        file);
+    std::cout << "--------------------------------\n"
+              << "Error:\n"
+              << "Tag: " << tag << '\n'
+              << "Location: " << file << ":" << line << '\n'
+              << "Message: " << msg << '\n'
+              << "--------------------------------" << std::endl;
 #endif
 }
 //-----------------------------------------------------------------------------
@@ -1391,7 +1378,7 @@ std::string ComputerInfos::get()
     // model = model;
 #    endif
 
-#elif defined(ANDROID)                                         //................................................
+#elif defined(ANDROID) //................................................
 
     os = "Android";
 

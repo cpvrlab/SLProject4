@@ -198,6 +198,9 @@ string findFile(const string&         filename,
 //! will also output into this file. Instantiate it with initFileLog function.
 static std::unique_ptr<FileLog> fileLog;
 
+//! if this flag is set to true all calls to log get ignored
+extern bool onlyErrorLogs;
+
 //! Instantiates FileLog instance
 void initFileLog(const std::string& logDir, bool forceFlush);
 

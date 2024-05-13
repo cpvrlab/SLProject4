@@ -1,0 +1,20 @@
+name: Build macOS-arm64
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-13
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Configure CMake
+      run: cmake -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=Debug -DSL_DOWNLOAD_DATA=OFF -DCMAKE_OSX_ARCHITECTURES=arm64
+
+    - name: Build
+      run: cmake --build ${{ github.workspace }}/build -j $(sysctl -n hw.ncpu)

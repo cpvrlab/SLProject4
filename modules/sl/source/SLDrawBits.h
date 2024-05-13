@@ -17,19 +17,20 @@
 Drawing Bits control some visual states of the scene and are applied per scene
 view or per single node object. Not all are used from the beginning
 */
-#define SL_DB_HIDDEN 1        //!< Flags an object as hidden
-#define SL_DB_NOTSELECTABLE 2 //!< Flags an object as selected
-#define SL_DB_MESHWIRED 4     //!< Draw polygons as wired mesh
-#define SL_DB_NORMALS 8       //!< Draw the vertex normals
-#define SL_DB_BBOX 16         //!< Draw the bounding boxes of a node
-#define SL_DB_AXIS 32         //!< Draw the coordinate axis of a node
-#define SL_DB_VOXELS 64       //!< Draw the voxels of the uniform grid
-#define SL_DB_SKELETON 128    //!< Draw the skeletons joints
-#define SL_DB_CULLOFF 256     //!< Turn off face culling
-#define SL_DB_OVERDRAW 512    //!< Draw node over all other nodes
-#define SL_DB_WITHEDGES 1024  //!< Draw faces with hard edges
-#define SL_DB_ONLYEDGES 2048  //!< Draw only hard edges
-#define SL_DB_BRECT 4096      //!< Draw the bounding rectangle of a node
+#define SL_DB_HIDDEN 1          //!< Flags an object as hidden
+#define SL_DB_NOTSELECTABLE 2   //!< Flags an object as selected
+#define SL_DB_MESHWIRED 4       //!< Draw polygons as wired mesh
+#define SL_DB_NORMALS 8         //!< Draw the vertex normals
+#define SL_DB_BBOX 16           //!< Draw the bounding boxes of a node
+#define SL_DB_AXIS 32           //!< Draw the coordinate axis of a node
+#define SL_DB_VOXELS 64         //!< Draw the voxels of the uniform grid
+#define SL_DB_SKELETON 128      //!< Draw the skeletons joints
+#define SL_DB_CULLOFF 256       //!< Turn off face culling
+#define SL_DB_OVERDRAW 512      //!< Draw node over all other nodes
+#define SL_DB_WITHEDGES 1024    //!< Draw faces with hard edges
+#define SL_DB_ONLYEDGES 2048    //!< Draw only hard edges
+#define SL_DB_BRECT 4096        //!< Draw the bounding rectangle of a node
+#define SL_DB_GPU_SKINNING 8192 //!< Perform skinning on the GPU
 
 //-----------------------------------------------------------------------------
 //! Drawing states stored in the bits of an unsigned int

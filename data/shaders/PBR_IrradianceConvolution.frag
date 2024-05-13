@@ -12,11 +12,11 @@
 precision highp float;
 
 //-----------------------------------------------------------------------------
-in      vec3        v_P_WS;         // sample direction in world space
+in      vec3        v_P_WS;           // sample direction in world space
 
-uniform samplerCube u_matTextureDiffuse0;  // environment cube map texture
+uniform samplerCube u_environmentMap; // environment cube map texture
 
-out     vec4        o_fragColor;    // output fragment color
+out     vec4        o_fragColor;      // output fragment color
 //-----------------------------------------------------------------------------
 const   float       PI = 3.14159265359;
 //-----------------------------------------------------------------------------
@@ -48,7 +48,7 @@ void main()
                              tangentSample.y * up + 
                              tangentSample.z * N; 
 
-            irradiance += texture(u_matTextureDiffuse0, sampleVec).rgb * cos(theta) * sin(theta);
+            irradiance += texture(u_environmentMap, sampleVec).rgb * cos(theta) * sin(theta);
             nrSamples++;
         }
     }

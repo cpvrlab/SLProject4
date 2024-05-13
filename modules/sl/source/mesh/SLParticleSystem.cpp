@@ -29,11 +29,18 @@ SLParticleSystem::SLParticleSystem(SLAssetManager* assetMgr,
                                    const SLfloat&  timeToLive,
                                    SLGLTexture*    texC,
                                    const SLstring& name,
-                                   SLGLTexture*    texFlipbook) : SLMesh(assetMgr, name)
+                                   SLGLTexture*    texFlipbook,
+                                   const bool      doInstancedDrawing) : SLMesh(assetMgr, name)
 {
     assert(!name.empty());
 
-    _primitive = PT_points;
+    _assetManager  = assetMgr;
+    _doInstancedDrawing = !SLGLState::instance()->glHasGeometryShaders() || doInstancedDrawing;
+    _primitive     = PT_points;
+
+    // Trick SL project because it wants the mesh to have vertex
+    P.push_back(SLVec3f(0, 0, 0));
+    I32.push_back(0);
 
     if (amount > UINT_MAX) // Need to change for number of floats
         SL_EXIT_MSG("SLParticleSystem supports max. 2^32 vertices.");
@@ -43,14 +50,8 @@ SLParticleSystem::SLParticleSystem(SLAssetManager* assetMgr,
     _velocityRndMin = velocityRandomStart;
     _velocityRndMax = velocityRandomEnd;
 
-    P.resize(1); // To trick parent class
-
     _textureFirst    = texC;
     _textureFlipbook = texFlipbook;
-
-    // Initialize the drawing:
-    SLMaterial* mDraw = new SLMaterial(assetMgr, "Drawing-Material", this, texC);
-    mat(mDraw);
 
     _updateTime.init(60, 0.0f);
     _drawTime.init(60, 0.0f);
@@ -94,7 +95,8 @@ SLVec3f SLParticleSystem::getPointOnSphere(float radius, SLVec3f randomXs)
 //! Function which return the direction towards the exterior of a sphere
 SLVec3f SLParticleSystem::getDirectionSphere(SLVec3f position)
 {
-    return (position - SLVec3f(0.0f, 0.0f, 0.0f)).normalized(); // Get unit vector center to position
+    // return a unit vector from center to position
+    return (position - SLVec3f(0.0f, 0.0f, 0.0f)).normalized();
 }
 //-----------------------------------------------------------------------------
 //! Function which return a position in a box
@@ -157,7 +159,8 @@ SLVec3f SLParticleSystem::getPointOnBox(SLVec3f boxScale)
 //! Function which return the direction towards the exterior of a box
 SLVec3f SLParticleSystem::getDirectionBox(SLVec3f position)
 {
-    return (position - SLVec3f(0.0f, 0.0f, 0.0f)).normalized(); // Get unit vector center to position
+    // return a unit vector from center to position
+    return (position - SLVec3f(0.0f, 0.0f, 0.0f)).normalized();
 }
 //-----------------------------------------------------------------------------
 //! Function which return a position in the cone define in the particle system
@@ -165,9 +168,10 @@ SLVec3f SLParticleSystem::getPointInCone()
 {
     float y      = 0.0f;
     float radius = _shapeRadius;
-    if (!_doShapeSpawnBase)                         // Spawn inside volume
+    if (!_doShapeSpawnBase) // Spawn inside volume
     {
-        y      = Utils::random(0.0f, _shapeHeight); // NEED TO HAVE MORE value near 1 when we have smaller base that top
+        // NEED TO HAVE MORE value near 1 when we have smaller base that top
+        y      = Utils::random(0.0f, _shapeHeight);
         radius = _shapeRadius + tan(_shapeAngle * DEG2RAD) * y;
     }
     float r     = radius * sqrt(random(0.0f, 1.0f));
@@ -183,9 +187,10 @@ SLVec3f SLParticleSystem::getPointOnCone()
 {
     float y      = 0.0f;
     float radius = _shapeRadius;
-    if (!_doShapeSpawnBase)                         // Spawn inside volume
+    if (!_doShapeSpawnBase) // Spawn inside volume
     {
-        y      = Utils::random(0.0f, _shapeHeight); // NEED TO HAVE MORE value near 1 when we have smaller base that top
+        // NEED TO HAVE MORE value near 1 when we have smaller base that top
+        y      = Utils::random(0.0f, _shapeHeight);
         radius = _shapeRadius + tan(_shapeAngle * DEG2RAD) * y;
     }
     float r     = radius;
@@ -199,15 +204,18 @@ SLVec3f SLParticleSystem::getPointOnCone()
 //! Function which return a direction following the cone shape
 SLVec3f SLParticleSystem::getDirectionCone(SLVec3f position)
 {
-    float maxRadius = _shapeRadius + tan(_shapeAngle * DEG2RAD) * _shapeHeight; // Calculate max radius
-    float percentX  = position.x / maxRadius;                                   // Calculate at which percent our x is, to know how much we need to adapt our angle
-    float percentZ  = position.z / maxRadius;                                   // Calculate at which percent our z is, to know how much we need to adapt our angle
-    float newX      = position.x + tan(_shapeAngle * percentX * DEG2RAD) * _shapeHeight;
-    float newZ      = position.z + tan(_shapeAngle * percentZ * DEG2RAD) * _shapeHeight;
+    float maxRadius = _shapeRadius + tan(_shapeAngle * DEG2RAD) * _shapeHeight;
+
+    // Calculate at which percent our x is, to know how much we need to adapt our angle
+    float percentX = position.x / maxRadius;
+    // Calculate at which percent our z is, to know how much we need to adapt our angle
+    float percentZ = position.z / maxRadius;
+    float newX     = position.x + tan(_shapeAngle * percentX * DEG2RAD) * _shapeHeight;
+    float newZ     = position.z + tan(_shapeAngle * percentZ * DEG2RAD) * _shapeHeight;
     return SLVec3f(newX, _shapeHeight, newZ).normalize();
 }
 //-----------------------------------------------------------------------------
-//! Function which return a position in the pyramid define in the particle system
+//! Function which returns a position in the pyramid that define the PS
 SLVec3f SLParticleSystem::getPointInPyramid()
 {
     float y      = 0.0f;
@@ -223,7 +231,7 @@ SLVec3f SLParticleSystem::getPointInPyramid()
     return SLVec3f(x, y, z);
 }
 //-----------------------------------------------------------------------------
-//! Function which return a position on the pyramid define in the particle system
+//! Function which return a position on the pyramid that defines the PS
 SLVec3f SLParticleSystem::getPointOnPyramid()
 {
     float y      = 0.0f;
@@ -234,12 +242,11 @@ SLVec3f SLParticleSystem::getPointOnPyramid()
         radius = _shapeWidth + tan(_shapeAngle * DEG2RAD) * y;
     }
 
-    // int   temp      = Utils::random(0, 5);
     int   temp = Utils::random(0, 3);
-    float x    = 0.0f;
-    float z    = 0.0f;
-    if (temp == 0)
-    { // LEFT
+    float x = 0.0f, z = 0.0f;
+
+    if (temp == 0) // LEFT
+    {
         x = -radius;
         z = Utils::random(-radius, radius);
     }
@@ -258,22 +265,6 @@ SLVec3f SLParticleSystem::getPointOnPyramid()
         x = Utils::random(-radius, radius);
         z = -radius;
     }
-    // Comments to have top and bottom not filled
-    /* else if (temp == 4) //TOP
-    {
-        y = _heightPyramid;
-        radius = _shapeWidth + tan(_anglePyramid * DEG2RAD) * y;
-
-        x = Utils::random(-radius, radius);
-        z = Utils::random(-radius, radius);
-    }
-    else if (temp == 5) // BOTTOM
-    {
-        y      = 0.0f;
-        radius = _shapeWidth;
-        x = Utils::random(-radius, radius);
-        z = Utils::random(-radius, radius);
-    }*/
 
     return SLVec3f(x, y, z);
 }
@@ -299,18 +290,40 @@ void SLParticleSystem::generate()
     default_random_engine      generator(seed);
     normal_distribution<float> distribution(0.0f, 1.0f);
 
-    SLVVec3f tempP;
-    SLVVec3f tempV;
-    SLVfloat tempST;
-    SLVVec3f tempInitV;
-    SLVfloat tempR;
-    SLVfloat tempAngulareVelo;
+    SLVVec3f tempP, tempV, tempInitV;
+    SLVfloat tempR, tempST, tempAngulareVelo;
     SLVuint  tempTexNum;
     SLVVec3f tempInitP;
+
+    if (_doInstancedDrawing)
+        _primitive = PT_triangles;
+    else
+        _primitive = PT_points;
+
+    SLMesh::deleteDataGpu();
+
+    // Initialize the drawing:
+    if (_doFlipBookTexture)
+    {
+        SLMaterial* mDraw = new SLMaterial(_assetManager,
+                                           "Drawing-Material",
+                                           this,
+                                           _textureFlipbook);
+        mat(mDraw);
+    }
+    else
+    {
+        SLMaterial* mDraw = new SLMaterial(_assetManager,
+                                           "Drawing-Material",
+                                           this,
+                                           _textureFirst);
+        mat(mDraw);
+    }
 
     tempP.resize(_amount);
     tempV.resize(_amount);
     tempST.resize(_amount);
+
     if (_doAcceleration || _doGravity)
         tempInitV.resize(_amount);
     if (_doRotation)
@@ -327,7 +340,7 @@ void SLParticleSystem::generate()
     {
         if (_doShape && _shapeType == ST_Sphere) // Position in or on sphere
         {
-            if (!_doShapeSurface)                // In volume
+            if (!_doShapeSurface) // In volume
                 tempP[i] = getPointInSphere(_shapeRadius,
                                             SLVec3f(distribution(generator),
                                                     distribution(generator),
@@ -356,19 +369,19 @@ void SLParticleSystem::generate()
         else // Position is not a volume, spawn from start point (particle emitter position)
             tempP[i] = SLVec3f(0, 0, 0);
 
-        if (!_doDirectionSpeed)                                                   // Use normal velocity
+        if (!_doDirectionSpeed) // Use normal velocity
         {
-            if (_velocityType == 0)                                               // Random value
+            if (_velocityType == 0) // Random value
             {
                 tempV[i].x = Utils::random(_velocityRndMin.x, _velocityRndMax.x); // Random value for x velocity
                 tempV[i].y = Utils::random(_velocityRndMin.y, _velocityRndMax.y); // Random value for y velocity
                 tempV[i].z = Utils::random(_velocityRndMin.z, _velocityRndMax.z); // Random value for z velocity
             }
-            else if (_velocityType == 1)                                          // Constant
+            else if (_velocityType == 1) // Constant
             {
-                tempV[i].x = _velocityConst.x;                                    // Constant value for x velocity
-                tempV[i].y = _velocityConst.y;                                    // Constant value for y velocity
-                tempV[i].z = _velocityConst.z;                                    // Constant value for z velocity
+                tempV[i].x = _velocityConst.x; // Constant value for x velocity
+                tempV[i].y = _velocityConst.y; // Constant value for y velocity
+                tempV[i].z = _velocityConst.z; // Constant value for z velocity
             }
         }
         else // DO direction and speed
@@ -397,16 +410,17 @@ void SLParticleSystem::generate()
         // When the first particle dies the last one begin to live
         tempST[i] = GlobalTimer::timeS() + ((float)i * (_timeToLive / (float)_amount)); // Time to start
 
-        if (_doAcceleration || _doGravity)                                              // Acceleration
+        if (_doAcceleration || _doGravity) // Acceleration
             tempInitV[i] = tempV[i];
-        if (_doRotation)                                                                // Rotation (constant angular velocity)
-            tempR[i] = Utils::random(0.0f * DEG2RAD, 360.0f * DEG2RAD);                 // Start rotation of the particle
-        if (_doRotation && _doRotRange)                                                 // Random angular velocity for each particle
+        if (_doRotation)                                                // Rotation (constant angular velocity)
+            tempR[i] = Utils::random(0.0f * DEG2RAD, 360.0f * DEG2RAD); // Start rotation of the particle
+        if (_doRotation && _doRotRange)                                 // Random angular velocity for each particle
             tempAngulareVelo[i] = Utils::random(_angularVelocityRange.x * DEG2RAD,
-                                                _angularVelocityRange.y * DEG2RAD);     // Start rotation of the particle
-        if (_doFlipBookTexture)                                                         // Flipbook texture
-            tempTexNum[i] = Utils::random(0, _flipbookRows * _flipbookColumns - 1);
-        if (_doShape)                                                                   // Shape feature
+                                                _angularVelocityRange.y * DEG2RAD); // Start rotation of the particle
+        if (_doFlipBookTexture)                                                     // Flipbook texture
+            tempTexNum[i] = Utils::random(0,
+                                          _flipbookRows * _flipbookColumns - 1);
+        if (_doShape) // Shape feature
             tempInitP[i] = tempP[i];
     }
 
@@ -418,15 +432,25 @@ void SLParticleSystem::generate()
     _vao1.setAttrib(AT_startTime, AT_startTime, &tempST);
 
     if (_doAcceleration || _doGravity)
-        _vao1.setAttrib(AT_initialVelocity, AT_initialVelocity, &tempInitV);
+        _vao1.setAttrib(AT_initialVelocity,
+                        AT_initialVelocity,
+                        &tempInitV);
     if (_doRotation)
-        _vao1.setAttrib(AT_rotation, AT_rotation, &tempR);
+        _vao1.setAttrib(AT_rotation,
+                        AT_rotation,
+                        &tempR);
     if (_doRotation && _doRotRange)
-        _vao1.setAttrib(AT_angularVelo, AT_angularVelo, &tempAngulareVelo);
+        _vao1.setAttrib(AT_angularVelo,
+                        AT_angularVelo,
+                        &tempAngulareVelo);
     if (_doFlipBookTexture)
-        _vao1.setAttrib(AT_texNum, AT_texNum, &tempTexNum);
+        _vao1.setAttrib(AT_texNum,
+                        AT_texNum,
+                        &tempTexNum);
     if (_doShape)
-        _vao1.setAttrib(AT_initialPosition, AT_initialPosition, &tempInitP);
+        _vao1.setAttrib(AT_initialPosition,
+                        AT_initialPosition,
+                        &tempInitP);
     _vao1.generateTF((SLuint)tempP.size());
 
     // Configure second VAO
@@ -436,16 +460,57 @@ void SLParticleSystem::generate()
     _vao2.setAttrib(AT_startTime, AT_startTime, &tempST);
 
     if (_doAcceleration || _doGravity)
-        _vao2.setAttrib(AT_initialVelocity, AT_initialVelocity, &tempInitV);
+        _vao2.setAttrib(AT_initialVelocity,
+                        AT_initialVelocity,
+                        &tempInitV);
     if (_doRotation)
-        _vao2.setAttrib(AT_rotation, AT_rotation, &tempR);
+        _vao2.setAttrib(AT_rotation,
+                        AT_rotation,
+                        &tempR);
     if (_doRotation && _doRotRange)
-        _vao2.setAttrib(AT_angularVelo, AT_angularVelo, &tempAngulareVelo);
+        _vao2.setAttrib(AT_angularVelo,
+                        AT_angularVelo,
+                        &tempAngulareVelo);
     if (_doFlipBookTexture)
-        _vao2.setAttrib(AT_texNum, AT_texNum, &tempTexNum);
+        _vao2.setAttrib(AT_texNum,
+                        AT_texNum,
+                        &tempTexNum);
     if (_doShape)
-        _vao2.setAttrib(AT_initialPosition, AT_initialPosition, &tempInitP);
+        _vao2.setAttrib(AT_initialPosition,
+                        AT_initialPosition,
+                        &tempInitP);
     _vao2.generateTF((SLuint)tempP.size());
+
+    if (_doInstancedDrawing)
+    {
+        P.clear();
+        I32.clear();
+
+        // Generate for billboard (for drawing instanced without geometry shader)
+        P.push_back(SLVec3f(-1, -1, 0));
+        P.push_back(SLVec3f(1, -1, 0));
+        P.push_back(SLVec3f(1, 1, 0));
+        P.push_back(SLVec3f(-1, 1, 0));
+
+        I32.push_back(0);
+        I32.push_back(1);
+        I32.push_back(2);
+        I32.push_back(2);
+        I32.push_back(3);
+        I32.push_back(0);
+
+        _instanceVao1.deleteGL();
+        _instanceVao1.setAttrib(AT_custom0, AT_instancePosition, &P);
+        _instanceVao1.setIndices(&I32);
+        _instanceVao1.setInstanceVBO(_vao1.vbo(), 2);
+        _instanceVao1.generate((SLuint)P.size());
+
+        _instanceVao2.deleteGL();
+        _instanceVao2.setAttrib(AT_custom0, AT_instancePosition, &P);
+        _instanceVao2.setIndices(&I32);
+        _instanceVao2.setInstanceVBO(_vao2.vbo(), 2);
+        _instanceVao2.generate((SLuint)P.size());
+    }
 
     _isGenerated = true;
 }
@@ -490,24 +555,6 @@ void SLParticleSystem::generateBernsteinPSize()
     _bernsteinPYSize.w = StaEnd[1];
 }
 //-----------------------------------------------------------------------------
-/*!
-Change the current use texture, this will switch between the normal texture and
-the flipbook texture (and vice versa)
-*/
-void SLParticleSystem::changeTexture()
-{
-    if (_doFlipBookTexture)
-    {
-        mat()->removeTextureType(TT_diffuse);
-        mat()->addTexture(_textureFlipbook);
-    }
-    else
-    {
-        mat()->removeTextureType(TT_diffuse);
-        mat()->addTexture(_textureFirst);
-    }
-}
-//-----------------------------------------------------------------------------
 /*! Function called inside SLNode cull3DRec(..) which flags the particle system
  to be not visible in the view frustum. This is needed to correct later the
  start time of the PS when it reappears again.
@@ -541,59 +588,95 @@ void SLParticleSystem::pauseOrResume()
  * have been culled by the frustum culling or if they have been resumed by the
  * user. After I update the particle in the update pass, then and finally I
  * draw them.
+ @todo The assignment of TF buffer to a rendering buffer causes most probably
+ a warning on Emscripten-WebGL
  */
-void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
+void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
 {
-    /////////////////////////////////////
-    // Init particles vector and init VAO
-    /////////////////////////////////////
+    ////////////////////////////////////////
+    // Init particles vector and init VAO //
+    ////////////////////////////////////////
 
     if (!_isGenerated)
         generate();
 
-    ////////////////////
-    // Generate programs
-    ////////////////////
+    ///////////////////////
+    // Generate programs //
+    ///////////////////////
 
     if (!_mat->program() || !_mat->programTF())
-        _mat->generateProgramPS();
+        _mat->generateProgramPS(_doInstancedDrawing);
 
-    ////////////////////////////////////////////////
-    // Calculate time and paused and frustum culling
-    ////////////////////////////////////////////////
+    ///////////////////////////////////////////////////
+    // Calculate time and paused and frustum culling //
+    ///////////////////////////////////////////////////
 
     float difTime   = 0.0f;
     float deltaTime = GlobalTimer::timeS() - _startUpdateTimeS; // Actual delta time
 
     // Calculate time difference for frustum culling and paused
-    if (!_isVisibleInFrustum && !_isPaused && _lastTimeBeforePauseS != 0.0f) // If particle system was not visible, and was resumed when it was not visible
+    // If particle system was not visible, and was resumed when it was not visible
+    if (!_isVisibleInFrustum && !_isPaused && _lastTimeBeforePauseS != 0.0f)
     {
         _isVisibleInFrustum = true;
-        difTime             = GlobalTimer::timeS() - min(_lastTimeBeforePauseS, _notVisibleTimeS); // Paused was set before not visible (will take _lastTimeBeforePauseS), if set after (will take _notVisibleTimeS)
-        // maybe add later average delta time (because maybe bug when fast not visible long time, visible, not visible, visible
-        deltaTime             = _deltaTimeUpdateS; // Last delta time, because when culled draw is not called therefore the actual delta time will be too big
-        _notVisibleTimeS      = 0.0f;              // No more culling, the difference time has been applied, no further need
-        _lastTimeBeforePauseS = 0.0f;              // No more paused, the difference time has been applied, no further need
+
+        // Paused was set before not visible (will take _lastTimeBeforePauseS),
+        // if set after (will take _notVisibleTimeS)
+        difTime = GlobalTimer::timeS() - min(_lastTimeBeforePauseS, _notVisibleTimeS);
+
+        // maybe add later average delta time
+        // (because maybe bug when fast not visible long time, visible, not visible, visible
+        // Last delta time, because when culled draw is not called therefore
+        // the actual delta time will be too big
+        deltaTime = _deltaTimeUpdateS;
+
+        // No more culling, the difference time has been applied, no further need
+        _notVisibleTimeS = 0.0f;
+
+        // No more paused, the difference time has been applied, no further need
+        _lastTimeBeforePauseS = 0.0f;
     }
-    else if (!_isVisibleInFrustum)                 // If particle system was not visible, this one is called just once when the particle is draw again (Do nothing if paused, because update call is not done)
+
+    // If particle system was not visible, this one is called just once when the
+    // particle is draw again (Do nothing if paused, because update call is not done)
+    else if (!_isVisibleInFrustum)
     {
         _isVisibleInFrustum = true;
-        difTime             = GlobalTimer::timeS() - _notVisibleTimeS; // Use time since the particle system was not visible
-        // maybe add later average delta time (because maybe bug when fast not visible long time, visible, not visible, visible
-        deltaTime = _deltaTimeUpdateS;                                        // Last delta time, because when culled draw is not called therefore the actual delta time will be too big
-        if (_lastTimeBeforePauseS > _notVisibleTimeS)                         // If was paused when not visible. Need to take _notVisibleTimeS because it's since this value that the particle system is not drew.
-            _lastTimeBeforePauseS = _notVisibleTimeS;                         // Get the value of since the particle system is not drew
-        _notVisibleTimeS = 0.0f;                                              // No more culling, the difference time has been applied, no further need
+
+        // Use time since the particle system was not visible
+        difTime = GlobalTimer::timeS() - _notVisibleTimeS;
+
+        // maybe add later average delta time (because maybe bug when
+        // fast not visible long time, visible, not visible, visible
+        // Last delta time, because when culled draw is not called
+        // therefore the actual delta time will be too big
+        deltaTime = _deltaTimeUpdateS;
+
+        // If was paused when not visible. Need to take _notVisibleTimeS because
+        // it's since this value that the particle system is not drew.
+        if (_lastTimeBeforePauseS > _notVisibleTimeS)
+            // Get the value of since the particle system is not drew
+            _lastTimeBeforePauseS = _notVisibleTimeS;
+
+        // No more culling, the difference time has been applied, no further need
+        _notVisibleTimeS = 0.0f;
     }
-    else if (!_isPaused && _lastTimeBeforePauseS != 0.0f)                     // If particle system was resumed
+
+    // If particle system was resumed
+    else if (!_isPaused && _lastTimeBeforePauseS != 0.0f)
     {
-        difTime               = GlobalTimer::timeS() - _lastTimeBeforePauseS; // Use time since the particle system was paused
-        _lastTimeBeforePauseS = 0.0f;                                         // No more paused, the difference time has been applied, no further need
+        // Use time since the particle system was paused
+        difTime = GlobalTimer::timeS() - _lastTimeBeforePauseS;
 
-        // Take default delta time, because when just paused no need to take last delta time, the draw call continue to be called
+        // No more paused, the difference time has been applied, no further need
+        _lastTimeBeforePauseS = 0.0f;
+
+        // Take default delta time, because when just paused no need to
+        // take last delta time, the draw call continue to be called
     }
 
-    // Calculate the elapsed time for the updating, need to change to use a real profiler (can't measure time like this on the GPU)
+    // Calculate the elapsed time for the updating, need to change to
+    // use a real profiler (can't measure time like this on the GPU)
     _startUpdateTimeMS = GlobalTimer::timeMS();
 
     // MS above, S below
@@ -626,13 +709,20 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
         if (_doAcceleration)
         {
             if (_doAccDiffDir)
-                spTF->uniform3f("u_acceleration", _acceleration.x, _acceleration.y, _acceleration.z);
+                spTF->uniform3f("u_acceleration",
+                                _acceleration.x,
+                                _acceleration.y,
+                                _acceleration.z);
             else
-                spTF->uniform1f("u_accConst", _accelerationConst);
+                spTF->uniform1f("u_accConst",
+                                _accelerationConst);
         }
 
         if (_doGravity)
-            spTF->uniform3f("u_gravity", _gravity.x, _gravity.y, _gravity.z);
+            spTF->uniform3f("u_gravity",
+                            _gravity.x,
+                            _gravity.y,
+                            _gravity.z);
 
         spTF->uniform1f("u_tTL", _timeToLive);
 
@@ -669,32 +759,37 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
 
         // Rotation
         if (_doRotation && !_doRotRange)
-            spTF->uniform1f("u_angularVelo", _angularVelocityConst * DEG2RAD);
+            spTF->uniform1f("u_angularVelo",
+                            _angularVelocityConst * DEG2RAD);
 
-        //////////////////////
-        // Draw call to update
-        //////////////////////
+        /////////////////////////
+        // Draw call to update //
+        /////////////////////////
 
         if (_drawBuf == 0)
         {
             _vao1.beginTF(_vao2.tfoID());
             _vao1.drawArrayAs(PT_points);
             _vao1.endTF();
-            _vao = _vao2;
+
+            // @todo The assignment of TF buffer to a rendering buffer causes most probably a warning on Emscripten-WebGL
+            _vao = _doInstancedDrawing ? _instanceVao2 : _vao2;
         }
         else
         {
             _vao2.beginTF(_vao1.tfoID());
             _vao2.drawArrayAs(PT_points);
             _vao2.endTF();
-            _vao = _vao1;
+
+            // @todo The assignment of TF buffer to a rendering buffer causes most probably a warning on Emscripten-WebGL
+            _vao = _doInstancedDrawing ? _instanceVao1 : _vao1;
         }
         _updateTime.set(GlobalTimer::timeMS() - _startUpdateTimeMS);
     }
 
-    //////////
-    // DRAWING
-    //////////
+    /////////////
+    // DRAWING //
+    /////////////
 
     // Give uniform for drawing and find for linking vao vbo
     SLGLProgram* spD = _mat->program();
@@ -702,17 +797,18 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
 
     SLGLState* stateGL = SLGLState::instance();
 
-    // Start calculation of the elapsed time for the drawing, need to change to use a real profiler (can't measure time like this on the GPU)
+    // Start calculation of the elapsed time for the drawing, need to change
+    // to use a real profiler (can't measure time like this on the GPU)
     _startDrawTimeMS = GlobalTimer::timeMS();
 
     // Billboard type
     // World space
     if (_doWorldSpace)
     {
-
         if (_billboardType == BT_Vertical)
         {
-            SLMat4f vMat = stateGL->viewMatrix; // Just view matrix because world space is enabled
+            // Just view matrix because world space is enabled
+            SLMat4f vMat = stateGL->viewMatrix;
 
             vMat.m(0, 1.0f);
             vMat.m(1, 0.0f);
@@ -724,16 +820,34 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
 
             spD->uniformMatrix4fv("u_vYawPMatrix",
                                   1,
-                                  (SLfloat*)&vMat); // TO change for custom shader generation
+                                  (SLfloat*)&vMat);
         }
         else
         {
-            spD->uniformMatrix4fv("u_vOmvMatrix", 1, (SLfloat*)&stateGL->viewMatrix);
+            // Just view matrix because world space is enabled
+            SLMat4f vMat = stateGL->viewMatrix;
+            std::cout << "vMat" << std::endl;
+            vMat.m(0, 1.0f);
+            vMat.m(1, 0.0f);
+            vMat.m(2, 0.0f);
+
+            vMat.m(3, 1.0f);
+            vMat.m(4, 0.0f);
+            vMat.m(5, 0.0f);
+
+            vMat.m(6, 0.0f);
+            vMat.m(7, 0.0f);
+            vMat.m(8, 1.0f);
+
+            spD->uniformMatrix4fv("u_vOmvMatrix",
+                                  1,
+                                  (SLfloat*)&vMat);
         }
     }
     else
     {
-        SLMat4f mvMat = stateGL->viewMatrix * stateGL->modelMatrix; // Model-View Matrix
+        // Build Model-View Matrix
+        SLMat4f mvMat = stateGL->viewMatrix * stateGL->modelMatrix;
 
         if (_billboardType == BT_Vertical)
         {
@@ -747,13 +861,13 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
 
             spD->uniformMatrix4fv("u_vYawPMatrix",
                                   1,
-                                  (SLfloat*)&mvMat); // TO change for custom shader generation
+                                  (SLfloat*)&mvMat);
         }
         else
         {
             spD->uniformMatrix4fv("u_vOmvMatrix",
                                   1,
-                                  (SLfloat*)&mvMat); // TO change for custom shader generation
+                                  (SLfloat*)&mvMat);
         }
     }
 
@@ -809,11 +923,11 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
     spD->uniform1f("u_scale", _scale);
     spD->uniform1f("u_radiusW", _radiusW);
     spD->uniform1f("u_radiusH", _radiusH);
-
     spD->uniform1f("u_oneOverGamma", 1.0f);
 
     // Check wireframe
-    if (sv->drawBits()->get(SL_DB_MESHWIRED) || node->drawBits()->get(SL_DB_MESHWIRED))
+    if (sv->drawBits()->get(SL_DB_MESHWIRED) ||
+        node->drawBits()->get(SL_DB_MESHWIRED))
         spD->uniform1i("u_doWireFrame", 1);
     else
         spD->uniform1i("u_doWireFrame", 0);
@@ -821,12 +935,16 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
     if (_doColor && _doBlendBrightness)
         stateGL->blendFunc(GL_SRC_ALPHA, GL_ONE);
 
-    ///////////////////////
-    SLMesh::draw(sv, node);
-    ///////////////////////
+    ///////////////////////////
+    if (_doInstancedDrawing)
+        SLMesh::draw(sv, node, 2 * _amount); // 2 triangles per particle
+    else
+        SLMesh::draw(sv, node);
+    ///////////////////////////
 
     if (_doColor && _doBlendBrightness)
-        stateGL->blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        stateGL->blendFunc(GL_SRC_ALPHA,
+                           GL_ONE_MINUS_SRC_ALPHA);
 
     // End calculation of the elapsed time for the drawing
     _drawTime.set(GlobalTimer::timeMS() - _startDrawTimeMS);
@@ -835,20 +953,22 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node)
     _drawBuf = 1 - _drawBuf;
 }
 //-----------------------------------------------------------------------------
-//! deleteData deletes all mesh data and VAOs
-void SLParticleSystem::deleteData()
+/*!
+Change the current use texture, this will switch between the normal texture and
+the flipbook texture (and vice versa)
+*/
+void SLParticleSystem::changeTexture()
 {
-    _vao1.deleteGL();
-    _vao2.deleteGL();
-    SLMesh::deleteData();
-}
-//-----------------------------------------------------------------------------
-//! deleteData deletes all mesh data and VAOs
-void SLParticleSystem::deleteDataGpu()
-{
-    _vao1.deleteGL();
-    _vao2.deleteGL();
-    SLMesh::deleteDataGpu();
+    if (_doFlipBookTexture)
+    {
+        mat()->removeTextureType(TT_diffuse);
+        mat()->addTexture(_textureFlipbook);
+    }
+    else
+    {
+        mat()->removeTextureType(TT_diffuse);
+        mat()->addTexture(_textureFirst);
+    }
 }
 //-----------------------------------------------------------------------------
 /*! SLParticleSystem::buildAABB builds the passed axis-aligned bounding box in
@@ -856,7 +976,7 @@ void SLParticleSystem::deleteDataGpu()
  Take into account features like acceleration, gravity, shape, velocity.
  SLMesh::buildAABB builds the passed axis-aligned bounding box in OS and updates
  the min& max points in WS with the passed WM of the node.
- Todo: Can ben enhance furthermore the acceleration doesn't work wll for the moments
+ Todo: Can ben enhance furthermore the acceleration doesn't work well for the moment.
  The negative value for the acceleration are not take into account and also
  acceleration which goes against the velocity. To adapt the acceleration to
  exactly the same as the gravity not enough time to do it. Need to adapt more
@@ -910,7 +1030,7 @@ void SLParticleSystem::buildAABB(SLAABBox& aabb, const SLMat4f& wmNode)
             minP         = SLVec3f(-radius, -0.0, -radius);
             if (!_doShapeSpawnBase) // Spawn inside volume
                 maxP = SLVec3f(radius, _shapeHeight, radius);
-            else                    // Spawn base volume
+            else // Spawn base volume
                 maxP = SLVec3f(radius, 0.0f, radius);
             if (_doDirectionSpeed && _doShapeOverride)
             {
@@ -926,7 +1046,7 @@ void SLParticleSystem::buildAABB(SLAABBox& aabb, const SLMat4f& wmNode)
             minP         = SLVec3f(-radius, -0.0, -radius);
             if (!_doShapeSpawnBase) // Spawn inside volume
                 maxP = SLVec3f(radius, _shapeHeight, radius);
-            else                    // Spawn base volume
+            else // Spawn base volume
                 maxP = SLVec3f(radius, 0.0f, radius);
 
             if (_doDirectionSpeed && _doShapeOverride)
@@ -941,7 +1061,7 @@ void SLParticleSystem::buildAABB(SLAABBox& aabb, const SLMat4f& wmNode)
 
     if (_doAcceleration || _doGravity) // If acceleration or gravity is enabled
     {
-        if (!_doDirectionSpeed)        // If direction is not enable
+        if (!_doDirectionSpeed) // If direction is not enable
         {
             if (_velocityType == 0)
             {
@@ -1015,13 +1135,13 @@ void SLParticleSystem::buildAABB(SLAABBox& aabb, const SLMat4f& wmNode)
                 maxP.x -= maxV.x * (_timeToLive + timeForXGrav); // I remove the position  with the velocity that it will not do because it go against the velocity (becareful! here timeForXGrav is negative)
             else if (timeForXGrav > 0.0f)                        // If the gravity go with the velocity
                 maxP.x += 0.5f * _gravity.x * (_timeToLive * _timeToLive);
-            if (timeForYGrav < 0.0f)                             // If the gravity go against the velocity
+            if (timeForYGrav < 0.0f) // If the gravity go against the velocity
                 maxP.y -= maxV.y * (_timeToLive + timeForYGrav);
-            else if (timeForYGrav > 0.0f)                        // If the gravity go with the velocity
+            else if (timeForYGrav > 0.0f) // If the gravity go with the velocity
                 maxP.y += 0.5f * _gravity.y * (_timeToLive * _timeToLive);
-            if (timeForZGrav < 0.0f)                             // If the gravity go against the velocity
+            if (timeForZGrav < 0.0f) // If the gravity go against the velocity
                 maxP.z -= maxV.z * (_timeToLive + timeForZGrav);
-            else if (timeForZGrav > 0.0f)                        // If the gravity go with the velocity
+            else if (timeForZGrav > 0.0f) // If the gravity go with the velocity
                 maxP.z += 0.5f * _gravity.z * (_timeToLive * _timeToLive);
 
             // Time remaining after the gravity has nullified the velocity for the particle to die (for each axes)
@@ -1038,11 +1158,11 @@ void SLParticleSystem::buildAABB(SLAABBox& aabb, const SLMat4f& wmNode)
         }
 
         // ACCELERATION (Need to rework to work like gravity)
-        if (_doAcceleration && _doAccDiffDir)                           // Need to be rework ( for negative value)
+        if (_doAcceleration && _doAccDiffDir) // Need to be rework ( for negative value)
         {
             maxP += 0.5f * _acceleration * (_timeToLive * _timeToLive); // Apply acceleration after time
         }
-        else if (_doAcceleration && !_doAccDiffDir)                     // Need to be rework
+        else if (_doAcceleration && !_doAccDiffDir) // Need to be rework
         {
             // minP += 0.5f * _accelerationConst * (_timeToLive * _timeToLive); //Apply constant acceleration
             maxP += 0.5f * _accelerationConst * maxV * (_timeToLive * _timeToLive); // Apply constant acceleration //Not good

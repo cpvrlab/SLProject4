@@ -840,7 +840,6 @@ SLMaterial* SLAssimpImporter::loadMaterial(SLAssetManager* am,
     aiMat->Get(AI_MATKEY_OPACITY, opacity);
     aiMat->Get(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_METALLIC_FACTOR, metalness);
     aiMat->Get(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_ROUGHNESS_FACTOR, roughness);
-    aiString texRoughnessMetallic;
 
     // increase shininess if specular color is not low.
     // The aiMat will otherwise be too bright
@@ -916,7 +915,7 @@ SLGLTexture* SLAssimpImporter::loadTexture(SLAssetManager* assetMgr,
                                            minificationFilter,
                                            GL_LINEAR,
                                            texType);
-    texture->uvIndex(uvIndex);
+    texture->uvIndex((SLbyte)uvIndex);
 
     // if texture images get deleted after build you can't do ray tracing
     if (deleteTexImgAfterBuild)
@@ -1273,7 +1272,7 @@ SLAnimation* SLAssimpImporter::loadAnimation(SLAnimManager& animManager, aiAnima
 
     // exit if we didn't load a skeleton but have animations for one
     if (!_skinnedMeshes.empty())
-        assert(_skeleton != nullptr && "The skeleton wasn't impoted correctly.");
+        assert(_skeleton != nullptr && "The skeleton wasn't imported correctly.");
 
     // create the animation
     SLAnimation* result;
@@ -1296,10 +1295,11 @@ SLAnimation* SLAssimpImporter::loadAnimation(SLAnimManager& animManager, aiAnima
         SLuint   id           = 0;
         SLbool   isJointNode  = (affectedNode == nullptr);
 
-        // @todo: this is currently a work around but it can happen that we receive normal node animationtracks and joint animationtracks
-        //        we don't allow node animation tracks in a skeleton animation, so we should split an animation in two seperate
-        //        animations if this happens. for now we just ignore node animation tracks if we already have joint tracks
-        //        ofc this will crash if the first track is a node anim but its just temporary
+        // @todo: this is currently a work around but it can happen that we receive normal node animation tracks
+        //        and joint animation tracks we don't allow node animation tracks in a skeleton animation, so we
+        //        should split an animation in two separate animations if this happens. for now we just ignore node
+        //        animation tracks if we already have joint tracks ofc this will crash if the first track is a node
+        //        anim but its just temporary
         if (!isJointNode && isSkeletonAnim)
             continue;
 
@@ -1443,7 +1443,7 @@ children has a mesh. aiNode can contain only transform or joint nodes without
 any visuals.
 
 @todo   this function doesn't look well optimized. It's currently used if the option to
-        only load nodes containing meshes somewhere in their heirarchy is enabled.
+        only load nodes containing meshes somewhere in their hierarchy is enabled.
         This means we call it on ancestor nodes first. This also means that we will
         redundantly traverse the same exact nodes multiple times. This isn't a pressing
         issue at the moment but should be tackled when this importer is being optimized
@@ -1488,9 +1488,9 @@ SLstring SLAssimpImporter::checkFilePath(const SLstring& modelPath,
 
     if (showWarning)
     {
-        SLstring msg = "SLAssimpImporter: Texture file not found: \n" + aiTexFile +
-                       "\non model path: " + modelPath + "\n";
-        SL_WARN_MSG(msg.c_str());
+        SLstring msg = "WARNING: SLAssimpImporter: Texture file not found: \n" +
+                       aiTexFile + "\non model path: " + modelPath + "\n";
+        SL_LOG(msg.c_str());
     }
 
     // Return path for texture not found image;

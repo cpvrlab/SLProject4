@@ -39,17 +39,14 @@ add_library(${target}
             ${headers}
             ${sources})
 
+add_definitions(-w)
+
 add_library(${META_PROJECT_NAME}::${target}
         ALIAS
         ${target}
         )
 
 enable_warnings(${target})
-
-set_target_properties(${target}
-        PROPERTIES
-        ${DEFAULT_PROJECT_OPTIONS}
-        )
 
 target_include_directories(${target}
         PRIVATE

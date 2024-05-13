@@ -132,9 +132,10 @@ function(copy_dylibs LIBS)
         get_target_property(DYLIB_PATH ${LIB} LOCATION_${CMAKE_BUILD_TYPE})
         get_filename_component(DYLIB_FILENAME ${DYLIB_PATH} NAME)
         message(STATUS "Copying ${DYLIB_FILENAME}")
-        file(COPY ${DYLIB_PATH} DESTINATION ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+        file(COPY ${DYLIB_PATH} DESTINATION ${CMAKE_BINARY_DIR})
     endforeach ()
 endfunction ()
+
 
 #=======================================================================================================================
 if ("${SYSTEM_NAME_UPPER}" STREQUAL "LINUX")
@@ -157,13 +158,19 @@ if ("${SYSTEM_NAME_UPPER}" STREQUAL "LINUX")
     set(OpenCV_LIBS ${OpenCV_LINK_LIBS})
     set(OpenCV_LIBS_DEBUG ${OpenCV_LIBS})
     
-    build_external_lib("build_opencv_w_contrib_for_linux.sh" "${OpenCV_VERSION}" "${OpenCV_PREBUILT_DIR}")
+
+    if ("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+        download_lib("${OpenCV_PREBUILT_DIR}")
+    else ()
+        build_external_lib("build_opencv_w_contrib_for_linux.sh" "${OpenCV_VERSION}" "${OpenCV_PREBUILT_DIR}")
+    endif ()
+
 
     #################
     # g2o for Linux #
     #################
     
-    set(g2o_PREBUILT_DIR "linux_g2o")
+    set(g2o_PREBUILT_DIR "linux_g2o_20170730")
     set(g2o_DIR "${PREBUILT_PATH}/${g2o_PREBUILT_DIR}")
     set(g2o_INCLUDE_DIR "${g2o_DIR}/include")
 
@@ -175,8 +182,12 @@ if ("${SYSTEM_NAME_UPPER}" STREQUAL "LINUX")
                 INTERFACE_INCLUDE_DIRECTORIES "${g2o_INCLUDE_DIR}")
         set(g2o_LIBS ${g2o_LIBS} ${lib})
     endforeach (lib)
-    
-    build_external_lib("build_g2o_for_linux.sh" "" "${g2o_PREBUILT_DIR}")
+
+    if ("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+        download_lib("${g2o_PREBUILT_DIR}")
+    else ()
+        build_external_lib("build_g2o_for_linux.sh" "" "${g2o_PREBUILT_DIR}")
+    endif ()
 
     ####################
     # Assimp for Linux #
@@ -202,13 +213,18 @@ if ("${SYSTEM_NAME_UPPER}" STREQUAL "LINUX")
 
     set(assimp_LIBS assimp::assimp assimp::irrxml)
     
-    build_external_lib("build_assimp_for_linux.sh" "${assimp_VERSION}" "${assimp_PREBUILT_DIR}")
+    if ("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+        download_lib("${assimp_PREBUILT_DIR}")
+    else ()
+        build_external_lib("build_assimp_for_linux.sh" "${assimp_VERSION}" "${assimp_PREBUILT_DIR}")
+    endif ()
 
     #####################
     # OpenSSL for Linux #
     #####################
 
-    set(openssl_PREBUILT_DIR "linux_openssl")
+    set(openssl_VERSION "1.1.1h")
+    set(openssl_PREBUILT_DIR "linux_openssl_${openssl_VERSION}")
     set(openssl_DIR "${PREBUILT_PATH}/${openssl_PREBUILT_DIR}")
     set(openssl_INCLUDE_DIR ${openssl_DIR}/include)
 
@@ -221,7 +237,11 @@ if ("${SYSTEM_NAME_UPPER}" STREQUAL "LINUX")
         set(openssl_LIBS ${openssl_LIBS} ${lib})
     endforeach (lib)
     
-    build_external_lib("build_openssl_for_linux.sh" "OpenSSL_1_1_1h" "${openssl_PREBUILT_DIR}")
+    if ("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+        download_lib("${openssl_PREBUILT_DIR}")
+    else ()
+        build_external_lib("build_openssl_for_linux.sh" "" "${openssl_PREBUILT_DIR}")
+    endif ()
 
     ####################
     # Vulkan for Linux #
@@ -345,7 +365,7 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "WINDOWS") #----------------------------
     ###################
 
     if (SL_BUILD_WAI)
-        set(g2o_PREBUILT_DIR "win64_g2o")
+        set(g2o_PREBUILT_DIR "win64_g2o_20170730")
         set(g2o_DIR "${PREBUILT_PATH}/${g2o_PREBUILT_DIR}")
         set(g2o_INCLUDE_DIR "${g2o_DIR}/include")
         set(g2o_LIB_DIR "${g2o_DIR}/lib")
@@ -446,22 +466,19 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "WINDOWS") #----------------------------
     # GLFW for Windows #
     ####################
 
-    set(glfw_VERSION "3.3.2")
+    set(glfw_VERSION "3.3.8")
     set(glfw_PREBUILT_DIR "win64_glfw_${glfw_VERSION}")
     set(glfw_DIR "${PREBUILT_PATH}/${glfw_PREBUILT_DIR}")
-    set(glfw_INCLUDE_DIR "${glfw_DIR}/include")
-    set(glfw_LINK_DIR "${glfw_DIR}/lib-vc2019")
 
-    add_library(glfw3dll SHARED IMPORTED)
-    set_target_properties(glfw3dll PROPERTIES
-            IMPORTED_IMPLIB "${glfw_LINK_DIR}/glfw3dll.lib"
-            IMPORTED_LOCATION "${glfw_LINK_DIR}/glfw3.dll"
-            INTERFACE_INCLUDE_DIRECTORIES "${glfw_INCLUDE_DIR}"
+    add_library(glfw3 STATIC IMPORTED)
+    set_target_properties(glfw3 PROPERTIES
+            IMPORTED_LOCATION "${glfw_DIR}/release/glfw3.lib"
+            IMPORTED_LOCATION_DEBUG "${glfw_DIR}/debug/glfw3.lib"
+            INTERFACE_INCLUDE_DIRECTORIES "${glfw_DIR}/include"
             )
-    set(glfw_LIBS glfw3dll)
+    set(glfw_LIBS glfw3)
 
     download_lib("${glfw_PREBUILT_DIR}")
-    copy_dlls("${glfw_LIBS}")
 
     ###################
     # KTX for Windows #
@@ -560,14 +577,15 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "DARWIN" AND
     # g2o for MacOS-x86_64 #
     ########################
 
-    set(g2o_PREBUILT_DIR "mac64_g2o")
+    set(g2o_PREBUILT_DIR "mac64_g2o_20170730")
     set(g2o_DIR "${PREBUILT_PATH}/${g2o_PREBUILT_DIR}")
     set(g2o_INCLUDE_DIR "${g2o_DIR}/include")
 
     foreach (lib ${g2o_LINK_LIBS})
         add_library(${lib} SHARED IMPORTED)
         set_target_properties(${lib} PROPERTIES
-                IMPORTED_LOCATION "${g2o_DIR}/Debug/lib${lib}.dylib"
+                IMPORTED_LOCATION "${g2o_DIR}/Release/lib${lib}.dylib"
+                IMPORTED_LOCATION_DEBUG "${g2o_DIR}/Debug/lib${lib}.dylib"
                 INTERFACE_INCLUDE_DIRECTORIES "${g2o_INCLUDE_DIR}")
         set(g2o_LIBS ${g2o_LIBS} ${lib})
     endforeach (lib)
@@ -643,19 +661,18 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "DARWIN" AND
     # GLFW for MacOS-x86_64 #
     #########################
 
-    set(glfw_VERSION "3.3.2")
+    set(glfw_VERSION "3.3.8")
     set(glfw_PREBUILT_DIR "mac64_glfw_${glfw_VERSION}")
     set(glfw_DIR "${PREBUILT_PATH}/${glfw_PREBUILT_DIR}")
-    set(glfw_INCLUDE_DIR "${glfw_DIR}/include")
 
-    add_library(glfw SHARED IMPORTED)
-    set_target_properties(glfw PROPERTIES
-            IMPORTED_LOCATION "${glfw_DIR}/Release/libglfw.3.dylib"
-            INTERFACE_INCLUDE_DIRECTORIES "${glfw_INCLUDE_DIR}")
-    set(glfw_LIBS glfw)
+    add_library(glfw3 STATIC IMPORTED)
+    set_target_properties(glfw3 PROPERTIES
+            IMPORTED_LOCATION "${glfw_DIR}/release/libglfw3.a"
+            IMPORTED_LOCATION_DEBUG "${glfw_DIR}/debug/libglfw3.a"
+            INTERFACE_INCLUDE_DIRECTORIES "${glfw_DIR}/include")
+    set(glfw_LIBS glfw3)
 
     download_lib("${glfw_PREBUILT_DIR}")
-    copy_dylibs("${glfw_LIBS}")
 
     ########################
     # KTX for MacOS-x86_64 #
@@ -765,7 +782,7 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "DARWIN" AND
     # g2o for MacOS-arm64 #
     #######################
 
-    set(g2o_PREBUILT_DIR "macArm64_g2o")
+    set(g2o_PREBUILT_DIR "macArm64_g2o_20170730")
     set(g2o_DIR "${PREBUILT_PATH}/${g2o_PREBUILT_DIR}")
     set(g2o_INCLUDE_DIR "${g2o_DIR}/include")
     
@@ -825,19 +842,18 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "DARWIN" AND
     # GLFW for MacOS-arm64 #
     ########################
 
-    set(glfw_VERSION "3.3.2")
+    set(glfw_VERSION "3.3.8")
     set(glfw_PREBUILT_DIR "macArm64_glfw_${glfw_VERSION}")
     set(glfw_DIR "${PREBUILT_PATH}/${glfw_PREBUILT_DIR}")
-    set(glfw_INCLUDE_DIR "${glfw_DIR}/include")
 
-    add_library(glfw SHARED IMPORTED)
-    set_target_properties(glfw PROPERTIES
-            IMPORTED_LOCATION "${glfw_DIR}/Release/libglfw.3.3.dylib"
-            INTERFACE_INCLUDE_DIRECTORIES "${glfw_INCLUDE_DIR}")
-    set(glfw_LIBS glfw)
+    add_library(glfw3 STATIC IMPORTED)
+    set_target_properties(glfw3 PROPERTIES
+            IMPORTED_LOCATION "${glfw_DIR}/release/libglfw3.a"
+            IMPORTED_LOCATION_DEBUG "${glfw_DIR}/debug/libglfw3.a"
+            INTERFACE_INCLUDE_DIRECTORIES "${glfw_DIR}/include")
+    set(glfw_LIBS glfw3)
 
     download_lib("${glfw_PREBUILT_DIR}")
-    copy_dylibs("${glfw_LIBS}")
 
     #######################
     # KTX for MacOS-arm64 #

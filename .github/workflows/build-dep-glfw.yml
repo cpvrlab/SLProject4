@@ -1,10 +1,7 @@
-name: Build glfw
+name: Build dependancy GLFW
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - build-workflow
 
 jobs:
   build-linux:

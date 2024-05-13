@@ -141,6 +141,7 @@ SLbool SLGLShader::createAndCompile(SLVLight* lights)
     if (compileSuccess == GL_FALSE)
     {
         GLchar log[1024];
+        if (Utils::onlyErrorLogs) Utils::onlyErrorLogs = false;
         glGetShaderInfoLog(_shaderID, sizeof(log), nullptr, &log[0]);
         SL_LOG("*** COMPILER ERROR ***");
         SL_LOG("Source file: %s\n", _file.c_str());
@@ -149,6 +150,7 @@ SLbool SLGLShader::createAndCompile(SLVLight* lights)
         SLint     lineNum = 1;
         for (string& line : lines)
             SL_LOG("%4d: %s", lineNum++, line.c_str());
+        SL_LOG("\n");
         return false;
     }
 

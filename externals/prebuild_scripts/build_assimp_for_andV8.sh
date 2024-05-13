@@ -10,6 +10,7 @@ ZIPFILE="$ARCH"_assimp_"$assimp_VERSION"
 ZIPFOLDER=$ZIPFILE
 BUILD_D="$ARCH"_debug_"$assimp_VERSION"
 BUILD_R="$ARCH"_release_"$assimp_VERSION"
+NDK_VERSION="26.2.11394342"
 
 clear
 echo "Building assimp Version: $assimp_VERSION"
@@ -42,13 +43,14 @@ mkdir $BUILD_D
 cd $BUILD_D
 
 # Run cmake to configure and generate the make files
+
 cmake \
-    -DCMAKE_TOOLCHAIN_FILE=/Users/ghm1/Library/Android/sdk/ndk/21.3.6528147/build/cmake/android.toolchain.cmake \
+    -DCMAKE_TOOLCHAIN_FILE=~/Android/Sdk/ndk/$NDK_VERSION/build/cmake/android.toolchain.cmake \
     -DANDROID_ABI=arm64-v8a \
+    -DANDROID_PLATFORM=android-N \
     -DCMAKE_INSTALL_PREFIX=install \
     -DCMAKE_BUILD_TYPE=Debug \
     -DASSIMP_BUILD_TESTS=OFF \
-    -DINJECT_DEBUG_POSTFIX=OFF \
     -DBUILD_SHARED_LIBS=ON \
     ..
 
@@ -66,12 +68,12 @@ cd $BUILD_R
 
 # Run cmake to configure and generate the make files
 cmake \
-    -DCMAKE_TOOLCHAIN_FILE=/Users/ghm1/Library/Android/sdk/ndk/21.3.6528147/build/cmake/android.toolchain.cmake \
+    -DCMAKE_TOOLCHAIN_FILE=~/Android/Sdk/ndk/$NDK_VERSION/build/cmake/android.toolchain.cmake \
     -DANDROID_ABI=arm64-v8a \
+    -DANDROID_PLATFORM=android-N \
     -DCMAKE_INSTALL_PREFIX=install \
     -DCMAKE_BUILD_TYPE=Release \
     -DASSIMP_BUILD_TESTS=OFF \
-    -DINJECT_DEBUG_POSTFIX=OFF \
     -DBUILD_SHARED_LIBS=ON \
     ..
 

@@ -409,10 +409,10 @@ void SLGLState::useProgram(SLuint progID)
  */
 void SLGLState::bindTexture(SLenum target, SLuint textureID)
 {
-    // (luc) If there we call glActiveTexture and glBindTexture from outside,
+    // (luc) If we call glActiveTexture and glBindTexture from outside,
     // This will lead to problems as the global state in SLGLState will not be
     // equivalent to the OpenGL state.
-    // We should solve this by querying opengl for the last binded texture.
+    // We should solve this by querying opengl for the last bound texture.
     // glGetIntegeriv(GL_ACTIVE_TEXTURE, active_texture)
     // glGetIntegeriv(GL_TEXTURE_BINDING_2D, textureID)
 

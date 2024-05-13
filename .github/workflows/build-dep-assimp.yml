@@ -1,10 +1,7 @@
-name: Build Assimp
+name: Build Dependancy Assimp
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - build-workflow
 
 jobs:
   build-linux:
@@ -15,12 +12,12 @@ jobs:
 
     - name: Run build script
       working-directory: ${{ github.workspace }}/externals/prebuild_scripts/
-      run: ./build_assimp_for_linux.sh v5.0.0
+      run: ./build_assimp_for_linux.sh v5.4.0
 
     - name: Archive prebuilt assimp 
       uses: actions/upload-artifact@v3
       with:
         name: prebuilt-assimp-linux
-        path: ${{ github.workspace }}/externals/prebuilt/linux_assimp_v5.0.0
+        path: ${{ github.workspace }}/externals/prebuilt/linux_assimp_v5.4.0
 
 

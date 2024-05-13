@@ -2,11 +2,12 @@ apply plugin: 'com.android.application'
 
 android {
     signingConfigs {
+        // Please create your own release key with Build > Generate Signed Bundle or APK
         release {
             keyAlias 'slproject-release-key'
-            keyPassword '' // Change to your key password
+            keyPassword '?' // Change to your key password
             storeFile file('../slproject-release-key')
-            storePassword '' // Change to your store password
+            storePassword '?' // Change to your store password
         }
     }
     compileSdkVersion 29

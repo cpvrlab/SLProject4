@@ -32,7 +32,7 @@ void SLGLVertexArrayExt::generateVertexPos(SLuint numVertices,
     SLint location = AT_position;
 
     // Add attribute if it doesn't exist
-    if (_VBOf.attribIndex(AT_position) == -1)
+    if (_vbo.attribIndex(AT_position) == -1)
     {
         setAttrib(AT_position, elementSize, location, dataPointer);
         generate(numVertices, BU_static, false);
@@ -51,7 +51,7 @@ void SLGLVertexArrayExt::drawArrayAsColored(SLGLPrimitiveType primitiveType,
 {
     assert(countVertices <= _numVertices);
 
-    if (!_VBOf.id())
+    if (!_vbo.id())
         SL_EXIT_MSG("No VBO generated for VAO in drawArrayAsColored.");
 
     // Prepare shader
@@ -67,7 +67,7 @@ void SLGLVertexArrayExt::drawArrayAsColored(SLGLPrimitiveType primitiveType,
     // Set uniform color
     glUniform4fv(sp->getUniformLocation("u_matDiff"), 1, (SLfloat*)&color);
 
-#ifndef SL_GLES
+#if not defined(SL_GLES) && not defined(SL_EMSCRIPTEN)
     if (pointSize != 1.0f)
         if (primitiveType == PT_points)
             glPointSize(pointSize);
@@ -79,7 +79,7 @@ void SLGLVertexArrayExt::drawArrayAsColored(SLGLPrimitiveType primitiveType,
                 (SLsizei)countVertices);
     //////////////////////////////////////
 
-#ifndef SL_GLES
+#if not defined(SL_GLES) && not defined(SL_EMSCRIPTEN)
     if (pointSize != 1.0f)
         if (primitiveType == PT_points)
             glPointSize(1.0f);
@@ -98,7 +98,7 @@ void SLGLVertexArrayExt::drawElementAsColored(SLGLPrimitiveType primitiveType,
 {
     assert(countVertices <= _numVertices);
 
-    if (!_VBOf.id())
+    if (!_vbo.id())
         SL_EXIT_MSG("No VBO generated for VAO in drawArrayAsColored.");
 
     // Prepare shader
@@ -114,7 +114,7 @@ void SLGLVertexArrayExt::drawElementAsColored(SLGLPrimitiveType primitiveType,
     // Set uniform color
     glUniform4fv(sp->getUniformLocation("u_matDiff"), 1, (SLfloat*)&color);
 
-#ifndef SL_GLES
+#if not defined(SL_GLES) && not defined(SL_EMSCRIPTEN)
     if (pointSize != 1.0f)
         if (primitiveType == PT_points)
             glPointSize(pointSize);
@@ -126,7 +126,7 @@ void SLGLVertexArrayExt::drawElementAsColored(SLGLPrimitiveType primitiveType,
                    countVertices);
     ////////////////////////////////
 
-#ifndef SL_GLES
+#if not defined(SL_GLES) && not defined(SL_EMSCRIPTEN)
     if (pointSize != 1.0f)
         if (primitiveType == PT_points)
             glPointSize(1.0f);

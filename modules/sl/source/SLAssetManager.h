@@ -52,6 +52,9 @@ public:
     //! Removes the specified mesh from the meshes resource vector.
     bool removeMesh(SLMesh* mesh);
 
+    //! Removes the specified mesh from the meshes resource vector.
+    bool removeProgram(SLGLProgram* program);
+
     //! Returns the pointer to shader program if found by name
     SLGLProgram* getProgramByName(const string& programName);
 

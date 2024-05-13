@@ -17,7 +17,7 @@
 #include <SLSkybox.h>
 
 //-----------------------------------------------------------------------------
-//! Cubemap Constructor with cubemap images
+//! Cubemap constructor with cubemap images
 /*! All resources allocated are stored in the SLScene vectors for textures,
 materials, programs and meshes and get deleted at scene destruction.
 */
@@ -75,7 +75,7 @@ SLSkybox::SLSkybox(SLAssetManager* assetMgr,
                       matCubeMap));
 }
 //-----------------------------------------------------------------------------
-//! Draw the skybox with a cube map with the camera in its center.
+//! Constructor for a cube map skybox from a HDR Image
 /*! This constructor generates a cube map skybox from a HDR Image and also
 all the textures needed for image based lighting and store them in the textures
 of the material of this sky box.
@@ -113,7 +113,7 @@ SLSkybox::SLSkybox(SLAssetManager* am,
                                              resolution,
                                              TT_environmentCubemap,
                                              GL_TEXTURE_CUBE_MAP,
-                                             true,
+                                             true, // read back environment for ray tracing
                                              GL_LINEAR_MIPMAP_LINEAR);
 
     // The irradiance cubemap is used for the ambient indirect light of PBR materials
