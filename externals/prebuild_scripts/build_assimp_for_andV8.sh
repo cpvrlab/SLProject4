@@ -10,7 +10,12 @@ ZIPFILE="$ARCH"_assimp_"$assimp_VERSION"
 ZIPFOLDER=$ZIPFILE
 BUILD_D="$ARCH"_debug_"$assimp_VERSION"
 BUILD_R="$ARCH"_release_"$assimp_VERSION"
-NDK_VERSION="26.2.11394342"
+#ANDROID_NDK_VERSION="26.2.11394342"
+ANDROID_NDK_VERSION="r26d"
+WORK_PATH=$(cd "$(dirname "$0")";pwd)
+export ANDROID_NDK_HOME="android-ndk-$ANDROID_NDK_VERSION"
+export ANDROID_NDK_PATH=${WORK_PATH}/${ANDROID_NDK_HOME}
+export ANDROID_NDK_ROOT=${ANDROID_NDK_PATH}
 
 clear
 echo "Building assimp Version: $assimp_VERSION"
@@ -19,6 +24,14 @@ if [ "$#" -lt 1 ]; then
     echo "No assimp tag passed as 1st parameter"
     exit
 fi
+
+
+if [ ! -d $ANDROID_NDK_HOME ]
+then
+    wget https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux.zip
+    unzip android-ndk-${ANDROID_NDK_VERSION}-linux.zip
+fi
+
 
 # Cloning assimp
 if [ ! -d "assimp/.git" ]; then
@@ -37,6 +50,8 @@ else
     exit
 fi
 
+export PATH=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin:$ANDROID_NDK_ROOT/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin:$ANDROID_NDK_ROOT/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin:$PATH
+
 # Make build folder for debug version
 rm -rf $BUILD_D
 mkdir $BUILD_D
@@ -45,7 +60,7 @@ cd $BUILD_D
 # Run cmake to configure and generate the make files
 
 cmake \
-    -DCMAKE_TOOLCHAIN_FILE=~/Android/Sdk/ndk/$NDK_VERSION/build/cmake/android.toolchain.cmake \
+    -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake \
     -DANDROID_ABI=arm64-v8a \
     -DANDROID_PLATFORM=android-N \
     -DCMAKE_INSTALL_PREFIX=install \
@@ -68,7 +83,7 @@ cd $BUILD_R
 
 # Run cmake to configure and generate the make files
 cmake \
-    -DCMAKE_TOOLCHAIN_FILE=~/Android/Sdk/ndk/$NDK_VERSION/build/cmake/android.toolchain.cmake \
+    -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake \
     -DANDROID_ABI=arm64-v8a \
     -DANDROID_PLATFORM=android-N \
     -DCMAKE_INSTALL_PREFIX=install \
