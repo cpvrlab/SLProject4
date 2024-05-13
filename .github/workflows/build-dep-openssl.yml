@@ -53,6 +53,8 @@ jobs:
   build-android:
     runs-on: ubuntu-22.04
     steps:
+    - uses: actions/checkout@v3
+
     - name: Run android build script
       working-directory: ${{ github.workspace }}/externals/prebuild_scripts/
       run: ./build_openssl_for_andV8.sh
@@ -61,7 +63,8 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: prebuilt-openssl-andV8
-        path: ${{ github.workspace }}/externals/prebuilt/andV8_openssl_3.2.1
+        path: ${{ github.workspace }}/externals/prebuilt/andv8_openssl_3.2.1
+
   build-macos:
     runs-on: macos-13
     steps:
