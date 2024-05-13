@@ -48,6 +48,12 @@ SLLight::SLLight(SLfloat ambiPower,
     //                      1
     // attenuation = ------------------
     //               kc + kl*d + kq*d*d
+
+    // init values to avoid used of uninitialized values
+    _kc=1.0f;
+    _kl=0.0f;
+    _kq=0.0f;
+
     kc(1.0f);
     kl(0.0f);
     kq(0.0f);
