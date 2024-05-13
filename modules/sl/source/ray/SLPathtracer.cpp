@@ -194,7 +194,7 @@ SLCol4f SLPathtracer::trace(SLRay* ray, SLbool em)
     SLCol4f finalColor(ray->backgroundColor);
 
     // Participating Media init
-    SLfloat absorbtion = 1.0f; // used to calculate absorbtion along the ray
+    SLfloat absorption = 1.0f; // used to calculate absorption along the ray
     SLfloat scaleBy    = 1.0f; // used to scale surface reflectance at the end of random walk
 
     // Intersect scene
@@ -226,13 +226,13 @@ SLCol4f SLPathtracer::trace(SLRay* ray, SLbool em)
     if (maxEmission > 0)
     {
         if (ray->depth == 1)
-            return mat->emissive() * absorbtion;
+            return mat->emissive() * absorption;
         else
-            return mat->emissive() * absorbtion * em;
+            return mat->emissive() * absorption * em;
     }
 
-    // add absorbtion to base color from Participating Media
-    objectColor = objectColor * absorbtion;
+    // add absorption to base color from Participating Media
+    objectColor = objectColor * absorption;
 
     // diffuse reflection
     if (ray->hitMatIsDiffuse())

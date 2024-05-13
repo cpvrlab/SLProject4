@@ -6469,8 +6469,7 @@ resolution shadows near the camera and lower resolution shadows further away.");
 
         // create camera
         SLCamera* cam1 = new SLCamera();
-        cam1->translation(0.0f, 0.40f, 6.35f);
-        cam1->lookAt(0.0f, -0.05f, 0.0f);
+        cam1->translation(0, 0, 7.2f);
         cam1->fov(27);
         cam1->focalDist(cam1->translationOS().length());
         cam1->background().colors(SLCol4f(0.0f, 0.0f, 0.0f));
