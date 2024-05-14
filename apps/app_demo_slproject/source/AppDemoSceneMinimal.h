@@ -13,7 +13,7 @@
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
-// Class for minimal scene
+//! Class for minimal scene
 class AppDemoSceneMinimal : public AppScene
 {
 public:

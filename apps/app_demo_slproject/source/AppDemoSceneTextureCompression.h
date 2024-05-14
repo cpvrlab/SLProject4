@@ -13,7 +13,7 @@
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
-// Class for texture compression test scene
+//! Class for texture compression test scene
 class AppDemoSceneTextureCompression : public AppScene
 {
 public:

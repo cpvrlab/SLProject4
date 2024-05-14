@@ -13,7 +13,7 @@
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
-// Class for frustum culling test scene
+//! Class for frustum culling test scene
 class AppDemoSceneFrustum : public AppScene
 {
 public:

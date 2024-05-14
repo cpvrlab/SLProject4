@@ -13,6 +13,7 @@
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
+//! Class for normal map bump mapping
 class AppDemoSceneShaderBump : public AppScene
 {
 public:

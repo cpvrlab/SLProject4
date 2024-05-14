@@ -13,6 +13,7 @@
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
+//! Class for all variants of generated shaders on the Suzanne head
 class AppDemoSceneSuzanne : public AppScene
 {
 public:

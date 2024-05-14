@@ -13,6 +13,7 @@
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
+//! Class for per vertex wave shader
 class AppDemoSceneShaderWave : public AppScene
 {
 public:

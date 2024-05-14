@@ -13,6 +13,7 @@
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
+//! Class for Cook-Torrance lighting demo scene
 class AppDemoSceneShaderCook : public AppScene
 {
 public:

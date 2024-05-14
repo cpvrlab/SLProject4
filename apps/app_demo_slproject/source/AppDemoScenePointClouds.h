@@ -13,7 +13,7 @@
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
-// Class for point cloud test scene
+//! Class for point cloud test scene
 class AppDemoScenePointClouds : public AppScene
 {
 public:

@@ -13,7 +13,7 @@
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
-// Class for 2D and 3D text scene
+//! Class for 2D and 3D text scene
 class AppDemoScene2Dand3DText : public AppScene
 {
 public:

@@ -13,7 +13,7 @@
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
-// Class for texture filtering scene
+//! Class for texture filtering scene
 class AppDemoSceneTextureFilter : public AppScene
 {
 public:

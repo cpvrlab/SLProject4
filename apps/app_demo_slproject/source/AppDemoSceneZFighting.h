@@ -13,7 +13,7 @@
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
-// Class for z-fighting test scene
+//! Class for z-fighting test scene
 class AppDemoSceneZFighting : public AppScene
 {
 public:

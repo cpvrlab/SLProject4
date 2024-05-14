@@ -13,7 +13,7 @@
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
-// Class for the figure scene
+//! Class for the figure scene
 class AppDemoSceneFigure : public AppScene
 {
 public:

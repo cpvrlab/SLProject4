@@ -13,7 +13,7 @@
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
-// Class for mesh loading demo scene
+//! Class for mesh loading demo scene
 class AppDemoSceneMeshLoad : public AppScene
 {
 public:

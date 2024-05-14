@@ -13,7 +13,7 @@
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
-// Class for texture blending scene
+//! Class for texture blending scene
 class AppDemoSceneTextureBlend : public AppScene
 {
 public:

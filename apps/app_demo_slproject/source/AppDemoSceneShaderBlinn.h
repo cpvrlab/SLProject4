@@ -13,6 +13,7 @@
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
+//! Class for demo scene with Blinn-Phong lighting per vertex or per pixel
 class AppDemoSceneShaderBlinn : public AppScene
 {
 public:

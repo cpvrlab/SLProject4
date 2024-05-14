@@ -13,6 +13,7 @@
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
+//! Class for parallax bump mapping demo scene
 class AppDemoSceneShaderParallax : public AppScene
 {
 public:
