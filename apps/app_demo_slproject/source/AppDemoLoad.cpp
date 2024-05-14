@@ -66,6 +66,7 @@
 #include <AppDemoSceneLegacy.h>
 #include <AppDemoScenePointClouds.h>
 #include <AppDemoSceneRevolver.h>
+#include <AppDemoSceneRobot.h>
 #include <AppDemoSceneSuzanne.h>
 #include <AppDemoSceneShaderBlinn.h>
 #include <AppDemoSceneShaderBump.h>
@@ -83,6 +84,8 @@
 #include <AppDemoSceneTextureBlend.h>
 #include <AppDemoSceneTextureCompression.h>
 #include <AppDemoSceneTextureFilter.h>
+#include <AppDemoSceneVolumeRayCast.h>
+#include <AppDemoSceneVolumeRayCastLighted.h>
 #include <AppDemoSceneZFighting.h>
 
 #ifdef SL_BUILD_WAI
@@ -639,261 +642,7 @@ void appDemoLoadScene(SLAssetManager* am,
     SLScene::entities.dump(true);
 #endif
 
-    if (sceneID == SID_Robotics_FanucCRX_FK) //...............................................
-    {
-        SLstring modelFile = modelPath + "GLTF/FanucCRX/Fanuc-CRX.gltf";
-
-        if (SLFileStorage::exists(modelFile, IOK_model))
-        {
-            s->info("FANUC CRX Robot with Forward Kinematic");
-
-            // Create a scene group node
-            SLNode* scene = new SLNode("scene node");
-            s->root3D(scene);
-
-            // Create camera and initialize its parameters
-            SLCamera* cam1 = new SLCamera("Camera 1");
-            cam1->translation(0, 0.5f, 2.0f);
-            cam1->lookAt(0, 0.5f, 0);
-            cam1->background().colors(SLCol4f(0.7f, 0.7f, 0.7f),
-                                      SLCol4f(0.2f, 0.2f, 0.2f));
-            cam1->focalDist(2);
-            cam1->setInitialState();
-            scene->addChild(cam1);
-
-            // Define directional
-            SLLightDirect* light1 = new SLLightDirect(am,
-                                                      s,
-                                                      2,
-                                                      2,
-                                                      2,
-                                                      0.2f,
-                                                      1,
-                                                      1,
-                                                      1);
-            light1->lookAt(0, 0, 0);
-            light1->attenuation(1, 0, 0);
-            light1->createsShadows(true);
-            light1->createShadowMap(1, 7, SLVec2f(5, 5), SLVec2i(2048, 2048));
-            light1->doSmoothShadows(true);
-            light1->castsShadows(false);
-            scene->addChild(light1);
-
-            SLMaterial* matFloor = new SLMaterial(am, "matFloor", SLCol4f::WHITE * 0.5f);
-            matFloor->ambient(SLCol4f::WHITE * 0.3f);
-            SLMesh* rectangle = new SLRectangle(am,
-                                                SLVec2f(-2, -2),
-                                                SLVec2f(2, 2),
-                                                1,
-                                                1,
-                                                "rectangle",
-                                                matFloor);
-            SLNode* floorRect = new SLNode(rectangle);
-            floorRect->rotate(90, -1, 0, 0);
-            scene->addChild(floorRect);
-
-            // Import robot model
-            SLAssimpImporter importer;
-            SLNode*          robot = importer.load(s->animManager(),
-                                          am,
-                                          modelFile,
-                                          Utils::getPath(modelFile),
-                                          nullptr,
-                                          false,   // delete tex images after build
-                                          true,    // only meshes
-                                          nullptr, // no replacement material
-                                          0.2f);   // 40% ambient reflection
-
-            // Set missing specular color
-            robot->updateMeshMat([](SLMaterial* m)
-                                 { m->specular(SLCol4f::WHITE); },
-                                 true);
-
-            SLNode* crx_j1 = robot->findChild<SLNode>("crx_j1");
-            SLNode* crx_j2 = robot->findChild<SLNode>("crx_j2");
-            SLNode* crx_j3 = robot->findChild<SLNode>("crx_j3");
-            SLNode* crx_j4 = robot->findChild<SLNode>("crx_j4");
-            SLNode* crx_j5 = robot->findChild<SLNode>("crx_j5");
-            SLNode* crx_j6 = robot->findChild<SLNode>("crx_j6");
-
-            SLfloat angleDEG    = 45;
-            SLfloat durationSEC = 3.0f;
-
-            SLAnimation* j1Anim = s->animManager().createNodeAnimation("j1Anim", durationSEC, true, EC_inOutCubic, AL_pingPongLoop);
-            j1Anim->createNodeAnimTrackForRotation3(crx_j1, -angleDEG, 0, angleDEG, crx_j1->axisYOS());
-
-            SLAnimation* j2Anim = s->animManager().createNodeAnimation("j2Anim", durationSEC, true, EC_inOutCubic, AL_pingPongLoop);
-            j2Anim->createNodeAnimTrackForRotation3(crx_j2, -angleDEG, 0, angleDEG, -crx_j2->axisZOS());
-
-            SLAnimation* j3Anim = s->animManager().createNodeAnimation("j3Anim", durationSEC, true, EC_inOutCubic, AL_pingPongLoop);
-            j3Anim->createNodeAnimTrackForRotation3(crx_j3, angleDEG, 0, -angleDEG, -crx_j3->axisZOS());
-
-            SLAnimation* j4Anim = s->animManager().createNodeAnimation("j4Anim", durationSEC, true, EC_inOutCubic, AL_pingPongLoop);
-            j4Anim->createNodeAnimTrackForRotation3(crx_j4, -2 * angleDEG, 0, 2 * angleDEG, crx_j4->axisXOS());
-
-            SLAnimation* j5Anim = s->animManager().createNodeAnimation("j5Anim", durationSEC, true, EC_inOutCubic, AL_pingPongLoop);
-            j5Anim->createNodeAnimTrackForRotation3(crx_j5, -2 * angleDEG, 0, 2 * angleDEG, -crx_j5->axisZOS());
-
-            SLAnimation* j6Anim = s->animManager().createNodeAnimation("j6Anim", durationSEC, true, EC_inOutCubic, AL_pingPongLoop);
-            j6Anim->createNodeAnimTrackForRotation3(crx_j6, -2 * angleDEG, 0, 2 * angleDEG, crx_j6->axisXOS());
-
-            scene->addChild(robot);
-
-            sv->camera(cam1);
-            sv->doWaitOnIdle(true); // Saves energy
-        }
-    }
-
-    else if (sceneID == SID_VolumeRayCast) //......................................................
-    {
-        s->name("Volume Ray Cast Test");
-        s->info("Volume Rendering of an angiographic MRI scan");
-
-        // Load volume data into 3D texture
-        SLVstring mriImages;
-        for (SLint i = 0; i < 207; ++i)
-            mriImages.push_back(Utils::formatString(texPath + "i%04u_0000b.png", i));
-
-        SLint clamping3D = GL_CLAMP_TO_EDGE;
-        if (SLGLState::instance()->getSLVersionNO() > "320")
-            clamping3D = 0x812D; // GL_CLAMP_TO_BORDER
-
-        SLGLTexture* texMRI = new SLGLTexture(am,
-                                              mriImages,
-                                              GL_LINEAR,
-                                              GL_LINEAR,
-                                              clamping3D,
-                                              clamping3D,
-                                              "mri_head_front_to_back");
-
-        // Create transfer LUT 1D texture
-        SLVAlphaLUTPoint tfAlphas = {SLAlphaLUTPoint(0.00f, 0.00f),
-                                     SLAlphaLUTPoint(0.01f, 0.75f),
-                                     SLAlphaLUTPoint(1.00f, 1.00f)};
-        SLTexColorLUT*   tf       = new SLTexColorLUT(am, tfAlphas, CLUT_BCGYR);
-
-        // Load shader and uniforms for volume size
-        SLGLProgram*   sp   = new SLGLProgramGeneric(am,
-                                                 shaderPath + "VolumeRenderingRayCast.vert",
-                                                 shaderPath + "VolumeRenderingRayCast.frag");
-        SLGLUniform1f* volX = new SLGLUniform1f(UT_const, "u_volumeX", (SLfloat)texMRI->images()[0]->width());
-        SLGLUniform1f* volY = new SLGLUniform1f(UT_const, "u_volumeY", (SLfloat)texMRI->images()[0]->height());
-        SLGLUniform1f* volZ = new SLGLUniform1f(UT_const, "u_volumeZ", (SLfloat)mriImages.size());
-        sp->addUniform1f(volX);
-        sp->addUniform1f(volY);
-        sp->addUniform1f(volZ);
-
-        // Create volume rendering material
-        SLMaterial* matVR = new SLMaterial(am, "matVR", texMRI, tf, nullptr, nullptr, sp);
-
-        // Create camera
-        SLCamera* cam1 = new SLCamera("Camera 1");
-        cam1->translation(0, 0, 3);
-        cam1->lookAt(0, 0, 0);
-        cam1->focalDist(3);
-        cam1->background().colors(SLCol4f(0, 0, 0));
-        cam1->setInitialState();
-        cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-
-        // Set light
-        SLLightSpot* light1 = new SLLightSpot(am, s, 0.3f);
-        light1->powers(0.1f, 1.0f, 1.0f);
-        light1->attenuation(1, 0, 0);
-        light1->translation(5, 5, 5);
-
-        // Assemble scene with box node
-        SLNode* scene = new SLNode("Scene");
-        s->root3D(scene);
-        scene->addChild(light1);
-        scene->addChild(new SLNode(new SLBox(am, -1, -1, -1, 1, 1, 1, "Box", matVR)));
-        scene->addChild(cam1);
-
-        sv->camera(cam1);
-    }
-    else if (sceneID == SID_VolumeRayCastLighted) //...............................................
-    {
-        s->name("Volume Ray Cast Lighted Test");
-        s->info("Volume Rendering of an angiographic MRI scan with lighting");
-
-        // The MRI Images got loaded in advance
-        if (gTexMRI3D && !gTexMRI3D->images().empty())
-        {
-            // Add pointer to the global resource vectors for deallocation
-            if (am)
-                am->textures().push_back(gTexMRI3D);
-        }
-        else
-        {
-            // Load volume data into 3D texture
-            SLVstring mriImages;
-            for (SLint i = 0; i < 207; ++i)
-                mriImages.push_back(Utils::formatString(texPath + "i%04u_0000b.png", i));
-
-            gTexMRI3D = new SLGLTexture(am,
-                                        mriImages,
-                                        GL_LINEAR,
-                                        GL_LINEAR,
-#ifndef SL_EMSCRIPTEN
-                                        0x812D, // GL_CLAMP_TO_BORDER (GLSL 320)
-                                        0x812D, // GL_CLAMP_TO_BORDER (GLSL 320)
-#else
-                                        GL_CLAMP_TO_EDGE,
-                                        GL_CLAMP_TO_EDGE,
-#endif
-                                        "mri_head_front_to_back",
-                                        true);
-
-            gTexMRI3D->calc3DGradients(1, [](int progress)
-                                       { AppDemo::jobProgressNum(progress); });
-            // gTexMRI3D->smooth3DGradients(1, [](int progress) {AppDemo::jobProgressNum(progress);});
-        }
-
-        // Create transfer LUT 1D texture
-        SLVAlphaLUTPoint tfAlphas = {SLAlphaLUTPoint(0.00f, 0.00f),
-                                     SLAlphaLUTPoint(0.01f, 0.75f),
-                                     SLAlphaLUTPoint(1.00f, 1.00f)};
-        SLTexColorLUT*   tf       = new SLTexColorLUT(am, tfAlphas, CLUT_BCGYR);
-
-        // Load shader and uniforms for volume size
-        SLGLProgram*   sp   = new SLGLProgramGeneric(am,
-                                                 shaderPath + "VolumeRenderingRayCast.vert",
-                                                 shaderPath + "VolumeRenderingRayCastLighted.frag");
-        SLGLUniform1f* volX = new SLGLUniform1f(UT_const, "u_volumeX", (SLfloat)gTexMRI3D->images()[0]->width());
-        SLGLUniform1f* volY = new SLGLUniform1f(UT_const, "u_volumeY", (SLfloat)gTexMRI3D->images()[0]->height());
-        SLGLUniform1f* volZ = new SLGLUniform1f(UT_const, "u_volumeZ", (SLfloat)gTexMRI3D->images().size());
-        sp->addUniform1f(volX);
-        sp->addUniform1f(volY);
-        sp->addUniform1f(volZ);
-
-        // Create volume rendering material
-        SLMaterial* matVR = new SLMaterial(am, "matVR", gTexMRI3D, tf, nullptr, nullptr, sp);
-
-        // Create camera
-        SLCamera* cam1 = new SLCamera("Camera 1");
-        cam1->translation(0, 0, 3);
-        cam1->lookAt(0, 0, 0);
-        cam1->focalDist(3);
-        cam1->background().colors(SLCol4f(0, 0, 0));
-        cam1->setInitialState();
-        cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-
-        // Set light
-        SLLightSpot* light1 = new SLLightSpot(am, s, 0.3f);
-        light1->powers(0.1f, 1.0f, 1.0f);
-        light1->attenuation(1, 0, 0);
-        light1->translation(5, 5, 5);
-
-        // Assemble scene with box node
-        SLNode* scene = new SLNode("Scene");
-        s->root3D(scene);
-        scene->addChild(light1);
-        scene->addChild(new SLNode(new SLBox(am, -1, -1, -1, 1, 1, 1, "Box", matVR)));
-        scene->addChild(cam1);
-
-        sv->camera(cam1);
-    }
-
-    else if (sceneID == SID_AnimationSkinned) //..................................................
+    if (sceneID == SID_AnimationSkinned) //..................................................
     {
         s->name("Skeletal Animation Test");
         s->info("Skeletal Animation Test Scene");
@@ -4528,6 +4277,9 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         case SID_glTF_FlightHelmet:
         case SID_glTF_Sponza:
         case SID_glTF_WaterBottle: s = new AppDemoSceneGLTF(sceneID); break;
+        case SID_Robotics_FanucCRX_FK: s = new AppDemoSceneRobot(); break;
+        case SID_VolumeRayCast: s = new AppDemoSceneVolumeRayCast(); break;
+        case SID_VolumeRayCastLighted: s = new AppDemoSceneVolumeRayCastLighted(); break;
         default: s = new AppDemoSceneLegacy(sceneID); break;
     }
 

@@ -113,6 +113,47 @@ void SLAssetLoader::addTextureToLoad(SLGLTexture*&   texture,
                                                      loadGrayscaleIntoAlpha); });
 }
 //-----------------------------------------------------------------------------
+/*! Method for adding a 3D texture from a vector of images to load in parallel
+ * thread.
+ * @param texture Pointer to SLGLTexture to return
+ * @param imageFilenames Vector of texture image files. If only filenames are
+ * passed they will be searched on the SLGLTexture::defaultPath.
+ * @param min_filter Minification filter constant from OpenGL
+ * @param mag_filter Magnification filter constant from OpenGL
+ * @param wrapS Texture wrapping in S direction (OpenGL constant)
+ * @param wrapT Texture wrapping in T direction (OpenGL constant)
+ * @param name Name of the 3D texture
+ * @param loadGrayscaleIntoAlpha Flag if grayscale image should be loaded into
+ * alpha channel.
+ */
+void SLAssetLoader::addTextureToLoad(SLGLTexture*&   texture,
+                                     const SLVstring& imageFilenames,
+                                     SLint           min_filter,
+                                     SLint           mag_filter,
+                                     SLint           wrapS,
+                                     SLint           wrapT,
+                                     const SLstring& name,
+                                     SLbool          loadGrayscaleIntoAlpha)
+{
+    _loadTasks.push_back([this,
+                          &texture,
+                          imageFilenames,
+                          min_filter,
+                          mag_filter,
+                          wrapS,
+                          wrapT,
+                          name,
+                          loadGrayscaleIntoAlpha]
+                         { texture = new SLGLTexture(_scene->assetManager(),
+                                                     imageFilenames,
+                                                     min_filter,
+                                                     mag_filter,
+                                                     wrapS,
+                                                     wrapT,
+                                                     name,
+                                                     loadGrayscaleIntoAlpha); });
+}
+//-----------------------------------------------------------------------------
 void SLAssetLoader::addProgramGenericToLoad(SLGLProgram*&   program,
                                             const SLstring& vertShaderFile,
                                             const SLstring& fragShaderFile)
@@ -173,6 +214,11 @@ void SLAssetLoader::addSkyboxToLoad(SLSkybox*&      skybox,
                                                  hdrImageWithFullPath,
                                                  resolution,
                                                  name); });
+}
+//-----------------------------------------------------------------------------
+void SLAssetLoader::addLoadTask(SLAssetLoadTask task)
+{
+    _loadTasks.push_back(task);
 }
 //-----------------------------------------------------------------------------
 void SLAssetLoader::addSkyboxToLoad(SLSkybox*&      skybox,

@@ -17,14 +17,15 @@ AppDemoSceneGLTF::AppDemoSceneGLTF(SLSceneID sceneID)
   : AppScene("GLTF File Demo Scene"),
     _sceneID(sceneID)
 {
-    info("");
+    info("GLTF File Format Test Scene");
 }
 //-----------------------------------------------------------------------------
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneGLTF::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addSkyboxToLoad(_skybox,
-                       al.modelPath() + "GLTF/glTF-Sample-Models/hdris/envmap_malibu.hdr",
+                       al.modelPath() +
+                         "GLTF/glTF-Sample-Models/hdris/envmap_malibu.hdr",
                        SLVec2i(256, 256),
                        "HDR Skybox");
     switch (_sceneID)
@@ -46,6 +47,7 @@ void AppDemoSceneGLTF::registerAssetsToLoad(SLAssetLoader& al)
             this->name("glTF-Sample-Model: WaterBottle");
             break;
     }
+
     al.addNodeToLoad(_modelGLTF, _modelFile);
 }
 //-----------------------------------------------------------------------------
@@ -126,7 +128,7 @@ void AppDemoSceneGLTF::assemble(SLAssetManager* am, SLSceneView* sv)
 
     // Update all materials and set their skybox to _skybox
     _modelGLTF->updateMeshMat([=](SLMaterial* m)
-                              { m->skybox(_skybox);},
+                              { m->skybox(_skybox); },
                               true);
 
     scene->addChild(_modelGLTF);

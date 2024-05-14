@@ -84,15 +84,25 @@ public:
                           const SLstring& name                   = "3D-Texture",
                           SLbool          loadGrayscaleIntoAlpha = false);
 
-    //! Add mesh from file to load via assimp loader
-    void addNodeToLoad(SLNode*&    node,
-                       SLstring    path,
-                       SLSkybox*   skybox                 = nullptr,
-                       SLbool      deleteTexImgAfterBuild = false,
-                       SLbool      loadMeshesOnly         = true,
-                       SLMaterial* overrideMat            = nullptr,
-                       float       ambientFactor          = 0.5f,
-                       SLbool      forceCookTorranceRM    = false);
+    //! Add 3D texture from a vector of files
+    void addTextureToLoad(SLGLTexture*&    texture,
+                          const SLVstring& imageFilenames,
+                          SLint            min_filter,
+                          SLint            mag_filter,
+                          SLint            wrapS,
+                          SLint            wrapT,
+                          const SLstring&  name,
+                          SLbool           loadGrayscaleIntoAlpha);
+
+      //! Add mesh from file to load via assimp loader
+      void addNodeToLoad(SLNode*&    node,
+                         SLstring    path,
+                         SLSkybox*   skybox                 = nullptr,
+                         SLbool      deleteTexImgAfterBuild = false,
+                         SLbool      loadMeshesOnly         = true,
+                         SLMaterial* overrideMat            = nullptr,
+                         float       ambientFactor          = 0.5f,
+                         SLbool      forceCookTorranceRM    = false);
 
     //! Add generic GLSL program with shader files to load
     void addProgramGenericToLoad(SLGLProgram*&   program,
@@ -113,6 +123,9 @@ public:
                          const SLstring& cubeMapYNeg,
                          const SLstring& cubeMapZPos,
                          const SLstring& cubeMapZNeg);
+
+    //! Add generic task
+    void addLoadTask(SLAssetLoadTask task);
 
     void loadAll(function<void()> onDone);
     void update();

@@ -1615,7 +1615,8 @@ void SLGLTexture::calc3DGradients(SLint                      sampleRadius,
     // check that all images in depth have the same size
     for (auto img : _images)
         if ((SLint)img->width() != volX ||
-            (SLint)img->height() != volY || img->format() != PF_rgba)
+            (SLint)img->height() != volY ||
+            img->format() != PF_rgba)
             SL_EXIT_MSG("SLGLTexture::calc3DGradients: Not all images have the same size!");
 
     for (int z = r; z < volZ - r; ++z)
@@ -1649,8 +1650,11 @@ void SLGLTexture::calc3DGradients(SLint                      sampleRadius,
 
                 // Calculate progress in percent
                 cntVoxels++;
-                SLint progress = (SLint)((SLfloat)cntVoxels / (SLfloat)numVoxels * 100.0f);
-                onUpdateProgress(progress);
+                if (onUpdateProgress)
+                {
+                    SLint progress = (SLint)((SLfloat)cntVoxels / (SLfloat)numVoxels * 100.0f);
+                    onUpdateProgress(progress);
+                }
             }
         }
     }
@@ -1716,8 +1720,12 @@ void SLGLTexture::smooth3DGradients(SLint               smoothRadius,
 
                 // Calculate progress in percent
                 cntVoxels++;
-                SLint progress = (SLint)((SLfloat)cntVoxels / (SLfloat)numVoxels * 100.0f);
-                onUpdateProgress(progress);
+
+                if (onUpdateProgress)
+                {
+                    SLint progress = (SLint)((SLfloat)cntVoxels / (SLfloat)numVoxels * 100.0f);
+                    onUpdateProgress(progress);
+                }
             }
         }
     }
