@@ -17,7 +17,7 @@ class SLPathtracer : public SLRaytracer
 {
 public:
     SLPathtracer();
-    ~SLPathtracer() { SL_LOG("Destructor      : ~SLPathtracer"); }
+    ~SLPathtracer() { SL_LOG("Destructor       : ~SLPathtracer"); }
 
     // classic ray tracer functions
     SLbool  render(SLSceneView* sv);

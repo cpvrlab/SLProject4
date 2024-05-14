@@ -44,7 +44,7 @@ SLRaytracer::SLRaytracer()
 //-----------------------------------------------------------------------------
 SLRaytracer::~SLRaytracer()
 {
-    SL_LOG("Destructor      : ~SLRaytracer");
+    SL_LOG("Destructor       : ~SLRaytracer");
 }
 //-----------------------------------------------------------------------------
 /*!

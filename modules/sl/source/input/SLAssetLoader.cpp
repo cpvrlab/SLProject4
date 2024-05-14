@@ -159,18 +159,18 @@ void SLAssetLoader::addNodeToLoad(SLNode*&    node,
 }
 //-----------------------------------------------------------------------------
 void SLAssetLoader::addSkyboxToLoad(SLSkybox*&      skybox,
-                                    const SLstring& hdrImage,
+                                    const SLstring& hdrImageWithFullPath,
                                     SLVec2i         resolution,
                                     SLstring        name)
 {
     _loadTasks.push_back([this,
                           &skybox,
-                          hdrImage,
+                          hdrImageWithFullPath,
                           resolution,
                           name]
                          { skybox = new SLSkybox(_scene->assetManager(),
                                                  _shaderPath,
-                                                 _texturePath + hdrImage,
+                                                 hdrImageWithFullPath,
                                                  resolution,
                                                  name); });
 }

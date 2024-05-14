@@ -52,10 +52,6 @@ file(GLOB sources
         cuda/SLOptixHelper.h
         cuda/SLOptixVectorMath.h
         source/SL.h
-        source/SLAssetLoader.cpp
-        source/SLAssetLoader.h
-        source/SLAssetManager.cpp
-        source/SLAssetManager.h
         source/SLBackground.cpp
         source/SLBackground.h
         source/SLDrawBits.h
@@ -131,6 +127,10 @@ file(GLOB sources
         source/gl/SLGLVertexArrayExt.h
         source/gl/SLGLVertexBuffer.cpp
         source/gl/SLGLVertexBuffer.h
+        source/input/SLAssetLoader.cpp
+        source/input/SLAssetLoader.h
+        source/input/SLAssetManager.cpp
+        source/input/SLAssetManager.h
         source/input/SLAssimpImporter.cpp
         source/input/SLAssimpImporter.h
         source/input/SLAssimpIOSystem.cpp

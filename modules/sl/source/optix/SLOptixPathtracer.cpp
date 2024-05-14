@@ -24,7 +24,7 @@ SLOptixPathtracer::SLOptixPathtracer()
 //-----------------------------------------------------------------------------
 SLOptixPathtracer::~SLOptixPathtracer()
 {
-    SL_LOG("Destructor      : ~SLOptixPathtracer");
+    SL_LOG("Destructor       : ~SLOptixPathtracer");
 
     try
     {

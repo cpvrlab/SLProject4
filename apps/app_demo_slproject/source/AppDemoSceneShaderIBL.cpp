@@ -33,7 +33,7 @@ void AppDemoSceneShaderIBL::registerAssetsToLoad(SLAssetLoader& al)
     al.addTextureToLoad(_texA, "gold-scuffed_2048_A.png");
 
     al.addSkyboxToLoad(_skybox,
-                       "env_barce_rooftop.hdr",
+                       al.texturePath() + "env_barce_rooftop.hdr",
                        SLVec2i(256, 256),
                        "HDR Skybox");
 }

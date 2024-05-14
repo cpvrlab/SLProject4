@@ -27,9 +27,9 @@ class SLSkybox;
 class SLMaterial;
 
 using std::atomic;
+using std::function;
 using std::optional;
 using std::thread;
-using std::function;
 
 //-----------------------------------------------------------------------------
 typedef function<void()>        SLAssetLoadTask;
@@ -43,9 +43,14 @@ public:
                   SLstring shaderPath);
     ~SLAssetLoader();
 
-    // Getters
-    bool isLoading() const { return _isLoading; }
+    // Setters
     void scene(SLScene* scene) { _scene = scene; }
+
+    // Getters
+    bool     isLoading() const { return _isLoading; }
+    SLstring modelPath() const { return _modelPath; }
+    SLstring shaderPath() const { return _shaderPath; }
+    SLstring texturePath() const { return _texturePath; }
 
     //! Add 2D textures with internal image allocation
     void addTextureToLoad(SLGLTexture*& texture,
@@ -95,13 +100,13 @@ public:
                                  const SLstring& fragShaderFile);
 
     //! Add skybox with HDR texture to load
-    void addSkyboxToLoad(SLSkybox*& skybox,
-                         const SLstring& hdrImage,
-                         SLVec2i  resolution,
-                         SLstring name);
+    void addSkyboxToLoad(SLSkybox*&      skybox,
+                         const SLstring& hdrImageWithFullPath,
+                         SLVec2i         resolution,
+                         SLstring        name);
 
     //! Add skybox with 6 textures for a cubemap to load
-    void addSkyboxToLoad(SLSkybox*& skybox,
+    void addSkyboxToLoad(SLSkybox*&      skybox,
                          const SLstring& cubeMapXPos,
                          const SLstring& cubeMapXNeg,
                          const SLstring& cubeMapYPos,

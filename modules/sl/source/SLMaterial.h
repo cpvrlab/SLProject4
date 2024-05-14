@@ -231,25 +231,25 @@ public:
     static SLfloat PERFECT; //!< PM: shininess/translucency limit
 
 protected:
-    SLAssetManager*   _assetManager;                //!< pointer to the asset manager (the owner) if available
-    SLReflectionModel _reflectionModel;             //!< reflection model (RM_BlinnPhong or RM_CookTorrance)
-    SLCol4f           _ambient;                     //!< ambient color (RGB reflection coefficients)
-    SLCol4f           _diffuse;                     //!< diffuse color (RGB reflection coefficients)
-    SLCol4f           _specular;                    //!< specular color (RGB reflection coefficients)
-    SLCol4f           _emissive;                    //!< emissive color coefficients
-    SLfloat           _shininess;                   //!< shininess exponent in Blinn-Phong model
-    SLfloat           _roughness;                   //!< roughness property (0-1) in Cook-Torrance model
-    SLfloat           _metalness;                   //!< metallic property (0-1) in Cook-Torrance model
-    SLCol4f           _transmissive;                //!< transmissive color (RGB reflection coefficients) for path tracing
-    SLfloat           _translucency;                //!< translucency exponent for light refraction for path tracing
-    SLfloat           _kr{};                        //!< reflection coefficient 0.0 - 1.0 used for ray and path tracing
-    SLfloat           _kt{};                        //!< transmission coefficient 0.0 - 1.0 used for ray and path tracing
-    SLfloat           _kn{};                        //!< refraction index
-    SLbool            _getsShadows;                 //!< true if shadows are visible on this material
-    SLGLProgram*      _program{};                   //!< pointer to a GLSL shader program
-    SLGLProgram*      _programTF{};                 //!< pointer to a GLSL shader program for transformFeedback
-    SLint             _numTextures;                 //!< number of textures in all _textures vectors array
-    SLSkybox*         _skybox;                      //!< pointer to the skybox
+    SLAssetManager*   _assetManager;    //!< pointer to the asset manager (the owner) if available
+    SLReflectionModel _reflectionModel; //!< reflection model (RM_BlinnPhong or RM_CookTorrance)
+    SLCol4f           _ambient;         //!< ambient color (RGB reflection coefficients)
+    SLCol4f           _diffuse;         //!< diffuse color (RGB reflection coefficients)
+    SLCol4f           _specular;        //!< specular color (RGB reflection coefficients)
+    SLCol4f           _emissive;        //!< emissive color coefficients
+    SLfloat           _shininess;       //!< shininess exponent in Blinn-Phong model
+    SLfloat           _roughness;       //!< roughness property (0-1) in Cook-Torrance model
+    SLfloat           _metalness;       //!< metallic property (0-1) in Cook-Torrance model
+    SLCol4f           _transmissive;    //!< transmissive color (RGB reflection coefficients) for path tracing
+    SLfloat           _translucency;    //!< translucency exponent for light refraction for path tracing
+    SLfloat           _kr{};            //!< reflection coefficient 0.0 - 1.0 used for ray and path tracing
+    SLfloat           _kt{};            //!< transmission coefficient 0.0 - 1.0 used for ray and path tracing
+    SLfloat           _kn{};            //!< refraction index
+    SLbool            _getsShadows;     //!< true if shadows are visible on this material
+    SLGLProgram*      _program{};       //!< pointer to a GLSL shader program
+    SLGLProgram*      _programTF{};     //!< pointer to a GLSL shader program for transformFeedback
+    SLint             _numTextures;     //!< number of textures in all _textures vectors array
+    SLSkybox*         _skybox;          //!< pointer to the skybox
 
     // For particle system
     SLParticleSystem* _ps; //!< pointer to a particle system

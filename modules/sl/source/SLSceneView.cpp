@@ -50,7 +50,7 @@ SLSceneView::~SLSceneView()
     if (_gui)
         _gui->onClose();
 
-    SL_LOG("Destructor      : ~SLSceneView");
+    SL_LOG("Destructor       : ~SLSceneView");
 }
 //-----------------------------------------------------------------------------
 /*! SLSceneView::init initializes default values for an empty scene

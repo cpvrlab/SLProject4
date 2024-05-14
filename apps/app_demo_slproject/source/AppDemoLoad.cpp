@@ -60,6 +60,7 @@
 #include <AppDemoSceneEmpty.h>
 #include <AppDemoSceneFigure.h>
 #include <AppDemoSceneFrustum.h>
+#include <AppDemoSceneGLTF.h>
 #include <AppDemoSceneMeshLoad.h>
 #include <AppDemoSceneMinimal.h>
 #include <AppDemoSceneLegacy.h>
@@ -638,121 +639,7 @@ void appDemoLoadScene(SLAssetManager* am,
     SLScene::entities.dump(true);
 #endif
 
-    if (
-      sceneID == SID_glTF_DamagedHelmet ||
-      sceneID == SID_glTF_FlightHelmet ||
-      sceneID == SID_glTF_Sponza ||
-      sceneID == SID_glTF_WaterBottle) //..........................................................
-    {
-        SLstring damagedHelmet = modelPath + "GLTF/glTF-Sample-Models/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf";
-        SLstring flightHelmet  = modelPath + "GLTF/glTF-Sample-Models/2.0/FlightHelmet/glTF/FlightHelmet.gltf";
-        SLstring sponzaPalace  = modelPath + "GLTF/glTF-Sample-Models/2.0/Sponza/glTF/Sponza.gltf";
-        SLstring waterBottle   = modelPath + "GLTF/glTF-Sample-Models/2.0/WaterBottle/glTF/WaterBottle.gltf";
-
-        if ( //(sceneID == SID_glTF_ClearCoatTest && Utils::fileExists(clearCoatTest)) ||
-          (sceneID == SID_glTF_DamagedHelmet && SLFileStorage::exists(damagedHelmet, IOK_model)) ||
-          (sceneID == SID_glTF_FlightHelmet && SLFileStorage::exists(flightHelmet, IOK_model)) ||
-          (sceneID == SID_glTF_Sponza && SLFileStorage::exists(sponzaPalace, IOK_model)) ||
-          (sceneID == SID_glTF_WaterBottle && SLFileStorage::exists(waterBottle, IOK_model)))
-        {
-            SLVec3f  camPos, lookAt;
-            SLfloat  camClipFar = 100;
-            SLstring modelFile;
-
-            switch (sceneID)
-            {
-                case SID_glTF_DamagedHelmet:
-                {
-                    s->name("glTF-Sample-Model: Damaged Helmet");
-                    modelFile = damagedHelmet;
-                    camPos.set(0, 0, 3);
-                    lookAt.set(0, camPos.y, 0);
-                    camClipFar = 20;
-                    break;
-                }
-                case SID_glTF_FlightHelmet:
-                {
-                    s->name("glTF-Sample-Model: Flight Helmet");
-                    modelFile = flightHelmet;
-                    camPos.set(0, 0.33f, 1.1f);
-                    lookAt.set(0, camPos.y, 0);
-                    camClipFar = 20;
-                    break;
-                }
-                case SID_glTF_Sponza:
-                {
-                    s->name("glTF-Sample-Model: Sponza Palace in Dubrovnic");
-                    modelFile = sponzaPalace;
-                    camPos.set(-8, 1.6f, 0);
-                    lookAt.set(0, camPos.y, 0);
-                    break;
-                }
-                case SID_glTF_WaterBottle:
-                {
-                    s->name("glTF-Sample-Model: WaterBottle");
-                    modelFile = waterBottle;
-                    camPos.set(0, 0, 0.5f);
-                    lookAt.set(0, camPos.y, 0);
-                    camClipFar = 20;
-                    break;
-                }
-            }
-
-            s->info("glTF Sample Model with Physically Based Rendering material and Image Based Lighting.");
-
-            // Create HDR CubeMap and get precalculated textures from it
-            SLSkybox* skybox = new SLSkybox(am,
-                                            shaderPath,
-                                            modelPath + "GLTF/glTF-Sample-Models/hdris/envmap_malibu.hdr",
-                                            SLVec2i(256, 256),
-                                            "HDR Skybox");
-            // Create a scene group node
-            SLNode* scene = new SLNode("scene node");
-            s->root3D(scene);
-
-            // Create camera and initialize its parameters
-            SLCamera* cam1 = new SLCamera("Camera 1");
-            cam1->translation(camPos);
-            cam1->lookAt(lookAt);
-            cam1->background().colors(SLCol4f(0.2f, 0.2f, 0.2f));
-            cam1->focalDist(camPos.length());
-            cam1->clipFar(camClipFar);
-            cam1->setInitialState();
-            scene->addChild(cam1);
-
-            // Add directional light with a position that corresponds roughly to the sun direction
-            SLLight::gamma        = 2.2f;
-            SLLightDirect* light1 = new SLLightDirect(am, s, 0.55f, 1.0f, -0.2f, 0.2f, 0, 1, 1);
-            light1->lookAt(0, 0, 0);
-            light1->attenuation(1, 0, 0);
-            light1->createsShadows(true);
-            light1->createShadowMapAutoSize(cam1, SLVec2i(2048, 2048), 4);
-            light1->shadowMap()->cascadesFactor(1.0);
-            light1->doSmoothShadows(true);
-            light1->castsShadows(false);
-            light1->shadowMinBias(0.001f);
-            light1->shadowMaxBias(0.003f);
-            scene->addChild(light1);
-
-            // Import main model
-            SLAssimpImporter importer;
-            SLNode*          pbrGroup = importer.load(s->animManager(),
-                                             am,
-                                             modelFile,
-                                             Utils::getPath(modelFile),
-                                             skybox,
-                                             false,   // delete tex images after build
-                                             true,    // only meshes
-                                             nullptr, // no replacement material
-                                             0.4f);   // 40% ambient reflection
-            scene->addChild(pbrGroup);
-
-            s->skybox(skybox);
-            sv->camera(cam1);
-            sv->doWaitOnIdle(true); // Saves energy
-        }
-    }
-    else if (sceneID == SID_Robotics_FanucCRX_FK) //...............................................
+    if (sceneID == SID_Robotics_FanucCRX_FK) //...............................................
     {
         SLstring modelFile = modelPath + "GLTF/FanucCRX/Fanuc-CRX.gltf";
 
@@ -4637,6 +4524,10 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         case SID_SuzannePerPixBlinnTmNmAo: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and diffuse, normal, ambient occlusion and shadow mapping", true, true, true, false); break;
         case SID_SuzannePerPixBlinnTmNmSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and diffuse, normal and shadow mapping ", true, true, false, true); break;
         case SID_SuzannePerPixBlinnTmNmAoSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and diffuse, normal, ambient occlusion and shadow mapping", true, true, true, true); break;
+        case SID_glTF_DamagedHelmet:
+        case SID_glTF_FlightHelmet:
+        case SID_glTF_Sponza:
+        case SID_glTF_WaterBottle: s = new AppDemoSceneGLTF(sceneID); break;
         default: s = new AppDemoSceneLegacy(sceneID); break;
     }
 

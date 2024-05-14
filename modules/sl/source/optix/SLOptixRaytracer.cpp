@@ -31,7 +31,7 @@ SLOptixRaytracer::SLOptixRaytracer()
 //-----------------------------------------------------------------------------
 SLOptixRaytracer::~SLOptixRaytracer()
 {
-    SL_LOG("Destructor      : ~SLOptixRaytracer");
+    SL_LOG("Destructor       : ~SLOptixRaytracer");
     destroy();
 }
 //-----------------------------------------------------------------------------
