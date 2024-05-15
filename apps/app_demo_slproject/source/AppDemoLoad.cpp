@@ -88,6 +88,7 @@
 #include <AppDemoSceneTextureBlend.h>
 #include <AppDemoSceneTextureCompression.h>
 #include <AppDemoSceneTextureFilter.h>
+#include <AppDemoSceneVideoTexture.h>
 #include <AppDemoSceneVolumeRayCast.h>
 #include <AppDemoSceneVolumeRayCastLighted.h>
 #include <AppDemoSceneZFighting.h>
@@ -646,71 +647,10 @@ void appDemoLoadScene(SLAssetManager* am,
     SLScene::entities.dump(true);
 #endif
 
-    if (sceneID == SID_VideoTextureLive ||
-        sceneID == SID_VideoTextureFile) //...................................................
-    {
-        // Set scene name and info string
-        if (sceneID == SID_VideoTextureLive)
-        {
-            s->name("Live Video Texture");
-            s->info("Minimal texture mapping example with live video source.");
-            CVCapture::instance()->videoType(VT_MAIN); // on desktop it will be the main camera
-        }
-        else
-        {
-            s->name("File Video Texture");
-            s->info("Minimal texture mapping example with video file source.");
-            CVCapture::instance()->videoType(VT_FILE);
-            CVCapture::instance()->videoFilename = AppDemo::videoPath + "street3.mp4";
-            CVCapture::instance()->videoLoops    = true;
-        }
-        sv->viewportSameAsVideo(true);
-
-        // Create video texture on global pointer updated in AppDemoVideo
-        videoTexture   = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
-        SLMaterial* m1 = new SLMaterial(am, "VideoMat", videoTexture);
-
-        // Create a root scene group for all nodes
-        SLNode* scene = new SLNode("scene node");
-        s->root3D(scene);
-
-        // Create a camera node
-        SLCamera* cam1 = new SLCamera("Camera 1");
-        cam1->translation(0, 0, 20);
-        cam1->focalDist(20);
-        cam1->lookAt(0, 0, 0);
-        cam1->background().texture(videoTexture);
-        cam1->setInitialState();
-        cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-        scene->addChild(cam1);
-
-        // Create rectangle meshe and nodes
-        SLfloat h        = 5.0f;
-        SLfloat w        = h * sv->viewportWdivH();
-        SLMesh* rectMesh = new SLRectangle(am, SLVec2f(-w, -h), SLVec2f(w, h), 1, 1, "rect mesh", m1);
-        SLNode* rectNode = new SLNode(rectMesh, "rect node");
-        rectNode->translation(0, 0, -5);
-        scene->addChild(rectNode);
-
-        // Center sphere
-        SLNode* sphere = new SLNode(new SLSphere(am, 2, 32, 32, "Sphere", m1));
-        sphere->rotate(-90, 1, 0, 0);
-        scene->addChild(sphere);
-
-        // Create a light source node
-        SLLightSpot* light1 = new SLLightSpot(am, s, 0.3f);
-        light1->translation(0, 0, 5);
-        light1->lookAt(0, 0, 0);
-        light1->name("light node");
-        scene->addChild(light1);
-
-        sv->camera(cam1);
-        sv->doWaitOnIdle(false);
-    }
-    else if (sceneID == SID_VideoTrackChessMain ||
-             sceneID == SID_VideoTrackChessScnd ||
-             sceneID == SID_VideoCalibrateMain ||
-             sceneID == SID_VideoCalibrateScnd) //.................................................
+    if (sceneID == SID_VideoTrackChessMain ||
+        sceneID == SID_VideoTrackChessScnd ||
+        sceneID == SID_VideoCalibrateMain ||
+        sceneID == SID_VideoCalibrateScnd) //.................................................
     {
         /*
         The tracking of markers is done in AppDemoVideo::onUpdateTracking by calling the specific
@@ -3947,6 +3887,8 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         case SID_AnimationNodeMass: s = new AppDemoSceneAnimationNodeMass(); break;
         case SID_AnimationSkinned: s = new AppDemoSceneAnimationSkinned(); break;
         case SID_AnimationSkinnedMass: s = new AppDemoSceneAnimationSkinnedMass(); break;
+        case SID_VideoTextureFile:
+        case SID_VideoTextureLive: s = new AppDemoSceneVideoTexture(sceneID); break;
         default: s = new AppDemoSceneLegacy(sceneID); break;
     }
 
