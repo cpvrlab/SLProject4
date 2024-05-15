@@ -139,10 +139,10 @@ enum SLSceneID
     SID_VolumeRayCast,
     SID_VolumeRayCastLighted,
 
-    SID_AnimationMass,
-    SID_AnimationSkinned,
     SID_AnimationNode,
-    SID_AnimationAstroboyArmy,
+    SID_AnimationNodeMass,
+    SID_AnimationSkinned,
+    SID_AnimationSkinnedMass,
 
     SID_VideoTextureLive,
     SID_VideoTextureFile,

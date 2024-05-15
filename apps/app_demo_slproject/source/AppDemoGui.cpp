@@ -1695,12 +1695,12 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 {
                     if (ImGui::MenuItem("Node Animation", nullptr, sid == SID_AnimationNode))
                         AppDemo::sceneToLoad = SID_AnimationNode;
-                    if (ImGui::MenuItem("Mass Animation", nullptr, sid == SID_AnimationMass))
-                        AppDemo::sceneToLoad = SID_AnimationMass;
-                    if (ImGui::MenuItem("Skeletal Animation", nullptr, sid == SID_AnimationSkinned))
+                    if (ImGui::MenuItem("Mass Node Animation", nullptr, sid == SID_AnimationNodeMass))
+                        AppDemo::sceneToLoad = SID_AnimationNodeMass;
+                    if (ImGui::MenuItem("Skinned Animation", nullptr, sid == SID_AnimationSkinned))
                         AppDemo::sceneToLoad = SID_AnimationSkinned;
-                    if (ImGui::MenuItem("AstroBoy Army", nullptr, sid == SID_AnimationAstroboyArmy))
-                        AppDemo::sceneToLoad = SID_AnimationAstroboyArmy;
+                    if (ImGui::MenuItem("Mass Skinned Animation", nullptr, sid == SID_AnimationSkinnedMass))
+                        AppDemo::sceneToLoad = SID_AnimationSkinnedMass;
                     if (ImGui::MenuItem("Fanuc-CRX", nullptr, sid == SID_Robotics_FanucCRX_FK))
                         AppDemo::sceneToLoad = SID_Robotics_FanucCRX_FK;
 
