@@ -16,22 +16,19 @@
 
 //-----------------------------------------------------------------------------
 AppDemoSceneVideoTexture::AppDemoSceneVideoTexture(SLSceneID sid)
-  : AppScene("Video Texture")
+  : AppScene("Video Texture"),
+    _sceneID(sid)
 {
     // Set scene name and info string
-    if (sid == SID_VideoTextureLive)
+    if (_sceneID == SID_VideoTextureLive)
     {
         name("Live Video Texture");
         info("Minimal texture mapping example with live video source.");
-        CVCapture::instance()->videoType(VT_MAIN); // on desktop, it will be the main camera
     }
     else
     {
         name("File Video Texture");
         info("Minimal texture mapping example with video file source.");
-        CVCapture::instance()->videoType(VT_FILE);
-        CVCapture::instance()->videoFilename = AppDemo::videoPath + "street3.mp4";
-        CVCapture::instance()->videoLoops    = true;
     }
 }
 //-----------------------------------------------------------------------------
@@ -44,6 +41,19 @@ void AppDemoSceneVideoTexture::registerAssetsToLoad(SLAssetLoader& al)
 //! After parallel loading of the assets the scene gets assembled in here.
 void AppDemoSceneVideoTexture::assemble(SLAssetManager* am, SLSceneView* sv)
 {
+    // Set scene name and info string
+    if (_sceneID == SID_VideoTextureLive)
+    {
+        // on desktop, it will be the main camera
+        CVCapture::instance()->videoType(VT_MAIN);
+    }
+    else
+    {
+        CVCapture::instance()->videoType(VT_FILE);
+        CVCapture::instance()->videoFilename = AppDemo::videoPath + "street3.mp4";
+        CVCapture::instance()->videoLoops    = true;
+    }
+
     sv->viewportSameAsVideo(true);
 
     // Create video texture on global pointer updated in AppDemoVideo

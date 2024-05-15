@@ -26,6 +26,9 @@ class SLScene;
 class SLAssetLoader;
 class SLGLImGui;
 class CVCalibrationEstimator;
+
+using std::optional;
+
 //-----------------------------------------------------------------------------
 //! Top level class for an SLProject application.
 /*!
@@ -45,15 +48,15 @@ class AppDemo
 {
 public:
     // Major owned instances of the app
-    static SLInputManager           inputManager; //!< Input events manager
-    static SLAssetManager*          assetManager; //!< asset manager
-    static SLAssetLoader*           assetLoader;
-    static SLScene*                 scene;      //!< scene pointer
-    static SLVSceneView             sceneViews; //!< vector of sceneview pointers
-    static SLGLImGui*               gui;        //!< gui pointer
-    static SLDeviceRotation         devRot;     //!< Mobile device rotation from IMU
-    static SLDeviceLocation         devLoc;     //!< Mobile device location from GPS
-    static std::optional<SLSceneID> sceneToLoad;
+    static SLInputManager      inputManager; //!< Input events manager
+    static SLAssetManager*     assetManager; //!< asset manager
+    static SLAssetLoader*      assetLoader;
+    static SLScene*            scene;      //!< scene pointer
+    static SLVSceneView        sceneViews; //!< vector of sceneview pointers
+    static SLGLImGui*          gui;        //!< gui pointer
+    static SLDeviceRotation    devRot;     //!< Mobile device rotation from IMU
+    static SLDeviceLocation    devLoc;     //!< Mobile device location from GPS
+    static optional<SLSceneID> sceneToLoad;
 
     static void createAppAndScene(SLstring appName);
     static void deleteAppAndScene();

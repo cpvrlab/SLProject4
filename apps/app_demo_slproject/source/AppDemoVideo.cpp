@@ -25,22 +25,26 @@
 
 //-----------------------------------------------------------------------------
 /*! Global pointer for the video texture defined in AppDemoLoad for video scenes
- It gets updated in the following onUpdateTracking routine */
+ It gets updated in the following onUpdateTracking routine
+ */
 SLGLTexture* videoTexture = nullptr;
 
 /*! Global pointer for a tracker that is set in AppDemoLoad for video scenes
- It gets updated in the following onUpdateTracking routine */
+ It gets updated in the following onUpdateTracking routine
+ */
 CVTracked* tracker = nullptr;
 
 /*! Global pointer to a node that from witch the tracker changes the pose.
- it gets updated in the following onUpdateTracking routine */
+ it gets updated in the following onUpdateTracking routine
+ */
 SLNode* trackedNode = nullptr;
 
 //-----------------------------------------------------------------------------
-// always update scene camera fovV from calibration because the calibration may have
-// been adapted in adjustForSL after a change of aspect ratio!
-// Attention: The active scene view camera may be a different one that the tracking camera
-// but we have to update the tracking camera only!
+/*! always update scene camera fovV from calibration because the calibration
+ may have been adapted in adjustForSL after a change of aspect ratio!
+ Attention: The active scene view camera may be a different one that the
+ tracking camera but we have to update the tracking camera only!
+*/
 void updateTrackingSceneCamera(CVCamera* ac)
 {
     PROFILE_FUNCTION();

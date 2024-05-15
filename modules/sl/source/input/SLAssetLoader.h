@@ -127,8 +127,8 @@ public:
     //! Add generic task
     void addLoadTask(SLAssetLoadTask task);
 
-    void loadAll(function<void()> onDone);
-    void update();
+    void startLoadingAllParallel(function<void()> onDone);
+    void checkIfParallelLoadingIsDone();
 
 private:
     SLScene*         _scene;

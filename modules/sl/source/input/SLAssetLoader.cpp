@@ -126,14 +126,14 @@ void SLAssetLoader::addTextureToLoad(SLGLTexture*&   texture,
  * @param loadGrayscaleIntoAlpha Flag if grayscale image should be loaded into
  * alpha channel.
  */
-void SLAssetLoader::addTextureToLoad(SLGLTexture*&   texture,
+void SLAssetLoader::addTextureToLoad(SLGLTexture*&    texture,
                                      const SLVstring& imageFilenames,
-                                     SLint           min_filter,
-                                     SLint           mag_filter,
-                                     SLint           wrapS,
-                                     SLint           wrapT,
-                                     const SLstring& name,
-                                     SLbool          loadGrayscaleIntoAlpha)
+                                     SLint            min_filter,
+                                     SLint            mag_filter,
+                                     SLint            wrapS,
+                                     SLint            wrapT,
+                                     const SLstring&  name,
+                                     SLbool           loadGrayscaleIntoAlpha)
 {
     _loadTasks.push_back([this,
                           &texture,
@@ -247,7 +247,7 @@ void SLAssetLoader::addSkyboxToLoad(SLSkybox*&      skybox,
                                                  _texturePath + cubeMapZNeg); });
 }
 //-----------------------------------------------------------------------------
-void SLAssetLoader::loadAll(function<void()> onDoneLoading)
+void SLAssetLoader::startLoadingAllParallel(function<void()> onDoneLoading)
 {
     _onDoneLoading = onDoneLoading;
     _isDone.store(false);
@@ -261,12 +261,15 @@ void SLAssetLoader::loadAll(function<void()> onDoneLoading)
         _isDone = true; });
 }
 //-----------------------------------------------------------------------------
-void SLAssetLoader::update()
+void SLAssetLoader::checkIfParallelLoadingIsDone()
 {
     if (_isLoading && _isDone)
     {
-        _worker->join();
-        _worker = {};
+        if (_worker)
+        {
+            _worker->join();
+            _worker = {}; // set optional to false
+        }
 
         _isLoading = false;
         _loadTasks.clear();

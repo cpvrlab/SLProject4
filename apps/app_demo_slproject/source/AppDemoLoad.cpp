@@ -3925,7 +3925,7 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     sv->visibleMaterials2D().clear();
     sv->visibleMaterials3D().clear();
 
-    // clear gui stuff that depends on scene and sceneview
+    // Clear gui stuff that depends on scene and sceneview
     AppDemoGui::clear();
 
     // Deactivate in general the device sensors
@@ -3937,6 +3937,7 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
 
     al->scene(s);
 
+    // Define callback lambda to be called after loading
     auto onDoneLoading = [s, sv]
     {
         s->assemble(am, sv);
@@ -3949,6 +3950,7 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     };
 
     s->registerAssetsToLoad(*al);
-    al->loadAll(onDoneLoading);
+
+    al->startLoadingAllParallel(onDoneLoading);
 }
 //-----------------------------------------------------------------------------

@@ -22,6 +22,7 @@ public:
     void assemble(SLAssetManager* am, SLSceneView* sv) override;
 
 private:
+    SLSceneID    _sceneID;
     SLGLTexture* _videoTex;
 };
 //-----------------------------------------------------------------------------

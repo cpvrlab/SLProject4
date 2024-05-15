@@ -70,16 +70,17 @@ SLbool onPaint()
 
     if (AppDemo::sceneViews.empty())
         return false;
+
     SLSceneView* sv = AppDemo::sceneViews[svIndex];
 
     if (AppDemo::sceneToLoad)
     {
         appDemoSwitchScene(sv, *AppDemo::sceneToLoad);
-        AppDemo::sceneToLoad = {};
+        AppDemo::sceneToLoad = {}; // sets optional to false
     }
 
     if (AppDemo::assetLoader->isLoading())
-        AppDemo::assetLoader->update();
+        AppDemo::assetLoader->checkIfParallelLoadingIsDone();
 
     // If live video image is requested grab it and copy it
     if (CVCapture::instance()->videoType() != VT_NONE)
