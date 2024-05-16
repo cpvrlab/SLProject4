@@ -373,7 +373,7 @@ void CVCapture::loadIntoLastFrame(const float           viewportWdivH,
     adjustForSL(viewportWdivH);
 }
 //-----------------------------------------------------------------------------
-//! Does all adjustments needed for the videoTexture
+//! Does all adjustments needed for the gVideoTexture
 /*! CVCapture::adjustForSL processes the following adjustments for all input
 images no matter with what they where captured:
 \n

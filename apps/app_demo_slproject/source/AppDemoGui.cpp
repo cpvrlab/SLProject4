@@ -60,8 +60,8 @@
 #endif
 
 //-----------------------------------------------------------------------------
-extern CVTracked*   tracker;      // Global pointer declared in AppDemoTracking
-extern SLNode*      trackedNode;  // Global pointer declared in AppDemoTracking
+extern CVTracked*   gVideoTracker;      // Global pointer declared in AppDemoTracking
+extern SLNode*      gVideoTrackedNode;  // Global pointer declared in AppDemoTracking
 extern SLGLTexture* gTexMRI3D;    // Global pointer declared in AppDemoLoad
 extern SLNode*      gDragonModel; // Global pointer declared in AppDemoLoad
 
@@ -478,7 +478,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                     }
 
 #ifndef SL_EMSCRIPTEN
-                    if (vt != VT_NONE && tracker != nullptr && trackedNode != nullptr)
+                    if (vt != VT_NONE && gVideoTracker != nullptr && gVideoTrackedNode != nullptr)
                     {
                         snprintf(m + strlen(m), sizeof(m), "  Tracking : %5.1f ms (%3d%%)\n", trackingTime, (SLint)trackingTimePC);
                         snprintf(m + strlen(m), sizeof(m), "   Detect  : %5.1f ms (%3d%%)\n", detectTime, (SLint)detectTimePC);
@@ -787,18 +787,18 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                 snprintf(m + strlen(m), sizeof(m), "Calib. state : %s\n", c->stateStr().c_str());
                 snprintf(m + strlen(m), sizeof(m), "Num. caps    : %d\n", c->numCapturedImgs());
 
-                if (vt != VT_NONE && tracker != nullptr && trackedNode != nullptr)
+                if (vt != VT_NONE && gVideoTracker != nullptr && gVideoTrackedNode != nullptr)
                 {
                     snprintf(m + strlen(m), sizeof(m), "-------------:\n");
-                    if (typeid(*trackedNode) == typeid(SLCamera))
+                    if (typeid(*gVideoTrackedNode) == typeid(SLCamera))
                     {
-                        SLVec3f cameraPos = trackedNode->updateAndGetWM().translation();
+                        SLVec3f cameraPos = gVideoTrackedNode->updateAndGetWM().translation();
                         snprintf(m + strlen(m), sizeof(m), "Dist. to zero: %4.2f\n", cameraPos.length());
                     }
                     else
                     {
                         SLVec3f cameraPos = ((SLNode*)sv->camera())->updateAndGetWM().translation();
-                        SLVec3f objectPos = trackedNode->updateAndGetWM().translation();
+                        SLVec3f objectPos = gVideoTrackedNode->updateAndGetWM().translation();
                         SLVec3f camToObj  = objectPos - cameraPos;
                         snprintf(m + strlen(m), sizeof(m), "Dist. to obj.: %4.2f\n", camToObj.length());
                     }
@@ -2251,12 +2251,12 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 }
 
                 CVTrackedFeatures* featureTracker = nullptr;
-                if (tracker != nullptr && typeid(*tracker) == typeid(CVTrackedFeatures))
-                    featureTracker = (CVTrackedFeatures*)tracker;
+                if (gVideoTracker != nullptr && typeid(*gVideoTracker) == typeid(CVTrackedFeatures))
+                    featureTracker = (CVTrackedFeatures*)gVideoTracker;
 
-                if (tracker != nullptr)
-                    if (ImGui::MenuItem("Draw Detection", nullptr, tracker->drawDetection()))
-                        tracker->drawDetection(!tracker->drawDetection());
+                if (gVideoTracker != nullptr)
+                    if (ImGui::MenuItem("Draw Detection", nullptr, gVideoTracker->drawDetection()))
+                        gVideoTracker->drawDetection(!gVideoTracker->drawDetection());
 
                 if (ImGui::BeginMenu("Feature Tracking", featureTracker != nullptr) && featureTracker != nullptr)
                 {

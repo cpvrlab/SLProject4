@@ -1,5 +1,5 @@
 //#############################################################################
-//  File:      AppDemoSceneVideoTexture.h
+//  File:      AppDemoSceneVideoTrackAruco.h
 //  Date:      May 2024
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
 //  Authors:   Marino von Wattenwyl
@@ -7,17 +7,17 @@
 //             Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
 
-#ifndef APPDEMOSCENEVIDEOTEX_H
-#define APPDEMOSCENEVIDEOTEX_H
+#ifndef APPDEMOSCENEVIDEOARUCO_H
+#define APPDEMOSCENEVIDEOARUCO_H
 
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
-//! Class for live or file video on texture test scene
-class AppDemoSceneVideoTexture : public AppScene
+//! Class for ARUCO marker tracking test scene
+class AppDemoSceneVideoTrackAruco : public AppScene
 {
 public:
-    AppDemoSceneVideoTexture(SLSceneID sid);
+    AppDemoSceneVideoTrackAruco(SLSceneID sid);
     void registerAssetsToLoad(SLAssetLoader& al) override;
     void assemble(SLAssetManager* am, SLSceneView* sv) override;
 

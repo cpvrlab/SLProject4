@@ -89,7 +89,10 @@
 #include <AppDemoSceneTextureBlend.h>
 #include <AppDemoSceneTextureCompression.h>
 #include <AppDemoSceneTextureFilter.h>
+#include <AppDemoSceneVideoChessboard.h>
 #include <AppDemoSceneVideoTexture.h>
+#include <AppDemoSceneVideoTrackAruco.h>
+#include <AppDemoSceneVideoTrackFace.h>
 #include <AppDemoSceneVolumeRayCast.h>
 #include <AppDemoSceneVolumeRayCastLighted.h>
 #include <AppDemoSceneZFighting.h>
@@ -100,9 +103,9 @@
 
 //-----------------------------------------------------------------------------
 // Global pointers declared in AppDemoVideo
-extern SLGLTexture* videoTexture;
-extern CVTracked*   tracker;
-extern SLNode*      trackedNode;
+extern SLGLTexture* gVideoTexture;
+extern CVTracked*   gVideoTracker;
+extern SLNode*      gVideoTrackedNode;
 //-----------------------------------------------------------------------------
 //! Global pointer to 3D MRI texture for volume rendering for threaded loading
 SLGLTexture* gTexMRI3D = nullptr;
@@ -648,194 +651,7 @@ void appDemoLoadScene(SLAssetManager* am,
     SLScene::entities.dump(true);
 #endif
 
-    if (sceneID == SID_VideoTrackChessMain ||
-        sceneID == SID_VideoTrackChessScnd ||
-        sceneID == SID_VideoCalibrateMain ||
-        sceneID == SID_VideoCalibrateScnd) //.................................................
-    {
-        /*
-        The tracking of markers is done in AppDemoVideo::onUpdateTracking by calling the specific
-        CVTracked::track method. If a marker was found it overwrites the linked nodes
-        object matrix (SLNode::_om). If the linked node is the active camera the found
-        transform is additionally inversed. This would be the standard augmented realtiy
-        use case.
-        The chessboard marker used in these scenes is also used for the camera
-        calibration. The different calibration state changes are also handled in
-        AppDemoVideo::onUpdateVideo.
-        */
-
-        // Setup here only the requested scene.
-        if (sceneID == SID_VideoTrackChessMain ||
-            sceneID == SID_VideoTrackChessScnd)
-        {
-            if (sceneID == SID_VideoTrackChessMain)
-            {
-                CVCapture::instance()->videoType(VT_MAIN);
-                s->name("Track Chessboard (main cam.)");
-            }
-            else
-            {
-                CVCapture::instance()->videoType(VT_SCND);
-                s->name("Track Chessboard (scnd cam.");
-            }
-        }
-        else if (sceneID == SID_VideoCalibrateMain)
-        {
-            if (AppDemo::calibrationEstimator)
-            {
-                delete AppDemo::calibrationEstimator;
-                AppDemo::calibrationEstimator = nullptr;
-            }
-            CVCapture::instance()->videoType(VT_MAIN);
-            s->name("Calibrate Main Cam.");
-        }
-        else if (sceneID == SID_VideoCalibrateScnd)
-        {
-            if (AppDemo::calibrationEstimator)
-            {
-                delete AppDemo::calibrationEstimator;
-                AppDemo::calibrationEstimator = nullptr;
-            }
-            CVCapture::instance()->videoType(VT_SCND);
-            s->name("Calibrate Scnd Cam.");
-        }
-
-        // Create video texture on global pointer updated in AppDemoVideo
-        videoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
-
-        // Material
-        SLMaterial* yellow = new SLMaterial(am, "mY", SLCol4f(1, 1, 0, 0.5f));
-
-        // set the edge length of a chessboard square
-        SLfloat e1 = 0.028f;
-        SLfloat e3 = e1 * 3.0f;
-        SLfloat e9 = e3 * 3.0f;
-
-        // Create a scene group node
-        SLNode* scene = new SLNode("scene node");
-
-        // Create a camera node
-        SLCamera* cam1 = new SLCamera();
-        cam1->name("camera node");
-        cam1->translation(0, 0, 5);
-        cam1->lookAt(0, 0, 0);
-        cam1->focalDist(5);
-        cam1->clipFar(10);
-        cam1->fov(CVCapture::instance()->activeCamera->calibration.cameraFovVDeg());
-        cam1->background().texture(videoTexture);
-        cam1->setInitialState();
-        cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-        scene->addChild(cam1);
-
-        // Create a light source node
-        SLLightSpot* light1 = new SLLightSpot(am, s, e1 * 0.5f);
-        light1->translate(e9, e9, e9);
-        light1->name("light node");
-        scene->addChild(light1);
-
-        // Build mesh & node
-        if (sceneID == SID_VideoTrackChessMain ||
-            sceneID == SID_VideoTrackChessScnd)
-        {
-            SLBox*  box     = new SLBox(am, 0.0f, 0.0f, 0.0f, e3, e3, e3, "Box", yellow);
-            SLNode* boxNode = new SLNode(box, "Box Node");
-            boxNode->setDrawBitsRec(SL_DB_CULLOFF, true);
-            SLNode* axisNode = new SLNode(new SLCoordAxis(am), "Axis Node");
-            axisNode->setDrawBitsRec(SL_DB_MESHWIRED, false);
-            axisNode->scale(e3);
-            boxNode->addChild(axisNode);
-            scene->addChild(boxNode);
-        }
-
-        // Create OpenCV Tracker for the camera node for AR camera.
-        tracker = new CVTrackedChessboard(AppDemo::calibIniPath);
-        tracker->drawDetection(true);
-        trackedNode = cam1;
-
-        // pass the scene group as root node
-        s->root3D(scene);
-
-        // Set active camera
-        sv->camera(cam1);
-        sv->doWaitOnIdle(false);
-    }
-    else if (sceneID == SID_VideoTrackArucoMain ||
-             sceneID == SID_VideoTrackArucoScnd) //................................................
-    {
-        /*
-        The tracking of markers is done in AppDemoVideo::onUpdateVideo by calling the specific
-        CVTracked::track method. If a marker was found it overwrites the linked nodes
-        object matrix (SLNode::_om). If the linked node is the active camera the found
-        transform is additionally inversed. This would be the standard augmented realtiy
-        use case.
-        */
-
-        if (sceneID == SID_VideoTrackArucoMain)
-        {
-            CVCapture::instance()->videoType(VT_MAIN);
-            s->name("Track Aruco (main cam.)");
-            s->info("Hold the Aruco board dictionary 0 into the field of view of the main camera. You can find the Aruco markers in the file data/Calibrations. If not all markers are tracked you may have the mirror the video horizontally.");
-        }
-        else
-        {
-            CVCapture::instance()->videoType(VT_SCND);
-            s->name("Track Aruco (scnd. cam.)");
-            s->info("Hold the Aruco board dictionary 0 into the field of view of the secondary camera. You can find the Aruco markers in the file data/Calibrations. If not all markers are tracked you may have the mirror the video horizontally.");
-        }
-
-        // Create video texture on global pointer updated in AppDemoVideo
-        videoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
-
-        // Material
-        SLMaterial* yellow = new SLMaterial(am, "mY", SLCol4f(1, 1, 0, 0.5f));
-        SLMaterial* cyan   = new SLMaterial(am, "mY", SLCol4f(0, 1, 1, 0.5f));
-
-        // Create a scene group node
-        SLNode* scene = new SLNode("scene node");
-        s->root3D(scene);
-
-        // Create a camera node 1
-        SLCamera* cam1 = new SLCamera("Camera 1");
-        cam1->translation(0, 0, 5);
-        cam1->lookAt(0, 0, 0);
-        cam1->fov(CVCapture::instance()->activeCamera->calibration.cameraFovVDeg());
-        cam1->background().texture(videoTexture);
-        cam1->setInitialState();
-        cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-        scene->addChild(cam1);
-
-        // Create a light source node
-        SLLightSpot* light1 = new SLLightSpot(am, s, 0.02f);
-        light1->translation(0.12f, 0.12f, 0.12f);
-        light1->name("light node");
-        scene->addChild(light1);
-
-        // Get the half edge length of the aruco marker
-        SLfloat edgeLen = CVTrackedAruco::params.edgeLength;
-        SLfloat he      = edgeLen * 0.5f;
-
-        // Build mesh & node that will be tracked by the 1st marker (camera)
-        SLBox*  box1      = new SLBox(am, -he, -he, 0.0f, he, he, 2 * he, "Box 1", yellow);
-        SLNode* boxNode1  = new SLNode(box1, "Box Node 1");
-        SLNode* axisNode1 = new SLNode(new SLCoordAxis(am), "Axis Node 1");
-        axisNode1->setDrawBitsRec(SL_DB_MESHWIRED, false);
-        axisNode1->scale(edgeLen);
-        boxNode1->addChild(axisNode1);
-        boxNode1->setDrawBitsRec(SL_DB_CULLOFF, true);
-        scene->addChild(boxNode1);
-
-        // Create OpenCV Tracker for the box node
-        tracker = new CVTrackedAruco(9, AppDemo::calibIniPath);
-        tracker->drawDetection(true);
-        trackedNode = boxNode1;
-
-        // Set active camera
-        sv->camera(cam1);
-
-        // Turn on constant redraw
-        sv->doWaitOnIdle(false);
-    }
-    else if (sceneID == SID_VideoTrackFeature2DMain) //............................................
+    if (sceneID == SID_VideoTrackFeature2DMain) //............................................
     {
         /*
         The tracking of markers is done in AppDemoVideo::onUpdateVideo by calling the specific
@@ -849,7 +665,7 @@ void appDemoLoadScene(SLAssetManager* am,
         s->info("Augmented Reality 2D Feature Tracking: You need to print out the stones image target from the file data/calibrations/vuforia_markers.pdf");
 
         // Create video texture on global pointer updated in AppDemoVideo
-        videoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
+        gVideoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
 
         SLCamera* cam1 = new SLCamera("Camera 1");
         cam1->translation(0, 2, 60);
@@ -858,7 +674,7 @@ void appDemoLoadScene(SLAssetManager* am,
         cam1->clipFar(1000.0f); // Increase to infinity?
         cam1->setInitialState();
         cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-        cam1->background().texture(videoTexture);
+        cam1->background().texture(gVideoTexture);
         CVCapture::instance()->videoType(VT_MAIN);
 
         SLLightSpot* light1 = new SLLightSpot(am, s, 420, 420, 420, 1);
@@ -893,91 +709,16 @@ void appDemoLoadScene(SLAssetManager* am,
         scene->addChild(box);
         scene->addChild(cam1);
 
-        // Create feature tracker and let it pose the camera for AR posing
-        tracker = new CVTrackedFeatures(texPath + "features_stones.jpg");
-        // tracker = new CVTrackedFeatures("features_abstract.jpg");
-        tracker->drawDetection(true);
-        trackedNode = cam1;
+        // Create feature gVideoTracker and let it pose the camera for AR posing
+        gVideoTracker = new CVTrackedFeatures(texPath + "features_stones.jpg");
+        // gVideoTracker = new CVTrackedFeatures("features_abstract.jpg");
+        gVideoTracker->drawDetection(true);
+        gVideoTrackedNode = cam1;
 
         sv->doWaitOnIdle(false); // for constant video feed
         sv->camera(cam1);
         AppDemo::devRot.isUsed(true);
     }
-#ifndef SL_EMSCRIPTEN
-    else if (sceneID == SID_VideoTrackFaceMain ||
-             sceneID == SID_VideoTrackFaceScnd) //.................................................
-    {
-        /*
-        The tracking of markers is done in AppDemoVideo::onUpdateVideo by calling the specific
-        CVTracked::track method. If a marker was found it overwrites the linked nodes
-        object matrix (SLNode::_om). If the linked node is the active camera the found
-        transform is additionally inversed. This would be the standard augmented realtiy
-        use case.
-        */
-
-        if (sceneID == SID_VideoTrackFaceMain)
-        {
-            CVCapture::instance()->videoType(VT_MAIN);
-            s->name("Track Face (main cam.)");
-        }
-        else
-        {
-            CVCapture::instance()->videoType(VT_SCND);
-            s->name("Track Face (scnd. cam.)");
-        }
-        s->info("Face and facial landmark detection.");
-
-        // Create video texture on global pointer updated in AppDemoVideo
-        videoTexture = new SLGLTexture(am,
-                                       texPath + "LiveVideoError.png",
-                                       GL_LINEAR,
-                                       GL_LINEAR);
-
-        SLCamera* cam1 = new SLCamera("Camera 1");
-        cam1->translation(0, 0, 0.5f);
-        cam1->clipNear(0.1f);
-        cam1->clipFar(1000.0f); // Increase to infinity?
-        cam1->setInitialState();
-        cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-        cam1->background().texture(videoTexture);
-
-        SLLightSpot* light1 = new SLLightSpot(am, s, 10, 10, 10, 1);
-        light1->powers(1.0f, 1.0f, 1.0f);
-        light1->attenuation(1, 0, 0);
-
-        // Load sunglasses
-        SLAssimpImporter importer;
-        SLNode*          glasses = importer.load(s->animManager(),
-                                        am,
-                                        modelPath + "FBX/Sunglasses.fbx",
-                                        texPath);
-        glasses->scale(0.008f);
-        glasses->translate(0, 1.5f, 0);
-
-        // Add axis arrows at world center
-        SLNode* axis = new SLNode(new SLCoordAxis(am), "Axis Node");
-        axis->setDrawBitsRec(SL_DB_MESHWIRED, false);
-        axis->scale(0.03f);
-
-        // Scene structure
-        SLNode* scene = new SLNode("Scene");
-        s->root3D(scene);
-        scene->addChild(light1);
-        scene->addChild(cam1);
-        scene->addChild(glasses);
-        scene->addChild(axis);
-
-        // Add a face tracker that moves the camera node
-        tracker     = new CVTrackedFaces(AppDemo::calibIniPath + "haarcascade_frontalface_alt2.xml",
-                                     AppDemo::calibIniPath + "lbfmodel.yaml",
-                                     3);
-        trackedNode = cam1;
-        tracker->drawDetection(true);
-
-        sv->doWaitOnIdle(false); // for constant video feed
-        sv->camera(cam1);
-    }
-#endif
 #ifdef SL_BUILD_WITH_MEDIAPIPE
     else if (sceneID == SID_VideoTrackMediaPipeHandsMain) //.......................................
     {
@@ -985,20 +726,20 @@ void appDemoLoadScene(SLAssetManager* am,
         s->name("Tracking Hands with MediaPipe (main cam.)");
         s->info("Tracking hands with MediaPipe.");
 
-        videoTexture = new SLGLTexture(am,
+        gVideoTexture = new SLGLTexture(am,
                                        texPath + "LiveVideoError.png",
                                        GL_LINEAR,
                                        GL_LINEAR);
 
         SLCamera* cam1 = new SLCamera("Camera 1");
-        cam1->background().texture(videoTexture);
+        cam1->background().texture(gVideoTexture);
 
         SLNode* scene = new SLNode("Scene");
         s->root3D(scene);
 
-        tracker     = new CVTrackedMediaPipeHands(AppDemo::dataPath);
-        trackedNode = cam1;
-        tracker->drawDetection(true);
+        gVideoTracker     = new CVTrackedMediaPipeHands(AppDemo::dataPath);
+        gVideoTrackedNode = cam1;
+        gVideoTracker->drawDetection(true);
 
         sv->doWaitOnIdle(false);
         sv->camera(cam1);
@@ -1012,7 +753,7 @@ void appDemoLoadScene(SLAssetManager* am,
         s->info("Track the scene with a point cloud built with the WAI (Where Am I) library.");
 
         // Create video texture on global pointer updated in AppDemoVideo
-        videoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
+        gVideoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
 
         // Material
         SLMaterial* yellow = new SLMaterial(am, "mY", SLCol4f(1, 1, 0, 0.5f));
@@ -1027,7 +768,7 @@ void appDemoLoadScene(SLAssetManager* am,
         cam1->translation(0, 0, 5);
         cam1->lookAt(0, 0, 0);
         cam1->fov(CVCapture::instance()->activeCamera->calibration.cameraFovVDeg());
-        cam1->background().texture(videoTexture);
+        cam1->background().texture(gVideoTexture);
         cam1->setInitialState();
         scene->addChild(cam1);
 
@@ -1060,9 +801,9 @@ void appDemoLoadScene(SLAssetManager* am,
 #    else
         vocFileName = "ORBvoc.bin";
 #    endif
-        tracker = new CVTrackedWAI(Utils::findFile(vocFileName, {AppDemo::calibIniPath, AppDemo::exePath}));
-        tracker->drawDetection(true);
-        trackedNode = cam1;
+        gVideoTracker = new CVTrackedWAI(Utils::findFile(vocFileName, {AppDemo::calibIniPath, AppDemo::exePath}));
+        gVideoTracker->drawDetection(true);
+        gVideoTrackedNode = cam1;
 
         sv->camera(cam1);
 
@@ -1077,7 +818,7 @@ void appDemoLoadScene(SLAssetManager* am,
         s->info("Minimal scene to test the devices IMU and GPS Sensors. See the sensor information. GPS needs a few sec. to improve the accuracy.");
 
         // Create video texture on global pointer updated in AppDemoVideo
-        videoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
+        gVideoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
 
         SLCamera* cam1 = new SLCamera("Camera 1");
         cam1->translation(0, 0, 60);
@@ -1087,7 +828,7 @@ void appDemoLoadScene(SLAssetManager* am,
         cam1->clipFar(10000.0f);
         cam1->setInitialState();
         cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-        cam1->background().texture(videoTexture);
+        cam1->background().texture(gVideoTexture);
 
         // Turn on main video
         CVCapture::instance()->videoType(VT_MAIN);
@@ -2134,15 +1875,15 @@ void appDemoLoadScene(SLAssetManager* am,
         s->info("Augmented Reality Christoffel Tower");
 
         // Create video texture on global pointer updated in AppDemoVideo
-        videoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
-        videoTexture->texType(TT_videoBkgd);
+        gVideoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
+        gVideoTexture->texType(TT_videoBkgd);
 
         // Create see through video background material without shadow mapping
-        SLMaterial* matVideoBkgd = new SLMaterial(am, "matVideoBkgd", videoTexture);
+        SLMaterial* matVideoBkgd = new SLMaterial(am, "matVideoBkgd", gVideoTexture);
         matVideoBkgd->reflectionModel(RM_Custom);
 
         // Create see through video background material with shadow mapping
-        SLMaterial* matVideoBkgdSM = new SLMaterial(am, "matVideoBkgdSM", videoTexture);
+        SLMaterial* matVideoBkgdSM = new SLMaterial(am, "matVideoBkgdSM", gVideoTexture);
         matVideoBkgdSM->reflectionModel(RM_Custom);
         matVideoBkgdSM->ambient(SLCol4f(0.6f, 0.6f, 0.6f));
         matVideoBkgdSM->getsShadows(true);
@@ -2154,7 +1895,7 @@ void appDemoLoadScene(SLAssetManager* am,
         cam1->clipFar(700);
         cam1->setInitialState();
         cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-        cam1->background().texture(videoTexture);
+        cam1->background().texture(gVideoTexture);
 
         // Turn on main video
         CVCapture::instance()->videoType(VT_MAIN);
@@ -2296,7 +2037,7 @@ void appDemoLoadScene(SLAssetManager* am,
         s->info("Augmented Reality at Biel-BFH");
 
         // Create video texture on global pointer updated in AppDemoVideo
-        videoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
+        gVideoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
 
         // Define shader that shows on all pixels the video background
         SLGLProgram* spVideoBackground = new SLGLProgramGeneric(am,
@@ -2304,7 +2045,7 @@ void appDemoLoadScene(SLAssetManager* am,
                                                                 shaderPath + "PerPixTmBackground.frag");
         SLMaterial*  matVideoBkgd      = new SLMaterial(am,
                                                   "matVideoBkgd",
-                                                  videoTexture,
+                                                  gVideoTexture,
                                                   nullptr,
                                                   nullptr,
                                                   nullptr,
@@ -2317,7 +2058,7 @@ void appDemoLoadScene(SLAssetManager* am,
         cam1->clipFar(1000);
         cam1->setInitialState();
         cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-        cam1->background().texture(videoTexture);
+        cam1->background().texture(gVideoTexture);
 
         // Turn on main video
         CVCapture::instance()->videoType(VT_MAIN);
@@ -2409,15 +2150,15 @@ void appDemoLoadScene(SLAssetManager* am,
         s->info(s->name());
 
         // Create video texture on global pointer updated in AppDemoVideo
-        videoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
-        videoTexture->texType(TT_videoBkgd);
+        gVideoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
+        gVideoTexture->texType(TT_videoBkgd);
 
         // Create see through video background material without shadow mapping
-        SLMaterial* matVideoBkgd = new SLMaterial(am, "matVideoBkgd", videoTexture);
+        SLMaterial* matVideoBkgd = new SLMaterial(am, "matVideoBkgd", gVideoTexture);
         matVideoBkgd->reflectionModel(RM_Custom);
 
         // Create see through video background material with shadow mapping
-        SLMaterial* matVideoBkgdSM = new SLMaterial(am, "matVideoBkgdSM", videoTexture);
+        SLMaterial* matVideoBkgdSM = new SLMaterial(am, "matVideoBkgdSM", gVideoTexture);
         matVideoBkgdSM->reflectionModel(RM_Custom);
         matVideoBkgdSM->ambient(SLCol4f(0.6f, 0.6f, 0.6f));
         matVideoBkgdSM->getsShadows(true);
@@ -2430,7 +2171,7 @@ void appDemoLoadScene(SLAssetManager* am,
         cam1->clipFar(400);
         cam1->focalDist(150);
         cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-        cam1->background().texture(videoTexture);
+        cam1->background().texture(gVideoTexture);
 
         // Turn on main video
         CVCapture::instance()->videoType(VT_MAIN);
@@ -2554,15 +2295,15 @@ void appDemoLoadScene(SLAssetManager* am,
         s->info(s->name());
 
         // Create video texture on global pointer updated in AppDemoVideo
-        videoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
-        videoTexture->texType(TT_videoBkgd);
+        gVideoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
+        gVideoTexture->texType(TT_videoBkgd);
 
         // Create see through video background material without shadow mapping
-        SLMaterial* matVideoBkgd = new SLMaterial(am, "matVideoBkgd", videoTexture);
+        SLMaterial* matVideoBkgd = new SLMaterial(am, "matVideoBkgd", gVideoTexture);
         matVideoBkgd->reflectionModel(RM_Custom);
 
         // Create see through video background material with shadow mapping
-        SLMaterial* matVideoBkgdSM = new SLMaterial(am, "matVideoBkgdSM", videoTexture);
+        SLMaterial* matVideoBkgdSM = new SLMaterial(am, "matVideoBkgdSM", gVideoTexture);
         matVideoBkgdSM->reflectionModel(RM_Custom);
         matVideoBkgdSM->ambient(SLCol4f(0.6f, 0.6f, 0.6f));
         matVideoBkgdSM->getsShadows(true);
@@ -2575,7 +2316,7 @@ void appDemoLoadScene(SLAssetManager* am,
         cam1->clipFar(400);
         cam1->focalDist(150);
         cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-        cam1->background().texture(videoTexture);
+        cam1->background().texture(gVideoTexture);
 
         // Turn on main video
         CVCapture::instance()->videoType(VT_MAIN);
@@ -2699,15 +2440,15 @@ void appDemoLoadScene(SLAssetManager* am,
         s->info(s->name());
 
         // Create video texture on global pointer updated in AppDemoVideo
-        videoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
-        videoTexture->texType(TT_videoBkgd);
+        gVideoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
+        gVideoTexture->texType(TT_videoBkgd);
 
         // Create see through video background material without shadow mapping
-        SLMaterial* matVideoBkgd = new SLMaterial(am, "matVideoBkgd", videoTexture);
+        SLMaterial* matVideoBkgd = new SLMaterial(am, "matVideoBkgd", gVideoTexture);
         matVideoBkgd->reflectionModel(RM_Custom);
 
         // Create see through video background material with shadow mapping
-        SLMaterial* matVideoBkgdSM = new SLMaterial(am, "matVideoBkgdSM", videoTexture);
+        SLMaterial* matVideoBkgdSM = new SLMaterial(am, "matVideoBkgdSM", gVideoTexture);
         matVideoBkgdSM->reflectionModel(RM_Custom);
         matVideoBkgdSM->ambient(SLCol4f(0.6f, 0.6f, 0.6f));
         matVideoBkgdSM->getsShadows(true);
@@ -2720,7 +2461,7 @@ void appDemoLoadScene(SLAssetManager* am,
         cam1->clipFar(400);
         cam1->focalDist(150);
         cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-        cam1->background().texture(videoTexture);
+        cam1->background().texture(gVideoTexture);
 
         // Turn on main video
         CVCapture::instance()->videoType(VT_MAIN);
@@ -2880,15 +2621,15 @@ void appDemoLoadScene(SLAssetManager* am,
         s->info("Augmented Reality for Aventicum Amphitheatre (AO)");
 
         // Create video texture on global pointer updated in AppDemoVideo
-        videoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
-        videoTexture->texType(TT_videoBkgd);
+        gVideoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
+        gVideoTexture->texType(TT_videoBkgd);
 
         // Create see through video background material without shadow mapping
-        SLMaterial* matVideoBkgd = new SLMaterial(am, "matVideoBkgd", videoTexture);
+        SLMaterial* matVideoBkgd = new SLMaterial(am, "matVideoBkgd", gVideoTexture);
         matVideoBkgd->reflectionModel(RM_Custom);
 
         // Create see through video background material with shadow mapping
-        SLMaterial* matVideoBkgdSM = new SLMaterial(am, "matVideoBkgdSM", videoTexture);
+        SLMaterial* matVideoBkgdSM = new SLMaterial(am, "matVideoBkgdSM", gVideoTexture);
         matVideoBkgdSM->reflectionModel(RM_Custom);
         matVideoBkgdSM->ambient(SLCol4f(0.6f, 0.6f, 0.6f));
         matVideoBkgdSM->getsShadows(true);
@@ -2902,7 +2643,7 @@ void appDemoLoadScene(SLAssetManager* am,
         cam1->focalDist(150);
         cam1->setInitialState();
         cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-        cam1->background().texture(videoTexture);
+        cam1->background().texture(gVideoTexture);
 
         // Turn on main video
         CVCapture::instance()->videoType(VT_MAIN);
@@ -3003,15 +2744,15 @@ void appDemoLoadScene(SLAssetManager* am,
         s->info("Augmented Reality for Aventicum Cigognier Temple");
 
         // Create video texture on global pointer updated in AppDemoVideo
-        videoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
-        videoTexture->texType(TT_videoBkgd);
+        gVideoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
+        gVideoTexture->texType(TT_videoBkgd);
 
         // Create see through video background material without shadow mapping
-        SLMaterial* matVideoBkgd = new SLMaterial(am, "matVideoBkgd", videoTexture);
+        SLMaterial* matVideoBkgd = new SLMaterial(am, "matVideoBkgd", gVideoTexture);
         matVideoBkgd->reflectionModel(RM_Custom);
 
         // Create see through video background material with shadow mapping
-        SLMaterial* matVideoBkgdSM = new SLMaterial(am, "matVideoBkgdSM", videoTexture);
+        SLMaterial* matVideoBkgdSM = new SLMaterial(am, "matVideoBkgdSM", gVideoTexture);
         matVideoBkgdSM->reflectionModel(RM_Custom);
         matVideoBkgdSM->ambient(SLCol4f(0.6f, 0.6f, 0.6f));
         matVideoBkgdSM->getsShadows(true);
@@ -3025,7 +2766,7 @@ void appDemoLoadScene(SLAssetManager* am,
         cam1->focalDist(150);
         cam1->setInitialState();
         cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-        cam1->background().texture(videoTexture);
+        cam1->background().texture(gVideoTexture);
 
         // Turn on main video
         CVCapture::instance()->videoType(VT_MAIN);
@@ -3123,15 +2864,15 @@ void appDemoLoadScene(SLAssetManager* am,
         s->info("Augmented Reality for Aventicum Theatre");
 
         // Create video texture on global pointer updated in AppDemoVideo
-        videoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
-        videoTexture->texType(TT_videoBkgd);
+        gVideoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
+        gVideoTexture->texType(TT_videoBkgd);
 
         // Create see through video background material without shadow mapping
-        SLMaterial* matVideoBkgd = new SLMaterial(am, "matVideoBkgd", videoTexture);
+        SLMaterial* matVideoBkgd = new SLMaterial(am, "matVideoBkgd", gVideoTexture);
         matVideoBkgd->reflectionModel(RM_Custom);
 
         // Create see through video background material with shadow mapping
-        SLMaterial* matVideoBkgdSM = new SLMaterial(am, "matVideoBkgdSM", videoTexture);
+        SLMaterial* matVideoBkgdSM = new SLMaterial(am, "matVideoBkgdSM", gVideoTexture);
         matVideoBkgdSM->reflectionModel(RM_Custom);
         matVideoBkgdSM->ambient(SLCol4f(0.6f, 0.6f, 0.6f));
         matVideoBkgdSM->getsShadows(true);
@@ -3145,7 +2886,7 @@ void appDemoLoadScene(SLAssetManager* am,
         cam1->focalDist(150);
         cam1->setInitialState();
         cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-        cam1->background().texture(videoTexture);
+        cam1->background().texture(gVideoTexture);
 
         // Turn on main video
         CVCapture::instance()->videoType(VT_MAIN);
@@ -3247,15 +2988,15 @@ void appDemoLoadScene(SLAssetManager* am,
         s->info("Augmented Reality for Sutz, Kirchrain 18");
 
         // Create video texture on global pointer updated in AppDemoVideo
-        videoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
-        videoTexture->texType(TT_videoBkgd);
+        gVideoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
+        gVideoTexture->texType(TT_videoBkgd);
 
         // Create see through video background material without shadow mapping
-        SLMaterial* matVideoBkgd = new SLMaterial(am, "matVideoBkgd", videoTexture);
+        SLMaterial* matVideoBkgd = new SLMaterial(am, "matVideoBkgd", gVideoTexture);
         matVideoBkgd->reflectionModel(RM_Custom);
 
         // Create see through video background material with shadow mapping
-        SLMaterial* matVideoBkgdSM = new SLMaterial(am, "matVideoBkgdSM", videoTexture);
+        SLMaterial* matVideoBkgdSM = new SLMaterial(am, "matVideoBkgdSM", gVideoTexture);
         matVideoBkgdSM->reflectionModel(RM_Custom);
         matVideoBkgdSM->ambient(SLCol4f(0.6f, 0.6f, 0.6f));
         matVideoBkgdSM->getsShadows(true);
@@ -3281,7 +3022,7 @@ void appDemoLoadScene(SLAssetManager* am,
         cam1->focalDist(150);
         cam1->setInitialState();
         cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-        cam1->background().texture(videoTexture);
+        cam1->background().texture(gVideoTexture);
 
         // Turn on main video
         CVCapture::instance()->videoType(VT_MAIN);
@@ -3837,13 +3578,13 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     }
 
     // Reset non CVTracked and CVCapture infos
-    CVTracked::resetTimes(); // delete all tracker times
-    delete tracker;
-    tracker = nullptr;
+    CVTracked::resetTimes(); // delete all gVideoTracker times
+    delete gVideoTracker;
+    gVideoTracker = nullptr;
 
     // Reset asset pointer from previous scenes
-    videoTexture = nullptr; // The video texture will be deleted by scene uninit
-    trackedNode  = nullptr; // The tracked node will be deleted by scene uninit
+    gVideoTexture = nullptr; // The video texture will be deleted by scene uninit
+    gVideoTrackedNode  = nullptr; // The tracked node will be deleted by scene uninit
 
     if (sceneID != SID_VolumeRayCastLighted)
         gTexMRI3D = nullptr; // The 3D MRI texture will be deleted by scene uninit
@@ -3916,6 +3657,14 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         case SID_AnimationSkinnedMass: s = new AppDemoSceneAnimationSkinnedMass(); break;
         case SID_VideoTextureFile:
         case SID_VideoTextureLive: s = new AppDemoSceneVideoTexture(sceneID); break;
+        case SID_VideoTrackChessMain:
+        case SID_VideoTrackChessScnd:
+        case SID_VideoCalibrateMain:
+        case SID_VideoCalibrateScnd: s = new AppDemoSceneVideoChessboard(sceneID); break;
+        case SID_VideoTrackArucoMain:
+        case SID_VideoTrackArucoScnd: s = new AppDemoSceneVideoTrackAruco(sceneID); break;
+        case SID_VideoTrackFaceMain:
+        case SID_VideoTrackFaceScnd: s = new AppDemoSceneVideoTrackFace(sceneID); break;
         default: s = new AppDemoSceneLegacy(sceneID); break;
     }
 
@@ -3924,13 +3673,13 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     CVCapture::instance()->videoType(VT_NONE); // turn off any video
 
     // Reset non CVTracked and CVCapture infos
-    CVTracked::resetTimes(); // delete all tracker times
-    delete tracker;
-    tracker = nullptr;
+    CVTracked::resetTimes(); // delete all gVideoTracker times
+    delete gVideoTracker;
+    gVideoTracker = nullptr;
 
     // Reset asset pointer from previous scenes
-    videoTexture = nullptr; // The video texture will be deleted by scene uninit
-    trackedNode  = nullptr; // The tracked node will be deleted by scene uninit
+    gVideoTexture = nullptr; // The video texture will be deleted by scene uninit
+    gVideoTrackedNode  = nullptr; // The tracked node will be deleted by scene uninit
 
     if (sceneID != SID_VolumeRayCastLighted)
         gTexMRI3D = nullptr; // The 3D MRI texture will be deleted by scene uninit

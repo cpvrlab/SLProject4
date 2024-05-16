@@ -27,17 +27,17 @@
 /*! Global pointer for the video texture defined in AppDemoLoad for video scenes
  It gets updated in the following onUpdateTracking routine
  */
-SLGLTexture* videoTexture = nullptr;
+SLGLTexture* gVideoTexture = nullptr;
 
-/*! Global pointer for a tracker that is set in AppDemoLoad for video scenes
+/*! Global pointer for a gVideoTracker that is set in AppDemoLoad for video scenes
  It gets updated in the following onUpdateTracking routine
  */
-CVTracked* tracker = nullptr;
+CVTracked* gVideoTracker = nullptr;
 
-/*! Global pointer to a node that from witch the tracker changes the pose.
+/*! Global pointer to a node that from witch the gVideoTracker changes the pose.
  it gets updated in the following onUpdateTracking routine
  */
-SLNode* trackedNode = nullptr;
+SLNode* gVideoTrackedNode = nullptr;
 
 //-----------------------------------------------------------------------------
 /*! always update scene camera fovV from calibration because the calibration
@@ -49,9 +49,9 @@ void updateTrackingSceneCamera(CVCamera* ac)
 {
     PROFILE_FUNCTION();
 
-    if (trackedNode && typeid(*trackedNode) == typeid(SLCamera))
+    if (gVideoTrackedNode && typeid(*gVideoTrackedNode) == typeid(SLCamera))
     {
-        SLCamera* trackingCam = dynamic_cast<SLCamera*>(trackedNode);
+        SLCamera* trackingCam = dynamic_cast<SLCamera*>(gVideoTrackedNode);
         trackingCam->fov(ac->calibration.cameraFovVDeg());
     }
 }
@@ -252,16 +252,16 @@ bool onUpdateVideo()
             // but we have to update the tracking camera only!
             updateTrackingSceneCamera(ac);
 
-            if (tracker && trackedNode)
+            if (gVideoTracker && gVideoTrackedNode)
             {
-                bool foundPose = tracker->track(CVCapture::instance()->lastFrameGray,
+                bool foundPose = gVideoTracker->track(CVCapture::instance()->lastFrameGray,
                                                 CVCapture::instance()->lastFrame,
                                                 &ac->calibration);
                 if (foundPose)
                 {
                     // clang-format off
                     // convert matrix type CVMatx44f to SLMat4f
-                    CVMatx44f cvOVM = tracker->objectViewMat();
+                    CVMatx44f cvOVM = gVideoTracker->objectViewMat();
                     SLMat4f glOVM(cvOVM.val[0], cvOVM.val[1], cvOVM.val[2], cvOVM.val[3],
                                   cvOVM.val[4], cvOVM.val[5], cvOVM.val[6], cvOVM.val[7],
                                   cvOVM.val[8], cvOVM.val[9], cvOVM.val[10],cvOVM.val[11],
@@ -270,20 +270,20 @@ bool onUpdateVideo()
 
                     // set the object matrix depending if the
                     // tracked node is attached to a camera or not
-                    if (typeid(*trackedNode) == typeid(SLCamera))
+                    if (typeid(*gVideoTrackedNode) == typeid(SLCamera))
                     {
-                        trackedNode->om(glOVM.inverted());
-                        trackedNode->setDrawBitsRec(SL_DB_HIDDEN, true);
+                        gVideoTrackedNode->om(glOVM.inverted());
+                        gVideoTrackedNode->setDrawBitsRec(SL_DB_HIDDEN, true);
                     }
                     else
                     {
                         // see comments in CVTracked::calcObjectMatrix
-                        trackedNode->om(sv->camera()->om() * glOVM);
-                        trackedNode->setDrawBitsRec(SL_DB_HIDDEN, false);
+                        gVideoTrackedNode->om(sv->camera()->om() * glOVM);
+                        gVideoTrackedNode->setDrawBitsRec(SL_DB_HIDDEN, false);
                     }
                 }
                 else
-                    trackedNode->setDrawBitsRec(SL_DB_HIDDEN, false);
+                    gVideoTrackedNode->setDrawBitsRec(SL_DB_HIDDEN, false);
             }
 
             // Update info text only for chessboard scene
@@ -306,15 +306,15 @@ bool onUpdateVideo()
 
         //...................................................................
         // copy image to video texture
-        if (videoTexture)
+        if (gVideoTexture)
         {
             if (ac->calibration.state() == CS_calibrated && ac->showUndistorted())
             {
                 CVMat undistorted;
                 ac->calibration.remap(CVCapture::instance()->lastFrame, undistorted);
 
-                // CVCapture::instance()->videoTexture()->copyVideoImage(undistorted.cols,
-                videoTexture->copyVideoImage(undistorted.cols,
+                // CVCapture::instance()->gVideoTexture()->copyVideoImage(undistorted.cols,
+                gVideoTexture->copyVideoImage(undistorted.cols,
                                              undistorted.rows,
                                              CVCapture::instance()->format,
                                              undistorted.data,
@@ -323,8 +323,8 @@ bool onUpdateVideo()
             }
             else
             {
-                // CVCapture::instance()->videoTexture()->copyVideoImage(CVCapture::instance()->lastFrame.cols,
-                videoTexture->copyVideoImage(CVCapture::instance()->lastFrame.cols,
+                // CVCapture::instance()->gVideoTexture()->copyVideoImage(CVCapture::instance()->lastFrame.cols,
+                gVideoTexture->copyVideoImage(CVCapture::instance()->lastFrame.cols,
                                              CVCapture::instance()->lastFrame.rows,
                                              CVCapture::instance()->format,
                                              CVCapture::instance()->lastFrame.data,

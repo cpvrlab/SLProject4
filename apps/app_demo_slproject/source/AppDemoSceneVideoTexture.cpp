@@ -14,6 +14,9 @@
 #include <SLRectangle.h>
 #include <SLSphere.h>
 
+// Global pointers declared in AppDemoVideo
+extern SLGLTexture* gVideoTexture;
+
 //-----------------------------------------------------------------------------
 AppDemoSceneVideoTexture::AppDemoSceneVideoTexture(SLSceneID sid)
   : AppScene("Texture from Video"),
@@ -29,7 +32,6 @@ AppDemoSceneVideoTexture::AppDemoSceneVideoTexture(SLSceneID sid)
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneVideoTexture::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addTextureToLoad(_videoTex, "LiveVideoError.png");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
@@ -51,7 +53,13 @@ void AppDemoSceneVideoTexture::assemble(SLAssetManager* am, SLSceneView* sv)
     sv->viewportSameAsVideo(true);
 
     // Create video texture on global pointer updated in AppDemoVideo
-    SLMaterial* m1 = new SLMaterial(am, "VideoMat", _videoTex);
+    gVideoTexture = new SLGLTexture(am,
+                                   AppDemo::texturePath + "LiveVideoError.png",
+                                   GL_LINEAR,
+                                   GL_LINEAR);
+
+    // Create video texture on global pointer updated in AppDemoVideo
+    SLMaterial* m1 = new SLMaterial(am, "VideoMat", gVideoTexture);
 
     // Create a root scene group for all nodes
     SLNode* scene = new SLNode("scene node");
@@ -62,7 +70,7 @@ void AppDemoSceneVideoTexture::assemble(SLAssetManager* am, SLSceneView* sv)
     cam1->translation(0, 0, 20);
     cam1->focalDist(20);
     cam1->lookAt(0, 0, 0);
-    cam1->background().texture(_videoTex);
+    cam1->background().texture(gVideoTexture);
     cam1->setInitialState();
     cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
     scene->addChild(cam1);
