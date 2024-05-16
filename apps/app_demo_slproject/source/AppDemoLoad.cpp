@@ -3790,7 +3790,7 @@ void appDemoLoadScene(SLAssetManager* am,
         sv->camera(cam1);
     }
 
-    ////////////////////////////////////////////////////////////////////////////
+    /*
     // call onInitialize on all scene views to init the scenegraph and stats
     for (auto* sceneView : AppDemo::sceneViews)
         if (sceneView != nullptr)
@@ -3814,6 +3814,7 @@ void appDemoLoadScene(SLAssetManager* am,
     }
 
     s->loadTimeMS(GlobalTimer::timeMS() - startLoadMS);
+    */
 
 #ifdef SL_USE_ENTITIES_DEBUG
     SLScene::entities.dump(true);
@@ -3826,11 +3827,40 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     SLAssetManager*& am = AppDemo::assetManager;
     SLAssetLoader*&  al = AppDemo::assetLoader;
 
+    SLfloat startLoadMS = GlobalTimer::timeMS();
+
+    //////////////////////
+    // Delete old scene //
+    //////////////////////
+
     if (AppDemo::scene)
     {
         delete AppDemo::scene;
         AppDemo::scene = nullptr;
     }
+
+    // Reset non CVTracked and CVCapture infos
+    CVTracked::resetTimes(); // delete all tracker times
+    delete tracker;
+    tracker = nullptr;
+
+    // Reset asset pointer from previous scenes
+    videoTexture = nullptr; // The video texture will be deleted by scene uninit
+    trackedNode  = nullptr; // The tracked node will be deleted by scene uninit
+
+    if (sceneID != SID_VolumeRayCastLighted)
+        gTexMRI3D = nullptr; // The 3D MRI texture will be deleted by scene uninit
+
+    // reset existing sceneviews
+    for (auto* sceneview : AppDemo::sceneViews)
+        sceneview->unInit();
+
+    // Clear all data in the asset manager
+    am->clear();
+
+    ////////////////////
+    // Init new scene //
+    ////////////////////
 
     switch (sceneID)
     {
@@ -3892,34 +3922,14 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         default: s = new AppDemoSceneLegacy(sceneID); break;
     }
 
-    s->initOculus(AppDemo::dataPath + "shaders/");
-    sv->scene(s);
-
-    CVCapture::instance()->videoType(VT_NONE); // turn off any video
-
-    // Reset non CVTracked and CVCapture infos
-    CVTracked::resetTimes(); // delete all tracker times
-    delete tracker;
-    tracker = nullptr;
-
-    // Reset asset pointer from previous scenes
-    videoTexture = nullptr; // The video texture will be deleted by scene uninit
-    trackedNode  = nullptr; // The tracked node will be deleted by scene uninit
-
-    if (sceneID != SID_VolumeRayCastLighted)
-        gTexMRI3D = nullptr; // The 3D MRI texture will be deleted by scene uninit
-
-    // reset existing sceneviews
-    for (auto* sceneview : AppDemo::sceneViews)
-        sceneview->unInit();
-
-    // Clear all data in the asset manager
-    am->clear();
-
     AppDemo::sceneID = sceneID;
 
     // Initialize all preloaded stuff from SLScene
     s->init(am);
+
+    s->initOculus(AppDemo::dataPath + "shaders/");
+
+    CVCapture::instance()->videoType(VT_NONE); // turn off any video
 
     // Clear the visible materials from the last scene
     sv->visibleMaterials2D().clear();
@@ -3936,9 +3946,10 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     SLGLState::instance()->initAll();
 
     al->scene(s);
+    sv->scene(s);
 
     // Define callback lambda to be called after loading
-    auto onDoneLoading = [s, sv]
+    auto onDoneLoading = [s, sv, startLoadMS]
     {
         s->assemble(am, sv);
 
@@ -3947,10 +3958,34 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
             sv->camera(sv->sceneViewCamera());
 
         AppDemo::scene = s;
+
+        // call onInitialize on all scene views to init the scenegraph and stats
+        for (auto* sceneView : AppDemo::sceneViews)
+            if (sceneView != nullptr)
+                sceneView->onInitialize();
+
+        if (CVCapture::instance()->videoType() != VT_NONE)
+        {
+            if (sv->viewportSameAsVideo())
+            {
+                // Pass a negative value to the start function, so that the
+                // viewport aspect ratio can be adapted later to the video aspect.
+                // This will be known after start.
+                CVCapture::instance()->start(-1.0f);
+                SLVec2i videoAspect;
+                videoAspect.x = CVCapture::instance()->captureSize.width;
+                videoAspect.y = CVCapture::instance()->captureSize.height;
+                sv->setViewportFromRatio(videoAspect, sv->viewportAlign(), true);
+            }
+            else
+                CVCapture::instance()->start(sv->viewportWdivH());
+        }
+
+        s->loadTimeMS(GlobalTimer::timeMS() - startLoadMS);
     };
 
     s->registerAssetsToLoad(*al);
 
-    al->startLoadingAllParallel(onDoneLoading);
+    al->startLoadingAssetsAsync(onDoneLoading);
 }
 //-----------------------------------------------------------------------------

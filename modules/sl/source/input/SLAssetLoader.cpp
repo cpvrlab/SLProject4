@@ -247,7 +247,7 @@ void SLAssetLoader::addSkyboxToLoad(SLSkybox*&      skybox,
                                                  _texturePath + cubeMapZNeg); });
 }
 //-----------------------------------------------------------------------------
-void SLAssetLoader::startLoadingAllParallel(function<void()> onDoneLoading)
+void SLAssetLoader::startLoadingAssetsAsync(function<void()> onDoneLoading)
 {
     _onDoneLoading = onDoneLoading;
     _isDone.store(false);
@@ -261,7 +261,7 @@ void SLAssetLoader::startLoadingAllParallel(function<void()> onDoneLoading)
         _isDone = true; });
 }
 //-----------------------------------------------------------------------------
-void SLAssetLoader::checkIfParallelLoadingIsDone()
+void SLAssetLoader::checkIfAsyncLoadingIsDone()
 {
     if (_isLoading && _isDone)
     {

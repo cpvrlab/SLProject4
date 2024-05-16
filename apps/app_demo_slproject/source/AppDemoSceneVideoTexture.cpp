@@ -16,20 +16,14 @@
 
 //-----------------------------------------------------------------------------
 AppDemoSceneVideoTexture::AppDemoSceneVideoTexture(SLSceneID sid)
-  : AppScene("Video Texture"),
+  : AppScene("Texture from Video"),
     _sceneID(sid)
 {
     // Set scene name and info string
     if (_sceneID == SID_VideoTextureLive)
-    {
-        name("Live Video Texture");
         info("Minimal texture mapping example with live video source.");
-    }
     else
-    {
-        name("File Video Texture");
         info("Minimal texture mapping example with video file source.");
-    }
 }
 //-----------------------------------------------------------------------------
 //! All assets the should be loaded in parallel must be registered in here.
