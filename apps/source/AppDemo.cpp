@@ -48,6 +48,9 @@ CVCalibrationEstimator*      AppDemo::calibrationEstimator = nullptr;
 SLstring                     AppDemo::calibIniPath;
 SLstring                     AppDemo::calibFilePath;
 
+SLIOBuffer AppDemo::fontDataDroidSans;
+SLIOBuffer AppDemo::fontDataProggyClean;
+
 SLstring AppDemo::exePath;
 SLstring AppDemo::configPath;
 SLstring AppDemo::externalPath;
@@ -97,11 +100,14 @@ void AppDemo::createAppAndScene(SLstring appName)
 
     name = std::move(appName);
     SLGLProgramManager::init(dataPath + "shaders/", configPath);
-    assetManager = new SLAssetManager(AppDemo::fontPath,
-                                      true);
-    assetLoader  = new SLAssetLoader(AppDemo::modelPath,
+
+    assetManager = new SLAssetManager();
+
+    assetLoader = new SLAssetLoader(AppDemo::modelPath,
                                     AppDemo::texturePath,
-                                    AppDemo::shaderPath);
+                                    AppDemo::shaderPath,
+                                    AppDemo::fontPath);
+
     GlobalTimer::timerStart();
 
 #ifdef SL_HAS_OPTIX

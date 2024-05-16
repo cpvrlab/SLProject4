@@ -48,13 +48,14 @@
 #include <SLGLProgramManager.h>
 #include <SLGLTexture.h>
 #include <Profiler.h>
-#include <AppDemoGui.h>
+#include "AppDemoGui.h"
 #include <SLDeviceLocation.h>
 #include <SLNodeLOD.h>
 #include <imgui_color_gradient.h> // For color over life, need to create own color interpolator
 #include <SLEntities.h>
 #include <SLFileStorage.h>
 #include <SLAssetLoader.h>
+#include <SLEnums.h>
 
 #include <AppDemoScene2Dand3DText.h>
 #include <AppDemoSceneAnimationNode.h>
@@ -2499,8 +2500,7 @@ void appDemoLoadScene(SLAssetManager* am,
         axis->castsShadows(false);
 
         // Set some ambient light
-        thtAndTmp->updateMeshMat([](SLMaterial* m)
-                                 { m->ambient(SLCol4f(.25f, .25f, .25f)); },
+        thtAndTmp->updateMeshMat([](SLMaterial* m) { m->ambient(SLCol4f(.25f, .25f, .25f)); },
                                  true);
         SLNode* scene = new SLNode("Scene");
         s->root3D(scene);
@@ -2645,8 +2645,7 @@ void appDemoLoadScene(SLAssetManager* am,
         axis->castsShadows(false);
 
         // Set some ambient light
-        thtAndTmp->updateMeshMat([](SLMaterial* m)
-                                 { m->ambient(SLCol4f(.25f, .25f, .25f)); },
+        thtAndTmp->updateMeshMat([](SLMaterial* m) { m->ambient(SLCol4f(.25f, .25f, .25f)); },
                                  true);
         SLNode* scene = new SLNode("Scene");
         s->root3D(scene);
@@ -2792,8 +2791,7 @@ void appDemoLoadScene(SLAssetManager* am,
         axis->castsShadows(false);
 
         // Set some ambient light
-        thtAndTmp->updateMeshMat([](SLMaterial* m)
-                                 { m->ambient(SLCol4f(.25f, .25f, .25f)); },
+        thtAndTmp->updateMeshMat([](SLMaterial* m) { m->ambient(SLCol4f(.25f, .25f, .25f)); },
                                  true);
         SLNode* scene = new SLNode("Scene");
         s->root3D(scene);
@@ -2831,8 +2829,7 @@ void appDemoLoadScene(SLAssetManager* am,
         tmpL2->drawBits()->set(SL_DB_HIDDEN, true);
 
         // Add level of detail switch callback lambda
-        cam1->onCamUpdateCB([=](SLSceneView* sv)
-                            {
+        cam1->onCamUpdateCB([=](SLSceneView* sv) {
                                 SLVec3f posCam     = sv->camera()->updateAndGetWM().translation();
                                 SLVec3f posAlt     = tmpAltar->updateAndGetWM().translation();
                                 SLVec3f distCamAlt = posCam - posAlt;
@@ -3922,12 +3919,35 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         default: s = new AppDemoSceneLegacy(sceneID); break;
     }
 
+    sv->scene(s);
+
+    CVCapture::instance()->videoType(VT_NONE); // turn off any video
+
+    // Reset non CVTracked and CVCapture infos
+    CVTracked::resetTimes(); // delete all tracker times
+    delete tracker;
+    tracker = nullptr;
+
+    // Reset asset pointer from previous scenes
+    videoTexture = nullptr; // The video texture will be deleted by scene uninit
+    trackedNode  = nullptr; // The tracked node will be deleted by scene uninit
+
+    if (sceneID != SID_VolumeRayCastLighted)
+        gTexMRI3D = nullptr; // The 3D MRI texture will be deleted by scene uninit
+
+    // reset existing sceneviews
+    for (auto* sceneview : AppDemo::sceneViews)
+        sceneview->unInit();
+
+    // Clear all data in the asset manager
+    am->clear();
+
     AppDemo::sceneID = sceneID;
 
     // Initialize all preloaded stuff from SLScene
     s->init(am);
 
-    s->initOculus(AppDemo::dataPath + "shaders/");
+    // s->initOculus(AppDemo::dataPath + "shaders/");
 
     CVCapture::instance()->videoType(VT_NONE); // turn off any video
 
@@ -3948,9 +3968,7 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     al->scene(s);
     sv->scene(s);
 
-    // Define callback lambda to be called after loading
-    auto onDoneLoading = [s, sv, startLoadMS]
-    {
+    auto onDoneLoading = [s, sv, startLoadMS] {
         s->assemble(am, sv);
 
         // Make sure the scene view has a camera
@@ -3986,6 +4004,6 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
 
     s->registerAssetsToLoad(*al);
 
-    al->startLoadingAssetsAsync(onDoneLoading);
+    al->loadAssetsAsync(onDoneLoading);
 }
 //-----------------------------------------------------------------------------

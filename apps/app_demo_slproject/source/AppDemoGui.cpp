@@ -8,8 +8,9 @@
 //             Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
 
+#include "AppDemoGui.h"
+
 #include "Utils.h"
-#include <AppDemoGui.h>
 #include <AppDemo.h>
 #include <SL.h>
 
@@ -66,8 +67,7 @@ extern SLNode*      gDragonModel; // Global pointer declared in AppDemoLoad
 
 //-----------------------------------------------------------------------------
 //! Vector getter callback for combo and listbox with std::vector<std::string>
-static auto vectorGetter = [](void* vec, int idx, const char** out_text)
-{
+static auto vectorGetter = [](void* vec, int idx, const char** out_text) {
     auto& vector = *(SLVstring*)vec;
     if (idx < 0 || idx >= (int)vector.size())
         return false;
@@ -1861,8 +1861,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                             AppDemo::sceneToLoad = SID_Benchmark1_LargeModel;
                         else
                         {
-                            auto downloadJobFTP = []()
-                            {
+                            auto downloadJobFTP = []() {
                                 AppDemo::jobProgressMsg("Downloading large dragon file via FTP:");
                                 AppDemo::jobProgressMax(100);
                                 ftplib ftp;
@@ -1906,8 +1905,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                                 AppDemo::jobIsRunning = false;
                             };
 
-                            auto unzipJob = [largeFile]()
-                            {
+                            auto unzipJob = [largeFile]() {
                                 AppDemo::jobProgressMsg("Decompress dragon file:");
                                 AppDemo::jobProgressMax(-1);
                                 string zipFile = AppDemo::configPath + "models/xyzrgb_dragon.zip";
@@ -1919,8 +1917,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                                 AppDemo::jobIsRunning = false;
                             };
 
-                            auto followUpJob1 = [am, s, sv, largeFile]()
-                            {
+                            auto followUpJob1 = [am, s, sv, largeFile]() {
                                 if (Utils::fileExists(largeFile))
                                     AppDemo::sceneToLoad = SID_Benchmark1_LargeModel;
                             };
@@ -1982,8 +1979,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
 
             if (ImGui::MenuItem("Multi-threaded Jobs"))
             {
-                auto job1 = []()
-                {
+                auto job1 = []() {
                     PROFILE_THREAD("Worker Thread 1");
                     PROFILE_SCOPE("Parallel Job 1");
 
@@ -1999,8 +1995,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                     AppDemo::jobIsRunning = false;
                 };
 
-                auto job2 = []()
-                {
+                auto job2 = []() {
                     PROFILE_THREAD("Worker Thread 2");
                     PROFILE_SCOPE("Parallel Job 2");
 
@@ -2016,10 +2011,8 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                     AppDemo::jobIsRunning = false;
                 };
 
-                auto followUpJob1 = []()
-                { SL_LOG("followUpJob1"); };
-                auto jobToFollow2 = []()
-                { SL_LOG("JobToFollow2"); };
+                auto followUpJob1 = []() { SL_LOG("followUpJob1"); };
+                auto jobToFollow2 = []() { SL_LOG("JobToFollow2"); };
 
                 AppDemo::jobsToBeThreaded.emplace_back(job1);
                 AppDemo::jobsToBeThreaded.emplace_back(job2);
@@ -3993,8 +3986,7 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
                                 static ImGradientMark* draggingMark = nullptr;
                                 static ImGradientMark* selectedMark = nullptr;
 
-                                static bool once = [ps]()
-                                {
+                                static bool once = [ps]() {
                                     gradient.getMarks().clear();
                                     for (auto cp : ps->colorPoints())
                                         gradient.addMark(cp.pos, ImColor(cp.color.r, cp.color.g, cp.color.b));
@@ -4686,7 +4678,7 @@ void AppDemoGui::loadConfig(SLint dotsPerInch)
 #ifdef SL_EMSCRIPTEN
     // Overwrite config with URL parameters
     // clang-format off
-    int sceneId = MAIN_THREAD_EM_ASM_INT(
+    int sceneId = EM_ASM_INT(
         let params = new URL(window.location).searchParams;
         return params.get("scene") ?? -1;
     );
@@ -4901,8 +4893,7 @@ void AppDemoGui::downloadModelAndLoadScene(SLScene*     s,
     assert(s->assetManager() && "No asset manager assigned to scene!");
     SLAssetManager* am = s->assetManager();
 
-    auto progressCallback = [](size_t curr, size_t filesize)
-    {
+    auto progressCallback = [](size_t curr, size_t filesize) {
         if (filesize > 0)
         {
             int transferredPC = (int)((float)curr / (float)filesize * 100.0f);
@@ -4914,8 +4905,7 @@ void AppDemoGui::downloadModelAndLoadScene(SLScene*     s,
         return 0; // Return Non-Zero to cancel
     };
 
-    auto downloadJobHTTP = [=]()
-    {
+    auto downloadJobHTTP = [=]() {
         PROFILE_FUNCTION();
         string jobMsg = "Downloading file via HTTPS: " + downloadFilename;
         AppDemo::jobProgressMsg(jobMsg);
@@ -4929,8 +4919,7 @@ void AppDemoGui::downloadModelAndLoadScene(SLScene*     s,
         AppDemo::jobIsRunning = false;
     };
 
-    auto unzipJob = [=]()
-    {
+    auto unzipJob = [=]() {
         string jobMsg = "Decompressing file: " + downloadFilename;
         AppDemo::jobProgressMsg(jobMsg);
         AppDemo::jobProgressMax(-1);
@@ -4950,8 +4939,7 @@ void AppDemoGui::downloadModelAndLoadScene(SLScene*     s,
         AppDemo::jobIsRunning = false;
     };
 
-    auto followUpJob1 = [=]()
-    {
+    auto followUpJob1 = [=]() {
         if (Utils::fileExists(pathAndFileToLoad))
             AppDemo::sceneToLoad = sceneIDToLoad;
         else

@@ -15,6 +15,8 @@
 #include <SLScene.h>
 #include <SLSceneView.h>
 #include <SLGLImGui.h>
+#include <SLAssetManager.h>
+#include <SLAssetLoader.h>
 #include <Profiler.h>
 #include <ZipUtils.h>
 
@@ -106,6 +108,28 @@ void slCreateAppAndScene(SLVstring&      cmdLineArgs,
     AppDemo::createAppAndScene(applicationName);
 }
 //-----------------------------------------------------------------------------
+void slRegisterCoreAssetsToLoad()
+{
+    SLAssetLoader&  al = *AppDemo::assetLoader;
+    SLAssetManager* am = AppDemo::assetManager;
+
+    // Generate static fonts.
+    al.addLoadTask([am, fontPath = AppDemo::fontPath] { am->generateStaticFonts(AppDemo::fontPath); });
+
+    // Make sure all core shaders are loaded.
+    al.addLoadTask([am] { SLGLProgramManager::get(SP_colorAttribute); });
+    al.addLoadTask([am] { SLGLProgramManager::get(SP_colorUniform); });
+    al.addLoadTask([am] { SLGLProgramManager::get(SP_TextureOnly); });
+    al.addLoadTask([am] { SLGLProgramManager::get(SP_TextureOnlyExternal); });
+    al.addLoadTask([am] { SLGLProgramManager::get(SP_fontTex); });
+    al.addLoadTask([am] { SLGLProgramManager::get(SP_errorTex); });
+    al.addLoadTask([am] { SLGLProgramManager::get(SP_depth); });
+
+    // Load data for ImGUI fonts.
+    al.addRawDataToLoad(AppDemo::fontDataDroidSans, AppDemo::fontPath + "DroidSans.ttf", IOK_font);
+    al.addRawDataToLoad(AppDemo::fontDataProggyClean, AppDemo::fontPath + "ProggyClean.ttf", IOK_font);
+}
+//-----------------------------------------------------------------------------
 /*! Global creation function for a SLSceneview instance returning the index of
 the sceneview. It creates the new SLSceneView instance by calling the callback
 function slNewSceneView. If you have a custom SLSceneView inherited class you
@@ -149,7 +173,8 @@ SLint slCreateSceneView(SLAssetManager* am,
                                  (cbOnImGuiLoadConfig)onImGuiLoadConfig,
                                  (cbOnImGuiSaveConfig)onImGuiSaveConfig,
                                  dotsPerInch,
-                                 AppDemo::fontPath);
+                                 AppDemo::fontDataDroidSans,
+                                 AppDemo::fontDataProggyClean);
 
     sv->init("SceneView",
              screenWidth,

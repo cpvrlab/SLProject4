@@ -273,17 +273,19 @@ bool CVCapture::grabAndAdjustForSL(float viewportWdivH)
         return false;
     }
 #else
-    if (!_webCamera.isOpened())
-    {
-        SL_LOG("Web camera is not open!");
-        return false;
-    }
+    return false;
 
-    if (activeCamera->camSizeIndex() != -1)
-        _webCamera.setSize(camSizes[activeCamera->camSizeIndex()]);
+    // if (!_webCamera.isOpened())
+    // {
+    //     SL_LOG("Web camera is not open!");
+    //     return false;
+    // }
 
-    lastFrame = _webCamera.read();
-    adjustForSL(viewportWdivH);
+    // if (activeCamera->camSizeIndex() != -1)
+    //     _webCamera.setSize(camSizes[activeCamera->camSizeIndex()]);
+
+    // lastFrame = _webCamera.read();
+    // adjustForSL(viewportWdivH);
 #endif
 
     return true;

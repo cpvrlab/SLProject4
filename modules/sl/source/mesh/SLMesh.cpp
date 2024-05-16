@@ -812,6 +812,10 @@ void SLMesh::generateVAO(SLGLVertexArray& vao)
 void SLMesh::computeHardEdgesIndices(float angleDEG,
                                      float epsilon)
 {
+#ifdef SL_EMSCRIPTEN
+    return;
+#endif
+
     // dihedral angle considered to sharp
     float angleRAD = angleDEG * Utils::DEG2RAD;
 

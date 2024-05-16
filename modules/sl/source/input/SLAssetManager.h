@@ -32,16 +32,9 @@ class SLAnimManager;
 class SLAssetManager
 {
 public:
-    SLAssetManager(SLstring fontPath = "", bool generateStaticFonts = false)
-    {
-        if (!fontPath.empty() && generateStaticFonts)
-        {
-            // font and video texture are not added to the _textures vector
-            SLAssetManager::generateFonts(fontPath,
-                                          *SLGLProgramManager::get(SP_fontTex));
-        }
-    }
     ~SLAssetManager();
+
+    void generateStaticFonts(SLstring fontPath);
 
     void clear();
 

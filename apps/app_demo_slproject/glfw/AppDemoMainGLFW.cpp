@@ -545,6 +545,9 @@ void initSL(SLVstring& cmdLineArgs)
                         (void*)nullptr);
     /////////////////////////////////////////////////////////
 
+    slRegisterCoreAssetsToLoad();
+    AppDemo::assetLoader->loadAssetsSync();
+
     /////////////////////////////////////////////////////////
     slCreateSceneView(AppDemo::assetManager,
                       AppDemo::scene,

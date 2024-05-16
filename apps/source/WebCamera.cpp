@@ -23,7 +23,7 @@
 void WebCamera::open(WebCameraFacing facing)
 {
     // clang-format off
-    MAIN_THREAD_EM_ASM({
+    EM_ASM({
         console.log("[WebCamera] Requesting stream...");
 
         let facingMode;

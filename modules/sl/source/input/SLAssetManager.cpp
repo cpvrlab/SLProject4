@@ -33,6 +33,13 @@ SLAssetManager::~SLAssetManager()
     clear();
 }
 //-----------------------------------------------------------------------------
+void SLAssetManager::generateStaticFonts(SLstring fontPath)
+{
+    // font and video texture are not added to the _textures vector
+    SLAssetManager::generateFonts(fontPath,
+                                  *SLGLProgramManager::get(SP_fontTex));
+}
+//-----------------------------------------------------------------------------
 //! for all assets, clear gpu data
 void SLAssetManager::clear()
 {

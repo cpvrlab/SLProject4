@@ -1,27 +1,85 @@
 #include "SLAssetLoader.h"
 
+#include <mutex>
+
+#include "SLFileStorage.h"
+#include "SLGLProgramManager.h"
 #include "SLGLTexture.h"
 #include "SLSkybox.h"
 #include "SLAssimpImporter.h"
 #include "SLScene.h"
+#include "SLAssetManager.h"
 
+//-----------------------------------------------------------------------------
+using std::unique_lock;
 //-----------------------------------------------------------------------------
 SLAssetLoader::SLAssetLoader(SLstring modelPath,
                              SLstring texturePath,
-                             SLstring shaderPath)
+                             SLstring shaderPath,
+                             SLstring fontPath)
   : _modelPath(modelPath),
     _texturePath(texturePath),
     _shaderPath(shaderPath),
-    _isLoading(false)
+    _fontPath(fontPath),
+    _state(State::IDLE)
 {
+    auto workerFunc = [this]() {
+        while (true)
+        {
+            // Wait until the main thread sends a message.
+            // 'Sending a message' means updating the state to a value that instructs
+            // the worker thread to do something.
+            unique_lock lock(_messageMutex);
+            _messageCondVar.wait(lock, [this]() { return _state == State::SUBMITTED || _state == State::STOPPING; });
+
+            // Do something depending on the current state.
+            if (_state == State::SUBMITTED)
+            {
+                // Process the tasks defined by the main thread.
+                for (SLAssetLoadTask& task : _loadTasks)
+                    task();
+
+                // Notify the main thread that the worker thread is done.
+                // The main thread checks this in checkIfAsyncLoadingIsDone.
+                _state = State::DONE;
+            }
+            else if (_state == State::STOPPING)
+            {
+                // Stops the worker thread by jumping...
+                break;
+            }
+        }
+
+        // ...here and notifying the main thread that it can now join the worker thread.
+        _state = State::STOPPED;
+        _messageCondVar.notify_one();
+    };
+
+    _worker = std::thread(workerFunc);
 }
 //-----------------------------------------------------------------------------
 SLAssetLoader::~SLAssetLoader()
 {
-    if (_worker)
-        _worker->join();
+    // Instruct the worker thread to stop.
+    unique_lock lock(_messageMutex);
+    _state = State::STOPPING;
+    lock.unlock();
+    _messageCondVar.notify_one();
+
+    // Wait until the worker thread has stopped so we can join it.
+    lock.lock();
+    _messageCondVar.wait(lock, [this]() { return _state == State::STOPPED; });
+    _worker.join();
 }
 //-----------------------------------------------------------------------------
+void SLAssetLoader::addRawDataToLoad(SLIOBuffer&    buffer,
+                                     SLstring       filename,
+                                     SLIOStreamKind kind)
+{
+    _loadTasks.push_back([this, &buffer, filename, kind] {
+        buffer = SLFileStorage::readIntoBuffer(filename, kind);
+    });
+}
 void SLAssetLoader::addTextureToLoad(SLGLTexture*& texture,
                                      SLstring      imageFilename,
                                      SLint         min_filter,
@@ -37,14 +95,13 @@ void SLAssetLoader::addTextureToLoad(SLGLTexture*& texture,
                           mag_filter,
                           type,
                           wrapS,
-                          wrapT]
-                         { texture = new SLGLTexture(_scene->assetManager(),
-                                                     _texturePath + imageFilename,
-                                                     min_filter,
-                                                     mag_filter,
-                                                     type,
-                                                     wrapS,
-                                                     wrapT); });
+                          wrapT] { texture = new SLGLTexture(_scene->assetManager(),
+                                                             _texturePath + imageFilename,
+                                                             min_filter,
+                                                             mag_filter,
+                                                             type,
+                                                             wrapS,
+                                                             wrapT); });
 }
 //-----------------------------------------------------------------------------
 void SLAssetLoader::addTextureToLoad(SLGLTexture*&   texture,
@@ -68,17 +125,16 @@ void SLAssetLoader::addTextureToLoad(SLGLTexture*&   texture,
                           filenameZNeg,
                           min_filter,
                           mag_filter,
-                          type]
-                         { texture = new SLGLTexture(_scene->assetManager(),
-                                                     _texturePath + filenameXPos,
-                                                     _texturePath + filenameXNeg,
-                                                     _texturePath + filenameYPos,
-                                                     _texturePath + filenameYNeg,
-                                                     _texturePath + filenameZPos,
-                                                     _texturePath + filenameZNeg,
-                                                     min_filter,
-                                                     mag_filter,
-                                                     type); });
+                          type] { texture = new SLGLTexture(_scene->assetManager(),
+                                                            _texturePath + filenameXPos,
+                                                            _texturePath + filenameXNeg,
+                                                            _texturePath + filenameYPos,
+                                                            _texturePath + filenameYNeg,
+                                                            _texturePath + filenameZPos,
+                                                            _texturePath + filenameZNeg,
+                                                            min_filter,
+                                                            mag_filter,
+                                                            type); });
 }
 //-----------------------------------------------------------------------------
 void SLAssetLoader::addTextureToLoad(SLGLTexture*&   texture,
@@ -101,16 +157,15 @@ void SLAssetLoader::addTextureToLoad(SLGLTexture*&   texture,
                           wrapS,
                           wrapT,
                           name,
-                          loadGrayscaleIntoAlpha]
-                         { texture = new SLGLTexture(_scene->assetManager(),
-                                                     depth,
-                                                     _texturePath + imageFilename,
-                                                     min_filter,
-                                                     mag_filter,
-                                                     wrapS,
-                                                     wrapT,
-                                                     name,
-                                                     loadGrayscaleIntoAlpha); });
+                          loadGrayscaleIntoAlpha] { texture = new SLGLTexture(_scene->assetManager(),
+                                                                              depth,
+                                                                              _texturePath + imageFilename,
+                                                                              min_filter,
+                                                                              mag_filter,
+                                                                              wrapS,
+                                                                              wrapT,
+                                                                              name,
+                                                                              loadGrayscaleIntoAlpha); });
 }
 //-----------------------------------------------------------------------------
 /*! Method for adding a 3D texture from a vector of images to load in parallel
@@ -143,15 +198,14 @@ void SLAssetLoader::addTextureToLoad(SLGLTexture*&    texture,
                           wrapS,
                           wrapT,
                           name,
-                          loadGrayscaleIntoAlpha]
-                         { texture = new SLGLTexture(_scene->assetManager(),
-                                                     imageFilenames,
-                                                     min_filter,
-                                                     mag_filter,
-                                                     wrapS,
-                                                     wrapT,
-                                                     name,
-                                                     loadGrayscaleIntoAlpha); });
+                          loadGrayscaleIntoAlpha] { texture = new SLGLTexture(_scene->assetManager(),
+                                                                              imageFilenames,
+                                                                              min_filter,
+                                                                              mag_filter,
+                                                                              wrapS,
+                                                                              wrapT,
+                                                                              name,
+                                                                              loadGrayscaleIntoAlpha); });
 }
 //-----------------------------------------------------------------------------
 void SLAssetLoader::addProgramGenericToLoad(SLGLProgram*&   program,
@@ -161,10 +215,9 @@ void SLAssetLoader::addProgramGenericToLoad(SLGLProgram*&   program,
     _loadTasks.push_back([this,
                           &program,
                           vertShaderFile,
-                          fragShaderFile]
-                         { program = new SLGLProgramGeneric(_scene->assetManager(),
-                                                            _shaderPath + vertShaderFile,
-                                                            _shaderPath + fragShaderFile); });
+                          fragShaderFile] { program = new SLGLProgramGeneric(_scene->assetManager(),
+                                                                             _shaderPath + vertShaderFile,
+                                                                             _shaderPath + fragShaderFile); });
 }
 //-----------------------------------------------------------------------------
 void SLAssetLoader::addNodeToLoad(SLNode*&    node,
@@ -184,8 +237,7 @@ void SLAssetLoader::addNodeToLoad(SLNode*&    node,
                           loadMeshesOnly,
                           overrideMat,
                           ambientFactor,
-                          forceCookTorranceRM]
-                         {
+                          forceCookTorranceRM] {
         SLAssimpImporter importer;
         node = importer.load(_scene->animManager(),
                              _scene->assetManager(),
@@ -208,12 +260,11 @@ void SLAssetLoader::addSkyboxToLoad(SLSkybox*&      skybox,
                           &skybox,
                           hdrImageWithFullPath,
                           resolution,
-                          name]
-                         { skybox = new SLSkybox(_scene->assetManager(),
-                                                 _shaderPath,
-                                                 hdrImageWithFullPath,
-                                                 resolution,
-                                                 name); });
+                          name] { skybox = new SLSkybox(_scene->assetManager(),
+                                                        _shaderPath,
+                                                        hdrImageWithFullPath,
+                                                        resolution,
+                                                        name); });
 }
 //-----------------------------------------------------------------------------
 void SLAssetLoader::addLoadTask(SLAssetLoadTask task)
@@ -236,42 +287,40 @@ void SLAssetLoader::addSkyboxToLoad(SLSkybox*&      skybox,
                           cubeMapYPos,
                           cubeMapYNeg,
                           cubeMapZPos,
-                          cubeMapZNeg]
-                         { skybox = new SLSkybox(_scene->assetManager(),
-                                                 _shaderPath,
-                                                 _texturePath + cubeMapXPos,
-                                                 _texturePath + cubeMapXNeg,
-                                                 _texturePath + cubeMapYPos,
-                                                 _texturePath + cubeMapYNeg,
-                                                 _texturePath + cubeMapZPos,
-                                                 _texturePath + cubeMapZNeg); });
+                          cubeMapZNeg] { skybox = new SLSkybox(_scene->assetManager(),
+                                                               _shaderPath,
+                                                               _texturePath + cubeMapXPos,
+                                                               _texturePath + cubeMapXNeg,
+                                                               _texturePath + cubeMapYPos,
+                                                               _texturePath + cubeMapYNeg,
+                                                               _texturePath + cubeMapZPos,
+                                                               _texturePath + cubeMapZNeg); });
 }
 //-----------------------------------------------------------------------------
-void SLAssetLoader::startLoadingAssetsAsync(function<void()> onDoneLoading)
+void SLAssetLoader::loadAssetsSync()
+{
+    for (const SLAssetLoadTask& task : _loadTasks)
+        task();
+
+    _loadTasks.clear();
+}
+//-----------------------------------------------------------------------------
+void SLAssetLoader::loadAssetsAsync(function<void()> onDoneLoading)
 {
     _onDoneLoading = onDoneLoading;
-    _isDone.store(false);
-    _isLoading = true;
 
-    _worker = thread([this]
-                     {
-        for (const SLAssetLoadTask& task : _loadTasks)
-            task();
-
-        _isDone = true; });
+    // Instruct the worker thread to start processing tasks.
+    unique_lock lock(_messageMutex);
+    _state = State::SUBMITTED;
+    lock.unlock();
+    _messageCondVar.notify_one();
 }
 //-----------------------------------------------------------------------------
 void SLAssetLoader::checkIfAsyncLoadingIsDone()
 {
-    if (_isLoading && _isDone)
+    if (_state == State::DONE)
     {
-        if (_worker)
-        {
-            _worker->join();
-            _worker = {}; // set optional to false
-        }
-
-        _isLoading = false;
+        _state = State::IDLE;
         _loadTasks.clear();
         _onDoneLoading();
     }

@@ -10,6 +10,8 @@
 #ifndef SLASSETLOADER_H
 #define SLASSETLOADER_H
 
+#include "SLFileStorage.h"
+
 #include <condition_variable>
 #include <vector>
 #include <functional>
@@ -17,8 +19,9 @@
 #include <atomic>
 #include <optional>
 
-#include <SL.h>
-#include <SLGLTexture.h>;
+#include "SL.h"
+#include "SLGLTexture.h"
+#include "SLFileStorage.h"
 
 class SLScene;
 class SLAssetManager;
@@ -27,7 +30,9 @@ class SLSkybox;
 class SLMaterial;
 
 using std::atomic;
+using std::condition_variable;
 using std::function;
+using std::mutex;
 using std::optional;
 using std::thread;
 
@@ -37,20 +42,36 @@ typedef vector<SLAssetLoadTask> SLVAssetLoadTask;
 //-----------------------------------------------------------------------------
 class SLAssetLoader
 {
+private:
+    enum class State
+    {
+        IDLE,
+        SUBMITTED,
+        WORKING,
+        DONE,
+        STOPPING,
+        STOPPED
+    };
+
 public:
     SLAssetLoader(SLstring modelPath,
                   SLstring texturePath,
-                  SLstring shaderPath);
+                  SLstring shaderPath,
+                  SLstring fontPath);
     ~SLAssetLoader();
 
     // Setters
     void scene(SLScene* scene) { _scene = scene; }
 
     // Getters
-    bool     isLoading() const { return _isLoading; }
+    bool     isLoading() const { return _state != State::IDLE; }
     SLstring modelPath() const { return _modelPath; }
     SLstring shaderPath() const { return _shaderPath; }
     SLstring texturePath() const { return _texturePath; }
+
+    void addRawDataToLoad(SLIOBuffer&    buffer,
+                          SLstring       filename,
+                          SLIOStreamKind kind);
 
     //! Add 2D textures with internal image allocation
     void addTextureToLoad(SLGLTexture*& texture,
@@ -94,15 +115,15 @@ public:
                           const SLstring&  name,
                           SLbool           loadGrayscaleIntoAlpha);
 
-      //! Add mesh from file to load via assimp loader
-      void addNodeToLoad(SLNode*&    node,
-                         SLstring    path,
-                         SLSkybox*   skybox                 = nullptr,
-                         SLbool      deleteTexImgAfterBuild = false,
-                         SLbool      loadMeshesOnly         = true,
-                         SLMaterial* overrideMat            = nullptr,
-                         float       ambientFactor          = 0.5f,
-                         SLbool      forceCookTorranceRM    = false);
+    //! Add mesh from file to load via assimp loader
+    void addNodeToLoad(SLNode*&    node,
+                       SLstring    path,
+                       SLSkybox*   skybox                 = nullptr,
+                       SLbool      deleteTexImgAfterBuild = false,
+                       SLbool      loadMeshesOnly         = true,
+                       SLMaterial* overrideMat            = nullptr,
+                       float       ambientFactor          = 0.5f,
+                       SLbool      forceCookTorranceRM    = false);
 
     //! Add generic GLSL program with shader files to load
     void addProgramGenericToLoad(SLGLProgram*&   program,
@@ -127,20 +148,24 @@ public:
     //! Add generic task
     void addLoadTask(SLAssetLoadTask task);
 
-    void startLoadingAssetsAsync(function<void()> onDone);
+    void loadAssetsSync();
+    void loadAssetsAsync(function<void()> onDone);
     void checkIfAsyncLoadingIsDone();
 
-private:
+public:
     SLScene*         _scene;
     SLAssetManager*  _am;
     SLstring         _modelPath;
     SLstring         _texturePath;
     SLstring         _shaderPath;
+    SLstring         _fontPath;
     SLVAssetLoadTask _loadTasks;
-    bool             _isLoading;
-    atomic<bool>     _isDone;        //!< thread save boolean for checking parallel loading
-    optional<thread> _worker;        //!< worker thread for parallel loading
     function<void()> _onDoneLoading; //!< Callback after threaded loading
+
+    thread             _worker;         //!< worker thread for parallel loading
+    atomic<State>      _state;          //!< current state (used for communication between threads)
+    mutex              _messageMutex;   //!< mutex protecting state between threads
+    condition_variable _messageCondVar; //!< mutex for waiting until state has changed
 };
 //-----------------------------------------------------------------------------
 

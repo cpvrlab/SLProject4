@@ -127,8 +127,7 @@ void AppDemoSceneGLTF::assemble(SLAssetManager* am, SLSceneView* sv)
     scene->addChild(light1);
 
     // Update all materials and set their skybox to _skybox
-    _modelGLTF->updateMeshMat([=](SLMaterial* m)
-                              { m->skybox(_skybox); },
+    _modelGLTF->updateMeshMat([=](SLMaterial* m) { m->skybox(_skybox); },
                               true);
 
     scene->addChild(_modelGLTF);

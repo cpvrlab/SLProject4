@@ -18,6 +18,7 @@
 #include <math/SLRect.h>
 #include <imgui.h>
 #include <SLUiInterface.h>
+#include "SLFileStorage.h"
 
 class SLScene;
 class SLSceneView;
@@ -64,7 +65,8 @@ public:
               cbOnImGuiLoadConfig loadConfigCB,
               cbOnImGuiSaveConfig saveConfigCB,
               int                 dpi,
-              SLstring            fontDir);
+              SLIOBuffer          fontDataDroidSans,
+              SLIOBuffer          fontDataProggyClean);
     ~SLGLImGui() override;
     void init(const string& configPath) override;
 
@@ -83,7 +85,7 @@ public:
     void renderExtraFrame(SLScene* s, SLSceneView* sv, SLint mouseX, SLint mouseY) override;
     bool doNotDispatchKeyboard() override { return ImGui::GetIO().WantCaptureKeyboard; }
     bool doNotDispatchMouse() override { return ImGui::GetIO().WantCaptureMouse; }
-    void loadFonts(SLfloat fontPropDots, SLfloat fontFixedDots, SLstring fontDir);
+    void loadFonts(SLfloat fontPropDots, SLfloat fontFixedDots, SLIOBuffer fontDataDroidSans, SLIOBuffer fontDataProggyClean);
     void drawMouseCursor(bool doDraw) override { ImGui::GetIO().MouseDrawCursor = doDraw; }
 
     // Default font dots
@@ -120,7 +122,6 @@ private:
     SLuint   _elementsHandle;    //!< OpenGL handle for vertex indexes
     SLfloat  _fontPropDots;      //!< Active font size of proportional font
     SLfloat  _fontFixedDots;     //!< Active font size of fixed size font
-    SLstring _fontDir;
     SLstring _configPath;
 };
 //-----------------------------------------------------------------------------

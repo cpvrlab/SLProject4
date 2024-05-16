@@ -23,14 +23,13 @@ bool SLIOReaderFetch::exists(std::string url)
     emscripten_fetch_t* fetch  = emscripten_fetch(&attr, url.c_str());
     bool                exists = fetch->status == 200;
     emscripten_fetch_close(fetch);
+
     return exists;
 }
 //-----------------------------------------------------------------------------
 SLIOReaderFetch::SLIOReaderFetch(std::string url)
   : SLIOReaderMemory(url)
 {
-    Utils::showSpinnerMsg(url);
-
     std::cout << "FETCH \"" << url << "\"" << std::endl;
 
     emscripten_fetch_attr_t attr;
@@ -49,7 +48,6 @@ SLIOReaderFetch::SLIOReaderFetch(std::string url)
     }
 
     emscripten_fetch_close(fetch);
-    Utils::hideSpinnerMsg();
 }
 //-----------------------------------------------------------------------------
 SLIOReaderFetch::~SLIOReaderFetch()

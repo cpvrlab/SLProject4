@@ -45,6 +45,8 @@ void slCreateAppAndScene(SLVstring&      cmdLineArgs,
                          const SLstring& applicationName,
                          void*           onSceneLoadCallback = nullptr);
 //-----------------------------------------------------------------------------
+void slRegisterCoreAssetsToLoad();
+//-----------------------------------------------------------------------------
 SLint slCreateSceneView(SLAssetManager* am,
                         SLScene*        scene,
                         int             screenWidth,

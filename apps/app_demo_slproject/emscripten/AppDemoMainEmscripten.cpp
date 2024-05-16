@@ -11,12 +11,16 @@
 //              Please visit: http://opensource.org/licenses/GPL-3.0
 // #############################################################################
 
+#include "SL.h"
+#include "SLGLImGui.h"
+#include <AppDemoSceneView.h>
+
 #include <SLInterface.h>
 #include <SLScene.h>
 #include <AppDemo.h>
-#include <AppDemoSceneView.h>
 #include <AppDemoGui.h>
 #include <CVCapture.h>
+#include <SLAssetLoader.h>
 
 #include <GLFW/glfw3.h>
 #include <GLES3/gl3.h>
@@ -49,11 +53,10 @@ static SLint       lastWidth;          //!< Last window width in pixels
 static SLint       lastHeight;         //!< Last window height in pixels
 static SLbool      fullscreen = false; //!< flag if window is in fullscreen mode
 
+static SLbool coreAssetsLoaded = false;
+
 //-----------------------------------------------------------------------------
-extern void appDemoLoadScene(SLAssetManager* am,
-                             SLScene*        s,
-                             SLSceneView*    sv,
-                             SLSceneID       sceneID);
+void        appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID);
 extern bool onUpdateVideo();
 //-----------------------------------------------------------------------------
 void updateCanvas()
@@ -316,26 +319,17 @@ EM_BOOL emOnKeyPressed(int                            eventType,
 
         if (key == '0' && sv)
         {
-            appDemoLoadScene(AppDemo::assetManager,
-                             AppDemo::scene,
-                             sv,
-                             SID_Empty);
+            AppDemo::sceneToLoad = SID_Empty;
             SL_LOG("Loading SceneID: %d", AppDemo::sceneID);
         }
         else if (key == K_left && sv && AppDemo::sceneID > 0)
         {
-            appDemoLoadScene(AppDemo::assetManager,
-                             AppDemo::scene,
-                             sv,
-                             (SLSceneID)(AppDemo::sceneID - 1));
+            AppDemo::sceneToLoad = static_cast<SLSceneID>(AppDemo::sceneID - 1);
             SL_LOG("Loading SceneID: %d", AppDemo::sceneID);
         }
         else if (key == K_right && sv && AppDemo::sceneID < SID_MaxNoBenchmarks - 1)
         {
-            appDemoLoadScene(AppDemo::assetManager,
-                             AppDemo::scene,
-                             sv,
-                             (SLSceneID)(AppDemo::sceneID + 1));
+            AppDemo::sceneToLoad = static_cast<SLSceneID>(AppDemo::sceneID + 1);
             SL_LOG("Loading SceneID: %d", AppDemo::sceneID);
         }
     }
@@ -474,8 +468,8 @@ bool onPaint()
         return false;
     SLSceneView* sv = AppDemo::sceneViews[svIndex];
 
-    int newCanvasWidth  = MAIN_THREAD_EM_ASM_INT(return window.innerWidth;);
-    int newCanvasHeight = MAIN_THREAD_EM_ASM_INT(return window.innerHeight;);
+    int newCanvasWidth  = EM_ASM_INT(return window.innerWidth;);
+    int newCanvasHeight = EM_ASM_INT(return window.innerHeight;);
 
     if (newCanvasWidth != canvasWidth || newCanvasHeight != canvasHeight)
     {
@@ -488,6 +482,15 @@ bool onPaint()
                      canvasWidth,
                      canvasHeight);
     }
+
+    if (AppDemo::sceneToLoad)
+    {
+        appDemoSwitchScene(sv, *AppDemo::sceneToLoad);
+        AppDemo::sceneToLoad = {};
+    }
+
+    if (AppDemo::assetLoader->isLoading())
+        AppDemo::assetLoader->checkIfAsyncLoadingIsDone();
 
     // If live video image is requested grab it and copy it
     if (CVCapture::instance()->videoType() != VT_NONE)
@@ -502,18 +505,42 @@ bool onPaint()
     bool viewsNeedsRepaint = slPaintAllViews();
     ///////////////////////////////////////////////
 
-    return jobIsRunning || viewsNeedsRepaint;
+    return jobIsRunning || viewsNeedsRepaint || AppDemo::assetLoader->isLoading();
 }
 //-----------------------------------------------------------------------------
 void onLoop()
 {
-    onPaint();
+    if (coreAssetsLoaded)
+        onPaint();
+    else
+    {
+        if (AppDemo::assetLoader->isLoading())
+        {
+            AppDemo::assetLoader->checkIfAsyncLoadingIsDone();
+            return;
+        }
+
+        coreAssetsLoaded = true;
+
+        slCreateSceneView(AppDemo::assetManager,
+                          AppDemo::scene,
+                          canvasWidth,
+                          canvasHeight,
+                          dpi,
+                          (SLSceneID)SID_Minimal,
+                          (void*)&onPaint,
+                          nullptr,
+                          (void*)createAppDemoSceneView,
+                          (void*)AppDemoGui::build,
+                          (void*)AppDemoGui::loadConfig,
+                          (void*)AppDemoGui::saveConfig);
+    }
 }
 //-----------------------------------------------------------------------------
 int main(void)
 {
-    canvasWidth  = MAIN_THREAD_EM_ASM_INT(return window.innerWidth);
-    canvasHeight = MAIN_THREAD_EM_ASM_INT(return window.innerHeight);
+    canvasWidth  = EM_ASM_INT(return window.innerWidth);
+    canvasHeight = EM_ASM_INT(return window.innerHeight);
     updateCanvas();
 
     EmscriptenWebGLContextAttributes attributes;
@@ -553,7 +580,7 @@ int main(void)
 
     // HACK: Fixes to make this able to run in an <iframe>
     // clang-format off
-    MAIN_THREAD_EM_ASM({
+    EM_ASM({
         const canvas = document.querySelector("#canvas");
         
         // Focus the canvas element on click.
@@ -586,21 +613,10 @@ int main(void)
       "data/videos/",
       "data/config/",
       "AppDemoEmscripten",
-      (void*)appDemoLoadScene);
+      (void*)nullptr);
 
-    slCreateSceneView(
-      AppDemo::assetManager,
-      AppDemo::scene,
-      canvasWidth,
-      canvasHeight,
-      dpi,
-      (SLSceneID)SID_Minimal,
-      (void*)&onPaint,
-      nullptr,
-      (void*)createAppDemoSceneView,
-      (void*)AppDemoGui::build,
-      (void*)AppDemoGui::loadConfig,
-      (void*)AppDemoGui::saveConfig);
+    slRegisterCoreAssetsToLoad();
+    AppDemo::assetLoader->loadAssetsAsync([] {});
 
     // We cannot loop ourselves because that would block the page,
     // but we can register an update function to be called in every iteration

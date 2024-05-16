@@ -228,12 +228,6 @@ void errorMsg(const char* tag,
               int         line,
               const char* file);
 
-//! Shows the a spinner icon message
-void showSpinnerMsg(string msg);
-
-//! Hides the previous spinner icon message
-void hideSpinnerMsg();
-
 //! Returns in release config the max. NO. of threads otherwise 1
 unsigned int maxThreads();
 

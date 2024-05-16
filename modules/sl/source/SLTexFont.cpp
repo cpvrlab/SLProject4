@@ -135,7 +135,7 @@ void SLTexFont::create(SLstring fontFilename)
                     x1[ch - 32] = x;
                     y0[ch - 32] = r * (h + 1);
                     y1[ch - 32] = r * (h + 1) + h - 1;
-                    start = x + 1;
+                    start       = x + 1;
                 }
                 ++ch;
             }
@@ -311,7 +311,7 @@ SLVstring SLTexFont::wrapTextToLines(SLstring text, // text to wrap
 
             // if width exceeded wrap at last blank position
             if (curX > maxW)
-            {     // wrap at last blank
+            { // wrap at last blank
                 if (xBlank > 0.0f)
                 {
                     // keep largest line width
@@ -347,14 +347,14 @@ void SLTexFont::buildTextBuffers(SLGLVertexArray& vao,      //!< external vertex
                                  SLfloat          maxWidth, //!<  max. width for multi-line text
                                  SLfloat          lineHeight)        //!< line height factor
 {
-    SLVstring lines;                                        // Vector of text lines
-    SLVVec2f  sizes;                                        // Sizes of text lines
-    size_t    numP = 0;                                     // No. of vertices
-    size_t    numI = 0;                                     // No. of indices (3 per triangle)
-    SLfloat   x;                                            // current lower-left x position
-    SLfloat   y;                                            // current lower-left y position
-    SLuint    iV;                                           // current vertex index
-    SLuint    iI;                                           // current vertex index index
+    SLVstring lines;    // Vector of text lines
+    SLVVec2f  sizes;    // Sizes of text lines
+    size_t    numP = 0; // No. of vertices
+    size_t    numI = 0; // No. of indices (3 per triangle)
+    SLfloat   x;        // current lower-left x position
+    SLfloat   y;        // current lower-left y position
+    SLuint    iV;       // current vertex index
+    SLuint    iI;       // current vertex index index
 
     // Calculate number of vertices & indices
     if (maxWidth > 0.0f)
