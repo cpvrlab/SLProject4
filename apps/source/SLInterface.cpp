@@ -113,17 +113,13 @@ void slRegisterCoreAssetsToLoad()
     SLAssetLoader&  al = *AppDemo::assetLoader;
     SLAssetManager* am = AppDemo::assetManager;
 
+    // FIXME: There are dependencies between these load tasks, how do we express this?
+
+    // Load all core shader programs.
+    al.addLoadTask([am] { SLGLProgramManager::loadPrograms(); });
+
     // Generate static fonts.
     al.addLoadTask([am, fontPath = AppDemo::fontPath] { am->generateStaticFonts(AppDemo::fontPath); });
-
-    // Make sure all core shaders are loaded.
-    al.addLoadTask([am] { SLGLProgramManager::get(SP_colorAttribute); });
-    al.addLoadTask([am] { SLGLProgramManager::get(SP_colorUniform); });
-    al.addLoadTask([am] { SLGLProgramManager::get(SP_TextureOnly); });
-    al.addLoadTask([am] { SLGLProgramManager::get(SP_TextureOnlyExternal); });
-    al.addLoadTask([am] { SLGLProgramManager::get(SP_fontTex); });
-    al.addLoadTask([am] { SLGLProgramManager::get(SP_errorTex); });
-    al.addLoadTask([am] { SLGLProgramManager::get(SP_depth); });
 
     // Load data for ImGUI fonts.
     al.addRawDataToLoad(AppDemo::fontDataDroidSans, AppDemo::fontPath + "DroidSans.ttf", IOK_font);

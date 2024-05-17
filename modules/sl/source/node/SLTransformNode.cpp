@@ -8,6 +8,7 @@
 //             Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
 
+#include <SLGLProgramManager.h>
 #include <SLTransformNode.h>
 #include <SLVec3.h>
 #include <SLCoordAxisArrow.h>
@@ -34,17 +35,16 @@ SLTransformNode::SLTransformNode(SLSceneView* sv,
     _mouseIsDown(false),
     _gizmoScale(1.0f)
 {
-    _prog = new SLGLProgramGeneric(nullptr, shaderDir + "ColorUniformPoint.vert", shaderDir + "Color.frag");
-    _prog->addUniform1f(new SLGLUniform1f(UT_const, "u_pointSize", 3.0f));
+    SLGLProgram* prog = SLGLProgramManager::get(SP_colorUniformPoint);
 
-    _matR  = new SLMaterial(nullptr, "Red Opaque", SLCol4f::RED, SLVec4f::WHITE, 100.0f, 0.0f, 0.0f, 0.0f, _prog);
-    _matRT = new SLMaterial(nullptr, "Red Transp", SLCol4f::RED, SLVec4f::WHITE, 100.0f, 0.0f, 0.5f, 0.0f, _prog);
-    _matG  = new SLMaterial(nullptr, "Green Opaque", SLCol4f::GREEN, SLVec4f::WHITE, 100.0f, 0.0f, 0.0f, 0.0f, _prog);
-    _matGT = new SLMaterial(nullptr, "Green Transp", SLCol4f::GREEN, SLVec4f::WHITE, 100.0f, 0.0f, 0.5f, 0.0f, _prog);
-    _matB  = new SLMaterial(nullptr, "Blue Opaque", SLCol4f::BLUE, SLVec4f::WHITE, 100.0f, 0.0f, 0.0f, 0.0f, _prog);
-    _matBT = new SLMaterial(nullptr, "Blue Transp", SLCol4f::BLUE, SLVec4f::WHITE, 100.0f, 0.0f, 0.5f, 0.0f, _prog);
-    _matY  = new SLMaterial(nullptr, "Yellow Opaque", SLCol4f::YELLOW, SLVec4f::WHITE, 100.0f, 0.0f, 0.0f, 0.0f, _prog);
-    _matYT = new SLMaterial(nullptr, "Yellow Transp", SLCol4f::YELLOW, SLVec4f::WHITE, 100.0f, 0.0f, 0.5f, 0.0f, _prog);
+    _matR  = new SLMaterial(nullptr, "Red Opaque", SLCol4f::RED, SLVec4f::WHITE, 100.0f, 0.0f, 0.0f, 0.0f, prog);
+    _matRT = new SLMaterial(nullptr, "Red Transp", SLCol4f::RED, SLVec4f::WHITE, 100.0f, 0.0f, 0.5f, 0.0f, prog);
+    _matG  = new SLMaterial(nullptr, "Green Opaque", SLCol4f::GREEN, SLVec4f::WHITE, 100.0f, 0.0f, 0.0f, 0.0f, prog);
+    _matGT = new SLMaterial(nullptr, "Green Transp", SLCol4f::GREEN, SLVec4f::WHITE, 100.0f, 0.0f, 0.5f, 0.0f, prog);
+    _matB  = new SLMaterial(nullptr, "Blue Opaque", SLCol4f::BLUE, SLVec4f::WHITE, 100.0f, 0.0f, 0.0f, 0.0f, prog);
+    _matBT = new SLMaterial(nullptr, "Blue Transp", SLCol4f::BLUE, SLVec4f::WHITE, 100.0f, 0.0f, 0.5f, 0.0f, prog);
+    _matY  = new SLMaterial(nullptr, "Yellow Opaque", SLCol4f::YELLOW, SLVec4f::WHITE, 100.0f, 0.0f, 0.0f, 0.0f, prog);
+    _matYT = new SLMaterial(nullptr, "Yellow Transp", SLCol4f::YELLOW, SLVec4f::WHITE, 100.0f, 0.0f, 0.5f, 0.0f, prog);
 
     _axisR             = new SLCoordAxisArrow(nullptr, _matRT);
     _axisG             = new SLCoordAxisArrow(nullptr, _matGT);
@@ -167,8 +167,7 @@ SLTransformNode::~SLTransformNode()
     // delete _gizmosNode;
     this->deleteChild(_gizmosNode);
     this->deleteChildren();
-    // delete all programs, materials and meshes
-    delete _prog;
+    // delete all materials and meshes
     delete _matR;
     delete _matG;
     delete _matB;

@@ -15,6 +15,7 @@
 
 using std::string;
 
+class SLGLProgram;
 class SLGLProgramGeneric;
 
 //-----------------------------------------------------------------------------
@@ -23,13 +24,14 @@ enum SLStdShaderProg
 {
     SP_colorAttribute = 0,
     SP_colorUniform,
-    SP_TextureOnly,
-    SP_TextureOnlyExternal,
+    SP_colorUniformPoint,
+    SP_textureOnly,
+    SP_textureOnlyExternal,
     SP_fontTex,
     SP_stereoOculus,
     SP_stereoOculusDistortion,
     SP_depth,
-    SP_errorTex
+    SP_errorTex,
 };
 
 //-----------------------------------------------------------------------------
@@ -49,7 +51,10 @@ public:
     static void init(string shaderPath, string configPath);
 
     //! Get program reference for given id
-    static SLGLProgramGeneric* get(SLStdShaderProg id);
+    static SLGLProgramGeneric* get(SLStdShaderProg id) { return _programs[id]; }
+
+    //! Instantiate and load all programs
+    static void loadPrograms();
 
     //! Delete all instantiated programs
     static void deletePrograms();
@@ -60,12 +65,14 @@ public:
     //! Contains the global shader path
     static string shaderPath;
 
-    //! Contains the global writable configuration path;
+    //! Contains the global writable configuration path
     static string configPath;
 
 private:
-    //! Make a program if it is not contained in _programs
-    static void makeProgram(SLStdShaderProg id);
+    //! Make a new program and insert it into _programs
+    static SLGLProgramGeneric* loadProgram(SLStdShaderProg id,
+                                           string          vertShaderFilename,
+                                           string          fragShaderFilename);
 
     //! Instantiated programs
     static std::map<SLStdShaderProg, SLGLProgramGeneric*> _programs;

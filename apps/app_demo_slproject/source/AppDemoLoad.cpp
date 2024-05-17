@@ -727,9 +727,9 @@ void appDemoLoadScene(SLAssetManager* am,
         s->info("Tracking hands with MediaPipe.");
 
         gVideoTexture = new SLGLTexture(am,
-                                       texPath + "LiveVideoError.png",
-                                       GL_LINEAR,
-                                       GL_LINEAR);
+                                        texPath + "LiveVideoError.png",
+                                        GL_LINEAR,
+                                        GL_LINEAR);
 
         SLCamera* cam1 = new SLCamera("Camera 1");
         cam1->background().texture(gVideoTexture);
@@ -3559,6 +3559,41 @@ void appDemoLoadScene(SLAssetManager* am,
 #endif
 }
 //-----------------------------------------------------------------------------
+static void onDoneLoading(AppScene* s, SLSceneView* sv, SLAssetManager* am, SLfloat startLoadMS)
+{
+    s->assemble(am, sv);
+
+    // Make sure the scene view has a camera
+    if (!sv->camera())
+        sv->camera(sv->sceneViewCamera());
+
+    AppDemo::scene = s;
+
+    // call onInitialize on all scene views to init the scenegraph and stats
+    for (auto* sceneView : AppDemo::sceneViews)
+        if (sceneView != nullptr)
+            sceneView->onInitialize();
+
+    if (CVCapture::instance()->videoType() != VT_NONE)
+    {
+        if (sv->viewportSameAsVideo())
+        {
+            // Pass a negative value to the start function, so that the
+            // viewport aspect ratio can be adapted later to the video aspect.
+            // This will be known after start.
+            CVCapture::instance()->start(-1.0f);
+            SLVec2i videoAspect;
+            videoAspect.x = CVCapture::instance()->captureSize.width;
+            videoAspect.y = CVCapture::instance()->captureSize.height;
+            sv->setViewportFromRatio(videoAspect, sv->viewportAlign(), true);
+        }
+        else
+            CVCapture::instance()->start(sv->viewportWdivH());
+    }
+
+    s->loadTimeMS(GlobalTimer::timeMS() - startLoadMS);
+}
+//-----------------------------------------------------------------------------
 void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
 {
     AppScene*        s  = nullptr;
@@ -3583,8 +3618,8 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     gVideoTracker = nullptr;
 
     // Reset asset pointer from previous scenes
-    gVideoTexture = nullptr; // The video texture will be deleted by scene uninit
-    gVideoTrackedNode  = nullptr; // The tracked node will be deleted by scene uninit
+    gVideoTexture     = nullptr; // The video texture will be deleted by scene uninit
+    gVideoTrackedNode = nullptr; // The tracked node will be deleted by scene uninit
 
     if (sceneID != SID_VolumeRayCastLighted)
         gTexMRI3D = nullptr; // The 3D MRI texture will be deleted by scene uninit
@@ -3678,8 +3713,8 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     gVideoTracker = nullptr;
 
     // Reset asset pointer from previous scenes
-    gVideoTexture = nullptr; // The video texture will be deleted by scene uninit
-    gVideoTrackedNode  = nullptr; // The tracked node will be deleted by scene uninit
+    gVideoTexture     = nullptr; // The video texture will be deleted by scene uninit
+    gVideoTrackedNode = nullptr; // The tracked node will be deleted by scene uninit
 
     if (sceneID != SID_VolumeRayCastLighted)
         gTexMRI3D = nullptr; // The 3D MRI texture will be deleted by scene uninit
@@ -3717,7 +3752,10 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     al->scene(s);
     sv->scene(s);
 
-    auto onDoneLoading = [s, sv, startLoadMS] {
+    s->registerAssetsToLoad(*al);
+
+    AppDemoGui::loadingString = "Loading...";
+    al->loadAssetsAsync([=] {
         s->assemble(am, sv);
 
         // Make sure the scene view has a camera
@@ -3749,11 +3787,6 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         }
 
         s->loadTimeMS(GlobalTimer::timeMS() - startLoadMS);
-    };
-
-    s->registerAssetsToLoad(*al);
-
-    AppDemoGui::loadingString = "Loading...";
-    al->loadAssetsAsync(onDoneLoading);
+    });
 }
 //-----------------------------------------------------------------------------

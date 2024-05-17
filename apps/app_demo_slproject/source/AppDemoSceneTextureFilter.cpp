@@ -58,28 +58,28 @@ void AppDemoSceneTextureFilter::assemble(SLAssetManager* am, SLSceneView* sv)
                                       nullptr,
                                       nullptr,
                                       nullptr,
-                                      SLGLProgramManager::get(SP_TextureOnly));
+                                      SLGLProgramManager::get(SP_textureOnly));
     SLMaterial* matL = new SLMaterial(am,
                                       "matL",
                                       _texL,
                                       nullptr,
                                       nullptr,
                                       nullptr,
-                                      SLGLProgramManager::get(SP_TextureOnly));
+                                      SLGLProgramManager::get(SP_textureOnly));
     SLMaterial* matT = new SLMaterial(am,
                                       "matT",
                                       _texT,
                                       nullptr,
                                       nullptr,
                                       nullptr,
-                                      SLGLProgramManager::get(SP_TextureOnly));
+                                      SLGLProgramManager::get(SP_textureOnly));
     SLMaterial* matR = new SLMaterial(am,
                                       "matR",
                                       _texR,
                                       nullptr,
                                       nullptr,
                                       nullptr,
-                                      SLGLProgramManager::get(SP_TextureOnly));
+                                      SLGLProgramManager::get(SP_textureOnly));
 
     // build polygons for bottom, left, top & right side
     SLVVec3f VB;
