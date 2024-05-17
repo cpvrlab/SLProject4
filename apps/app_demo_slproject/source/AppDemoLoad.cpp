@@ -90,9 +90,13 @@
 #include <AppDemoSceneTextureCompression.h>
 #include <AppDemoSceneTextureFilter.h>
 #include <AppDemoSceneVideoChessboard.h>
+#include <AppDemoSceneVideoSensorAR.h>
 #include <AppDemoSceneVideoTexture.h>
 #include <AppDemoSceneVideoTrackAruco.h>
 #include <AppDemoSceneVideoTrackFace.h>
+#include <AppDemoSceneVideoTrackFeatures.h>
+#include <AppDemoSceneVideoTrackMediapipe.h>
+#include <AppDemoSceneVideoTrackWAI.h>
 #include <AppDemoSceneVolumeRayCast.h>
 #include <AppDemoSceneVolumeRayCastLighted.h>
 #include <AppDemoSceneZFighting.h>
@@ -106,9 +110,6 @@
 extern SLGLTexture* gVideoTexture;
 extern CVTracked*   gVideoTracker;
 extern SLNode*      gVideoTrackedNode;
-//-----------------------------------------------------------------------------
-//! Global pointer to 3D MRI texture for volume rendering for threaded loading
-SLGLTexture* gTexMRI3D = nullptr;
 //-----------------------------------------------------------------------------
 //! Global pointer to dragon model for threaded loading
 SLNode* gDragonModel = nullptr;
@@ -650,232 +651,7 @@ void appDemoLoadScene(SLAssetManager* am,
 #ifdef SL_USE_ENTITIES_DEBUG
     SLScene::entities.dump(true);
 #endif
-
-    if (sceneID == SID_VideoTrackFeature2DMain) //............................................
-    {
-        /*
-        The tracking of markers is done in AppDemoVideo::onUpdateVideo by calling the specific
-        CVTracked::track method. If a marker was found it overwrites the linked nodes
-        object matrix (SLNode::_om). If the linked node is the active camera the found
-        transform is additionally inversed. This would be the standard augmented realtiy
-        use case.
-        */
-
-        s->name("Track 2D Features");
-        s->info("Augmented Reality 2D Feature Tracking: You need to print out the stones image target from the file data/calibrations/vuforia_markers.pdf");
-
-        // Create video texture on global pointer updated in AppDemoVideo
-        gVideoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
-
-        SLCamera* cam1 = new SLCamera("Camera 1");
-        cam1->translation(0, 2, 60);
-        cam1->lookAt(15, 15, 0);
-        cam1->clipNear(0.1f);
-        cam1->clipFar(1000.0f); // Increase to infinity?
-        cam1->setInitialState();
-        cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-        cam1->background().texture(gVideoTexture);
-        CVCapture::instance()->videoType(VT_MAIN);
-
-        SLLightSpot* light1 = new SLLightSpot(am, s, 420, 420, 420, 1);
-        light1->powers(1.0f, 1.0f, 1.0f);
-
-        SLLightSpot* light2 = new SLLightSpot(am, s, -450, -340, 420, 1);
-        light2->powers(1.0f, 1.0f, 1.0f);
-        light2->attenuation(1, 0, 0);
-
-        SLLightSpot* light3 = new SLLightSpot(am, s, 450, -370, 0, 1);
-        light3->powers(1.0f, 1.0f, 1.0f);
-        light3->attenuation(1, 0, 0);
-
-        // Coordinate axis node
-        SLNode* axis = new SLNode(new SLCoordAxis(am), "Axis Node");
-        axis->setDrawBitsRec(SL_DB_MESHWIRED, false);
-        axis->scale(100);
-        axis->rotate(-90, 1, 0, 0);
-
-        // Yellow center box
-        SLMaterial* yellow = new SLMaterial(am, "mY", SLCol4f(1, 1, 0, 0.5f));
-        SLNode*     box    = new SLNode(new SLBox(am, 0, 0, 0, 100, 100, 100, "Box", yellow), "Box Node");
-        box->rotate(-90, 1, 0, 0);
-
-        // Scene structure
-        SLNode* scene = new SLNode("Scene");
-        s->root3D(scene);
-        scene->addChild(light1);
-        scene->addChild(light2);
-        scene->addChild(light3);
-        scene->addChild(axis);
-        scene->addChild(box);
-        scene->addChild(cam1);
-
-        // Create feature gVideoTracker and let it pose the camera for AR posing
-        gVideoTracker = new CVTrackedFeatures(texPath + "features_stones.jpg");
-        // gVideoTracker = new CVTrackedFeatures("features_abstract.jpg");
-        gVideoTracker->drawDetection(true);
-        gVideoTrackedNode = cam1;
-
-        sv->doWaitOnIdle(false); // for constant video feed
-        sv->camera(cam1);
-        AppDemo::devRot.isUsed(true);
-    }
-#ifdef SL_BUILD_WITH_MEDIAPIPE
-    else if (sceneID == SID_VideoTrackMediaPipeHandsMain) //.......................................
-    {
-        CVCapture::instance()->videoType(VT_MAIN);
-        s->name("Tracking Hands with MediaPipe (main cam.)");
-        s->info("Tracking hands with MediaPipe.");
-
-        gVideoTexture = new SLGLTexture(am,
-                                        texPath + "LiveVideoError.png",
-                                        GL_LINEAR,
-                                        GL_LINEAR);
-
-        SLCamera* cam1 = new SLCamera("Camera 1");
-        cam1->background().texture(gVideoTexture);
-
-        SLNode* scene = new SLNode("Scene");
-        s->root3D(scene);
-
-        gVideoTracker     = new CVTrackedMediaPipeHands(AppDemo::dataPath);
-        gVideoTrackedNode = cam1;
-        gVideoTracker->drawDetection(true);
-
-        sv->doWaitOnIdle(false);
-        sv->camera(cam1);
-    }
-#endif
-#ifdef SL_BUILD_WAI
-    else if (sceneID == SID_VideoTrackWAI) //......................................................
-    {
-        CVCapture::instance()->videoType(VT_MAIN);
-        s->name("Track WAI (main cam.)");
-        s->info("Track the scene with a point cloud built with the WAI (Where Am I) library.");
-
-        // Create video texture on global pointer updated in AppDemoVideo
-        gVideoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
-
-        // Material
-        SLMaterial* yellow = new SLMaterial(am, "mY", SLCol4f(1, 1, 0, 0.5f));
-        SLMaterial* cyan   = new SLMaterial(am, "mY", SLCol4f(0, 1, 1, 0.5f));
-
-        // Create a scene group node
-        SLNode* scene = new SLNode("scene node");
-        s->root3D(scene);
-
-        // Create a camera node 1
-        SLCamera* cam1 = new SLCamera("Camera 1");
-        cam1->translation(0, 0, 5);
-        cam1->lookAt(0, 0, 0);
-        cam1->fov(CVCapture::instance()->activeCamera->calibration.cameraFovVDeg());
-        cam1->background().texture(gVideoTexture);
-        cam1->setInitialState();
-        scene->addChild(cam1);
-
-        // Create a light source node
-        SLLightSpot* light1 = new SLLightSpot(am, s, 0.02f);
-        light1->translation(0.12f, 0.12f, 0.12f);
-        light1->name("light node");
-        scene->addChild(light1);
-
-        // Get the half edge length of the aruco marker
-        SLfloat edgeLen = 0.1f;
-        SLfloat he      = edgeLen * 0.5f;
-
-        // Build mesh & node that will be tracked by the 1st marker (camera)
-        SLBox*  box1      = new SLBox(am, -he, -he, -he, he, he, he, "Box 1", yellow);
-        SLNode* boxNode1  = new SLNode(box1, "Box Node 1");
-        SLNode* axisNode1 = new SLNode(new SLCoordAxis(am), "Axis Node 1");
-        axisNode1->setDrawBitsRec(SL_DB_MESHWIRED, false);
-        axisNode1->scale(edgeLen);
-        axisNode1->translate(-he, -he, -he, TS_parent);
-        boxNode1->addChild(axisNode1);
-        boxNode1->setDrawBitsRec(SL_DB_CULLOFF, true);
-        boxNode1->translate(0.0f, 0.0f, 1.0f, TS_world);
-        scene->addChild(boxNode1);
-
-        // Create OpenCV Tracker for the box node
-        std::string vocFileName;
-#    if USE_FBOW
-        vocFileName = "voc_fbow.bin";
-#    else
-        vocFileName = "ORBvoc.bin";
-#    endif
-        gVideoTracker = new CVTrackedWAI(Utils::findFile(vocFileName, {AppDemo::calibIniPath, AppDemo::exePath}));
-        gVideoTracker->drawDetection(true);
-        gVideoTrackedNode = cam1;
-
-        sv->camera(cam1);
-
-        // Turn on constant redraw
-        sv->doWaitOnIdle(false);
-    }
-#endif
-    else if (sceneID == SID_VideoSensorAR) //......................................................
-    {
-        // Set scene name and info string
-        s->name("Video Sensor AR");
-        s->info("Minimal scene to test the devices IMU and GPS Sensors. See the sensor information. GPS needs a few sec. to improve the accuracy.");
-
-        // Create video texture on global pointer updated in AppDemoVideo
-        gVideoTexture = new SLGLTexture(am, texPath + "LiveVideoError.png", GL_LINEAR, GL_LINEAR);
-
-        SLCamera* cam1 = new SLCamera("Camera 1");
-        cam1->translation(0, 0, 60);
-        cam1->lookAt(0, 0, 0);
-        cam1->fov(CVCapture::instance()->activeCamera->calibration.cameraFovVDeg());
-        cam1->clipNear(0.1f);
-        cam1->clipFar(10000.0f);
-        cam1->setInitialState();
-        cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-        cam1->background().texture(gVideoTexture);
-
-        // Turn on main video
-        CVCapture::instance()->videoType(VT_MAIN);
-
-        // Create directional light for the sunlight
-        SLLightDirect* light = new SLLightDirect(am, s, 1.0f);
-        light->powers(1.0f, 1.0f, 1.0f);
-        light->attenuation(1, 0, 0);
-
-        // Let the sun be rotated by time and location
-        AppDemo::devLoc.sunLightNode(light);
-
-        SLNode* axis = new SLNode(new SLCoordAxis(am), "Axis Node");
-        axis->setDrawBitsRec(SL_DB_MESHWIRED, false);
-        axis->scale(2);
-        axis->rotate(-90, 1, 0, 0);
-
-        // Yellow center box
-        SLMaterial* yellow = new SLMaterial(am, "mY", SLCol4f(1, 1, 0, 0.5f));
-        SLNode*     box    = new SLNode(new SLBox(am, -.5f, -.5f, -.5f, .5f, .5f, .5f, "Box", yellow), "Box Node");
-
-        // Scene structure
-        SLNode* scene = new SLNode("Scene");
-        s->root3D(scene);
-        scene->addChild(light);
-        scene->addChild(cam1);
-        scene->addChild(box);
-        scene->addChild(axis);
-
-        sv->camera(cam1);
-
-#if defined(SL_OS_MACIOS) || defined(SL_OS_ANDROID)
-        // activate rotation and gps sensor
-        AppDemo::devRot.isUsed(true);
-        AppDemo::devRot.zeroYawAtStart(false);
-        AppDemo::devLoc.isUsed(true);
-        AppDemo::devLoc.useOriginAltitude(true);
-        AppDemo::devLoc.hasOrigin(false);
-        cam1->camAnim(SLCamAnim::CA_deviceRotLocYUp);
-#else
-        cam1->camAnim(SLCamAnim::CA_turntableYUp);
-        AppDemo::devRot.zeroYawAtStart(true);
-#endif
-
-        sv->doWaitOnIdle(false); // for constant video feed
-    }
-    else if (sceneID == SID_ParticleSystem_First) //...............................................
+    if (sceneID == SID_ParticleSystem_First) //...............................................
     {
         // Set scene name and info string
         s->name("First particle system");
@@ -3559,41 +3335,6 @@ void appDemoLoadScene(SLAssetManager* am,
 #endif
 }
 //-----------------------------------------------------------------------------
-static void onDoneLoading(AppScene* s, SLSceneView* sv, SLAssetManager* am, SLfloat startLoadMS)
-{
-    s->assemble(am, sv);
-
-    // Make sure the scene view has a camera
-    if (!sv->camera())
-        sv->camera(sv->sceneViewCamera());
-
-    AppDemo::scene = s;
-
-    // call onInitialize on all scene views to init the scenegraph and stats
-    for (auto* sceneView : AppDemo::sceneViews)
-        if (sceneView != nullptr)
-            sceneView->onInitialize();
-
-    if (CVCapture::instance()->videoType() != VT_NONE)
-    {
-        if (sv->viewportSameAsVideo())
-        {
-            // Pass a negative value to the start function, so that the
-            // viewport aspect ratio can be adapted later to the video aspect.
-            // This will be known after start.
-            CVCapture::instance()->start(-1.0f);
-            SLVec2i videoAspect;
-            videoAspect.x = CVCapture::instance()->captureSize.width;
-            videoAspect.y = CVCapture::instance()->captureSize.height;
-            sv->setViewportFromRatio(videoAspect, sv->viewportAlign(), true);
-        }
-        else
-            CVCapture::instance()->start(sv->viewportWdivH());
-    }
-
-    s->loadTimeMS(GlobalTimer::timeMS() - startLoadMS);
-}
-//-----------------------------------------------------------------------------
 void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
 {
     AppScene*        s  = nullptr;
@@ -3612,17 +3353,13 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         AppDemo::scene = nullptr;
     }
 
-    // Reset non CVTracked and CVCapture infos
-    CVTracked::resetTimes(); // delete all gVideoTracker times
-    delete gVideoTracker;
-    gVideoTracker = nullptr;
-
-    // Reset asset pointer from previous scenes
+    // Reset video and trackers
+    CVCapture::instance()->videoType(VT_NONE); // turn off any video
+    CVTracked::resetTimes();                   // delete all gVideoTracker times
+    delete gVideoTracker;                      // delete the tracker deep
+    gVideoTracker     = nullptr;
     gVideoTexture     = nullptr; // The video texture will be deleted by scene uninit
     gVideoTrackedNode = nullptr; // The tracked node will be deleted by scene uninit
-
-    if (sceneID != SID_VolumeRayCastLighted)
-        gTexMRI3D = nullptr; // The 3D MRI texture will be deleted by scene uninit
 
     // reset existing sceneviews
     for (auto* sceneview : AppDemo::sceneViews)
@@ -3630,6 +3367,9 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
 
     // Clear all data in the asset manager
     am->clear();
+
+    // Clear gui stuff that depends on scene and sceneview
+    AppDemoGui::clear();
 
     ////////////////////
     // Init new scene //
@@ -3700,47 +3440,24 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         case SID_VideoTrackArucoScnd: s = new AppDemoSceneVideoTrackAruco(sceneID); break;
         case SID_VideoTrackFaceMain:
         case SID_VideoTrackFaceScnd: s = new AppDemoSceneVideoTrackFace(sceneID); break;
+        case SID_VideoTrackFeature2DMain: s = new AppDemoSceneVideoTrackFeatures(); break;
+        case SID_VideoTrackMediaPipeHandsMain: s = new AppDemoSceneVideoTrackMediapipe(); break;
+        case SID_VideoTrackWAI: s = new AppDemoSceneVideoTrackWAI(); break;
+        case SID_VideoSensorAR: s = new AppDemoSceneVideoSensorAR(); break;
         default: s = new AppDemoSceneLegacy(sceneID); break;
     }
 
     sv->scene(s);
-
-    CVCapture::instance()->videoType(VT_NONE); // turn off any video
-
-    // Reset non CVTracked and CVCapture infos
-    CVTracked::resetTimes(); // delete all gVideoTracker times
-    delete gVideoTracker;
-    gVideoTracker = nullptr;
-
-    // Reset asset pointer from previous scenes
-    gVideoTexture     = nullptr; // The video texture will be deleted by scene uninit
-    gVideoTrackedNode = nullptr; // The tracked node will be deleted by scene uninit
-
-    if (sceneID != SID_VolumeRayCastLighted)
-        gTexMRI3D = nullptr; // The 3D MRI texture will be deleted by scene uninit
-
-    // reset existing sceneviews
-    for (auto* sceneview : AppDemo::sceneViews)
-        sceneview->unInit();
-
-    // Clear all data in the asset manager
-    am->clear();
+    al->scene(s);
 
     AppDemo::sceneID = sceneID;
 
     // Initialize all preloaded stuff from SLScene
     s->init(am);
 
-    // s->initOculus(AppDemo::dataPath + "shaders/");
-
-    CVCapture::instance()->videoType(VT_NONE); // turn off any video
-
-    // Clear the visible materials from the last scene
-    sv->visibleMaterials2D().clear();
-    sv->visibleMaterials3D().clear();
-
-    // Clear gui stuff that depends on scene and sceneview
-    AppDemoGui::clear();
+#ifndef SL_EMSCRIPTEN
+    s->initOculus(AppDemo::dataPath + "shaders/");
+#endif
 
     // Deactivate in general the device sensors
     AppDemo::devRot.init();
@@ -3749,13 +3466,7 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     // Reset the global SLGLState state
     SLGLState::instance()->initAll();
 
-    al->scene(s);
-    sv->scene(s);
-
-    s->registerAssetsToLoad(*al);
-
-    AppDemoGui::loadingString = "Loading...";
-    al->loadAssetsAsync([=] {
+    auto onDoneLoading = [s, sv, startLoadMS] {
         s->assemble(am, sv);
 
         // Make sure the scene view has a camera
@@ -3787,6 +3498,11 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         }
 
         s->loadTimeMS(GlobalTimer::timeMS() - startLoadMS);
-    });
+    };
+
+    s->registerAssetsToLoad(*al);
+
+    AppDemoGui::loadingString = "Loading...";
+    al->loadAssetsAsync(onDoneLoading);
 }
 //-----------------------------------------------------------------------------

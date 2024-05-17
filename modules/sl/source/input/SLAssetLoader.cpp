@@ -80,6 +80,7 @@ void SLAssetLoader::addRawDataToLoad(SLIOBuffer&    buffer,
         buffer = SLFileStorage::readIntoBuffer(filename, kind);
     });
 }
+//-----------------------------------------------------------------------------
 void SLAssetLoader::addTextureToLoad(SLGLTexture*& texture,
                                      SLstring      imageFilename,
                                      SLint         min_filter,
