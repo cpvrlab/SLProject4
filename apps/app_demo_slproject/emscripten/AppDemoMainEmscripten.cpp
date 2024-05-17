@@ -534,6 +534,8 @@ void onLoop()
                           (void*)AppDemoGui::build,
                           (void*)AppDemoGui::loadConfig,
                           (void*)AppDemoGui::saveConfig);
+
+        EM_ASM(document.querySelector("#loading-overlay").style.opacity = 0);
     }
 }
 //-----------------------------------------------------------------------------

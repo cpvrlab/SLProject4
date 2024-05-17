@@ -71,9 +71,9 @@
       display: none;
     }
 
-    #not-supported-canvas {
+    #loading-overlay {
       position: absolute;
-      background-color: white;
+      background-color: rgb(40, 40, 40);
       top: 0;
       left: 0;
       width: 100%;
@@ -83,24 +83,29 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      transition: opacity 0.5s ease-in-out;
+      pointer-events: none;
     }
 
-    #not-supported-canvas:not(.visible) {
-      display: none;
+    #loading-overlay-logo {
+      transition: opacity 1s ease-in-out;
+      animation-name: loading-overlay-logo-animation;
+      animation-duration: 8s;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+      border-radius: 32px;
     }
 
-    #not-supported-canvas>h1,
-    h2 {
-      font-family: sans-serif;
-    }
+    @keyframes loading-overlay-logo-animation {
 
-    #not-supported-canvas>h1 {
-      font-size: 48pt;
-      margin-bottom: 20pt;
-    }
+      0%,
+      100% {
+        transform: scale(0.5);
+      }
 
-    #not-supported-canvas>h2 {
-      font-size: 24pt;
+      50% {
+        transform: scale(0.75);
+      }
     }
   </style>
 </head>
@@ -114,36 +119,25 @@
   <video id="capture-video" autoplay></video>
   <canvas id="capture-canvas"></canvas>
 
-  <div id="not-supported-canvas">
-    <h1>:(</h1>
-    <h2>SLProject is not supported in your browser.</h2>
+  <div id="loading-overlay">
+    <img id="loading-overlay-logo" src="data/images/textures/LogoCPVR_256L.png" alt="cpvrLab Logo" style="opacity: 0" />
   </div>
 
   <script type="text/javascript">
-    let supported = true;
+    document.querySelector("#snapshot-overlay").addEventListener("click", event => {
+      event.target.classList.remove('visible');
+      URL.revokeObjectURL(snapshotURL);
+    });
 
-    if (typeof OffscreenCanvas === 'undefined') {
-      supported = false;
-    }
+    var Module = {
+      canvas: document.querySelector("#canvas")
+    };
 
-    if (supported) {
-      document.querySelector("#snapshot-overlay").addEventListener("click", event => {
-        event.target.classList.remove('visible');
-        URL.revokeObjectURL(snapshotURL);
-      });
-
-      var Module = {
-        canvas: document.querySelector("#canvas")
-      };
-
-      let script = document.createElement("script")
-      script.type = "text/javascript";
-      script.src = "app-Demo-SLProject.js";
-      document.querySelector("head").appendChild(script);
-    } else {
-      document.querySelector("#not-supported-canvas").classList.add("visible");
-    }
+    document.querySelector("#loading-overlay-logo").addEventListener("load", event => {
+      event.target.style.opacity = 1;
+    });
   </script>
+  <script type="text/javascript" src="app-Demo-SLProject.js"></script>
 
 </body>
 
