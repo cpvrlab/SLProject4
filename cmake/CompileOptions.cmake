@@ -260,7 +260,7 @@ if ("${SYSTEM_NAME_UPPER}" MATCHES "EMSCRIPTEN")
 			"-pthread"
 
 			# Create a thread pool of Web Workers before starting the application.
-			"-sPTHREAD_POOL_SIZE=8"
+			"-sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency + 4"
 
 			# The Wasm heap has a limited size.
 			# Enable growing the heap when allocating more than the initial heap size.
