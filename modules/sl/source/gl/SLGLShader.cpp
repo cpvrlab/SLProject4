@@ -57,6 +57,10 @@ void SLGLShader::load(const SLstring& filename)
     _code             = SLstring(buffer.data, buffer.data + buffer.size);
     SLFileStorage::deleteBuffer(buffer);
 
+    // Expand include pragmas. This has to be done here because we are not
+    // allowed to perform I/O later on when compiling the shader.
+    _code = preprocessIncludePragmas(_code);
+
     // remove comments because some stupid ARM compiler can't handle GLSL comments
     _code = removeComments(_code);
 }
@@ -122,7 +126,7 @@ SLbool SLGLShader::createAndCompile(SLVLight* lights)
     if (state->glIsES3()) srcVersion += " es";
     srcVersion += "\n";
 
-    _code = preprocessPragmas(_code, lights);
+    _code = preprocessDefinePragmas(_code, lights);
 
     // Concatenate final code string
     _code = srcVersion + _code;
@@ -244,8 +248,8 @@ SLstring SLGLShader::typeName()
     }
 }
 // ----------------------------------------------------------------------------
-//! Replaces our own pragma directives in GLSL code
-SLstring SLGLShader::preprocessPragmas(SLstring inCode, SLVLight* lights)
+//! Replaces our custom `pragma include` directives in GLSL code
+SLstring SLGLShader::preprocessIncludePragmas(SLstring inCode)
 {
     // Check first if #pragma exists at all
     size_t pragmaStart = inCode.find("#pragma");
@@ -287,7 +291,39 @@ SLstring SLGLShader::preprocessPragmas(SLstring inCode, SLVLight* lights)
                     outCode += line + '\n';
                 }
             }
-            else if (pragmaParts[1] == "define") //............................
+            else
+                outCode += line + '\n';
+        }
+    }
+    return outCode;
+}
+// ----------------------------------------------------------------------------
+//! Replaces our custom `pragma define` directives in GLSL code
+SLstring SLGLShader::preprocessDefinePragmas(SLstring inCode, SLVLight* lights)
+{
+    // Check first if #pragma exists at all
+    size_t pragmaStart = inCode.find("#pragma");
+    if (pragmaStart == string::npos)
+        return inCode;
+
+    SLVstring codeLines = Utils::getStringLines(inCode);
+
+    string outCode;
+
+    for (string& line : codeLines)
+    {
+        pragmaStart = line.find("#pragma");
+        if (pragmaStart == string::npos)
+            outCode += line + '\n';
+        else
+        {
+            SLVstring pragmaParts;
+            Utils::splitString(line, ' ', pragmaParts);
+
+            for (auto& part : pragmaParts)
+                part = Utils::trimString(part);
+
+            if (pragmaParts[1] == "define") //............................
             {
                 if (pragmaParts[2] == "NUM_LIGHTS")
                 {

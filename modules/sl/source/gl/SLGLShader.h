@@ -49,7 +49,8 @@ public:
 
 private:
     SLbool   createAndCompile(SLVLight* lights);
-    SLstring preprocessPragmas(SLstring code, SLVLight* lights);
+    SLstring preprocessIncludePragmas(SLstring inCode);
+    SLstring preprocessDefinePragmas(SLstring inCode, SLVLight* lights);
 
 protected:
     SLShaderType _type;     //!< Shader type enumeration
