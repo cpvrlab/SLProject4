@@ -137,6 +137,9 @@ void SLSceneView::unInit()
     _doWaitOnIdle     = true;
     _drawBits.allOff();
 
+    _visibleMaterials2D.clear();
+    _visibleMaterials3D.clear();
+
     _stats2D.clear();
     _stats3D.clear();
 }

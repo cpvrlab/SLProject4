@@ -107,9 +107,6 @@ extern SLGLTexture* gVideoTexture;
 extern CVTracked*   gVideoTracker;
 extern SLNode*      gVideoTrackedNode;
 //-----------------------------------------------------------------------------
-//! Global pointer to 3D MRI texture for volume rendering for threaded loading
-SLGLTexture* gTexMRI3D = nullptr;
-//-----------------------------------------------------------------------------
 //! Global pointer to dragon model for threaded loading
 SLNode* gDragonModel = nullptr;
 //-----------------------------------------------------------------------------
@@ -3577,17 +3574,13 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         AppDemo::scene = nullptr;
     }
 
-    // Reset non CVTracked and CVCapture infos
+    // Reset video and trackers
+    CVCapture::instance()->videoType(VT_NONE); // turn off any video
     CVTracked::resetTimes(); // delete all gVideoTracker times
-    delete gVideoTracker;
+    delete gVideoTracker; // delete the tracker deep
     gVideoTracker = nullptr;
-
-    // Reset asset pointer from previous scenes
     gVideoTexture = nullptr; // The video texture will be deleted by scene uninit
     gVideoTrackedNode  = nullptr; // The tracked node will be deleted by scene uninit
-
-    if (sceneID != SID_VolumeRayCastLighted)
-        gTexMRI3D = nullptr; // The 3D MRI texture will be deleted by scene uninit
 
     // reset existing sceneviews
     for (auto* sceneview : AppDemo::sceneViews)
@@ -3595,6 +3588,9 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
 
     // Clear all data in the asset manager
     am->clear();
+
+    // Clear gui stuff that depends on scene and sceneview
+    AppDemoGui::clear();
 
     ////////////////////
     // Init new scene //
@@ -3669,43 +3665,13 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     }
 
     sv->scene(s);
-
-    CVCapture::instance()->videoType(VT_NONE); // turn off any video
-
-    // Reset non CVTracked and CVCapture infos
-    CVTracked::resetTimes(); // delete all gVideoTracker times
-    delete gVideoTracker;
-    gVideoTracker = nullptr;
-
-    // Reset asset pointer from previous scenes
-    gVideoTexture = nullptr; // The video texture will be deleted by scene uninit
-    gVideoTrackedNode  = nullptr; // The tracked node will be deleted by scene uninit
-
-    if (sceneID != SID_VolumeRayCastLighted)
-        gTexMRI3D = nullptr; // The 3D MRI texture will be deleted by scene uninit
-
-    // reset existing sceneviews
-    for (auto* sceneview : AppDemo::sceneViews)
-        sceneview->unInit();
-
-    // Clear all data in the asset manager
-    am->clear();
+    al->scene(s);
 
     AppDemo::sceneID = sceneID;
 
     // Initialize all preloaded stuff from SLScene
     s->init(am);
-
-    // s->initOculus(AppDemo::dataPath + "shaders/");
-
-    CVCapture::instance()->videoType(VT_NONE); // turn off any video
-
-    // Clear the visible materials from the last scene
-    sv->visibleMaterials2D().clear();
-    sv->visibleMaterials3D().clear();
-
-    // Clear gui stuff that depends on scene and sceneview
-    AppDemoGui::clear();
+    s->initOculus(AppDemo::dataPath + "shaders/");
 
     // Deactivate in general the device sensors
     AppDemo::devRot.init();
@@ -3713,9 +3679,6 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
 
     // Reset the global SLGLState state
     SLGLState::instance()->initAll();
-
-    al->scene(s);
-    sv->scene(s);
 
     auto onDoneLoading = [s, sv, startLoadMS] {
         s->assemble(am, sv);
