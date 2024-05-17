@@ -128,6 +128,7 @@ SLbool      AppDemoGui::showDateAndTime     = false;
 std::time_t AppDemoGui::adjustedTime        = 0;
 SLbool      AppDemoGui::_horizonVisuEnabled = false;
 SLbool      AppDemoGui::hideUI              = false;
+SLstring    AppDemoGui::loadingString       = "";
 
 // Scene node for Christoffel objects
 static SLNode* bern        = nullptr;
@@ -253,7 +254,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
         drawList->PathArcTo(center, 50, offset, offset + 0.25f * 2 * PI);
         drawList->PathStroke(IM_COL32(250, 165, 0, 255), 0, 10.0f);
 
-        const char* text = "Loading...";
+        const char* text = loadingString.c_str();
         ImGui::SetCursorPosX(0.5f * (width - ImGui::CalcTextSize(text).x));
         ImGui::SetCursorPosY(0.5f * height + 100.0f);
         ImGui::Text(text);

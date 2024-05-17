@@ -3753,6 +3753,7 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
 
     s->registerAssetsToLoad(*al);
 
+    AppDemoGui::loadingString = "Loading...";
     al->loadAssetsAsync(onDoneLoading);
 }
 //-----------------------------------------------------------------------------

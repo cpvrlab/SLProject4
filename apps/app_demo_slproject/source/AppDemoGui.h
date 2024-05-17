@@ -75,6 +75,7 @@ public:
     static SLbool      showTransform;       //!< Flag if transform dialog should be shown
     static SLbool      showDateAndTime;     //!< Flag if date-time dialog should be shown
     static std::time_t adjustedTime;        //!< Adjusted GUI time for sun setting (default 0)
+    static SLstring    loadingString;       //!< String shown during loading screens
 
 private:
     static void   setTransformEditMode(SLScene*       s,

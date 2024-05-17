@@ -76,9 +76,6 @@ void SLSceneView::init(SLstring       name,
     _scrH       = screenHeight;
     _gotPainted = true;
 
-    // Set default viewport ratio to the same as the screen
-    setViewportFromRatio(SLVec2i(0, 0), VA_center, false);
-
     // The window update callback function is used to refresh the ray tracing
     // image during the rendering process. The ray tracing image is drawn by OpenGL
     // as a texture on a single quad.
@@ -116,6 +113,9 @@ void SLSceneView::init(SLstring       name,
 
     if (_gui)
         _gui->init(configPath);
+
+    // Set default viewport ratio to the same as the screen
+    setViewportFromRatio(SLVec2i(0, 0), VA_center, false);
 
     onStartup();
 }
@@ -862,8 +862,7 @@ void SLSceneView::draw3DGLNodes(SLVNode& nodes,
     // Depth sort with lambda function by their view distance
     if (depthSorted)
     {
-        std::sort(nodes.begin(), nodes.end(), [](SLNode* a, SLNode* b)
-                  {
+        std::sort(nodes.begin(), nodes.end(), [](SLNode* a, SLNode* b) {
                       if (!a) return false;
                       if (!b) return true;
                       return a->aabb()->sqrViewDist() > b->aabb()->sqrViewDist(); });
@@ -2084,8 +2083,7 @@ void SLSceneView::saveFrameBufferAsImage(SLstring pathFilename,
             Utils::exitMsg("SLProject", msg.c_str(), __LINE__, __FILE__);
         }
 #else
-        auto writer = [](void* context, void* data, int size)
-        {
+        auto writer = [](void* context, void* data, int size) {
             SLIOStream* stream = (SLIOStream*)context;
             stream->write(data, size);
         };
