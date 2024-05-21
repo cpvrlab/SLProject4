@@ -122,8 +122,12 @@ void slRegisterCoreAssetsToLoad()
     al.addLoadTask([am, fontPath = AppDemo::fontPath] { am->generateStaticFonts(AppDemo::fontPath); });
 
     // Load data for ImGUI fonts.
-    al.addRawDataToLoad(AppDemo::fontDataDroidSans, AppDemo::fontPath + "DroidSans.ttf", IOK_font);
-    al.addRawDataToLoad(AppDemo::fontDataProggyClean, AppDemo::fontPath + "ProggyClean.ttf", IOK_font);
+    al.addRawDataToLoad(AppDemo::fontDataDroidSans,
+                        AppDemo::fontPath + "DroidSans.ttf",
+                        IOK_font);
+    al.addRawDataToLoad(AppDemo::fontDataProggyClean,
+                        AppDemo::fontPath + "ProggyClean.ttf",
+                        IOK_font);
 }
 //-----------------------------------------------------------------------------
 /*! Global creation function for a SLSceneview instance returning the index of

@@ -137,11 +137,17 @@ void SLSceneView::unInit()
     _doWaitOnIdle     = true;
     _drawBits.allOff();
 
+    for (auto* material : _visibleMaterials2D)
+        material->nodesVisible2D().clear();
     _visibleMaterials2D.clear();
+
+    for (auto* material : _visibleMaterials3D)
+        material->nodesVisible3D().clear();
     _visibleMaterials3D.clear();
 
     _stats2D.clear();
     _stats3D.clear();
+    _s = nullptr;
 }
 //-----------------------------------------------------------------------------
 /*!
@@ -416,6 +422,8 @@ void SLSceneView::onInitialize()
         // Warn if there are no light in scene
         if (_s->lights().empty())
             SL_LOG("**** No Lights found in scene! ****");
+
+        //_s->root3D()->dumpRec();
     }
 
     // init 2D scene with initial depth 1

@@ -377,7 +377,7 @@ void SLNode::cullChildren3D(SLSceneView* sv)
  * material is added to the SLSceneview::_visibleMaterials3D set and the node
  * to the SLMaterials::nodesVisible3D vector. See also SLSceneView::draw3DGLAll
  * for more details.
-*/
+ */
 void SLNode::cull3DRec(SLSceneView* sv)
 {
     if (!this->drawBit(SL_DB_HIDDEN))
@@ -415,18 +415,20 @@ void SLNode::cull3DRec(SLSceneView* sv)
                     sv->visibleMaterials3D().insert(this->mesh()->mat());
                     this->mesh()->mat()->nodesVisible3D().push_back(this);
                 }
+                else
+                {
+                    // Add camera node without mesh to opaque vector for line drawing
+                    if (dynamic_cast<SLCamera*>(this))
+                        sv->nodesOpaque3D().push_back(this);
 
-                // Add camera node without mesh to opaque vector for line drawing
-                else if (dynamic_cast<SLCamera*>(this))
-                    sv->nodesOpaque3D().push_back(this);
+                    // Add selected nodes without mesh to opaque vector for line drawing
+                    else if (this->_isSelected)
+                        sv->nodesOpaque3D().push_back(this);
 
-                // Add selected nodes without mesh to opaque vector for line drawing
-                else if (this->_isSelected)
-                    sv->nodesOpaque3D().push_back(this);
-
-                // Add special text node to blended vector
-                else if (typeid(*this) == typeid(SLText))
-                    sv->nodesBlended3D().push_back(this);
+                    // Add special text node to blended vector
+                    else if (typeid(*this) == typeid(SLText))
+                        sv->nodesBlended3D().push_back(this);
+                }
             }
         }
     }
@@ -768,10 +770,16 @@ void SLNode::dumpRec()
     // dump meshes of node
     for (SLint i = 0; i < _depth; ++i)
         cout << "   ";
-    cout << "- Mesh: " << _mesh->name();
-    cout << ", " << _mesh->numI() * 3 << " tri";
-    if (_mesh->mat())
-        cout << ", Mat: " << _mesh->mat()->name();
+
+    if (_mesh)
+    {
+        cout << "- Mesh: " << _mesh->name();
+        cout << ", " << _mesh->numI() * 3 << " tri";
+        if (_mesh->mat())
+            cout << ", Mat: " << _mesh->mat()->name();
+    }
+    else
+        cout << "- Mesh: none";
     cout << endl;
 
     // dump children nodes

@@ -89,10 +89,10 @@
 #include <AppDemoSceneTextureBlend.h>
 #include <AppDemoSceneTextureCompression.h>
 #include <AppDemoSceneTextureFilter.h>
-#include <AppDemoSceneVideoChessboard.h>
 #include <AppDemoSceneVideoSensorAR.h>
 #include <AppDemoSceneVideoTexture.h>
 #include <AppDemoSceneVideoTrackAruco.h>
+#include <AppDemoSceneVideoTrackChessboard.h>
 #include <AppDemoSceneVideoTrackFace.h>
 #include <AppDemoSceneVideoTrackFeatures.h>
 #include <AppDemoSceneVideoTrackMediapipe.h>
@@ -3435,7 +3435,7 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         case SID_VideoTrackChessMain:
         case SID_VideoTrackChessScnd:
         case SID_VideoCalibrateMain:
-        case SID_VideoCalibrateScnd: s = new AppDemoSceneVideoChessboard(sceneID); break;
+        case SID_VideoCalibrateScnd: s = new AppDemoSceneVideoTrackChessboard(sceneID); break;
         case SID_VideoTrackArucoMain:
         case SID_VideoTrackArucoScnd: s = new AppDemoSceneVideoTrackAruco(sceneID); break;
         case SID_VideoTrackFaceMain:
@@ -3467,13 +3467,13 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     SLGLState::instance()->initAll();
 
     auto onDoneLoading = [s, sv, startLoadMS] {
+        AppDemoGui::loadingString = "Assembling...";
+
         s->assemble(am, sv);
 
         // Make sure the scene view has a camera
         if (!sv->camera())
             sv->camera(sv->sceneViewCamera());
-
-        AppDemo::scene = s;
 
         // call onInitialize on all scene views to init the scenegraph and stats
         for (auto* sceneView : AppDemo::sceneViews)
@@ -3496,6 +3496,8 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
             else
                 CVCapture::instance()->start(sv->viewportWdivH());
         }
+
+        AppDemo::scene = s;
 
         s->loadTimeMS(GlobalTimer::timeMS() - startLoadMS);
     };

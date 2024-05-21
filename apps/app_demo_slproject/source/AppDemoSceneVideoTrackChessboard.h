@@ -1,5 +1,5 @@
 //#############################################################################
-//  File:      AppDemoSceneVideoChessboard.h
+//  File:      AppDemoSceneVideoTrackChessboard.h
 //  Date:      May 2024
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
 //  Authors:   Marino von Wattenwyl
@@ -7,17 +7,17 @@
 //             Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
 
-#ifndef APPDEMOSCENEVIDEOCHESS_H
-#define APPDEMOSCENEVIDEOCHESS_H
+#ifndef APPDEMOSCENEVIDEOTRACKCHESS_H
+#define APPDEMOSCENEVIDEOTRACKCHESS_H
 
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for video for chessboard test scene
-class AppDemoSceneVideoChessboard : public AppScene
+class AppDemoSceneVideoTrackChessboard : public AppScene
 {
 public:
-    AppDemoSceneVideoChessboard(SLSceneID sid);
+    AppDemoSceneVideoTrackChessboard(SLSceneID sid);
     void registerAssetsToLoad(SLAssetLoader& al) override;
     void assemble(SLAssetManager* am, SLSceneView* sv) override;
 

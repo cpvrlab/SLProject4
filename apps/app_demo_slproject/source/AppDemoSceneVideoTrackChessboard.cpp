@@ -7,7 +7,7 @@
 //             Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
 
-#include <AppDemoSceneVideoChessboard.h>
+#include <AppDemoSceneVideoTrackChessboard.h>
 #include <CVCapture.h>
 #include <CVTrackedChessboard.h>
 #include <CVCalibrationEstimator.h>
@@ -22,7 +22,7 @@ extern CVTracked*   gVideoTracker;
 extern SLNode*      gVideoTrackedNode;
 
 //-----------------------------------------------------------------------------
-AppDemoSceneVideoChessboard::AppDemoSceneVideoChessboard(SLSceneID sid)
+AppDemoSceneVideoTrackChessboard::AppDemoSceneVideoTrackChessboard(SLSceneID sid)
   : AppScene("Chessboard Video"),
     _sceneID(sid)
 {
@@ -37,12 +37,13 @@ AppDemoSceneVideoChessboard::AppDemoSceneVideoChessboard(SLSceneID sid)
 }
 //-----------------------------------------------------------------------------
 //! All assets the should be loaded in parallel must be registered in here.
-void AppDemoSceneVideoChessboard::registerAssetsToLoad(SLAssetLoader& al)
+void AppDemoSceneVideoTrackChessboard::registerAssetsToLoad(SLAssetLoader& al)
 {
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
-void AppDemoSceneVideoChessboard::assemble(SLAssetManager* am, SLSceneView* sv)
+void AppDemoSceneVideoTrackChessboard::assemble(SLAssetManager* am,
+                                                SLSceneView* sv)
 {
     /*
     The tracking of markers is done in AppDemoVideo::onUpdateTracking by
