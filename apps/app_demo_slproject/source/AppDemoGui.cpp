@@ -1564,8 +1564,8 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                         AppDemo::sceneToLoad = SID_RTSoftShadows;
                     if (ImGui::MenuItem("Cascaded Shadows", nullptr, sid == SID_ShadowMappingCascaded))
                         AppDemo::sceneToLoad = SID_ShadowMappingCascaded;
-                    if (ImGui::MenuItem("Columns with Cascaded Sh.", nullptr, sid == SID_Benchmark6_ColumnsLOD))
-                        AppDemo::sceneToLoad = SID_Benchmark6_ColumnsLOD;
+                    if (ImGui::MenuItem("Columns with Cascaded Sh.", nullptr, sid == SID_Benchmark_ColumnsLOD))
+                        AppDemo::sceneToLoad = SID_Benchmark_ColumnsLOD;
 
                     ImGui::EndMenu();
                 }
@@ -1773,10 +1773,8 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
 
                 if (ImGui::BeginMenu("Particle Systems"))
                 {
-                    if (ImGui::MenuItem("First Particle System", nullptr, sid == SID_ParticleSystem_First))
-                        AppDemo::sceneToLoad = SID_ParticleSystem_First;
-                    if (ImGui::MenuItem("Demo Particle System", nullptr, sid == SID_ParticleSystem_Demo))
-                        AppDemo::sceneToLoad = SID_ParticleSystem_Demo;
+                    if (ImGui::MenuItem("First Particle System", nullptr, sid == SID_ParticleSystem_Simple))
+                        AppDemo::sceneToLoad = SID_ParticleSystem_Simple;
                     if (ImGui::MenuItem("Dust Storm Particle System", nullptr, sid == SID_ParticleSystem_DustStorm))
                         AppDemo::sceneToLoad = SID_ParticleSystem_DustStorm;
                     if (ImGui::MenuItem("Fountain Particle System", nullptr, sid == SID_ParticleSystem_Fountain))
@@ -1785,8 +1783,10 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                         AppDemo::sceneToLoad = SID_ParticleSystem_Sun;
                     if (ImGui::MenuItem("Ring of Fire Particle System", nullptr, sid == SID_ParticleSystem_RingOfFire))
                         AppDemo::sceneToLoad = SID_ParticleSystem_RingOfFire;
-                    if (ImGui::MenuItem("Complex Fire Particle System", nullptr, sid == SID_ParticleSystem_FireComplex))
-                        AppDemo::sceneToLoad = SID_ParticleSystem_FireComplex;
+                    if (ImGui::MenuItem("Complex Fire Particle System", nullptr, sid == SID_ParticleSystem_ComplexFire))
+                        AppDemo::sceneToLoad = SID_ParticleSystem_ComplexFire;
+                    if (ImGui::MenuItem("Particle system w. 1 mio. particles", nullptr, sid == SID_ParticleSystem_Many))
+                        AppDemo::sceneToLoad = SID_ParticleSystem_Many;
 
                     ImGui::EndMenu();
                 }
@@ -1855,11 +1855,11 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 {
 #ifndef SL_EMSCRIPTEN
                     // The large models are too large for emscripten
-                    if (ImGui::MenuItem("Large Model (via FTP)", nullptr, sid == SID_Benchmark1_LargeModel))
+                    if (ImGui::MenuItem("Large Model (via FTP)", nullptr, sid == SID_Benchmark_LargeModel))
                     {
                         SLstring largeFile = AppDemo::configPath + "models/xyzrgb_dragon/xyzrgb_dragon.ply";
                         if (Utils::fileExists(largeFile))
-                            AppDemo::sceneToLoad = SID_Benchmark1_LargeModel;
+                            AppDemo::sceneToLoad = SID_Benchmark_LargeModel;
                         else
                         {
                             auto downloadJobFTP = []() {
@@ -1920,7 +1920,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
 
                             auto followUpJob1 = [am, s, sv, largeFile]() {
                                 if (Utils::fileExists(largeFile))
-                                    AppDemo::sceneToLoad = SID_Benchmark1_LargeModel;
+                                    AppDemo::sceneToLoad = SID_Benchmark_LargeModel;
                             };
 
                             AppDemo::jobsToBeThreaded.emplace_back(downloadJobFTP);
@@ -1928,32 +1928,32 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                             AppDemo::jobsToFollowInMain.emplace_back(followUpJob1);
                         }
                     }
-                    if (ImGui::MenuItem("Large Model (via HTTPS)", nullptr, sid == SID_Benchmark1_LargeModel))
+                    if (ImGui::MenuItem("Large Model (via HTTPS)", nullptr, sid == SID_Benchmark_LargeModel))
                     {
                         SLstring largeFile = AppDemo::configPath + "models/xyzrgb_dragon/xyzrgb_dragon.ply";
-                        loadSceneWithLargeModel(s, sv, "xyzrgb_dragon.zip", largeFile, SID_Benchmark1_LargeModel);
+                        loadSceneWithLargeModel(s, sv, "xyzrgb_dragon.zip", largeFile, SID_Benchmark_LargeModel);
                     }
-                    if (ImGui::MenuItem("Large Model", nullptr, sid == SID_Benchmark1_LargeModel))
-                        AppDemo::sceneToLoad = SID_Benchmark1_LargeModel;
+                    if (ImGui::MenuItem("Large Model", nullptr, sid == SID_Benchmark_LargeModel))
+                        AppDemo::sceneToLoad = SID_Benchmark_LargeModel;
 #endif
-                    if (ImGui::MenuItem("Massive Nodes", nullptr, sid == SID_Benchmark2_MassiveNodes))
-                        AppDemo::sceneToLoad = SID_Benchmark2_MassiveNodes;
-                    if (ImGui::MenuItem("Massive Node Animations", nullptr, sid == SID_Benchmark3_NodeAnimations))
-                        AppDemo::sceneToLoad = SID_Benchmark3_NodeAnimations;
-                    if (ImGui::MenuItem("Jan's Universe", nullptr, sid == SID_Benchmark7_JansUniverse))
-                        AppDemo::sceneToLoad = SID_Benchmark7_JansUniverse;
-                    if (ImGui::MenuItem("Massive Skinned Animations", nullptr, sid == SID_Benchmark4_SkinnedAnimations))
-                        AppDemo::sceneToLoad = SID_Benchmark4_SkinnedAnimations;
-                    if (ImGui::MenuItem("Columns without LOD", nullptr, sid == SID_Benchmark5_ColumnsNoLOD))
-                        AppDemo::sceneToLoad = SID_Benchmark5_ColumnsNoLOD;
-                    if (ImGui::MenuItem("Columns with LOD", nullptr, sid == SID_Benchmark6_ColumnsLOD))
-                        AppDemo::sceneToLoad = SID_Benchmark6_ColumnsLOD;
-                    if (ImGui::MenuItem("Jan's Universe", nullptr, sid == SID_Benchmark7_JansUniverse))
-                        AppDemo::sceneToLoad = SID_Benchmark7_JansUniverse;
-                    if (ImGui::MenuItem("Particle System lot of fire complex", nullptr, sid == SID_Benchmark8_ParticleSystemFireComplex))
-                        AppDemo::sceneToLoad = SID_Benchmark8_ParticleSystemFireComplex;
-                    if (ImGui::MenuItem("Particle System lot of particle", nullptr, sid == SID_Benchmark9_ParticleSystemManyParticles))
-                        AppDemo::sceneToLoad = SID_Benchmark9_ParticleSystemManyParticles;
+                    if (ImGui::MenuItem("Massive Nodes", nullptr, sid == SID_Benchmark_MassiveNodes))
+                        AppDemo::sceneToLoad = SID_Benchmark_MassiveNodes;
+                    if (ImGui::MenuItem("Massive Node Animations", nullptr, sid == SID_Benchmark_NodeAnimations))
+                        AppDemo::sceneToLoad = SID_Benchmark_NodeAnimations;
+                    if (ImGui::MenuItem("Jan's Universe", nullptr, sid == SID_Benchmark_JansUniverse))
+                        AppDemo::sceneToLoad = SID_Benchmark_JansUniverse;
+                    if (ImGui::MenuItem("Massive Skinned Animations", nullptr, sid == SID_Benchmark_SkinnedAnimations))
+                        AppDemo::sceneToLoad = SID_Benchmark_SkinnedAnimations;
+                    if (ImGui::MenuItem("Columns without LOD", nullptr, sid == SID_Benchmark_ColumnsNoLOD))
+                        AppDemo::sceneToLoad = SID_Benchmark_ColumnsNoLOD;
+                    if (ImGui::MenuItem("Columns with LOD", nullptr, sid == SID_Benchmark_ColumnsLOD))
+                        AppDemo::sceneToLoad = SID_Benchmark_ColumnsLOD;
+                    if (ImGui::MenuItem("Jan's Universe", nullptr, sid == SID_Benchmark_JansUniverse))
+                        AppDemo::sceneToLoad = SID_Benchmark_JansUniverse;
+                    if (ImGui::MenuItem("Particle System lot of fire complex", nullptr, sid == SID_Benchmark_ParticleSystemComplexFire))
+                        AppDemo::sceneToLoad = SID_Benchmark_ParticleSystemComplexFire;
+                    if (ImGui::MenuItem("Particle System w. 1 mio. particle", nullptr, sid == SID_ParticleSystem_Many))
+                        AppDemo::sceneToLoad = SID_ParticleSystem_Many;
                     ImGui::EndMenu();
                 }
 

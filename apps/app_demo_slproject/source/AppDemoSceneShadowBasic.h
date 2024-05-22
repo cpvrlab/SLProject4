@@ -20,8 +20,6 @@ public:
     AppDemoSceneShadowBasic();
     void registerAssetsToLoad(SLAssetLoader& al) override;
     void assemble(SLAssetManager* am, SLSceneView* sv) override;
-
-private:
 };
 //-----------------------------------------------------------------------------
 

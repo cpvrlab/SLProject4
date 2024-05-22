@@ -652,7 +652,10 @@ SLint SLMaterial::passToUniforms(SLGLProgram* program, SLint nextTexUnit)
             }
 
             if (program->uniform1i(name, nextTexUnit) < 0)
-                Utils::log("Material", "texture name %s not found for program: %s", name, program->name().c_str());
+                Utils::log("Material",
+                           "texture name %s not found for program: %s",
+                           name,
+                           program->name().c_str());
 
             texNb++;
             nextTexUnit++;
