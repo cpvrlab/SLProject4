@@ -3466,9 +3466,7 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     // Reset the global SLGLState state
     SLGLState::instance()->initAll();
 
-    auto onDoneLoading = [s, sv, startLoadMS] {
-        AppDemoGui::loadingString = "Assembling...";
-
+    auto onDoneLoading = [s, sv, am, startLoadMS] {
         s->assemble(am, sv);
 
         // Make sure the scene view has a camera
@@ -3491,7 +3489,9 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
                 SLVec2i videoAspect;
                 videoAspect.x = CVCapture::instance()->captureSize.width;
                 videoAspect.y = CVCapture::instance()->captureSize.height;
-                sv->setViewportFromRatio(videoAspect, sv->viewportAlign(), true);
+                sv->setViewportFromRatio(videoAspect,
+                                         sv->viewportAlign(),
+                                         true);
             }
             else
                 CVCapture::instance()->start(sv->viewportWdivH());
