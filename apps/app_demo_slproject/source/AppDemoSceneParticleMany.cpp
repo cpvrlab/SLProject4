@@ -23,8 +23,12 @@ AppDemoSceneParticleMany::AppDemoSceneParticleMany()
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneParticleMany::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addTextureToLoad(_texC, "ParticleSmoke_08_C.png");
-    al.addTextureToLoad(_texFlip, "ParticleSmoke_03_8x8_C.png");
+    al.addTextureToLoad(_texC,
+                        AppDemo::texturePath,
+                        "ParticleSmoke_08_C.png");
+    al.addTextureToLoad(_texFlip,
+                        AppDemo::texturePath,
+                        "ParticleSmoke_03_8x8_C.png");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

@@ -37,9 +37,15 @@ AppDemoSceneShaderBlinn::AppDemoSceneShaderBlinn(SLstring name, bool perVertex)
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneShaderBlinn::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addTextureToLoad(_texC, "earth2048_C_Q95.jpg");
-    al.addTextureToLoad(_texN, "earth2048_N.jpg");
-    al.addTextureToLoad(_texH, "earth2048_H.jpg");
+    al.addTextureToLoad(_texC,
+                        AppDemo::texturePath,
+                        "earth2048_C_Q95.jpg");
+    al.addTextureToLoad(_texN,
+                        AppDemo::texturePath,
+                        "earth2048_N.jpg");
+    al.addTextureToLoad(_texH,
+                        AppDemo::texturePath,
+                        "earth2048_H.jpg");
     al.addProgramGenericToLoad(_perVrtTm,
                                "PerVrtBlinnTm.vert",
                                "PerVrtBlinnTm.frag");

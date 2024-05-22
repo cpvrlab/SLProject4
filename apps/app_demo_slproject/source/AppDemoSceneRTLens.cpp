@@ -23,12 +23,14 @@ AppDemoSceneRTLens::AppDemoSceneRTLens()
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneRTLens::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addTextureToLoad(_tex1, "VisionExample.jpg");
+    al.addTextureToLoad(_tex1,
+                        AppDemo::texturePath,
+                        "VisionExample.jpg");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
 void AppDemoSceneRTLens::assemble(SLAssetManager* am,
-                                 SLSceneView*    sv)
+                                  SLSceneView*    sv)
 {
     // Create root node
     SLNode* scene = new SLNode;

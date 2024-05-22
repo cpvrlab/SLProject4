@@ -58,15 +58,18 @@
 #include <AppDemoScene2Dand3DText.h>
 #include <AppDemoSceneAnimationNode.h>
 #include <AppDemoSceneAnimationNodeMass.h>
+#include <AppDemoSceneAnimationNodeMass2.h>
 #include <AppDemoSceneAnimationSkinned.h>
 #include <AppDemoSceneAnimationSkinnedMass.h>
 #include <AppDemoSceneEmpty.h>
 #include <AppDemoSceneFigure.h>
 #include <AppDemoSceneFrustum.h>
 #include <AppDemoSceneGLTF.h>
+#include <AppDemoSceneJansUniverse.h>
 #include <AppDemoSceneMeshLoad.h>
 #include <AppDemoSceneMinimal.h>
 #include <AppDemoSceneLegacy.h>
+#include <AppDemoSceneLevelOfDetail.h>
 #include <AppDemoSceneParticleComplexFire.h>
 #include <AppDemoSceneParticleDustStorm.h>
 #include <AppDemoSceneParticleFountain.h>
@@ -123,181 +126,6 @@ extern SLNode*      gVideoTrackedNode;
 //! Global pointer to dragon model for threaded loading
 SLNode* gDragonModel = nullptr;
 //-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-//! Creates a recursive rotating sphere group used for performance test
-/*!
- * This performance benchmark is expensive in terms of world matrix updates
- * because all sphere groups rotate. Therefore all children need to update
- * their wm every frame.
- * @param am Pointer to the asset manager
- * @param s Pointer to project scene aka asset manager
- * @param depth Max. allowed recursion depth
- * @param x Position in x direction
- * @param y Position in y direction
- * @param z Position in z direction
- * @param scale Scale factor > 0 and < 1 for the children spheres
- * @param resolution NO. of stack and slices of the spheres
- * @param mat Reference to an vector of materials
- * @return Group node of spheres
- */
-SLNode* RotatingSphereGroup(SLAssetManager* am,
-                            SLScene*        s,
-                            SLint           depth,
-                            SLfloat         x,
-                            SLfloat         y,
-                            SLfloat         z,
-                            SLfloat         scale,
-                            SLuint          resolution,
-                            SLVMaterial&    mat)
-{
-    PROFILE_FUNCTION();
-    assert(depth >= 0);
-    assert(scale >= 0.0f && scale <= 1.0f);
-    assert(resolution > 0 && resolution < 64);
-
-    // Choose the material index randomly
-    SLint iMat = Utils::random(0, (int)mat.size() - 1);
-
-    // Generate unique names for meshes, nodes and animations
-    static int sphereNum = 0;
-    string     meshName  = "Mesh" + std::to_string(sphereNum);
-    string     animName  = "Anim" + std::to_string(sphereNum);
-    string     nodeName  = "Node" + std::to_string(sphereNum);
-    sphereNum++;
-
-    SLAnimation* nodeAnim = s->animManager().createNodeAnimation(animName,
-                                                                 60,
-                                                                 true,
-                                                                 EC_linear,
-                                                                 AL_loop);
-    if (depth == 0)
-    {
-        SLSphere* sphere  = new SLSphere(am, 5.0f * scale, resolution, resolution, meshName, mat[iMat]);
-        SLNode*   sphNode = new SLNode(sphere, nodeName);
-        sphNode->translate(x, y, z, TS_object);
-        nodeAnim->createNodeAnimTrackForRotation360(sphNode, SLVec3f(0, 1, 0));
-        return sphNode;
-    }
-    else
-    {
-        depth--;
-
-        // decrease resolution to reduce memory consumption
-        if (resolution > 8)
-            resolution -= 2;
-
-        SLNode* sGroup = new SLNode(new SLSphere(am, 5.0f * scale, resolution, resolution, meshName, mat[iMat]), nodeName);
-        sGroup->translate(x, y, z, TS_object);
-        nodeAnim->createNodeAnimTrackForRotation360(sGroup, SLVec3f(0, 1, 0));
-        sGroup->addChild(RotatingSphereGroup(am, s, depth, 6.43951f * scale, 0, 1.72546f * scale, scale / 3.0f, resolution, mat));
-        sGroup->addChild(RotatingSphereGroup(am, s, depth, 1.72546f * scale, 0, 6.43951f * scale, scale / 3.0f, resolution, mat));
-        sGroup->addChild(RotatingSphereGroup(am, s, depth, -4.71405f * scale, 0, 4.71405f * scale, scale / 3.0f, resolution, mat));
-        sGroup->addChild(RotatingSphereGroup(am, s, depth, -6.43951f * scale, 0, -1.72546f * scale, scale / 3.0f, resolution, mat));
-        sGroup->addChild(RotatingSphereGroup(am, s, depth, -1.72546f * scale, 0, -6.43951f * scale, scale / 3.0f, resolution, mat));
-        sGroup->addChild(RotatingSphereGroup(am, s, depth, 4.71405f * scale, 0, -4.71405f * scale, scale / 3.0f, resolution, mat));
-        sGroup->addChild(RotatingSphereGroup(am, s, depth, 2.72166f * scale, 5.44331f * scale, 2.72166f * scale, scale / 3.0f, resolution, mat));
-        sGroup->addChild(RotatingSphereGroup(am, s, depth, -3.71785f * scale, 5.44331f * scale, 0.99619f * scale, scale / 3.0f, resolution, mat));
-        sGroup->addChild(RotatingSphereGroup(am, s, depth, 0.99619f * scale, 5.44331f * scale, -3.71785f * scale, scale / 3.0f, resolution, mat));
-        return sGroup;
-    }
-}
-//-----------------------------------------------------------------------------
-//! Adds another level to Jan's Universe scene
-void addUniverseLevel(SLAssetManager* am,
-                      SLScene*        s,
-                      SLNode*         parent,
-                      SLint           parentID,
-                      SLuint          currentLevel,
-                      SLuint          levels,
-                      SLuint          childCount,
-                      SLVMaterial&    materials,
-                      SLVMesh&        meshes,
-                      SLuint&         numNodes)
-{
-    if (currentLevel >= levels)
-        return;
-
-    const float degPerChild = 360.0f / (float)childCount;
-    SLuint      mod         = currentLevel % 3;
-
-    float scaleFactor = 0.25f;
-
-    for (SLuint i = 0; i < childCount; i++)
-    {
-        numNodes++;
-        string childName = "Node" + std::to_string(numNodes) +
-                           "-L" + std::to_string(currentLevel) +
-                           "-C" + std::to_string(i);
-        SLNode* child = new SLNode(meshes[numNodes % meshes.size()], childName);
-
-        child->rotate((float)i * degPerChild, 0, 0, 1);
-        child->translate(2, 0, 0);
-        child->scale(scaleFactor);
-
-        // Node animation on child node
-        string       animName  = "Anim" + std::to_string(numNodes);
-        SLAnimation* childAnim = s->animManager().createNodeAnimation(animName.c_str(),
-                                                                      60,
-                                                                      true,
-                                                                      EC_linear,
-                                                                      AL_loop);
-        childAnim->createNodeAnimTrackForRotation360(child, {0, 0, 1});
-
-        parent->addChild(child);
-
-        addUniverseLevel(am,
-                         s,
-                         child,
-                         parentID,
-                         currentLevel + 1,
-                         levels,
-                         childCount,
-                         materials,
-                         meshes,
-                         numNodes);
-    }
-}
-//-----------------------------------------------------------------------------
-//! Generates the Jan's Universe scene
-void generateUniverse(SLAssetManager* am,
-                      SLScene*        s,
-                      SLNode*         parent,
-                      SLint           parentID,
-                      SLuint          levels,
-                      SLuint          childCount,
-                      SLVMaterial&    materials,
-                      SLVMesh&        meshes)
-{
-    // Point light without mesh
-    SLLightSpot* light = new SLLightSpot(am, s, 0, 0, 0, 1.0f, 180, 0, 1000, 1000, true);
-    light->attenuation(1, 0, 0);
-    light->scale(10, 10, 10);
-    light->diffuseColor({1.0f, 1.0f, 0.5f});
-
-    // Node animation on light node
-    SLAnimation* lightAnim = s->animManager().createNodeAnimation("anim0",
-                                                                  60,
-                                                                  true,
-                                                                  EC_linear,
-                                                                  AL_loop);
-    lightAnim->createNodeAnimTrackForRotation360(light, SLVec3f(0, 1, 0));
-
-    parent->addChild(light);
-
-    SLuint numNodes = 1;
-
-    addUniverseLevel(am,
-                     s,
-                     light,
-                     parentID,
-                     1,
-                     levels,
-                     childCount,
-                     materials,
-                     meshes,
-                     numNodes);
-}
-
 //-----------------------------------------------------------------------------
 //! appDemoLoadScene builds a scene from source code.
 /*! appDemoLoadScene builds a scene from source code. Such a function must be
@@ -442,59 +270,6 @@ void appDemoLoadScene(SLAssetManager* am,
         sv->camera(cam1);
         sv->doWaitOnIdle(false);
     }
-    else if (sceneID == SID_Benchmark_NodeAnimations) //..........................................
-    {
-        s->name("Massive Node Animation Benchmark Scene");
-        s->info(s->name());
-
-        SLCamera* cam1 = new SLCamera("Camera 1");
-        cam1->clipNear(0.1f);
-        cam1->clipFar(100);
-        cam1->translation(0, 2.5f, 20);
-        cam1->focalDist(20);
-        cam1->lookAt(0, 2.5f, 0);
-        cam1->background().colors(SLCol4f(0.1f, 0.1f, 0.1f));
-        cam1->setInitialState();
-
-        SLLightSpot* light1 = new SLLightSpot(am, s, 15, 15, 15, 0.3f);
-        light1->powers(0.2f, 0.8f, 1.0f);
-        light1->attenuation(1, 0, 0);
-
-        SLNode* scene = new SLNode;
-        s->root3D(scene);
-        scene->addChild(cam1);
-        scene->addChild(light1);
-
-        // Generate NUM_MAT materials
-        const int   NUM_MAT = 20;
-        SLVMaterial mat;
-        for (int i = 0; i < NUM_MAT; ++i)
-        {
-            SLGLTexture* texC    = new SLGLTexture(am, texPath + "earth2048_C_Q95.jpg"); // color map
-            SLstring     matName = "mat-" + std::to_string(i);
-            mat.push_back(new SLMaterial(am, matName.c_str(), texC));
-            SLCol4f color;
-            color.hsva2rgba(SLVec4f(Utils::TWOPI * (float)i / (float)NUM_MAT, 1.0f, 1.0f));
-            mat[i]->diffuse(color);
-        }
-
-        // create rotating sphere group
-        SLint maxDepth = 5;
-
-        SLint resolution = 18;
-        scene->addChild(RotatingSphereGroup(am,
-                                            s,
-                                            maxDepth,
-                                            0,
-                                            0,
-                                            0,
-                                            1,
-                                            resolution,
-                                            mat));
-
-        sv->camera(cam1);
-        sv->doWaitOnIdle(false);
-    }
     else if (sceneID == SID_Benchmark_SkinnedAnimations) //.......................................
     {
         SLint  size         = 20;
@@ -569,213 +344,6 @@ void appDemoLoadScene(SLAssetManager* am,
 
         sv->camera(cam1);
     }
-    else if (sceneID == SID_Benchmark_ColumnsNoLOD ||
-             sceneID == SID_Benchmark_ColumnsLOD) //..............................................
-    {
-        SLstring modelFile = modelPath + "GLTF/CorinthianColumn/Corinthian-Column-Round-LOD.gltf";
-        SLstring texCFile  = modelPath + "GLTF/CorinthianColumn/PavementSlateSquare2_2K_DIF.jpg";
-        SLstring texNFile  = modelPath + "GLTF/CorinthianColumn/PavementSlateSquare2_2K_NRM.jpg";
-
-        if (SLFileStorage::exists(modelFile, IOK_model) &&
-            SLFileStorage::exists(texCFile, IOK_image) &&
-            SLFileStorage::exists(texNFile, IOK_image))
-        {
-            SLchar name[512];
-            SLint  size;
-            if (sceneID == SID_Benchmark_ColumnsNoLOD)
-            {
-                size = 25;
-                snprintf(name, sizeof(name), "%d corinthian columns without LOD", size * size);
-                s->name(name);
-            }
-            else
-            {
-                size = 50;
-                snprintf(name, sizeof(name), "%d corinthian columns with LOD", size * size);
-                s->name(name);
-            }
-            s->info(s->name() + " with cascaded shadow mapping. In the Day-Time dialogue you can change the sun angle.");
-
-            // Create ground material
-            SLGLTexture* texFloorDif = new SLGLTexture(am, texCFile, SL_ANISOTROPY_MAX, GL_LINEAR);
-            SLGLTexture* texFloorNrm = new SLGLTexture(am, texNFile, SL_ANISOTROPY_MAX, GL_LINEAR);
-            SLMaterial*  matFloor    = new SLMaterial(am, "matFloor", texFloorDif, texFloorNrm);
-
-            // Define camera
-            SLCamera* cam1 = new SLCamera;
-            cam1->translation(0, 1.7f, 20);
-            cam1->lookAt(0, 1.7f, 0);
-            cam1->focalDist(cam1->translationOS().length());
-            cam1->clipFar(600);
-            cam1->background().colors(SLCol4f(0.1f, 0.4f, 0.8f));
-            cam1->setInitialState();
-
-            // Create directional light for the sunlight
-            SLLightDirect* sunLight = new SLLightDirect(am, s, 1.0f);
-            sunLight->powers(0.25f, 1.0f, 1.0f);
-            sunLight->attenuation(1, 0, 0);
-            sunLight->translation(0, 1.7f, 0);
-            sunLight->lookAt(-1, 0, -1);
-            sunLight->doSunPowerAdaptation(true);
-
-            // Add cascaded shadow mapping
-            sunLight->createsShadows(true);
-            sunLight->createShadowMapAutoSize(cam1);
-            sunLight->doSmoothShadows(true);
-            sunLight->castsShadows(false);
-            sunLight->shadowMinBias(0.003f);
-            sunLight->shadowMaxBias(0.012f);
-
-            // Let the sun be rotated by time and location
-            AppDemo::devLoc.sunLightNode(sunLight);
-            AppDemo::devLoc.originLatLonAlt(47.14271, 7.24337, 488.2);        // Ecke Giosa
-            AppDemo::devLoc.defaultLatLonAlt(47.14260, 7.24310, 488.7 + 1.7); // auf Parkplatz
-
-            // Floor rectangle
-            SLNode* rect = new SLNode(new SLRectangle(am,
-                                                      SLVec2f(-200, -200),
-                                                      SLVec2f(200, 200),
-                                                      SLVec2f(0, 0),
-                                                      SLVec2f(50, 50),
-                                                      50,
-                                                      50,
-                                                      "Floor",
-                                                      matFloor));
-            rect->rotate(90, -1, 0, 0);
-            rect->castsShadows(false);
-
-            // Load the corinthian column
-            SLAssimpImporter importer;
-            SLNode*          columnLOD = importer.load(s->animManager(),
-                                              am,
-                                              modelFile,
-                                              texPath,
-                                              nullptr,
-                                              false,   // delete tex images after build
-                                              true,    // only meshes
-                                              nullptr, // no replacement material
-                                              1.0f);   // 40% ambient reflection
-
-            SLNode* columnL0 = columnLOD->findChild<SLNode>("Corinthian-Column-Round-L0");
-            SLNode* columnL1 = columnLOD->findChild<SLNode>("Corinthian-Column-Round-L1");
-            SLNode* columnL2 = columnLOD->findChild<SLNode>("Corinthian-Column-Round-L2");
-            SLNode* columnL3 = columnLOD->findChild<SLNode>("Corinthian-Column-Round-L3");
-
-            // Assemble scene
-            SLNode* scene = new SLNode("Scene");
-            s->root3D(scene);
-            scene->addChild(sunLight);
-            scene->addChild(rect);
-            scene->addChild(cam1);
-
-            // create loads of pillars
-            SLint   numColumns = size * size;
-            SLfloat offset     = 5.0f;
-            SLfloat z          = (float)(size - 1) * offset * 0.5f;
-
-            for (SLint iZ = 0; iZ < size; ++iZ)
-            {
-                SLfloat x = -(float)(size - 1) * offset * 0.5f;
-
-                for (SLint iX = 0; iX < size; ++iX)
-                {
-                    SLint iZX = iZ * size + iX;
-
-                    if (sceneID == SID_Benchmark_ColumnsNoLOD)
-                    {
-                        // Without just the level 0 node
-                        string  strNode = "Node" + std::to_string(iZX);
-                        SLNode* column  = new SLNode(columnL1->mesh(), strNode + "-L0");
-                        column->translate(x, 0, z, TS_object);
-                        scene->addChild(column);
-                    }
-                    else
-                    {
-                        // With LOD parent node and 3 levels
-                        string     strLOD    = "LOD" + std::to_string(iZX);
-                        SLNodeLOD* lod_group = new SLNodeLOD(strLOD);
-                        lod_group->translate(x, 0, z, TS_object);
-                        lod_group->addChildLOD(new SLNode(columnL1->mesh(), strLOD + "-L0"), 0.1f, 3);
-                        lod_group->addChildLOD(new SLNode(columnL2->mesh(), strLOD + "-L1"), 0.01f, 3);
-                        lod_group->addChildLOD(new SLNode(columnL3->mesh(), strLOD + "-L2"), 0.0001f, 3);
-                        scene->addChild(lod_group);
-                    }
-                    x += offset;
-                }
-                z -= offset;
-            }
-
-            // Set active camera & the root pointer
-            sv->camera(cam1);
-            sv->doWaitOnIdle(false);
-        }
-    }
-    else if (sceneID == SID_Benchmark_JansUniverse) //............................................
-    {
-        s->name("Jan's Universe Test Scene");
-        s->info(s->name());
-
-        SLCamera* cam1 = new SLCamera("Camera 1");
-        cam1->clipNear(0.1f);
-        cam1->clipFar(1000);
-        cam1->translation(0, 0, 75);
-        cam1->focalDist(75);
-        cam1->lookAt(0, 0, 0);
-        cam1->background().colors(SLCol4f(0.3f, 0.3f, 0.3f));
-        cam1->setInitialState();
-
-        // Root scene node
-        SLNode* scene = new SLNode;
-        s->root3D(scene);
-        scene->addChild(cam1);
-
-        // Generate NUM_MAT cook-torrance materials
-#ifndef SL_GLES
-        const int    NUM_MAT_MESH = 100;
-        SLuint const levels       = 6;
-        SLuint const childCount   = 8;
-#else
-        const int    NUM_MAT_MESH = 20;
-        SLuint const levels       = 6;
-        SLuint const childCount   = 8;
-#endif
-        SLVMaterial materials(NUM_MAT_MESH);
-        for (int i = 0; i < NUM_MAT_MESH; ++i)
-        {
-            /*
-            SLGLProgram* spTex   = new SLGLProgramGeneric(am,
-                                                        shaderPath + "PerPixCookTm.vert",
-                                                        shaderPath + "PerPixCookTm.frag");*/
-            SLstring matName = "mat-" + std::to_string(i);
-            materials[i]     = new SLMaterial(am,
-                                          matName.c_str(),
-                                          nullptr,
-                                          new SLGLTexture(am, texPath + "rusty-metal_2048_C.jpg"),
-                                          nullptr, // new SLGLTexture(am, texPath + "rusty-metal_2048_N.jpg"),
-                                          new SLGLTexture(am, texPath + "rusty-metal_2048_M.jpg"),
-                                          new SLGLTexture(am, texPath + "rusty-metal_2048_R.jpg"),
-                                          nullptr,
-                                          nullptr);
-            SLCol4f color;
-            color.hsva2rgba(SLVec4f(Utils::TWOPI * (float)i / (float)NUM_MAT_MESH, 1.0f, 1.0f));
-            materials[i]->diffuse(color);
-        }
-
-        // Generate NUM_MESH sphere meshes
-        SLVMesh meshes(NUM_MAT_MESH);
-        for (int i = 0; i < NUM_MAT_MESH; ++i)
-        {
-            SLstring meshName = "mesh-" + std::to_string(i);
-            meshes[i]         = new SLSphere(am, 1.0f, 32, 32, meshName.c_str(), materials[i % NUM_MAT_MESH]);
-        }
-
-        // Create universe
-        generateUniverse(am, s, scene, 0, levels, childCount, materials, meshes);
-
-        sv->camera(cam1);
-        sv->doWaitOnIdle(false);
-    }
-
     // These scenes assets are not publicly distributed
     else if (sceneID == SID_ErlebARBernChristoffel) //.............................................
     {
@@ -2169,6 +1737,10 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         case SID_RTMuttenzerBox: s = new AppDemoSceneRTMuttenzerBox(); break;
         case SID_RTDoF: s = new AppDemoSceneRTDoF(); break;
         case SID_RTLens: s = new AppDemoSceneRTLens(); break;
+        case SID_Benchmark_JansUniverse: s = new AppDemoSceneJansUniverse(); break;
+        case SID_Benchmark_NodeAnimations: s = new AppDemoSceneAnimationNodeMass2(); break;
+        case SID_Benchmark_ColumnsLOD: s = new AppDemoSceneLevelOfDetail(sceneID); break;
+        case SID_Benchmark_ColumnsNoLOD: s = new AppDemoSceneLevelOfDetail(sceneID); break;
         default: s = new AppDemoSceneLegacy(sceneID); break;
     }
 

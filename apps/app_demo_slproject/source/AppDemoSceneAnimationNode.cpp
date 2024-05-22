@@ -25,7 +25,9 @@ AppDemoSceneAnimationNode::AppDemoSceneAnimationNode()
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneAnimationNode::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addTextureToLoad(_tex1, "Checkerboard0512_C.png");
+    al.addTextureToLoad(_tex1,
+                        AppDemo::texturePath,
+                        "Checkerboard0512_C.png");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

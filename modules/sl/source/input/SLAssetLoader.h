@@ -74,16 +74,18 @@ public:
                           SLIOStreamKind kind);
 
     //! Add 2D textures with internal image allocation
-    void addTextureToLoad(SLGLTexture*& texture,
-                          SLstring      imageFilename,
-                          SLint         min_filter = GL_LINEAR_MIPMAP_LINEAR,
-                          SLint         mag_filter = GL_LINEAR,
-                          SLTextureType type       = TT_unknown,
-                          SLint         wrapS      = GL_REPEAT,
-                          SLint         wrapT      = GL_REPEAT);
+    void addTextureToLoad(SLGLTexture*&   texture,
+                          const SLstring& path,
+                          const SLstring& imageFilename,
+                          SLint           min_filter = GL_LINEAR_MIPMAP_LINEAR,
+                          SLint           mag_filter = GL_LINEAR,
+                          SLTextureType   type       = TT_unknown,
+                          SLint           wrapS      = GL_REPEAT,
+                          SLint           wrapT      = GL_REPEAT);
 
     //! Add cube map texture with internal image allocation
     void addTextureToLoad(SLGLTexture*&   texture,
+                          const SLstring& path,
                           const SLstring& imageFilenameXPos,
                           const SLstring& imageFilenameXNeg,
                           const SLstring& imageFilenameYPos,
@@ -97,6 +99,7 @@ public:
     //! Add 3D texture from a single file with depth as 3rd dimension
     void addTextureToLoad(SLGLTexture*&   texture,
                           SLint           depth,
+                          const SLstring& path,
                           const SLstring& imageFilename,
                           SLint           min_filter             = GL_LINEAR,
                           SLint           mag_filter             = GL_LINEAR,
@@ -116,14 +119,14 @@ public:
                           SLbool           loadGrayscaleIntoAlpha);
 
     //! Add mesh from file to load via assimp loader
-    void addNodeToLoad(SLNode*&    node,
-                       SLstring    path,
-                       SLSkybox*   skybox                 = nullptr,
-                       SLbool      deleteTexImgAfterBuild = false,
-                       SLbool      loadMeshesOnly         = true,
-                       SLMaterial* overrideMat            = nullptr,
-                       float       ambientFactor          = 0.5f,
-                       SLbool      forceCookTorranceRM    = false);
+    void addNodeToLoad(SLNode*&        node,
+                       const SLstring& modelFileWithPath,
+                       SLSkybox*       skybox                 = nullptr,
+                       SLbool          deleteTexImgAfterBuild = false,
+                       SLbool          loadMeshesOnly         = true,
+                       SLMaterial*     overrideMat            = nullptr,
+                       float           ambientFactor          = 0.5f,
+                       SLbool          forceCookTorranceRM    = false);
 
     //! Add generic GLSL program with shader files to load
     void addProgramGenericToLoad(SLGLProgram*&   program,

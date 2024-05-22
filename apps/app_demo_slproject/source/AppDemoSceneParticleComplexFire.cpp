@@ -26,19 +26,35 @@ AppDemoSceneParticleComplexFire::AppDemoSceneParticleComplexFire(SLSceneID scene
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneParticleComplexFire::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addTextureToLoad(_texFireCld, "ParticleFirecloudTransparent_C.png");
-    al.addTextureToLoad(_texFireFlm, "ParticleFlames_06_8x8_C.png");
-    al.addTextureToLoad(_texCircle, "ParticleCircle_05_C.png");
-    al.addTextureToLoad(_texSmokeB, "ParticleCloudBlack_C.png");
-    al.addTextureToLoad(_texSmokeW, "ParticleCloudWhite_C.png");
-    al.addTextureToLoad(_texTorchFlm, "ParticleFlames_04_16x4_C.png");
-    al.addTextureToLoad(_texTorchSmk, "ParticleSmoke_08_C.png");
+    al.addTextureToLoad(_texFireCld,
+                        AppDemo::texturePath,
+                        "ParticleFirecloudTransparent_C.png");
+    al.addTextureToLoad(_texFireFlm,
+                        AppDemo::texturePath,
+                        "ParticleFlames_06_8x8_C.png");
+    al.addTextureToLoad(_texCircle,
+                        AppDemo::texturePath,
+                        "ParticleCircle_05_C.png");
+    al.addTextureToLoad(_texSmokeB,
+                        AppDemo::texturePath,
+                        "ParticleCloudBlack_C.png");
+    al.addTextureToLoad(_texSmokeW,
+                        AppDemo::texturePath,
+                        "ParticleCloudWhite_C.png");
+    al.addTextureToLoad(_texTorchFlm,
+                        AppDemo::texturePath,
+                        "ParticleFlames_04_16x4_C.png");
+    al.addTextureToLoad(_texTorchSmk,
+                        AppDemo::texturePath,
+                        "ParticleSmoke_08_C.png");
 
     al.addTextureToLoad(_texWallDIF,
+                        AppDemo::texturePath,
                         "BrickLimestoneGray_1K_DIF.jpg",
                         SL_ANISOTROPY_MAX,
                         GL_LINEAR);
     al.addTextureToLoad(_texWallNRM,
+                        AppDemo::texturePath,
                         "BrickLimestoneGray_1K_NRM.jpg",
                         SL_ANISOTROPY_MAX,
                         GL_LINEAR);

@@ -27,6 +27,7 @@ void AppDemoSceneRTMuttenzerBox::registerAssetsToLoad(SLAssetLoader& al)
 {
 
     al.addTextureToLoad(_tex1,
+                        AppDemo::texturePath,
                         "MuttenzerBox+X0512_C.png",
                         "MuttenzerBox-X0512_C.png",
                         "MuttenzerBox+Y0512_C.png",

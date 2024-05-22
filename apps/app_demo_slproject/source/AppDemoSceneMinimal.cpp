@@ -26,7 +26,9 @@ AppDemoSceneMinimal::AppDemoSceneMinimal() : AppScene("Minimal Scene")
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneMinimal::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addTextureToLoad(_texC, "earth2048_C.png");
+    al.addTextureToLoad(_texC,
+                        AppDemo::texturePath,
+                        "earth2048_C.png");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

@@ -26,9 +26,15 @@ AppDemoSceneShaderParallax::AppDemoSceneShaderParallax()
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneShaderParallax::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addTextureToLoad(_texC, "brickwall0512_C.jpg");
-    al.addTextureToLoad(_texN, "brickwall0512_N.jpg");
-    al.addTextureToLoad(_texH, "brickwall0512_H.jpg");
+    al.addTextureToLoad(_texC,
+                        AppDemo::texturePath,
+                        "brickwall0512_C.jpg");
+    al.addTextureToLoad(_texN,
+                        AppDemo::texturePath,
+                        "brickwall0512_N.jpg");
+    al.addTextureToLoad(_texH,
+                        AppDemo::texturePath,
+                        "brickwall0512_H.jpg");
     al.addProgramGenericToLoad(_sp,
                                "PerPixBlinnTmNm.vert",
                                "PerPixBlinnTmPm.frag");

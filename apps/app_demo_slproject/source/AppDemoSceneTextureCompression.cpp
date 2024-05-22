@@ -24,9 +24,21 @@ void AppDemoSceneTextureCompression::registerAssetsToLoad(SLAssetLoader& al)
     SLint min = GL_LINEAR_MIPMAP_LINEAR;
     SLint mag = GL_NEAREST;
 
-    al.addTextureToLoad(_texPng, "earth2048_C.png", min, mag);
-    al.addTextureToLoad(_texJpgQ90, "earth2048_C_Q90.jpg", min, mag);
-    al.addTextureToLoad(_texJpgQ40, "earth2048_C_Q40.jpg", min, mag);
+    al.addTextureToLoad(_texPng,
+                        AppDemo::texturePath,
+                        "earth2048_C.png",
+                        min,
+                        mag);
+    al.addTextureToLoad(_texJpgQ90,
+                        AppDemo::texturePath,
+                        "earth2048_C_Q90.jpg",
+                        min,
+                        mag);
+    al.addTextureToLoad(_texJpgQ40,
+                        AppDemo::texturePath,
+                        "earth2048_C_Q40.jpg",
+                        min,
+                        mag);
 
     /* Console commands to generate the following KTX files
     ./../../../externals/prebuilt/mac64_ktx_v4.0.0-beta7-cpvr/release/toktx --automipmap --linear --lower_left_maps_to_s0t0 --bcmp --clevel 4 --qlevel 255 earth2048_C_bcmp_Q255.ktx2 earth2048_C.png
@@ -37,12 +49,36 @@ void AppDemoSceneTextureCompression::registerAssetsToLoad(SLAssetLoader& al)
     ./../../../externals/prebuilt/mac64_ktx_v4.0.0-beta7-cpvr/release/toktx --automipmap --linear --lower_left_maps_to_s0t0 --uastc 0 --zcmp 19 earth2048_C_uastc0.ktx2 earth2048_C.png
     */
 
-    al.addTextureToLoad(_texKtxBcmp255, "earth2048_C_bcmp_Q255.ktx2", min, mag);
-    al.addTextureToLoad(_texKtxBcmp128, "earth2048_C_bcmp_Q128.ktx2", min, mag);
-    al.addTextureToLoad(_texKtxBcmp001, "earth2048_C_bcmp_Q001.ktx2", min, mag);
-    al.addTextureToLoad(_texKtxUastc4, "earth2048_C_uastc4.ktx2", min, mag);
-    al.addTextureToLoad(_texKtxUastc2, "earth2048_C_uastc2.ktx2", min, mag);
-    al.addTextureToLoad(_texKtxUastc0, "earth2048_C_uastc0.ktx2", min, mag);
+    al.addTextureToLoad(_texKtxBcmp255,
+                        AppDemo::texturePath,
+                        "earth2048_C_bcmp_Q255.ktx2",
+                        min,
+                        mag);
+    al.addTextureToLoad(_texKtxBcmp128,
+                        AppDemo::texturePath,
+                        "earth2048_C_bcmp_Q128.ktx2",
+                        min,
+                        mag);
+    al.addTextureToLoad(_texKtxBcmp001,
+                        AppDemo::texturePath,
+                        "earth2048_C_bcmp_Q001.ktx2",
+                        min,
+                        mag);
+    al.addTextureToLoad(_texKtxUastc4,
+                        AppDemo::texturePath,
+                        "earth2048_C_uastc4.ktx2",
+                        min,
+                        mag);
+    al.addTextureToLoad(_texKtxUastc2,
+                        AppDemo::texturePath,
+                        "earth2048_C_uastc2.ktx2",
+                        min,
+                        mag);
+    al.addTextureToLoad(_texKtxUastc0,
+                        AppDemo::texturePath,
+                        "earth2048_C_uastc0.ktx2",
+                        min,
+                        mag);
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

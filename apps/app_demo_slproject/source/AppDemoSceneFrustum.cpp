@@ -22,7 +22,9 @@ AppDemoSceneFrustum::AppDemoSceneFrustum() : AppScene("Frustum Culling Test Scen
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneFrustum::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addTextureToLoad(_tex, "earth1024_C.jpg");
+    al.addTextureToLoad(_tex,
+                        AppDemo::texturePath,
+                        "earth1024_C.jpg");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

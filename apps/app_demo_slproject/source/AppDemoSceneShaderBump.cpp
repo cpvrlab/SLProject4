@@ -24,8 +24,12 @@ AppDemoSceneShaderBump::AppDemoSceneShaderBump()
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneShaderBump::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addTextureToLoad(_texC, "brickwall0512_C.jpg");
-    al.addTextureToLoad(_texN, "brickwall0512_N.jpg");
+    al.addTextureToLoad(_texC,
+                        AppDemo::texturePath,
+                        "brickwall0512_C.jpg");
+    al.addTextureToLoad(_texN,
+                        AppDemo::texturePath,
+                        "brickwall0512_N.jpg");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

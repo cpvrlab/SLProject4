@@ -24,6 +24,7 @@ AppDemoSceneTextureBlend::AppDemoSceneTextureBlend() : AppScene("Texture Blendin
 void AppDemoSceneTextureBlend::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_t1,
+                        AppDemo::texturePath,
                         "tree1_1024_C.png",
                         GL_LINEAR_MIPMAP_LINEAR,
                         GL_LINEAR,
@@ -31,6 +32,7 @@ void AppDemoSceneTextureBlend::registerAssetsToLoad(SLAssetLoader& al)
                         GL_CLAMP_TO_EDGE,
                         GL_CLAMP_TO_EDGE);
     al.addTextureToLoad(_t2,
+                        AppDemo::texturePath,
                         "grass0512_C.jpg",
                         GL_LINEAR_MIPMAP_LINEAR,
                         GL_LINEAR);

@@ -26,11 +26,21 @@ AppDemoSceneShaderIBL::AppDemoSceneShaderIBL()
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneShaderIBL::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addTextureToLoad(_texC, "gold-scuffed_2048_C.png");
-    al.addTextureToLoad(_texN, "gold-scuffed_2048_N.png");
-    al.addTextureToLoad(_texM, "gold-scuffed_2048_M.png");
-    al.addTextureToLoad(_texR, "gold-scuffed_2048_R.png");
-    al.addTextureToLoad(_texA, "gold-scuffed_2048_A.png");
+    al.addTextureToLoad(_texC,
+                        AppDemo::texturePath,
+                        "gold-scuffed_2048_C.png");
+    al.addTextureToLoad(_texN,
+                        AppDemo::texturePath,
+                        "gold-scuffed_2048_N.png");
+    al.addTextureToLoad(_texM,
+                        AppDemo::texturePath,
+                        "gold-scuffed_2048_M.png");
+    al.addTextureToLoad(_texR,
+                        AppDemo::texturePath,
+                        "gold-scuffed_2048_R.png");
+    al.addTextureToLoad(_texA,
+                        AppDemo::texturePath,
+                        "gold-scuffed_2048_A.png");
 
     al.addSkyboxToLoad(_skybox,
                        al.texturePath() + "env_barce_rooftop.hdr",

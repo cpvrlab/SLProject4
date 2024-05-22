@@ -25,23 +25,28 @@ AppDemoSceneTextureFilter::AppDemoSceneTextureFilter() : AppScene("Texture Filte
 void AppDemoSceneTextureFilter::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_texB,
+                        AppDemo::texturePath,
                         "brick0512_C.png",
                         GL_LINEAR,
                         GL_LINEAR);
     al.addTextureToLoad(_texL,
+                        AppDemo::texturePath,
                         "brick0512_C.png",
                         GL_NEAREST,
                         GL_NEAREST);
     al.addTextureToLoad(_texT,
+                        AppDemo::texturePath,
                         "brick0512_C.png",
                         GL_LINEAR_MIPMAP_LINEAR,
                         GL_LINEAR);
     al.addTextureToLoad(_texR,
+                        AppDemo::texturePath,
                         "brick0512_C.png",
                         SL_ANISOTROPY_MAX,
                         GL_LINEAR);
     al.addTextureToLoad(_tex3D,
                         256,
+                        AppDemo::texturePath,
                         "Wave_radial10_256C.jpg");
     al.addProgramGenericToLoad(_spr3D,
                                "TextureOnly3D.vert",

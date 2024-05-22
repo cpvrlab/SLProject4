@@ -26,12 +26,24 @@ AppDemoSceneShaderEarth::AppDemoSceneShaderEarth()
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneShaderEarth::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addTextureToLoad(_texC, "earth2048_C.png");
-    al.addTextureToLoad(_texN, "earth2048_N.jpg");
-    al.addTextureToLoad(_texH, "earth2048_H.jpg");
-    al.addTextureToLoad(_texG, "earth2048_S.jpg");
-    al.addTextureToLoad(_texNC, "earthNight2048_C.jpg");
-    al.addTextureToLoad(_texClC, "earthCloud1024_alpha_C.png");
+    al.addTextureToLoad(_texC,
+                        AppDemo::texturePath,
+                        "earth2048_C.png");
+    al.addTextureToLoad(_texN,
+                        AppDemo::texturePath,
+                        "earth2048_N.jpg");
+    al.addTextureToLoad(_texH,
+                        AppDemo::texturePath,
+                        "earth2048_H.jpg");
+    al.addTextureToLoad(_texG,
+                        AppDemo::texturePath,
+                        "earth2048_S.jpg");
+    al.addTextureToLoad(_texNC,
+                        AppDemo::texturePath,
+                        "earthNight2048_C.jpg");
+    al.addTextureToLoad(_texClC,
+                        AppDemo::texturePath,
+                        "earthCloud1024_alpha_C.png");
     al.addProgramGenericToLoad(_sp,
                                "PerPixBlinnTmNm.vert",
                                "PerPixBlinnTmNmEarth.frag");

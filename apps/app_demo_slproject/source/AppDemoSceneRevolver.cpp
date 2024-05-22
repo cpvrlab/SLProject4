@@ -27,12 +27,23 @@ AppDemoSceneRevolver::AppDemoSceneRevolver() : AppScene("Revolving Mesh Test")
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneRevolver::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addTextureToLoad(_tex1C, "Testmap_1024_C.jpg");
-    al.addTextureToLoad(_tex1N, "Testmap_1024_N.jpg");
-    al.addTextureToLoad(_tex2, "wood0_0512_C.jpg");
-    al.addTextureToLoad(_tex3, "bricks1_0256_C.jpg");
-    al.addTextureToLoad(_tex4, "wood2_0512_C.jpg");
+    al.addTextureToLoad(_tex1C,
+                        AppDemo::texturePath,
+                        "Testmap_1024_C.jpg");
+    al.addTextureToLoad(_tex1N,
+                        AppDemo::texturePath,
+                        "Testmap_1024_N.jpg");
+    al.addTextureToLoad(_tex2,
+                        AppDemo::texturePath,
+                        "wood0_0512_C.jpg");
+    al.addTextureToLoad(_tex3,
+                        AppDemo::texturePath,
+                        "bricks1_0256_C.jpg");
+    al.addTextureToLoad(_tex4,
+                        AppDemo::texturePath,
+                        "wood2_0512_C.jpg");
     al.addTextureToLoad(_tex5,
+                        AppDemo::texturePath,
                         "wood2_0256_C.jpg",
                         "wood2_0256_C.jpg",
                         "gray_0256_C.jpg",

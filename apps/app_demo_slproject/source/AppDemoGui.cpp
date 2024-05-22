@@ -1946,8 +1946,6 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                         AppDemo::sceneToLoad = SID_Benchmark_ColumnsNoLOD;
                     if (ImGui::MenuItem("Columns with LOD", nullptr, sid == SID_Benchmark_ColumnsLOD))
                         AppDemo::sceneToLoad = SID_Benchmark_ColumnsLOD;
-                    if (ImGui::MenuItem("Jan's Universe", nullptr, sid == SID_Benchmark_JansUniverse))
-                        AppDemo::sceneToLoad = SID_Benchmark_JansUniverse;
                     if (ImGui::MenuItem("Particle System lot of fire complex", nullptr, sid == SID_Benchmark_ParticleSystemComplexFire))
                         AppDemo::sceneToLoad = SID_Benchmark_ParticleSystemComplexFire;
                     if (ImGui::MenuItem("Particle System w. 1 mio. particle", nullptr, sid == SID_ParticleSystem_Many))
