@@ -164,7 +164,6 @@ enum SLSceneID
     SID_RTSoftShadows,
     SID_RTDoF,
     SID_RTLens,
-    SID_RTTest,
 
     SID_ParticleSystem_Simple,
     SID_ParticleSystem_DustStorm,

@@ -1757,8 +1757,6 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                         AppDemo::sceneToLoad = SID_RTDoF;
                     if (ImGui::MenuItem("Lens Test", nullptr, sid == SID_RTLens))
                         AppDemo::sceneToLoad = SID_RTLens;
-                    if (ImGui::MenuItem("RT Test", nullptr, sid == SID_RTTest))
-                        AppDemo::sceneToLoad = SID_RTTest;
 
                     ImGui::EndMenu();
                 }
