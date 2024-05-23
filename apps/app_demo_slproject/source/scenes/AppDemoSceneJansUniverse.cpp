@@ -13,6 +13,16 @@
 #include <SLRectangle.h>
 #include <SLSphere.h>
 
+#ifndef SL_GLES
+const SLuint NUM_MAT_MESH = 100;
+const SLuint NUM_LEVELS   = 6;
+const SLuint NUM_CHILDREN = 8;
+#else
+const SLuint NUM_MAT_MESH = 20;
+const SLuint NUM_LEVELS   = 6;
+const SLuint NUM_CHILDREN = 8;
+#endif
+
 //-----------------------------------------------------------------------------
 AppDemoSceneJansUniverse::AppDemoSceneJansUniverse()
   : AppScene("Jan's Universe Test Scene")
@@ -23,6 +33,9 @@ AppDemoSceneJansUniverse::AppDemoSceneJansUniverse()
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneJansUniverse::registerAssetsToLoad(SLAssetLoader& al)
 {
+    al.addTextureToLoad(_textureC, AppDemo::texturePath, "rusty-metal_2048_C.jpg");
+    al.addTextureToLoad(_textureM, AppDemo::texturePath, "rusty-metal_2048_M.jpg");
+    al.addTextureToLoad(_textureR, AppDemo::texturePath, "rusty-metal_2048_R.jpg");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
@@ -44,15 +57,6 @@ void AppDemoSceneJansUniverse::assemble(SLAssetManager* am,
     scene->addChild(cam1);
 
     // Generate NUM_MAT cook-torrance materials
-#ifndef SL_GLES
-    const int    NUM_MAT_MESH = 100;
-    SLuint const levels       = 6;
-    SLuint const childCount   = 8;
-#else
-    const int    NUM_MAT_MESH = 20;
-    SLuint const levels       = 6;
-    SLuint const childCount   = 8;
-#endif
     SLVMaterial materials(NUM_MAT_MESH);
     for (int i = 0; i < NUM_MAT_MESH; ++i)
     {
@@ -60,13 +64,10 @@ void AppDemoSceneJansUniverse::assemble(SLAssetManager* am,
         materials[i]     = new SLMaterial(am,
                                       matName.c_str(),
                                       nullptr,
-                                      new SLGLTexture(am,
-                                                      AppDemo::texturePath + "rusty-metal_2048_C.jpg"),
-                                      nullptr, // new SLGLTexture(am, texPath + "rusty-metal_2048_N.jpg"),
-                                      new SLGLTexture(am,
-                                                      AppDemo::texturePath + "rusty-metal_2048_M.jpg"),
-                                      new SLGLTexture(am,
-                                                      AppDemo::texturePath + "rusty-metal_2048_R.jpg"),
+                                      _textureC,
+                                      nullptr,
+                                      _textureM,
+                                      _textureR,
                                       nullptr,
                                       nullptr);
         SLCol4f color;
@@ -92,8 +93,8 @@ void AppDemoSceneJansUniverse::assemble(SLAssetManager* am,
                      this,
                      scene,
                      0,
-                     levels,
-                     childCount,
+                     NUM_LEVELS,
+                     NUM_CHILDREN,
                      materials,
                      meshes);
 

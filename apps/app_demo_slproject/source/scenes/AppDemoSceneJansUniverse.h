@@ -10,6 +10,7 @@
 #ifndef APPDEMOSCENEJANSUNIVERSE_H
 #define APPDEMOSCENEJANSUNIVERSE_H
 
+#include "SLGLTexture.h"
 #include <AppScene.h>
 
 //-----------------------------------------------------------------------------
@@ -38,6 +39,11 @@ public:
                           SLuint          childCount,
                           SLVMaterial&    materials,
                           SLVMesh&        meshes);
+
+private:
+    SLGLTexture* _textureC;
+    SLGLTexture* _textureM;
+    SLGLTexture* _textureR;
 };
 //-----------------------------------------------------------------------------
 
