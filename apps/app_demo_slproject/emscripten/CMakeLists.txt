@@ -2,6 +2,7 @@ set(target app-Demo-SLProject)
 
 file(GLOB headers
         ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/*.h
+        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/scenes/*.h
         ${SL_PROJECT_ROOT}/apps/source/AppDemo.h
         ${SL_PROJECT_ROOT}/apps/source/SLInterface.h
         ${SL_PROJECT_ROOT}/apps/source/Scene.h
@@ -10,7 +11,8 @@ file(GLOB headers
         )
 
 file(GLOB sources
-${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/*.cpp
+        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/*.cpp
+        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/scenes/*.cpp
         ${SL_PROJECT_ROOT}/apps/source/AppDemo.cpp
         ${SL_PROJECT_ROOT}/apps/source/SLInterface.cpp
         ${SL_PROJECT_ROOT}/apps/source/CVCapture.cpp
@@ -30,6 +32,7 @@ target_include_directories(
         ${target}
         PRIVATE
         ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/
+        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/scenes/
         ${SL_PROJECT_ROOT}/apps/source
         ${SL_PROJECT_ROOT}/modules/sl/source/accelstruct
         ${SL_PROJECT_ROOT}/modules/sl/source/animation

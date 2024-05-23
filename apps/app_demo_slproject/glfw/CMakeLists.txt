@@ -8,6 +8,7 @@ set(compile_definitions SL_STARTSCENE=SID_ShaderIBL)
 
 file(GLOB headers
         ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/*.h
+        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/scenes/*.h
 		${SL_PROJECT_ROOT}/apps/source/CVCapture.h
 		${SL_PROJECT_ROOT}/apps/source/AppDemo.h
         ${SL_PROJECT_ROOT}/apps/source/AppScene.h
@@ -17,6 +18,7 @@ file(GLOB headers
 
 file(GLOB sources
         ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/*.cpp
+        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/scenes/*.cpp
 		${SL_PROJECT_ROOT}/apps/source/CVCapture.cpp
 		${SL_PROJECT_ROOT}/apps/source/AppDemo.cpp
 		${SL_PROJECT_ROOT}/apps/source/SLInterface.cpp
@@ -47,6 +49,7 @@ target_include_directories(
         ${target}
         PRIVATE
         ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/
+        ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/scenes/
 		${SL_PROJECT_ROOT}/apps/source
         ${OpenCV_INCLUDE_DIR}
         ${glfw_INCLUDE_DIR}
