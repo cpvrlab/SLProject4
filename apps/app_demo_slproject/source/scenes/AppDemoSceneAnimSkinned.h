@@ -1,5 +1,5 @@
 //#############################################################################
-//  File:      AppDemoSceneAnimationSkinned.h
+//  File:      AppDemoSceneAnimSkinned.h
 //  Date:      May 2024
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
 //  Authors:   Marino von Wattenwyl
@@ -14,10 +14,10 @@
 
 //-----------------------------------------------------------------------------
 //! Class for skinned animation test scene
-class AppDemoSceneAnimationSkinned : public AppScene
+class AppDemoSceneAnimSkinned : public AppScene
 {
 public:
-    AppDemoSceneAnimationSkinned();
+    AppDemoSceneAnimSkinned();
     void registerAssetsToLoad(SLAssetLoader& al) override;
     void assemble(SLAssetManager* am, SLSceneView* sv) override;
 

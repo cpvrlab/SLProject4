@@ -56,11 +56,11 @@
 #include <SLEnums.h>
 
 #include <AppDemoScene2Dand3DText.h>
-#include <AppDemoSceneAnimationNode.h>
-#include <AppDemoSceneAnimationNodeMass.h>
-#include <AppDemoSceneAnimationNodeMass2.h>
-#include <AppDemoSceneAnimationSkinned.h>
-#include <AppDemoSceneAnimationSkinnedMass.h>
+#include <AppDemoSceneAnimNode.h>
+#include <AppDemoSceneAnimNodeMass.h>
+#include <AppDemoSceneAnimNodeMass2.h>
+#include <AppDemoSceneAnimSkinned.h>
+#include <AppDemoSceneAnimSkinnedMass.h>
 #include <AppDemoSceneEmpty.h>
 #include <AppDemoSceneFigure.h>
 #include <AppDemoSceneFrustum.h>
@@ -70,6 +70,7 @@
 #include <AppDemoSceneMinimal.h>
 #include <AppDemoSceneLegacy.h>
 #include <AppDemoSceneLevelOfDetail.h>
+#include <AppDemoSceneLotsOfNodes.h>
 #include <AppDemoSceneParticleComplexFire.h>
 #include <AppDemoSceneParticleDustStorm.h>
 #include <AppDemoSceneParticleFountain.h>
@@ -205,70 +206,6 @@ void appDemoLoadScene(SLAssetManager* am,
 
             sv->camera(cam1);
         }
-    }
-    else if (sceneID == SID_Benchmark_MassiveNodes) //............................................
-    {
-        s->name("Massive Data Benchmark Scene");
-        s->info(s->name());
-
-        SLCamera* cam1 = new SLCamera("Camera 1");
-        cam1->clipNear(0.1f);
-        cam1->clipFar(100);
-        cam1->translation(0, 0, 50);
-        cam1->lookAt(0, 0, 0);
-        cam1->focalDist(50);
-        cam1->background().colors(SLCol4f(0.1f, 0.1f, 0.1f));
-        cam1->setInitialState();
-
-        SLLightSpot* light1 = new SLLightSpot(am, s, 15, 15, 15, 0.3f);
-        light1->powers(0.2f, 0.8f, 1.0f);
-        light1->attenuation(1, 0, 0);
-
-        SLNode* scene = new SLNode;
-        s->root3D(scene);
-        scene->addChild(cam1);
-        scene->addChild(light1);
-
-        // Generate NUM_MAT materials
-        const int   NUM_MAT = 20;
-        SLVMaterial mat;
-        for (int i = 0; i < NUM_MAT; ++i)
-        {
-            SLGLTexture* texC    = new SLGLTexture(am, texPath + "earth2048_C_Q95.jpg");
-            SLstring     matName = "mat-" + std::to_string(i);
-            mat.push_back(new SLMaterial(am, matName.c_str(), texC));
-            SLCol4f color;
-            color.hsva2rgba(SLVec4f(Utils::TWOPI * (float)i / (float)NUM_MAT, 1.0f, 1.0f));
-            mat[i]->diffuse(color);
-        }
-
-        // create a 3D array of spheres
-        SLint  halfSize = 10;
-        SLuint n        = 0;
-        for (SLint iZ = -halfSize; iZ <= halfSize; ++iZ)
-        {
-            for (SLint iY = -halfSize; iY <= halfSize; ++iY)
-            {
-                for (SLint iX = -halfSize; iX <= halfSize; ++iX)
-                {
-                    // Choose a random material index
-                    SLuint   res      = 36;
-                    SLint    iMat     = (SLint)Utils::random(0, NUM_MAT - 1);
-                    SLstring nodeName = "earth-" + std::to_string(n);
-
-                    // Create a new sphere and node and translate it
-                    SLSphere* earth  = new SLSphere(am, 0.3f, res, res, nodeName, mat[iMat]);
-                    SLNode*   sphere = new SLNode(earth);
-                    sphere->translate(float(iX), float(iY), float(iZ), TS_object);
-                    scene->addChild(sphere);
-                    // SL_LOG("Earth: %000d (Mat: %00d)", n, iMat);
-                    n++;
-                }
-            }
-        }
-
-        sv->camera(cam1);
-        sv->doWaitOnIdle(false);
     }
     else if (sceneID == SID_Benchmark_SkinnedAnimations) //.......................................
     {
@@ -1706,10 +1643,10 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         case SID_Robotics_FanucCRX_FK: s = new AppDemoSceneRobot(); break;
         case SID_VolumeRayCast: s = new AppDemoSceneVolumeRayCast(); break;
         case SID_VolumeRayCastLighted: s = new AppDemoSceneVolumeRayCastLighted(); break;
-        case SID_AnimationNode: s = new AppDemoSceneAnimationNode(); break;
-        case SID_AnimationNodeMass: s = new AppDemoSceneAnimationNodeMass(); break;
-        case SID_AnimationSkinned: s = new AppDemoSceneAnimationSkinned(); break;
-        case SID_AnimationSkinnedMass: s = new AppDemoSceneAnimationSkinnedMass(); break;
+        case SID_AnimationNode: s = new AppDemoSceneAnimNode(); break;
+        case SID_AnimationNodeMass: s = new AppDemoSceneAnimNodeMass(); break;
+        case SID_AnimationSkinned: s = new AppDemoSceneAnimSkinned(); break;
+        case SID_AnimationSkinnedMass: s = new AppDemoSceneAnimSkinnedMass(); break;
         case SID_VideoTextureFile:
         case SID_VideoTextureLive: s = new AppDemoSceneVideoTexture(sceneID); break;
         case SID_VideoTrackChessMain:
@@ -1738,7 +1675,8 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         case SID_RTDoF: s = new AppDemoSceneRTDoF(); break;
         case SID_RTLens: s = new AppDemoSceneRTLens(); break;
         case SID_Benchmark_JansUniverse: s = new AppDemoSceneJansUniverse(); break;
-        case SID_Benchmark_NodeAnimations: s = new AppDemoSceneAnimationNodeMass2(); break;
+        case SID_Benchmark_NodeAnimations: s = new AppDemoSceneAnimNodeMass2(); break;
+        case SID_Benchmark_LotsOfNodes: s = new AppDemoSceneLotsOfNodes(); break;
         case SID_Benchmark_ColumnsLOD: s = new AppDemoSceneLevelOfDetail(sceneID); break;
         case SID_Benchmark_ColumnsNoLOD: s = new AppDemoSceneLevelOfDetail(sceneID); break;
         default: s = new AppDemoSceneLegacy(sceneID); break;

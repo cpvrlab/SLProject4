@@ -1934,8 +1934,8 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                     if (ImGui::MenuItem("Large Model", nullptr, sid == SID_Benchmark_LargeModel))
                         AppDemo::sceneToLoad = SID_Benchmark_LargeModel;
 #endif
-                    if (ImGui::MenuItem("Massive Nodes", nullptr, sid == SID_Benchmark_MassiveNodes))
-                        AppDemo::sceneToLoad = SID_Benchmark_MassiveNodes;
+                    if (ImGui::MenuItem("Massive Nodes", nullptr, sid == SID_Benchmark_LotsOfNodes))
+                        AppDemo::sceneToLoad = SID_Benchmark_LotsOfNodes;
                     if (ImGui::MenuItem("Massive Node Animations", nullptr, sid == SID_Benchmark_NodeAnimations))
                         AppDemo::sceneToLoad = SID_Benchmark_NodeAnimations;
                     if (ImGui::MenuItem("Jan's Universe", nullptr, sid == SID_Benchmark_JansUniverse))

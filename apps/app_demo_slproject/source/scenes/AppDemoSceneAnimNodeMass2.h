@@ -1,5 +1,5 @@
 //#############################################################################
-//  File:      AppDemoSceneAnimationNodeMass2.h
+//  File:      AppDemoSceneAnimNodeMass2.h
 //  Date:      May 2024
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
 //  Authors:   Marino von Wattenwyl
@@ -14,10 +14,10 @@
 
 //-----------------------------------------------------------------------------
 //! Class for benchmark mass animation test scene
-class AppDemoSceneAnimationNodeMass2 : public AppScene
+class AppDemoSceneAnimNodeMass2 : public AppScene
 {
 public:
-    AppDemoSceneAnimationNodeMass2();
+    AppDemoSceneAnimNodeMass2();
     void    registerAssetsToLoad(SLAssetLoader& al) override;
     void    assemble(SLAssetManager* am, SLSceneView* sv) override;
     SLNode* RotatingSpheres(SLAssetManager* am,

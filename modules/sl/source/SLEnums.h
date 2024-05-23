@@ -176,7 +176,7 @@ enum SLSceneID
     SID_MaxNoBenchmarks,
 
     SID_Benchmark_LargeModel,
-    SID_Benchmark_MassiveNodes,
+    SID_Benchmark_LotsOfNodes,
     SID_Benchmark_NodeAnimations,
     SID_Benchmark_SkinnedAnimations,
     SID_Benchmark_ColumnsNoLOD,

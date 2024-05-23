@@ -1,5 +1,5 @@
 //#############################################################################
-//  File:      AppDemoSceneAnimationNode.h
+//  File:      AppDemoSceneAnimNode.h
 //  Date:      May 2024
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
 //  Authors:   Marino von Wattenwyl
@@ -14,10 +14,10 @@
 
 //-----------------------------------------------------------------------------
 //! Class for node animation test scene
-class AppDemoSceneAnimationNode : public AppScene
+class AppDemoSceneAnimNode : public AppScene
 {
 public:
-    AppDemoSceneAnimationNode();
+    AppDemoSceneAnimNode();
     void registerAssetsToLoad(SLAssetLoader& al) override;
     void assemble(SLAssetManager* am, SLSceneView* sv) override;
 

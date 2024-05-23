@@ -1,5 +1,5 @@
 //#############################################################################
-//  File:      AppDemoSceneAnimationSkinned.cpp
+//  File:      AppDemoSceneAnimSkinned.cpp
 //  Date:      May 2024
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
 //  Authors:   Marino von Wattenwyl
@@ -7,20 +7,20 @@
 //             Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
 
-#include <AppDemoSceneAnimationSkinned.h>
+#include <AppDemoSceneAnimSkinned.h>
 #include <AppDemo.h>
 #include <SLLightSpot.h>
 #include <SLGrid.h>
 
 //-----------------------------------------------------------------------------
-AppDemoSceneAnimationSkinned::AppDemoSceneAnimationSkinned()
+AppDemoSceneAnimSkinned::AppDemoSceneAnimSkinned()
   : AppScene("Skeletal Animation Test Scene")
 {
     info("Skeletal Animation Test Scene");
 }
 //-----------------------------------------------------------------------------
 //! All assets the should be loaded in parallel must be registered in here.
-void AppDemoSceneAnimationSkinned::registerAssetsToLoad(SLAssetLoader& al)
+void AppDemoSceneAnimSkinned::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addNodeToLoad(_char1, "DAE/AstroBoy/AstroBoy.dae");
     al.addNodeToLoad(_char2, "GLTF/Sintel/Sintel_LowRes-Rigged.gltf");
@@ -30,7 +30,7 @@ void AppDemoSceneAnimationSkinned::registerAssetsToLoad(SLAssetLoader& al)
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
-void AppDemoSceneAnimationSkinned::assemble(SLAssetManager* am, SLSceneView* sv)
+void AppDemoSceneAnimSkinned::assemble(SLAssetManager* am, SLSceneView* sv)
 {
     // Root scene node
     SLNode* scene = new SLNode("scene group");

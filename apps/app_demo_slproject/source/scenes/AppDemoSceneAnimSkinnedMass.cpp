@@ -1,5 +1,5 @@
 //#############################################################################
-//  File:      AppDemoSceneAnimationSkinnedMass.cpp
+//  File:      AppDemoSceneAnimSkinnedMass.cpp
 //  Date:      May 2024
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
 //  Authors:   Marino von Wattenwyl
@@ -7,26 +7,26 @@
 //             Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
 
-#include <AppDemoSceneAnimationSkinnedMass.h>
+#include <AppDemoSceneAnimSkinnedMass.h>
 #include <AppDemo.h>
 #include <SLLightSpot.h>
 #include <SLRectangle.h>
 
 //-----------------------------------------------------------------------------
-AppDemoSceneAnimationSkinnedMass::AppDemoSceneAnimationSkinnedMass()
+AppDemoSceneAnimSkinnedMass::AppDemoSceneAnimSkinnedMass()
   : AppScene("Mass Skeletal Animation Test Scene")
 {
     info("Mass Skeletal Animation Test Scene");
 }
 //-----------------------------------------------------------------------------
 //! All assets the should be loaded in parallel must be registered in here.
-void AppDemoSceneAnimationSkinnedMass::registerAssetsToLoad(SLAssetLoader& al)
+void AppDemoSceneAnimSkinnedMass::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addNodeToLoad(_center, "DAE/AstroBoy/AstroBoy.dae");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
-void AppDemoSceneAnimationSkinnedMass::assemble(SLAssetManager* am, SLSceneView* sv)
+void AppDemoSceneAnimSkinnedMass::assemble(SLAssetManager* am, SLSceneView* sv)
 {
     // Create materials
     SLMaterial* m1 = new SLMaterial(am, "m1", SLCol4f::GRAY);

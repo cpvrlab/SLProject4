@@ -1,5 +1,5 @@
 //#############################################################################
-//  File:      AppDemoSceneAnimationNodeMass2.cpp
+//  File:      AppDemoSceneAnimNodeMass2.cpp
 //  Date:      May 2024
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
 //  Authors:   Marino von Wattenwyl
@@ -7,25 +7,25 @@
 //             Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
 
-#include <AppDemoSceneAnimationNodeMass2.h>
+#include <AppDemoSceneAnimNodeMass2.h>
 #include <AppDemo.h>
 #include <SLLightSpot.h>
 #include <SLSphere.h>
 
 //-----------------------------------------------------------------------------
-AppDemoSceneAnimationNodeMass2::AppDemoSceneAnimationNodeMass2()
+AppDemoSceneAnimNodeMass2::AppDemoSceneAnimNodeMass2()
   : AppScene("Benchmark Node Animation Test Scene")
 {
     info("Performance test for transform updates from many animations.");
 }
 //-----------------------------------------------------------------------------
 //! All assets the should be loaded in parallel must be registered in here.
-void AppDemoSceneAnimationNodeMass2::registerAssetsToLoad(SLAssetLoader& al)
+void AppDemoSceneAnimNodeMass2::registerAssetsToLoad(SLAssetLoader& al)
 {
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
-void AppDemoSceneAnimationNodeMass2::assemble(SLAssetManager* am,
+void AppDemoSceneAnimNodeMass2::assemble(SLAssetManager* am,
                                               SLSceneView*    sv)
 {
     SLCamera* cam1 = new SLCamera("Camera 1");
@@ -104,7 +104,7 @@ void AppDemoSceneAnimationNodeMass2::assemble(SLAssetManager* am,
  * @param mat Reference to an vector of materials
  * @return Group node of spheres
  */
-SLNode* AppDemoSceneAnimationNodeMass2::RotatingSpheres(SLAssetManager* am,
+SLNode* AppDemoSceneAnimNodeMass2::RotatingSpheres(SLAssetManager* am,
                                                         SLScene*        s,
                                                         SLint           depth,
                                                         SLfloat         x,

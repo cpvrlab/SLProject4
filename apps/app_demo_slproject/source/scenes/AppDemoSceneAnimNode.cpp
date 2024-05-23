@@ -1,5 +1,5 @@
 //#############################################################################
-//  File:      AppDemoSceneAnimationNode.cpp
+//  File:      AppDemoSceneAnimNode.cpp
 //  Date:      May 2024
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
 //  Authors:   Marino von Wattenwyl
@@ -7,7 +7,7 @@
 //             Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
 
-#include <AppDemoSceneAnimationNode.h>
+#include <AppDemoSceneAnimNode.h>
 #include <AppDemoSceneFigure.h>
 #include <AppDemo.h>
 #include <SLLightSpot.h>
@@ -16,14 +16,14 @@
 #include <SLCylinder.h>
 
 //-----------------------------------------------------------------------------
-AppDemoSceneAnimationNode::AppDemoSceneAnimationNode()
+AppDemoSceneAnimNode::AppDemoSceneAnimNode()
   : AppScene("Node Animation Test Scene")
 {
     info("Node animations with different easing curves.");
 }
 //-----------------------------------------------------------------------------
 //! All assets the should be loaded in parallel must be registered in here.
-void AppDemoSceneAnimationNode::registerAssetsToLoad(SLAssetLoader& al)
+void AppDemoSceneAnimNode::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_tex1,
                         AppDemo::texturePath,
@@ -31,7 +31,7 @@ void AppDemoSceneAnimationNode::registerAssetsToLoad(SLAssetLoader& al)
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
-void AppDemoSceneAnimationNode::assemble(SLAssetManager* am, SLSceneView* sv)
+void AppDemoSceneAnimNode::assemble(SLAssetManager* am, SLSceneView* sv)
 {
     SLMaterial* m1 = new SLMaterial(am, "m1", _tex1);
     m1->kr(0.5f);

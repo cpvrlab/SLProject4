@@ -1,5 +1,5 @@
 //#############################################################################
-//  File:      AppDemoSceneAnimationNodeMass.cpp
+//  File:      AppDemoSceneAnimNodeMass.cpp
 //  Date:      May 2024
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
 //  Authors:   Marino von Wattenwyl
@@ -7,25 +7,25 @@
 //             Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
 
-#include <AppDemoSceneAnimationNodeMass.h>
+#include <AppDemoSceneAnimNodeMass.h>
 #include <AppDemo.h>
 #include <SLLightSpot.h>
 #include <SLBox.h>
 
 //-----------------------------------------------------------------------------
-AppDemoSceneAnimationNodeMass::AppDemoSceneAnimationNodeMass()
+AppDemoSceneAnimNodeMass::AppDemoSceneAnimNodeMass()
   : AppScene("Mass Animation Test Scene")
 {
     info("Performance test for transform updates from many animations.");
 }
 //-----------------------------------------------------------------------------
 //! All assets the should be loaded in parallel must be registered in here.
-void AppDemoSceneAnimationNodeMass::registerAssetsToLoad(SLAssetLoader& al)
+void AppDemoSceneAnimNodeMass::registerAssetsToLoad(SLAssetLoader& al)
 {
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
-void AppDemoSceneAnimationNodeMass::assemble(SLAssetManager* am, SLSceneView* sv)
+void AppDemoSceneAnimNodeMass::assemble(SLAssetManager* am, SLSceneView* sv)
 {
     // Create a scene group node
     SLNode* scene = new SLNode("scene node");

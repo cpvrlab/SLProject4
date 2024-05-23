@@ -1,5 +1,5 @@
 //#############################################################################
-//  File:      AppDemoSceneAnimationSkinnedMass.h
+//  File:      AppDemoSceneLotsOfNodes.h
 //  Date:      May 2024
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
 //  Authors:   Marino von Wattenwyl
@@ -7,22 +7,24 @@
 //             Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
 
-#ifndef APPDEMOSCENEANIMSKINNEDMASS_H
-#define APPDEMOSCENEANIMSKINNEDMASS_H
+#ifndef APPDEMOSCENELOTSOFNODES_H
+#define APPDEMOSCENELOTSOFNODES_H
 
 #include <AppScene.h>
+#include <SLGLTexture.h>
 
 //-----------------------------------------------------------------------------
-//! Class for skinned animation test scene
-class AppDemoSceneAnimationSkinnedMass : public AppScene
+//! Class for scene with lots of nodes
+class AppDemoSceneLotsOfNodes : public AppScene
 {
 public:
-    AppDemoSceneAnimationSkinnedMass();
+    AppDemoSceneLotsOfNodes();
     void registerAssetsToLoad(SLAssetLoader& al) override;
     void assemble(SLAssetManager* am, SLSceneView* sv) override;
 
 private:
-    SLNode* _center;
+    static const int _NUM_MAT = 20;
+    SLGLTexture*     _texC[_NUM_MAT];
 };
 //-----------------------------------------------------------------------------
 
