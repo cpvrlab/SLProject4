@@ -39,11 +39,23 @@ AppDemoSceneVideoTrackChessboard::AppDemoSceneVideoTrackChessboard(SLSceneID sid
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneVideoTrackChessboard::registerAssetsToLoad(SLAssetLoader& al)
 {
+    // Create video texture on global pointer updated in AppDemoVideo
+    al.addTextureToLoad(gVideoTexture,
+                        AppDemo::texturePath,
+                        "LiveVideoError.png",
+                        GL_LINEAR,
+                        GL_LINEAR);
+
+    // Create a chessboard tracker
+    al.addLoadTask([]() {
+        gVideoTracker = new CVTrackedChessboard(AppDemo::calibIniPath);
+        gVideoTracker->drawDetection(true);
+    });
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
 void AppDemoSceneVideoTrackChessboard::assemble(SLAssetManager* am,
-                                                SLSceneView* sv)
+                                                SLSceneView*    sv)
 {
     /*
     The tracking of markers is done in AppDemoVideo::onUpdateTracking by
@@ -82,12 +94,6 @@ void AppDemoSceneVideoTrackChessboard::assemble(SLAssetManager* am,
         }
         CVCapture::instance()->videoType(VT_SCND);
     }
-
-    // Create video texture on global pointer updated in AppDemoVideo
-    gVideoTexture = new SLGLTexture(am,
-                                   AppDemo::texturePath + "LiveVideoError.png",
-                                   GL_LINEAR,
-                                   GL_LINEAR);
 
     // Material
     SLMaterial* yellow = new SLMaterial(am,
@@ -145,9 +151,7 @@ void AppDemoSceneVideoTrackChessboard::assemble(SLAssetManager* am,
         scene->addChild(boxNode);
     }
 
-    // Create OpenCV Tracker for the camera node for AR camera.
-    gVideoTracker = new CVTrackedChessboard(AppDemo::calibIniPath);
-    gVideoTracker->drawDetection(true);
+    // The tracker moves the camera node
     gVideoTrackedNode = cam1;
 
     // pass the scene group as root node

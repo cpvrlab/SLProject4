@@ -36,6 +36,21 @@ AppDemoSceneVideoTrackFace::AppDemoSceneVideoTrackFace(SLSceneID sid)
 void AppDemoSceneVideoTrackFace::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addNodeToLoad(_glasses, "FBX/Sunglasses.fbx");
+
+    // Create video texture on global pointer updated in AppDemoVideo
+    al.addTextureToLoad(gVideoTexture,
+                        AppDemo::texturePath,
+                        "LiveVideoError.png",
+                        GL_LINEAR,
+                        GL_LINEAR);
+
+    // Create a face tracker
+    al.addLoadTask([]() {
+        gVideoTracker = new CVTrackedFaces(AppDemo::calibIniPath + "haarcascade_frontalface_alt2.xml",
+                                           AppDemo::calibIniPath + "lbfmodel.yaml",
+                                           3);
+        gVideoTracker->drawDetection(true);
+    });
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
@@ -53,12 +68,6 @@ void AppDemoSceneVideoTrackFace::assemble(SLAssetManager* am, SLSceneView* sv)
         CVCapture::instance()->videoType(VT_MAIN);
     else
         CVCapture::instance()->videoType(VT_SCND);
-
-    // Create video texture on global pointer updated in AppDemoVideo
-    gVideoTexture = new SLGLTexture(am,
-                                    AppDemo::texturePath + "LiveVideoError.png",
-                                    GL_LINEAR,
-                                    GL_LINEAR);
 
     SLCamera* cam1 = new SLCamera("Camera 1");
     cam1->translation(0, 0, 0.5f);
@@ -94,11 +103,7 @@ void AppDemoSceneVideoTrackFace::assemble(SLAssetManager* am, SLSceneView* sv)
     scene->addChild(_glasses);
     scene->addChild(axis);
 
-    // Add a face gVideoTracker that moves the camera node
-    gVideoTracker = new CVTrackedFaces(AppDemo::calibIniPath + "haarcascade_frontalface_alt2.xml",
-                                       AppDemo::calibIniPath + "lbfmodel.yaml",
-                                       3);
-    gVideoTracker->drawDetection(true);
+    // The tracker moves the camera node
     gVideoTrackedNode = cam1;
 
     sv->doWaitOnIdle(false); // for constant video feed

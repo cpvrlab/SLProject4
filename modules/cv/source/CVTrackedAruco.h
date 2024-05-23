@@ -132,6 +132,9 @@ class CVTrackedAruco : public CVTracked
 public:
     explicit CVTrackedAruco(int arucoID, string calibIniPath);
 
+    // Getters
+    const CVArucoParams& params() const { return _params; }
+
     bool track(CVMat          imageGray,
                CVMat          imageBgr,
                CVCalibration* calib);
@@ -152,8 +155,6 @@ public:
                                 int maxMarkerId,
                                 int markerSizePX = 200);
 
-    static CVArucoParams params; //!< Parameter class instance
-
 protected:
     bool trackAll(CVMat          imageGray,
                   CVMat          imageBgr,
@@ -164,10 +165,9 @@ protected:
     CVVMatx44f  objectViewMats; //!< object view matrices for all found markers
 
 private:
-    static bool paramsLoaded; //!< Flag for loaded parameters
-
-    int    _arucoID;          //!< Aruco Marker ID for this node
-    string _calibIniPath;
+    CVArucoParams _params;  //!< Aruco parameters
+    int           _arucoID; //!< Aruco Marker ID for this node
+    string        _calibIniPath;
 };
 //-----------------------------------------------------------------------------
 #endif // CVTrackedAruco_H

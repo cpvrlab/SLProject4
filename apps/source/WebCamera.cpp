@@ -83,7 +83,7 @@ CVMat WebCamera::read()
     }
 
     // clang-format off
-    MAIN_THREAD_EM_ASM({
+    EM_ASM({
         let video = document.querySelector("#capture-video");
         let canvas = document.querySelector("#capture-canvas");
         let ctx = canvas.getContext("2d");
@@ -123,7 +123,7 @@ CVSize2i WebCamera::getSize()
     int32_t height;
 
     // clang-format off
-    MAIN_THREAD_EM_ASM({
+    EM_ASM({
         let video = document.querySelector("#capture-video");
         let width = video.videoWidth;
         let height = video.videoHeight;
@@ -160,7 +160,7 @@ void WebCamera::setSize(CVSize2i size)
     _waitingForResize = true;
 
     // clang-format off
-    MAIN_THREAD_EM_ASM({
+    EM_ASM({
         let video = document.querySelector("#capture-video");
         let stream = video.srcObject;
 
@@ -189,7 +189,7 @@ void WebCamera::setSize(CVSize2i size)
 void WebCamera::close()
 {
     // clang-format off
-    MAIN_THREAD_EM_ASM({
+    EM_ASM({
         let video = document.querySelector("#capture-video");
         let stream = video.srcObject;
 

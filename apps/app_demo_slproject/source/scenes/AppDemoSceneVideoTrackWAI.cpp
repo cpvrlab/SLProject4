@@ -35,6 +35,26 @@ AppDemoSceneVideoTrackWAI::AppDemoSceneVideoTrackWAI()
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneVideoTrackWAI::registerAssetsToLoad(SLAssetLoader& al)
 {
+#ifdef SL_BUILD_WAI
+    // Create video texture on global pointer updated in AppDemoVideo
+    al.addTextureToLoad(gVideoTexture,
+                        AppDemo::texturePath,
+                        "LiveVideoError.png",
+                        GL_LINEAR,
+                        GL_LINEAR);
+
+    al.addLoadTask([] {
+        // Create OpenCV Tracker for the box node
+        std::string vocFileName;
+#    if USE_FBOW
+        vocFileName = "voc_fbow.bin";
+#    else
+        vocFileName = "ORBvoc.bin";
+#    endif
+        gVideoTracker = new CVTrackedWAI(Utils::findFile(vocFileName, {AppDemo::calibIniPath, AppDemo::exePath}));
+        gVideoTracker->drawDetection(true);
+    });
+#endif
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
@@ -43,12 +63,6 @@ void AppDemoSceneVideoTrackWAI::assemble(SLAssetManager* am,
 {
 #ifdef SL_BUILD_WAI
     CVCapture::instance()->videoType(VT_MAIN);
-
-    // Create video texture on global pointer updated in AppDemoVideo
-    gVideoTexture = new SLGLTexture(am,
-                                    AppDemo::texturePath + "LiveVideoError.png",
-                                    GL_LINEAR,
-                                    GL_LINEAR);
 
     // Material
     SLMaterial* yellow = new SLMaterial(am,
@@ -101,15 +115,7 @@ void AppDemoSceneVideoTrackWAI::assemble(SLAssetManager* am,
     boxNode1->translate(0.0f, 0.0f, 1.0f, TS_world);
     scene->addChild(boxNode1);
 
-    // Create OpenCV Tracker for the box node
-    std::string vocFileName;
-#    if USE_FBOW
-    vocFileName = "voc_fbow.bin";
-#    else
-    vocFileName = "ORBvoc.bin";
-#    endif
-    gVideoTracker = new CVTrackedWAI(Utils::findFile(vocFileName, {AppDemo::calibIniPath, AppDemo::exePath}));
-    gVideoTracker->drawDetection(true);
+    // The tracker moves the box node
     gVideoTrackedNode = cam1;
 
     sv->camera(cam1);

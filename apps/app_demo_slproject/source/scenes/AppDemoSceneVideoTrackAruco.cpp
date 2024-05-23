@@ -46,6 +46,18 @@ AppDemoSceneVideoTrackAruco::AppDemoSceneVideoTrackAruco(SLSceneID sid)
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneVideoTrackAruco::registerAssetsToLoad(SLAssetLoader& al)
 {
+    // Create video texture on global pointer updated in AppDemoVideo
+    al.addTextureToLoad(gVideoTexture,
+                        AppDemo::texturePath,
+                        "LiveVideoError.png",
+                        GL_LINEAR,
+                        GL_LINEAR);
+
+    // Create an ArUco tracker
+    al.addLoadTask([]() {
+        gVideoTracker = new CVTrackedAruco(9, AppDemo::calibIniPath);
+        gVideoTracker->drawDetection(true);
+    });
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
@@ -63,12 +75,6 @@ void AppDemoSceneVideoTrackAruco::assemble(SLAssetManager* am, SLSceneView* sv)
         CVCapture::instance()->videoType(VT_MAIN);
     else
         CVCapture::instance()->videoType(VT_SCND);
-
-    // Create video texture on global pointer updated in AppDemoVideo
-    gVideoTexture = new SLGLTexture(am,
-                                   AppDemo::texturePath + "LiveVideoError.png",
-                                   GL_LINEAR,
-                                   GL_LINEAR);
 
     // Material
     SLMaterial* yellow = new SLMaterial(am,
@@ -99,7 +105,7 @@ void AppDemoSceneVideoTrackAruco::assemble(SLAssetManager* am, SLSceneView* sv)
     scene->addChild(light1);
 
     // Get the half edge length of the aruco marker
-    SLfloat edgeLen = CVTrackedAruco::params.edgeLength;
+    SLfloat edgeLen = static_cast<CVTrackedAruco*>(gVideoTracker)->params().edgeLength;
     SLfloat he      = edgeLen * 0.5f;
 
     // Build mesh & node that will be tracked by the 1st marker (camera)
@@ -122,9 +128,7 @@ void AppDemoSceneVideoTrackAruco::assemble(SLAssetManager* am, SLSceneView* sv)
     boxNode1->setDrawBitsRec(SL_DB_CULLOFF, true);
     scene->addChild(boxNode1);
 
-    // Create OpenCV Tracker for the box node
-    gVideoTracker = new CVTrackedAruco(9, AppDemo::calibIniPath);
-    gVideoTracker->drawDetection(true);
+    // The tracker moves the box node
     gVideoTrackedNode = boxNode1;
 
     // Set active camera

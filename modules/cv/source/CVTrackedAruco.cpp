@@ -20,14 +20,17 @@ for a good top down information.
 #include <Profiler.h>
 
 //-----------------------------------------------------------------------------
-// Initialize static variables
-bool          CVTrackedAruco::paramsLoaded = false;
-CVArucoParams CVTrackedAruco::params;
-//-----------------------------------------------------------------------------
 CVTrackedAruco::CVTrackedAruco(int arucoID, string calibIniPath)
   : _calibIniPath(calibIniPath),
     _arucoID(arucoID)
 {
+    SLbool paramsLoaded = _params.loadFromFile(_calibIniPath);
+
+    if (!paramsLoaded)
+        Utils::exitMsg("SLProject",
+                       "CVTrackedAruco::track: Failed to load Aruco parameters.",
+                       __LINE__,
+                       __FILE__);
 }
 //-----------------------------------------------------------------------------
 //! Tracks the all Aruco markers in the given image for the first sceneview
@@ -67,17 +70,6 @@ bool CVTrackedAruco::trackAll(CVMat          imageGray,
     assert(!imageBgr.empty() && "ImageBGR is empty");
     assert(!calib->cameraMat().empty() && "Calibration is empty");
 
-    // Load aruco parameter once
-    if (!paramsLoaded)
-    {
-        paramsLoaded = params.loadFromFile(_calibIniPath);
-        if (!paramsLoaded)
-            Utils::exitMsg("SLProject",
-                           "CVTrackedAruco::track: Failed to load Aruco parameters.",
-                           __LINE__,
-                           __FILE__);
-    }
-
 #if CV_MAJOR_VERSION < 4 || CV_MINOR_VERSION < 7
     if (params.arucoParams.empty() || params.dictionary.empty())
     {
@@ -109,7 +101,7 @@ bool CVTrackedAruco::trackAll(CVMat          imageGray,
                              params.arucoParams,
                              rejected);
 #else
-    cv::aruco::ArucoDetector detector(params.dictionary, params.arucoParams);
+    cv::aruco::ArucoDetector detector(_params.dictionary, _params.arucoParams);
     detector.detectMarkers(croppedImageGray,
                            corners,
                            arucoIDs,
@@ -144,7 +136,7 @@ bool CVTrackedAruco::trackAll(CVMat          imageGray,
         // find the camera extrinsic parameters (rVec & tVec)
         CVVPoint3d rVecs, tVecs;
         cv::aruco::estimatePoseSingleMarkers(corners,
-                                             params.edgeLength,
+                                             _params.edgeLength,
                                              calib->cameraMat(),
                                              calib->distortion(),
                                              rVecs,

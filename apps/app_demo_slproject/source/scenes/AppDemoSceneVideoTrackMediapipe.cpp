@@ -28,6 +28,20 @@ AppDemoSceneVideoTrackMediapipe::AppDemoSceneVideoTrackMediapipe()
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneVideoTrackMediapipe::registerAssetsToLoad(SLAssetLoader& al)
 {
+#ifdef SL_BUILD_WITH_MEDIAPIPE
+    // Create video texture on global pointer updated in AppDemoVideo
+    al.addTextureToLoad(gVideoTexture,
+                        AppDemo::texturePath,
+                        "LiveVideoError.png",
+                        GL_LINEAR,
+                        GL_LINEAR);
+
+    // Create MediaPipe hand tracker
+    al.addLoadTask([] {
+        gVideoTracker = new CVTrackedMediaPipeHands(AppDemo::dataPath);
+        gVideoTracker->drawDetection(true);
+    });
+#endif
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
@@ -45,20 +59,14 @@ void AppDemoSceneVideoTrackMediapipe::assemble(SLAssetManager* am,
 #ifdef SL_BUILD_WITH_MEDIAPIPE
     CVCapture::instance()->videoType(VT_MAIN);
 
-    gVideoTexture = new SLGLTexture(am,
-                                    AppDemo::texturePath + "LiveVideoError.png",
-                                    GL_LINEAR,
-                                    GL_LINEAR);
-
     SLCamera* cam1 = new SLCamera("Camera 1");
     cam1->background().texture(gVideoTexture);
 
     SLNode* scene = new SLNode("Scene");
     root3D(scene);
 
-    gVideoTracker     = new CVTrackedMediaPipeHands(AppDemo::dataPath);
+    // The tracker moves the camera
     gVideoTrackedNode = cam1;
-    gVideoTracker->drawDetection(true);
 
     sv->doWaitOnIdle(false);
     sv->camera(cam1);

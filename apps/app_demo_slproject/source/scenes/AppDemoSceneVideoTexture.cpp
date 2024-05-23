@@ -32,6 +32,12 @@ AppDemoSceneVideoTexture::AppDemoSceneVideoTexture(SLSceneID sid)
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneVideoTexture::registerAssetsToLoad(SLAssetLoader& al)
 {
+    // Create video texture on global pointer updated in AppDemoVideo
+    al.addTextureToLoad(gVideoTexture,
+                        AppDemo::texturePath,
+                        "LiveVideoError.png",
+                        GL_LINEAR,
+                        GL_LINEAR);
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
@@ -51,12 +57,6 @@ void AppDemoSceneVideoTexture::assemble(SLAssetManager* am, SLSceneView* sv)
     }
 
     sv->viewportSameAsVideo(true);
-
-    // Create video texture on global pointer updated in AppDemoVideo
-    gVideoTexture = new SLGLTexture(am,
-                                   AppDemo::texturePath + "LiveVideoError.png",
-                                   GL_LINEAR,
-                                   GL_LINEAR);
 
     // Create video texture on global pointer updated in AppDemoVideo
     SLMaterial* m1 = new SLMaterial(am, "VideoMat", gVideoTexture);

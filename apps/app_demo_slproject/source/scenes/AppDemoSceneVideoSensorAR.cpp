@@ -28,17 +28,17 @@ AppDemoSceneVideoSensorAR::AppDemoSceneVideoSensorAR()
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneVideoSensorAR::registerAssetsToLoad(SLAssetLoader& al)
 {
+    // Create video texture on global pointer updated in AppDemoVideo
+    al.addTextureToLoad(gVideoTexture,
+                        AppDemo::texturePath,
+                        "LiveVideoError.png",
+                        GL_LINEAR,
+                        GL_LINEAR);
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
 void AppDemoSceneVideoSensorAR::assemble(SLAssetManager* am, SLSceneView* sv)
 {
-    // Create video texture on global pointer updated in AppDemoVideo
-    gVideoTexture = new SLGLTexture(am,
-                                    AppDemo::texturePath + "LiveVideoError.png",
-                                    GL_LINEAR,
-                                    GL_LINEAR);
-
     SLCamera* cam1 = new SLCamera("Camera 1");
     cam1->translation(0, 0, 60);
     cam1->lookAt(0, 0, 0);

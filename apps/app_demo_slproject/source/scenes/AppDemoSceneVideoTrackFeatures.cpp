@@ -31,6 +31,18 @@ AppDemoSceneVideoTrackFeatures::AppDemoSceneVideoTrackFeatures()
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneVideoTrackFeatures::registerAssetsToLoad(SLAssetLoader& al)
 {
+    // Create video texture on global pointer updated in AppDemoVideo
+    al.addTextureToLoad(gVideoTexture,
+                        AppDemo::texturePath,
+                        "LiveVideoError.png",
+                        GL_LINEAR,
+                        GL_LINEAR);
+
+    // Create feature tracker
+    al.addLoadTask([]() {
+        gVideoTracker = new CVTrackedFeatures(AppDemo::texturePath + "features_stones.jpg");
+        gVideoTracker->drawDetection(true);
+    });
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
@@ -46,12 +58,6 @@ void AppDemoSceneVideoTrackFeatures::assemble(SLAssetManager* am,
     */
 
     CVCapture::instance()->videoType(VT_MAIN);
-
-    // Create video texture on global pointer updated in AppDemoVideo
-    gVideoTexture = new SLGLTexture(am,
-                                    AppDemo::texturePath + "LiveVideoError.png",
-                                    GL_LINEAR,
-                                    GL_LINEAR);
 
     SLCamera* cam1 = new SLCamera("Camera 1");
     cam1->translation(0, 2, 60);
@@ -101,9 +107,7 @@ void AppDemoSceneVideoTrackFeatures::assemble(SLAssetManager* am,
     scene->addChild(box);
     scene->addChild(cam1);
 
-    // Create feature gVideoTracker and let it pose the camera for AR posing
-    gVideoTracker = new CVTrackedFeatures(AppDemo::texturePath + "features_stones.jpg");
-    gVideoTracker->drawDetection(true);
+    // The tracker moves the camera
     gVideoTrackedNode = cam1;
 
     sv->doWaitOnIdle(false); // for constant video feed
