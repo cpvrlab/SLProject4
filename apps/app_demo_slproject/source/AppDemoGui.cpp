@@ -1314,9 +1314,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                     balda_stahl = nullptr;
                     balda_glas  = nullptr;
                 }
-                if (AppDemo::sceneID == SID_ErlebAR_AugustaRauricaTmpTht ||
-                    AppDemo::sceneID == SID_ErlebAR_AugustaRauricaTht ||
-                    AppDemo::sceneID == SID_ErlebAR_AugustaRauricaTmp)
+                if (AppDemo::sceneID == SID_ErlebAR_AugustaRauricaTmpTht)
                 {
                     ImGui::Begin("Augst-Theatre-Temple",
                                  &showErlebAR,
@@ -1816,14 +1814,6 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                         if (Utils::fileExists(modelBFH))
                             if (ImGui::MenuItem("Biel: BFH", nullptr, sid == SID_ErlebAR_BielBFH))
                                 AppDemo::sceneToLoad = SID_ErlebAR_BielBFH;
-
-                        if (Utils::fileExists(modelAR1))
-                            if (ImGui::MenuItem("Augusta Raurica Temple", nullptr, sid == SID_ErlebAR_AugustaRauricaTmp))
-                                AppDemo::sceneToLoad = SID_ErlebAR_AugustaRauricaTmp;
-
-                        if (Utils::fileExists(modelAR2))
-                            if (ImGui::MenuItem("Augusta Raurica Theater", nullptr, sid == SID_ErlebAR_AugustaRauricaTht))
-                                AppDemo::sceneToLoad = SID_ErlebAR_AugustaRauricaTht;
 
                         if (Utils::fileExists(modelAR3))
                             if (ImGui::MenuItem("Augusta Raurica Temple & Theater", nullptr, sid == SID_ErlebAR_AugustaRauricaTmpTht))
