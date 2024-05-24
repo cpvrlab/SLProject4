@@ -22,7 +22,7 @@ AppDemoSceneTextureCompression::AppDemoSceneTextureCompression() : AppScene("Tex
 void AppDemoSceneTextureCompression::registerAssetsToLoad(SLAssetLoader& al)
 {
     SLint min = GL_LINEAR_MIPMAP_LINEAR;
-    SLint mag = GL_NEAREST;
+    SLint mag = GL_LINEAR;
 
     al.addTextureToLoad(_texPng,
                         AppDemo::texturePath,

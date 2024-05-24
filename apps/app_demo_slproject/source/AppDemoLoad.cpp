@@ -61,6 +61,7 @@
 #include <AppDemoSceneAnimNodeMass2.h>
 #include <AppDemoSceneAnimSkinned.h>
 #include <AppDemoSceneAnimSkinnedMass.h>
+#include <AppDemoSceneAnimSkinnedMass2.h>
 #include <AppDemoSceneEmpty.h>
 #include <AppDemoSceneFigure.h>
 #include <AppDemoSceneFrustum.h>
@@ -206,80 +207,6 @@ void appDemoLoadScene(SLAssetManager* am,
 
             sv->camera(cam1);
         }
-    }
-    else if (sceneID == SID_Benchmark_SkinnedAnimations) //.......................................
-    {
-        SLint  size         = 20;
-        SLint  numAstroboys = size * size;
-        SLchar name[512];
-        snprintf(name, sizeof(name), "Massive Skinned Animation Benchmark w. %d individual Astroboys", numAstroboys);
-        s->name(name);
-        s->info(s->name());
-
-        // Create materials
-        SLMaterial* m1 = new SLMaterial(am, "m1", SLCol4f::GRAY);
-        m1->specular(SLCol4f::BLACK);
-
-        // Define a light
-        SLLightSpot* light1 = new SLLightSpot(am, s, 100, 40, 100, 1);
-        light1->powers(0.1f, 1.0f, 1.0f);
-        light1->attenuation(1, 0, 0);
-
-        // Define camera
-        SLCamera* cam1 = new SLCamera;
-        cam1->translation(0, 30, 0);
-        cam1->lookAt(0, 0, 0);
-        cam1->focalDist(cam1->translationOS().length());
-        cam1->background().colors(SLCol4f(0.1f, 0.4f, 0.8f));
-        cam1->setInitialState();
-        cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-
-        // Floor rectangle
-        SLNode* rect = new SLNode(new SLRectangle(am,
-                                                  SLVec2f(-20, -20),
-                                                  SLVec2f(20, 20),
-                                                  SLVec2f(0, 0),
-                                                  SLVec2f(50, 50),
-                                                  50,
-                                                  50,
-                                                  "Floor",
-                                                  m1));
-        rect->rotate(90, -1, 0, 0);
-
-        SLAssimpImporter importer;
-
-        // Assemble scene
-        SLNode* scene = new SLNode("scene group");
-        s->root3D(scene);
-        scene->addChild(light1);
-        scene->addChild(rect);
-        scene->addChild(cam1);
-
-        // create army with individual astroboys
-        SLfloat offset = 1.0f;
-        SLfloat z      = (float)(size - 1) * offset * 0.5f;
-
-        for (SLint iZ = 0; iZ < size; ++iZ)
-        {
-            SLfloat x = -(float)(size - 1) * offset * 0.5f;
-
-            for (SLint iX = 0; iX < size; ++iX)
-            {
-                SLNode* astroboy = importer.load(s->animManager(),
-                                                 am,
-                                                 modelPath + "DAE/AstroBoy/AstroBoy.dae",
-                                                 texPath);
-
-                s->animManager().lastAnimPlayback()->playForward();
-                s->animManager().lastAnimPlayback()->playbackRate(Utils::random(0.5f, 1.5f));
-                astroboy->translate(x, 0, z, TS_object);
-                scene->addChild(astroboy);
-                x += offset;
-            }
-            z -= offset;
-        }
-
-        sv->camera(cam1);
     }
     // These scenes assets are not publicly distributed
     else if (sceneID == SID_ErlebARBernChristoffel) //.............................................
@@ -1679,6 +1606,7 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         case SID_Benchmark_LotsOfNodes: s = new AppDemoSceneLotsOfNodes(); break;
         case SID_Benchmark_ColumnsLOD: s = new AppDemoSceneLevelOfDetail(sceneID); break;
         case SID_Benchmark_ColumnsNoLOD: s = new AppDemoSceneLevelOfDetail(sceneID); break;
+        case SID_Benchmark_SkinnedAnimations: s = new AppDemoSceneAnimSkinnedMass2; break;
         default: s = new AppDemoSceneLegacy(sceneID); break;
     }
 
