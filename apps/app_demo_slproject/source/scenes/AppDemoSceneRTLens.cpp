@@ -24,8 +24,8 @@ AppDemoSceneRTLens::AppDemoSceneRTLens()
 void AppDemoSceneRTLens::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_tex1,
-                        AppDemo::texturePath,
-                        "VisionExample.jpg");
+                        AppDemo::texturePath +
+                          "VisionExample.jpg");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

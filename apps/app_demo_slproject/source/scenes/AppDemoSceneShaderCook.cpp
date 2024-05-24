@@ -28,23 +28,23 @@ AppDemoSceneShaderCook::AppDemoSceneShaderCook()
 void AppDemoSceneShaderCook::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_texC,
-                        AppDemo::texturePath,
-                        "rusty-metal_2048_C.jpg");
+                        AppDemo::texturePath +
+                          "rusty-metal_2048_C.jpg");
     al.addTextureToLoad(_texN,
-                        AppDemo::texturePath,
-                        "rusty-metal_2048_N.jpg");
+                        AppDemo::texturePath +
+                          "rusty-metal_2048_N.jpg");
     al.addTextureToLoad(_texM,
-                        AppDemo::texturePath,
-                        "rusty-metal_2048_M.jpg");
+                        AppDemo::texturePath +
+                          "rusty-metal_2048_M.jpg");
     al.addTextureToLoad(_texR,
-                        AppDemo::texturePath,
-                        "rusty-metal_2048_R.jpg");
-    al.addProgramGenericToLoad(_sp,
-                               "PerPixCook.vert",
-                               "PerPixCook.frag");
-    al.addProgramGenericToLoad(_spTex,
-                               "PerPixCookTm.vert",
-                               "PerPixCookTm.frag");
+                        AppDemo::texturePath +
+                          "rusty-metal_2048_R.jpg");
+    al.addProgramToLoad(_sp,
+                        AppDemo::shaderPath + "PerPixCook.vert",
+                        AppDemo::shaderPath + "PerPixCook.frag");
+    al.addProgramToLoad(_spTex,
+                        AppDemo::shaderPath + "PerPixCookTm.vert",
+                        AppDemo::shaderPath + "PerPixCookTm.frag");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

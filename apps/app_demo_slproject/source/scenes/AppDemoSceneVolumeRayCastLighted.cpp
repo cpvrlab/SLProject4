@@ -40,14 +40,13 @@ void AppDemoSceneVolumeRayCastLighted::registerAssetsToLoad(SLAssetLoader& al)
                         "mri_head_front_to_back",
                         true);
 
-    al.addLoadTask([=]()
-                   { _mriTex3D->calc3DGradients(1); });
+    al.addLoadTask([=]() { _mriTex3D->calc3DGradients(1); });
     //al.addLoadTask([=]()
     //               { _mriTex3D->smooth3DGradients(1); });
 
-    al.addProgramGenericToLoad(_sp,
-                               "VolumeRenderingRayCast.vert",
-                               "VolumeRenderingRayCastLighted.frag");
+    al.addProgramToLoad(_sp,
+                        AppDemo::shaderPath + "VolumeRenderingRayCast.vert",
+                        AppDemo::shaderPath + "VolumeRenderingRayCastLighted.frag");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

@@ -28,31 +28,30 @@ AppDemoSceneRevolver::AppDemoSceneRevolver() : AppScene("Revolving Mesh Test")
 void AppDemoSceneRevolver::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_tex1C,
-                        AppDemo::texturePath,
-                        "Testmap_1024_C.jpg");
+                        AppDemo::texturePath +
+                          "Testmap_1024_C.jpg");
     al.addTextureToLoad(_tex1N,
-                        AppDemo::texturePath,
-                        "Testmap_1024_N.jpg");
+                        AppDemo::texturePath +
+                          "Testmap_1024_N.jpg");
     al.addTextureToLoad(_tex2,
-                        AppDemo::texturePath,
-                        "wood0_0512_C.jpg");
+                        AppDemo::texturePath +
+                          "wood0_0512_C.jpg");
     al.addTextureToLoad(_tex3,
-                        AppDemo::texturePath,
-                        "bricks1_0256_C.jpg");
+                        AppDemo::texturePath +
+                          "bricks1_0256_C.jpg");
     al.addTextureToLoad(_tex4,
-                        AppDemo::texturePath,
-                        "wood2_0512_C.jpg");
+                        AppDemo::texturePath +
+                          "wood2_0512_C.jpg");
     al.addTextureToLoad(_tex5,
-                        AppDemo::texturePath,
-                        "wood2_0256_C.jpg",
-                        "wood2_0256_C.jpg",
-                        "gray_0256_C.jpg",
-                        "wood0_0256_C.jpg",
-                        "gray_0256_C.jpg",
-                        "bricks1_0256_C.jpg");
-    al.addProgramGenericToLoad(_sp1,
-                               "RefractReflect.vert",
-                               "RefractReflect.frag");
+                        AppDemo::texturePath + "wood2_0256_C.jpg",
+                        AppDemo::texturePath + "wood2_0256_C.jpg",
+                        AppDemo::texturePath + "gray_0256_C.jpg",
+                        AppDemo::texturePath + "wood0_0256_C.jpg",
+                        AppDemo::texturePath + "gray_0256_C.jpg",
+                        AppDemo::texturePath + "bricks1_0256_C.jpg");
+    al.addProgramToLoad(_sp1,
+                        AppDemo::shaderPath + "RefractReflect.vert",
+                        AppDemo::shaderPath + "RefractReflect.frag");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

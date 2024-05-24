@@ -27,20 +27,20 @@ AppDemoSceneShaderIBL::AppDemoSceneShaderIBL()
 void AppDemoSceneShaderIBL::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_texC,
-                        AppDemo::texturePath,
-                        "gold-scuffed_2048_C.png");
+                        AppDemo::texturePath +
+                          "gold-scuffed_2048_C.png");
     al.addTextureToLoad(_texN,
-                        AppDemo::texturePath,
-                        "gold-scuffed_2048_N.png");
+                        AppDemo::texturePath +
+                          "gold-scuffed_2048_N.png");
     al.addTextureToLoad(_texM,
-                        AppDemo::texturePath,
-                        "gold-scuffed_2048_M.png");
+                        AppDemo::texturePath +
+                          "gold-scuffed_2048_M.png");
     al.addTextureToLoad(_texR,
-                        AppDemo::texturePath,
-                        "gold-scuffed_2048_R.png");
+                        AppDemo::texturePath +
+                          "gold-scuffed_2048_R.png");
     al.addTextureToLoad(_texA,
-                        AppDemo::texturePath,
-                        "gold-scuffed_2048_A.png");
+                        AppDemo::texturePath +
+                          "gold-scuffed_2048_A.png");
 
     al.addSkyboxToLoad(_skybox,
                        al.texturePath() + "env_barce_rooftop.hdr",

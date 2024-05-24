@@ -26,14 +26,14 @@ AppDemoSceneMeshLoad::AppDemoSceneMeshLoad() : AppScene("Mesh 3D Loader Test")
 void AppDemoSceneMeshLoad::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addNodeToLoad(_mesh3DS,
-                     AppDemo::modelPath,
-                     "3DS/Halloween/jackolan.3ds");
+                     AppDemo::modelPath +
+                       "3DS/Halloween/jackolan.3ds");
     al.addNodeToLoad(_meshFBX,
-                     AppDemo::modelPath,
-                     "FBX/Duck/duck.fbx");
+                     AppDemo::modelPath +
+                       "FBX/Duck/duck.fbx");
     al.addNodeToLoad(_meshDAE,
-                     AppDemo::modelPath,
-                     "DAE/AstroBoy/AstroBoy.dae");
+                     AppDemo::modelPath +
+                       "DAE/AstroBoy/AstroBoy.dae");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

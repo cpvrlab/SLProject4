@@ -23,12 +23,12 @@ AppDemoScenePointClouds::AppDemoScenePointClouds() : AppScene("Point Cloud Test 
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoScenePointClouds::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addProgramGenericToLoad(_sp1,
-                               "ColorUniformPoint.vert",
-                               "Color.frag");
-    al.addProgramGenericToLoad(_sp2,
-                               "ColorUniformPoint.vert",
-                               "Color.frag");
+    al.addProgramToLoad(_sp1,
+                        AppDemo::shaderPath + "ColorUniformPoint.vert",
+                        AppDemo::shaderPath + "Color.frag");
+    al.addProgramToLoad(_sp2,
+                        AppDemo::shaderPath + "ColorUniformPoint.vert",
+                        AppDemo::shaderPath + "Color.frag");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

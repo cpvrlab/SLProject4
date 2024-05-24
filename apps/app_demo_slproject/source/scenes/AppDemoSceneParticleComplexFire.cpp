@@ -27,41 +27,41 @@ AppDemoSceneParticleComplexFire::AppDemoSceneParticleComplexFire(SLSceneID scene
 void AppDemoSceneParticleComplexFire::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_texFireCld,
-                        AppDemo::texturePath,
-                        "ParticleFirecloudTransparent_C.png");
+                        AppDemo::texturePath +
+                          "ParticleFirecloudTransparent_C.png");
     al.addTextureToLoad(_texFireFlm,
-                        AppDemo::texturePath,
-                        "ParticleFlames_06_8x8_C.png");
+                        AppDemo::texturePath +
+                          "ParticleFlames_06_8x8_C.png");
     al.addTextureToLoad(_texCircle,
-                        AppDemo::texturePath,
-                        "ParticleCircle_05_C.png");
+                        AppDemo::texturePath +
+                          "ParticleCircle_05_C.png");
     al.addTextureToLoad(_texSmokeB,
-                        AppDemo::texturePath,
-                        "ParticleCloudBlack_C.png");
+                        AppDemo::texturePath +
+                          "ParticleCloudBlack_C.png");
     al.addTextureToLoad(_texSmokeW,
-                        AppDemo::texturePath,
-                        "ParticleCloudWhite_C.png");
+                        AppDemo::texturePath +
+                          "ParticleCloudWhite_C.png");
     al.addTextureToLoad(_texTorchFlm,
-                        AppDemo::texturePath,
-                        "ParticleFlames_04_16x4_C.png");
+                        AppDemo::texturePath +
+                          "ParticleFlames_04_16x4_C.png");
     al.addTextureToLoad(_texTorchSmk,
-                        AppDemo::texturePath,
-                        "ParticleSmoke_08_C.png");
+                        AppDemo::texturePath +
+                          "ParticleSmoke_08_C.png");
 
     al.addTextureToLoad(_texWallDIF,
-                        AppDemo::texturePath,
-                        "BrickLimestoneGray_1K_DIF.jpg",
+                        AppDemo::texturePath +
+                          "BrickLimestoneGray_1K_DIF.jpg",
                         SL_ANISOTROPY_MAX,
                         GL_LINEAR);
     al.addTextureToLoad(_texWallNRM,
-                        AppDemo::texturePath,
-                        "BrickLimestoneGray_1K_NRM.jpg",
+                        AppDemo::texturePath +
+                          "BrickLimestoneGray_1K_NRM.jpg",
                         SL_ANISOTROPY_MAX,
                         GL_LINEAR);
 
     al.addNodeToLoad(_firewood,
-                     AppDemo::modelPath,
-                     "GLTF/Firewood/Firewood1.gltf",
+                     AppDemo::modelPath +
+                       "GLTF/Firewood/Firewood1.gltf",
                      nullptr,
                      false,
                      true,
@@ -69,8 +69,8 @@ void AppDemoSceneParticleComplexFire::registerAssetsToLoad(SLAssetLoader& al)
                      0.3f,
                      true);
     al.addNodeToLoad(_torchL,
-                     AppDemo::modelPath,
-                     "GLTF/Torch/Torch.gltf",
+                     AppDemo::modelPath +
+                       "GLTF/Torch/Torch.gltf",
                      nullptr,
                      false,
                      true,

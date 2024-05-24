@@ -38,23 +38,23 @@ AppDemoSceneShaderBlinn::AppDemoSceneShaderBlinn(SLstring name, bool perVertex)
 void AppDemoSceneShaderBlinn::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_texC,
-                        AppDemo::texturePath,
-                        "earth2048_C_Q95.jpg");
+                        AppDemo::texturePath +
+                          "earth2048_C_Q95.jpg");
     al.addTextureToLoad(_texN,
-                        AppDemo::texturePath,
-                        "earth2048_N.jpg");
+                        AppDemo::texturePath +
+                          "earth2048_N.jpg");
     al.addTextureToLoad(_texH,
-                        AppDemo::texturePath,
-                        "earth2048_H.jpg");
-    al.addProgramGenericToLoad(_perVrtTm,
-                               "PerVrtBlinnTm.vert",
-                               "PerVrtBlinnTm.frag");
-    al.addProgramGenericToLoad(_perVrt,
-                               "PerVrtBlinn.vert",
-                               "PerVrtBlinn.frag");
-    al.addProgramGenericToLoad(_perPix,
-                               "PerPixBlinnTmNm.vert",
-                               "PerPixBlinnTmPm.frag");
+                        AppDemo::texturePath +
+                          "earth2048_H.jpg");
+    al.addProgramToLoad(_perVrtTm,
+                        AppDemo::shaderPath + "PerVrtBlinnTm.vert",
+                        AppDemo::shaderPath + "PerVrtBlinnTm.frag");
+    al.addProgramToLoad(_perVrt,
+                        AppDemo::shaderPath + "PerVrtBlinn.vert",
+                        AppDemo::shaderPath + "PerVrtBlinn.frag");
+    al.addProgramToLoad(_perPix,
+                        AppDemo::shaderPath + "PerPixBlinnTmNm.vert",
+                        AppDemo::shaderPath + "PerPixBlinnTmPm.frag");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

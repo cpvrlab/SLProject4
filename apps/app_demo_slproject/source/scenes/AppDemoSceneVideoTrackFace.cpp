@@ -36,13 +36,13 @@ AppDemoSceneVideoTrackFace::AppDemoSceneVideoTrackFace(SLSceneID sid)
 void AppDemoSceneVideoTrackFace::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addNodeToLoad(_glasses,
-                     AppDemo::modelPath,
-                     "FBX/Sunglasses.fbx");
+                     AppDemo::modelPath +
+                       "FBX/Sunglasses.fbx");
 
     // Create video texture on global pointer updated in AppDemoVideo
     al.addTextureToLoad(gVideoTexture,
-                        AppDemo::texturePath,
-                        "LiveVideoError.png",
+                        AppDemo::texturePath +
+                          "LiveVideoError.png",
                         GL_LINEAR,
                         GL_LINEAR);
 

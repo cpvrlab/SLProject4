@@ -23,7 +23,7 @@ AppDemoSceneAnimSkinnedMass::AppDemoSceneAnimSkinnedMass()
 void AppDemoSceneAnimSkinnedMass::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addNodeToLoad(_center,
-                     AppDemo::modelPath,
+                     AppDemo::modelPath +
                      "DAE/AstroBoy/AstroBoy.dae");
 }
 //-----------------------------------------------------------------------------

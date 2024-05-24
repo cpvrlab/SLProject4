@@ -23,8 +23,8 @@ AppDemoSceneSuzanne::AppDemoSceneSuzanne(SLstring name,
 void AppDemoSceneSuzanne::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addNodeToLoad(_suzanneInCube,
-                     AppDemo::modelPath,
-                     "GLTF/AO-Baked-Test/AO-Baked-Test.gltf",
+                     AppDemo::modelPath +
+                       "GLTF/AO-Baked-Test/AO-Baked-Test.gltf",
                      nullptr,
                      false,   // delete tex images after build
                      true,    // load meshes only
@@ -69,8 +69,7 @@ void AppDemoSceneSuzanne::assemble(SLAssetManager* am, SLSceneView* sv)
     SLCol4f stoneColor(0.56f, 0.50f, 0.44f);
 
     // Remove unwanted textures
-    auto materialUpdater = [=](SLMaterial* mat)
-    {
+    auto materialUpdater = [=](SLMaterial* mat) {
         if (!_textureMapping)
         {
             mat->removeTextureType(TT_diffuse);

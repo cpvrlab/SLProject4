@@ -26,8 +26,8 @@ AppDemoSceneRTDoF::AppDemoSceneRTDoF()
 void AppDemoSceneRTDoF::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_tex1,
-                        AppDemo::texturePath,
-                        "Checkerboard0512_C.png",
+                        AppDemo::texturePath +
+                          "Checkerboard0512_C.png",
                         SL_ANISOTROPY_MAX,
                         GL_LINEAR);
 }

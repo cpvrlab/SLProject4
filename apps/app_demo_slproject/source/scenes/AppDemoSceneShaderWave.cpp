@@ -26,9 +26,9 @@ AppDemoSceneShaderWave::AppDemoSceneShaderWave()
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneShaderWave::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addProgramGenericToLoad(_sp,
-                               "Wave.vert",
-                               "Wave.frag");
+    al.addProgramToLoad(_sp,
+                        AppDemo::shaderPath + "Wave.vert",
+                        AppDemo::shaderPath + "Wave.frag");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

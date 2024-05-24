@@ -24,10 +24,10 @@ AppDemoSceneParticleMany::AppDemoSceneParticleMany()
 void AppDemoSceneParticleMany::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_texC,
-                        AppDemo::texturePath,
+                        AppDemo::texturePath +
                         "ParticleSmoke_08_C.png");
     al.addTextureToLoad(_texFlip,
-                        AppDemo::texturePath,
+                        AppDemo::texturePath +
                         "ParticleSmoke_03_8x8_C.png");
 }
 //-----------------------------------------------------------------------------

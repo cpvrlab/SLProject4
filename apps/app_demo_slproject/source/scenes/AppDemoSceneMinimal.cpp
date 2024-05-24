@@ -27,8 +27,8 @@ AppDemoSceneMinimal::AppDemoSceneMinimal() : AppScene("Minimal Scene")
 void AppDemoSceneMinimal::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_texC,
-                        AppDemo::texturePath,
-                        "earth2048_C.png");
+                        AppDemo::texturePath +
+                          "earth2048_C.png");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

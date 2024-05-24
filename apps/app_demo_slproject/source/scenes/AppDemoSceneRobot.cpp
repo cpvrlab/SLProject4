@@ -24,8 +24,8 @@ AppDemoSceneRobot::AppDemoSceneRobot()
 void AppDemoSceneRobot::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addNodeToLoad(_robot,
-                     AppDemo::modelPath,
-                     "GLTF/FanucCRX/Fanuc-CRX.gltf");
+                     AppDemo::modelPath +
+                       "GLTF/FanucCRX/Fanuc-CRX.gltf");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
@@ -82,8 +82,7 @@ void AppDemoSceneRobot::assemble(SLAssetManager* am, SLSceneView* sv)
     scene->addChild(floorRect);
 
     // Set missing specular color
-    _robot->updateMeshMat([](SLMaterial* m)
-                          { m->specular(SLCol4f::WHITE); },
+    _robot->updateMeshMat([](SLMaterial* m) { m->specular(SLCol4f::WHITE); },
                           true);
 
     SLNode* crx_j1 = _robot->findChild<SLNode>("crx_j1");

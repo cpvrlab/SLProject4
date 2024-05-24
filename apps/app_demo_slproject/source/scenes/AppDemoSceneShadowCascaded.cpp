@@ -26,7 +26,7 @@ AppDemoSceneShadowCascaded::AppDemoSceneShadowCascaded()
 void AppDemoSceneShadowCascaded::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addNodeToLoad(_teapot,
-                     AppDemo::modelPath,
+                     AppDemo::modelPath+
                      "FBX/Teapot/Teapot.fbx");
 }
 //-----------------------------------------------------------------------------

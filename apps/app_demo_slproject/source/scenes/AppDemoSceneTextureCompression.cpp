@@ -25,18 +25,18 @@ void AppDemoSceneTextureCompression::registerAssetsToLoad(SLAssetLoader& al)
     SLint mag = GL_LINEAR;
 
     al.addTextureToLoad(_texPng,
-                        AppDemo::texturePath,
-                        "earth2048_C.png",
+                        AppDemo::texturePath +
+                          "earth2048_C.png",
                         min,
                         mag);
     al.addTextureToLoad(_texJpgQ90,
-                        AppDemo::texturePath,
-                        "earth2048_C_Q90.jpg",
+                        AppDemo::texturePath +
+                          "earth2048_C_Q90.jpg",
                         min,
                         mag);
     al.addTextureToLoad(_texJpgQ40,
-                        AppDemo::texturePath,
-                        "earth2048_C_Q40.jpg",
+                        AppDemo::texturePath +
+                          "earth2048_C_Q40.jpg",
                         min,
                         mag);
 
@@ -50,33 +50,33 @@ void AppDemoSceneTextureCompression::registerAssetsToLoad(SLAssetLoader& al)
     */
 
     al.addTextureToLoad(_texKtxBcmp255,
-                        AppDemo::texturePath,
-                        "earth2048_C_bcmp_Q255.ktx2",
+                        AppDemo::texturePath +
+                          "earth2048_C_bcmp_Q255.ktx2",
                         min,
                         mag);
     al.addTextureToLoad(_texKtxBcmp128,
-                        AppDemo::texturePath,
-                        "earth2048_C_bcmp_Q128.ktx2",
+                        AppDemo::texturePath +
+                          "earth2048_C_bcmp_Q128.ktx2",
                         min,
                         mag);
     al.addTextureToLoad(_texKtxBcmp001,
-                        AppDemo::texturePath,
-                        "earth2048_C_bcmp_Q001.ktx2",
+                        AppDemo::texturePath +
+                          "earth2048_C_bcmp_Q001.ktx2",
                         min,
                         mag);
     al.addTextureToLoad(_texKtxUastc4,
-                        AppDemo::texturePath,
-                        "earth2048_C_uastc4.ktx2",
+                        AppDemo::texturePath +
+                          "earth2048_C_uastc4.ktx2",
                         min,
                         mag);
     al.addTextureToLoad(_texKtxUastc2,
-                        AppDemo::texturePath,
-                        "earth2048_C_uastc2.ktx2",
+                        AppDemo::texturePath +
+                          "earth2048_C_uastc2.ktx2",
                         min,
                         mag);
     al.addTextureToLoad(_texKtxUastc0,
-                        AppDemo::texturePath,
-                        "earth2048_C_uastc0.ktx2",
+                        AppDemo::texturePath +
+                          "earth2048_C_uastc0.ktx2",
                         min,
                         mag);
 }

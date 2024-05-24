@@ -30,7 +30,7 @@ void AppDemoSceneVideoSensorAR::registerAssetsToLoad(SLAssetLoader& al)
 {
     // Create video texture on global pointer updated in AppDemoVideo
     al.addTextureToLoad(gVideoTexture,
-                        AppDemo::texturePath,
+                        AppDemo::texturePath +
                         "LiveVideoError.png",
                         GL_LINEAR,
                         GL_LINEAR);

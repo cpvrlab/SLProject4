@@ -34,18 +34,18 @@ void AppDemoSceneShaderSkybox::registerAssetsToLoad(SLAssetLoader& al)
                        "Desert-Y1024_C.jpg",
                        "Desert+Z1024_C.jpg",
                        "Desert-Z1024_C.jpg");
-    al.addProgramGenericToLoad(_spRefl,
-                               "Reflect.vert",
-                               "Reflect.frag");
-    al.addProgramGenericToLoad(_spRefr,
-                               "RefractReflect.vert",
-                               "RefractReflect.frag");
+    al.addProgramToLoad(_spRefl,
+                        AppDemo::shaderPath + "Reflect.vert",
+                        AppDemo::shaderPath + "Reflect.frag");
+    al.addProgramToLoad(_spRefr,
+                        AppDemo::shaderPath + "RefractReflect.vert",
+                        AppDemo::shaderPath + "RefractReflect.frag");
     al.addNodeToLoad(_teapot,
-                     AppDemo::modelPath,
-                     "FBX/Teapot/Teapot.fbx");
+                     AppDemo::modelPath +
+                       "FBX/Teapot/Teapot.fbx");
     al.addNodeToLoad(_suzanne,
-                     AppDemo::modelPath,
-                     "FBX/Suzanne/Suzanne.fbx");
+                     AppDemo::modelPath +
+                       "FBX/Suzanne/Suzanne.fbx");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

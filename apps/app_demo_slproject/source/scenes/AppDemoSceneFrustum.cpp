@@ -23,8 +23,7 @@ AppDemoSceneFrustum::AppDemoSceneFrustum() : AppScene("Frustum Culling Test Scen
 void AppDemoSceneFrustum::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_tex,
-                        AppDemo::texturePath,
-                        "earth1024_C.jpg");
+                        AppDemo::texturePath + "earth1024_C.jpg");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

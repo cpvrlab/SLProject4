@@ -23,20 +23,20 @@ AppDemoSceneAnimSkinned::AppDemoSceneAnimSkinned()
 void AppDemoSceneAnimSkinned::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addNodeToLoad(_char1,
-                     AppDemo::modelPath,
-                     "DAE/AstroBoy/AstroBoy.dae");
+                     AppDemo::modelPath +
+                       "DAE/AstroBoy/AstroBoy.dae");
     al.addNodeToLoad(_char2,
-                     AppDemo::modelPath,
-                     "GLTF/Sintel/Sintel_LowRes-Rigged.gltf");
+                     AppDemo::modelPath +
+                       "GLTF/Sintel/Sintel_LowRes-Rigged.gltf");
     al.addNodeToLoad(_cube1,
-                     AppDemo::modelPath,
-                     "DAE/SkinnedCube/skinnedcube2.dae");
+                     AppDemo::modelPath +
+                       "DAE/SkinnedCube/skinnedcube2.dae");
     al.addNodeToLoad(_cube2,
-                     AppDemo::modelPath,
-                     "DAE/SkinnedCube/skinnedcube4.dae");
+                     AppDemo::modelPath +
+                       "DAE/SkinnedCube/skinnedcube4.dae");
     al.addNodeToLoad(_cube3,
-                     AppDemo::modelPath,
-                     "DAE/SkinnedCube/skinnedcube5.dae");
+                     AppDemo::modelPath +
+                       "DAE/SkinnedCube/skinnedcube5.dae");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

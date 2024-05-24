@@ -25,11 +25,11 @@ AppDemoSceneShaderBump::AppDemoSceneShaderBump()
 void AppDemoSceneShaderBump::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_texC,
-                        AppDemo::texturePath,
-                        "brickwall0512_C.jpg");
+                        AppDemo::texturePath +
+                          "brickwall0512_C.jpg");
     al.addTextureToLoad(_texN,
-                        AppDemo::texturePath,
-                        "brickwall0512_N.jpg");
+                        AppDemo::texturePath +
+                          "brickwall0512_N.jpg");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

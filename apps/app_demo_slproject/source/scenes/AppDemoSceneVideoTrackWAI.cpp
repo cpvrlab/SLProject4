@@ -38,7 +38,7 @@ void AppDemoSceneVideoTrackWAI::registerAssetsToLoad(SLAssetLoader& al)
 #ifdef SL_BUILD_WAI
     // Create video texture on global pointer updated in AppDemoVideo
     al.addTextureToLoad(gVideoTexture,
-                        AppDemo::texturePath,
+                        AppDemo::texturePath +
                         "LiveVideoError.png",
                         GL_LINEAR,
                         GL_LINEAR);

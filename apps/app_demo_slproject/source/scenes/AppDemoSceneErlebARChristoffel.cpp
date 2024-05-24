@@ -28,24 +28,22 @@ void AppDemoSceneErlebARChristoffel::registerAssetsToLoad(SLAssetLoader& al)
 {
     // Create video texture on global pointer updated in AppDemoVideo
     al.addTextureToLoad(gVideoTexture,
-                        AppDemo::texturePath,
-                        "LiveVideoError.png",
+                        AppDemo::texturePath + "LiveVideoError.png",
                         GL_LINEAR,
                         GL_LINEAR);
     al.addNodeToLoad(_bern,
-                     AppDemo::dataPath,
+                     AppDemo::dataPath +
                        "erleb-AR/models/bern/bern-christoffel.gltf");
     al.addTextureToLoad(_cubemap,
-                        AppDemo::dataPath,
-                        "erleb-AR/models/bern/Sea1+X1024.jpg",
-                        "erleb-AR/models/bern/Sea1-X1024.jpg",
-                        "erleb-AR/models/bern/Sea1+Y1024.jpg",
-                        "erleb-AR/models/bern/Sea1-Y1024.jpg",
-                        "erleb-AR/models/bern/Sea1+Z1024.jpg",
-                        "erleb-AR/models/bern/Sea1-Z1024.jpg");
-    al.addProgramGenericToLoad(_spRefl,
-                               "Reflect.vert",
-                               "Reflect.frag");
+                        AppDemo::dataPath + "erleb-AR/models/bern/Sea1+X1024.jpg",
+                        AppDemo::dataPath + "erleb-AR/models/bern/Sea1-X1024.jpg",
+                        AppDemo::dataPath + "erleb-AR/models/bern/Sea1+Y1024.jpg",
+                        AppDemo::dataPath + "erleb-AR/models/bern/Sea1-Y1024.jpg",
+                        AppDemo::dataPath + "erleb-AR/models/bern/Sea1+Z1024.jpg",
+                        AppDemo::dataPath + "erleb-AR/models/bern/Sea1-Z1024.jpg");
+    al.addProgramToLoad(_spRefl,
+                        AppDemo::shaderPath + "Reflect.vert",
+                        AppDemo::shaderPath + "Reflect.frag");
 
     // This loads the DEM file and overwrites the altitude of originLatLonAlt and defaultLatLonAlt
     al.addGeoTiffToLoad(AppDemo::devLoc,

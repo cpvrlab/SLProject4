@@ -77,7 +77,6 @@ public:
     //! Add 2D textures with internal image allocation
     void addTextureToLoad(SLGLTexture*&   texture,
                           const SLstring& path,
-                          const SLstring& imageFilename,
                           SLint           min_filter = GL_LINEAR_MIPMAP_LINEAR,
                           SLint           mag_filter = GL_LINEAR,
                           SLTextureType   type       = TT_unknown,
@@ -86,7 +85,6 @@ public:
 
     //! Add cube map texture with internal image allocation
     void addTextureToLoad(SLGLTexture*&   texture,
-                          const SLstring& path,
                           const SLstring& imageFilenameXPos,
                           const SLstring& imageFilenameXNeg,
                           const SLstring& imageFilenameYPos,
@@ -101,7 +99,6 @@ public:
     void addTextureToLoad(SLGLTexture*&   texture,
                           SLint           depth,
                           const SLstring& path,
-                          const SLstring& imageFilename,
                           SLint           min_filter             = GL_LINEAR,
                           SLint           mag_filter             = GL_LINEAR,
                           SLint           wrapS                  = GL_REPEAT,
@@ -111,7 +108,7 @@ public:
 
     //! Add 3D texture from a vector of files
     void addTextureToLoad(SLGLTexture*&    texture,
-                          const SLVstring& imageFilenames,
+                          const SLVstring& imagePaths,
                           SLint            min_filter,
                           SLint            mag_filter,
                           SLint            wrapS,
@@ -121,12 +118,11 @@ public:
 
     //! Add GeoTiff file to load for the SLDevLocation
     void addGeoTiffToLoad(SLDeviceLocation& devLoc,
-                          const SLstring& imageFileWithPath);
+                          const SLstring&   imageFileWithPath);
 
     //! Add mesh from file to load via assimp loader
     void addNodeToLoad(SLNode*&        node,
-                       const SLstring& modelPath,
-                       const SLstring& modelFile,
+                       const SLstring& imagePath,
                        SLSkybox*       skybox                 = nullptr,
                        SLbool          deleteTexImgAfterBuild = false,
                        SLbool          loadMeshesOnly         = true,
@@ -135,13 +131,13 @@ public:
                        SLbool          forceCookTorranceRM    = false);
 
     //! Add generic GLSL program with shader files to load
-    void addProgramGenericToLoad(SLGLProgram*&   program,
-                                 const SLstring& vertShaderFile,
-                                 const SLstring& fragShaderFile);
+    void addProgramToLoad(SLGLProgram*&   program,
+                          const SLstring& vertShaderFile,
+                          const SLstring& fragShaderFile);
 
     //! Add skybox with HDR texture to load
     void addSkyboxToLoad(SLSkybox*&      skybox,
-                         const SLstring& hdrImageWithFullPath,
+                         const SLstring& path,
                          SLVec2i         resolution,
                          SLstring        name);
 

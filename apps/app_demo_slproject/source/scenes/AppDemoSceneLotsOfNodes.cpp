@@ -25,8 +25,7 @@ void AppDemoSceneLotsOfNodes::registerAssetsToLoad(SLAssetLoader& al)
     for (int i = 0; i < _NUM_MAT; ++i)
     {
         al.addTextureToLoad(_texC[i],
-                            AppDemo::texturePath,
-                            "earth2048_C_Q95.jpg");
+                            AppDemo::texturePath + "earth2048_C_Q95.jpg");
     }
 }
 //-----------------------------------------------------------------------------

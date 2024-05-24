@@ -23,11 +23,11 @@ AppDemoSceneParticleRingOfFire::AppDemoSceneParticleRingOfFire()
 void AppDemoSceneParticleRingOfFire::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_texC,
-                        AppDemo::texturePath,
-                        "ParticleSmoke_08_C.png");
+                        AppDemo::texturePath +
+                          "ParticleSmoke_08_C.png");
     al.addTextureToLoad(_texFlip,
-                        AppDemo::texturePath,
-                        "ParticleSmoke_03_8x8_C.png");
+                        AppDemo::texturePath +
+                          "ParticleSmoke_03_8x8_C.png");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

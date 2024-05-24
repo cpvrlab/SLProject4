@@ -24,21 +24,21 @@ AppDemoSceneTextureBlend::AppDemoSceneTextureBlend() : AppScene("Texture Blendin
 void AppDemoSceneTextureBlend::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_t1,
-                        AppDemo::texturePath,
-                        "tree1_1024_C.png",
+                        AppDemo::texturePath +
+                          "tree1_1024_C.png",
                         GL_LINEAR_MIPMAP_LINEAR,
                         GL_LINEAR,
                         TT_diffuse,
                         GL_CLAMP_TO_EDGE,
                         GL_CLAMP_TO_EDGE);
     al.addTextureToLoad(_t2,
-                        AppDemo::texturePath,
-                        "grass0512_C.jpg",
+                        AppDemo::texturePath +
+                          "grass0512_C.jpg",
                         GL_LINEAR_MIPMAP_LINEAR,
                         GL_LINEAR);
-    al.addProgramGenericToLoad(_sp,
-                               "PerVrtTm.vert",
-                               "PerVrtTm.frag");
+    al.addProgramToLoad(_sp,
+                        AppDemo::shaderPath + "PerVrtTm.vert",
+                        AppDemo::shaderPath + "PerVrtTm.frag");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

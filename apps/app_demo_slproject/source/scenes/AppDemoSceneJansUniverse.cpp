@@ -33,9 +33,9 @@ AppDemoSceneJansUniverse::AppDemoSceneJansUniverse()
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneJansUniverse::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addTextureToLoad(_textureC, AppDemo::texturePath, "rusty-metal_2048_C.jpg");
-    al.addTextureToLoad(_textureM, AppDemo::texturePath, "rusty-metal_2048_M.jpg");
-    al.addTextureToLoad(_textureR, AppDemo::texturePath, "rusty-metal_2048_R.jpg");
+    al.addTextureToLoad(_textureC, AppDemo::texturePath + "rusty-metal_2048_C.jpg");
+    al.addTextureToLoad(_textureM, AppDemo::texturePath + "rusty-metal_2048_M.jpg");
+    al.addTextureToLoad(_textureR, AppDemo::texturePath + "rusty-metal_2048_R.jpg");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

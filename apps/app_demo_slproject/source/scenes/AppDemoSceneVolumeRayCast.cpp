@@ -39,9 +39,9 @@ void AppDemoSceneVolumeRayCast::registerAssetsToLoad(SLAssetLoader& al)
                         clamping3D,
                         "mri_head_front_to_back",
                         false);
-    al.addProgramGenericToLoad(_sp,
-                               "VolumeRenderingRayCast.vert",
-                               "VolumeRenderingRayCast.frag");
+    al.addProgramToLoad(_sp,
+                        AppDemo::shaderPath + "VolumeRenderingRayCast.vert",
+                        AppDemo::shaderPath + "VolumeRenderingRayCast.frag");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

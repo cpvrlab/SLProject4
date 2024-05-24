@@ -27,17 +27,17 @@ AppDemoSceneShaderParallax::AppDemoSceneShaderParallax()
 void AppDemoSceneShaderParallax::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_texC,
-                        AppDemo::texturePath,
-                        "brickwall0512_C.jpg");
+                        AppDemo::texturePath +
+                          "brickwall0512_C.jpg");
     al.addTextureToLoad(_texN,
-                        AppDemo::texturePath,
-                        "brickwall0512_N.jpg");
+                        AppDemo::texturePath +
+                          "brickwall0512_N.jpg");
     al.addTextureToLoad(_texH,
-                        AppDemo::texturePath,
-                        "brickwall0512_H.jpg");
-    al.addProgramGenericToLoad(_sp,
-                               "PerPixBlinnTmNm.vert",
-                               "PerPixBlinnTmPm.frag");
+                        AppDemo::texturePath +
+                          "brickwall0512_H.jpg");
+    al.addProgramToLoad(_sp,
+                        AppDemo::shaderPath + "PerPixBlinnTmNm.vert",
+                        AppDemo::shaderPath + "PerPixBlinnTmPm.frag");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

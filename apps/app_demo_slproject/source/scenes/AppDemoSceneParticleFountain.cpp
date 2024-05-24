@@ -23,11 +23,11 @@ AppDemoSceneParticleFountain::AppDemoSceneParticleFountain()
 void AppDemoSceneParticleFountain::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_texC,
-                        AppDemo::texturePath,
-                        "ParticleCircle_05_C.png");
+                        AppDemo::texturePath +
+                          "ParticleCircle_05_C.png");
     al.addTextureToLoad(_texFlip,
-                        AppDemo::texturePath,
-                        "ParticleSmoke_03_8x8_C.png");
+                        AppDemo::texturePath +
+                          "ParticleSmoke_03_8x8_C.png");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

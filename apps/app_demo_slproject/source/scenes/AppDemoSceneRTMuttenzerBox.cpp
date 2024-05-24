@@ -27,25 +27,24 @@ void AppDemoSceneRTMuttenzerBox::registerAssetsToLoad(SLAssetLoader& al)
 {
 
     al.addTextureToLoad(_tex1,
-                        AppDemo::texturePath,
-                        "MuttenzerBox+X0512_C.png",
-                        "MuttenzerBox-X0512_C.png",
-                        "MuttenzerBox+Y0512_C.png",
-                        "MuttenzerBox-Y0512_C.png",
-                        "MuttenzerBox+Z0512_C.png",
-                        "MuttenzerBox-Z0512_C.png");
+                        AppDemo::texturePath + "MuttenzerBox+X0512_C.png",
+                        AppDemo::texturePath + "MuttenzerBox-X0512_C.png",
+                        AppDemo::texturePath + "MuttenzerBox+Y0512_C.png",
+                        AppDemo::texturePath + "MuttenzerBox-Y0512_C.png",
+                        AppDemo::texturePath + "MuttenzerBox+Z0512_C.png",
+                        AppDemo::texturePath + "MuttenzerBox-Z0512_C.png");
 
-    al.addProgramGenericToLoad(_spRefl,
-                               "Reflect.vert",
-                               "Reflect.frag");
-    al.addProgramGenericToLoad(_spRefr,
-                               "RefractReflect.vert",
-                               "RefractReflect.frag");
+    al.addProgramToLoad(_spRefl,
+                        AppDemo::shaderPath + "Reflect.vert",
+                        AppDemo::shaderPath + "Reflect.frag");
+    al.addProgramToLoad(_spRefr,
+                        AppDemo::shaderPath + "RefractReflect.vert",
+                        AppDemo::shaderPath + "RefractReflect.frag");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
 void AppDemoSceneRTMuttenzerBox::assemble(SLAssetManager* am,
-                                          SLSceneView* sv)
+                                          SLSceneView*    sv)
 {
     SLCol4f lightEmisRGB(7.0f, 7.0f, 7.0f);
     SLCol4f grayRGB(0.75f, 0.75f, 0.75f);

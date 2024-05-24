@@ -24,16 +24,16 @@ AppDemoSceneLevelOfDetail::AppDemoSceneLevelOfDetail(SLSceneID sceneID)
 void AppDemoSceneLevelOfDetail::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_texFloorDif,
-                        AppDemo::modelPath,
-                        "GLTF/CorinthianColumn/PavementSlateSquare2_2K_DIF.jpg",
+                        AppDemo::modelPath +
+                          "GLTF/CorinthianColumn/PavementSlateSquare2_2K_DIF.jpg",
                         SL_ANISOTROPY_MAX);
     al.addTextureToLoad(_texFloorNrm,
-                        AppDemo::modelPath,
-                        "GLTF/CorinthianColumn/PavementSlateSquare2_2K_NRM.jpg",
+                        AppDemo::modelPath +
+                          "GLTF/CorinthianColumn/PavementSlateSquare2_2K_NRM.jpg",
                         SL_ANISOTROPY_MAX);
     al.addNodeToLoad(_columnLOD,
-                     AppDemo::modelPath,
-                     "GLTF/CorinthianColumn/Corinthian-Column-Round-LOD.gltf");
+                     AppDemo::modelPath +
+                       "GLTF/CorinthianColumn/Corinthian-Column-Round-LOD.gltf");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

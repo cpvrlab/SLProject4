@@ -25,8 +25,8 @@ AppDemoSceneShadowLightTypes::AppDemoSceneShadowLightTypes()
 void AppDemoSceneShadowLightTypes::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addNodeToLoad(_teapot,
-                     AppDemo::modelPath,
-                     "FBX/Teapot/Teapot.fbx");
+                     AppDemo::modelPath +
+                       "FBX/Teapot/Teapot.fbx");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
