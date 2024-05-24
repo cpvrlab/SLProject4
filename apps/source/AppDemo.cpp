@@ -48,8 +48,8 @@ CVCalibrationEstimator*      AppDemo::calibrationEstimator = nullptr;
 SLstring                     AppDemo::calibIniPath;
 SLstring                     AppDemo::calibFilePath;
 
-SLIOBuffer AppDemo::fontDataDroidSans;
-SLIOBuffer AppDemo::fontDataProggyClean;
+SLIOBuffer AppDemo::fontDataProp;
+SLIOBuffer AppDemo::fontDataFixed;
 
 SLstring AppDemo::exePath;
 SLstring AppDemo::configPath;
@@ -148,6 +148,10 @@ void AppDemo::deleteAppAndScene()
         delete gui;
         gui = nullptr;
     }
+
+    // Deallocate global font data.
+    AppDemo::fontDataProp.deallocate();
+    AppDemo::fontDataFixed.deallocate();
 
     // The WebGL context is apparently already destroyed when we call this function
 #ifndef SL_EMSCRIPTEN

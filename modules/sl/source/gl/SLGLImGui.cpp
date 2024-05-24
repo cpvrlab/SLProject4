@@ -24,8 +24,8 @@ SLGLImGui::SLGLImGui(cbOnImGuiBuild      buildCB,
                      cbOnImGuiLoadConfig loadConfigCB,
                      cbOnImGuiSaveConfig saveConfigCB,
                      int                 dpi,
-                     SLIOBuffer          fontDataDroidSans,
-                     SLIOBuffer          fontDataProggyClean)
+                     SLIOBuffer          fontDataProp,
+                     SLIOBuffer          fontDataFixed)
 {
     _build             = buildCB;
     _saveConfig        = saveConfigCB;
@@ -47,6 +47,8 @@ SLGLImGui::SLGLImGui(cbOnImGuiBuild      buildCB,
     _mousePressed[0]   = false;
     _mousePressed[1]   = false;
     _mousePressed[2]   = false;
+    _fontDataProp      = fontDataProp;
+    _fontDataFixed     = fontDataFixed;
 
     // create imgui context
     ImGui::CreateContext();
@@ -62,7 +64,7 @@ SLGLImGui::SLGLImGui(cbOnImGuiBuild      buildCB,
         loadConfigCB(dpi);
 
     // load GUI fonts depending on the resolution
-    loadFonts(SLGLImGui::fontPropDots, SLGLImGui::fontFixedDots, fontDataDroidSans, fontDataProggyClean);
+    loadFonts(SLGLImGui::fontPropDots, SLGLImGui::fontFixedDots);
 }
 //-----------------------------------------------------------------------------
 SLGLImGui::~SLGLImGui()
@@ -146,10 +148,7 @@ void SLGLImGui::init(const string& configPath)
 }
 //-----------------------------------------------------------------------------
 //! Loads the proportional and fixed size font depending on the passed DPI
-void SLGLImGui::loadFonts(SLfloat    fontPropDotsToLoad,
-                          SLfloat    fontFixedDotsToLoad,
-                          SLIOBuffer fontDataDroidSans,
-                          SLIOBuffer fontDataProggyClean)
+void SLGLImGui::loadFonts(SLfloat fontPropDotsToLoad, SLfloat fontFixedDotsToLoad)
 {
     _fontPropDots  = fontPropDotsToLoad;
     _fontFixedDots = fontFixedDotsToLoad;
@@ -157,11 +156,19 @@ void SLGLImGui::loadFonts(SLfloat    fontPropDotsToLoad,
     ImGuiIO& io = ImGui::GetIO();
     io.Fonts->Clear();
 
+    // Create copies of the font data because ImGUI takes ownerhip of the data.
+    SLIOBuffer fontDataProp  = _fontDataProp.copy();
+    SLIOBuffer fontDataFixed = _fontDataFixed.copy();
+
     // Load proportional font for menu and text displays
-    io.Fonts->AddFontFromMemoryTTF(fontDataDroidSans.data, (int)fontDataDroidSans.size, fontPropDotsToLoad);
+    io.Fonts->AddFontFromMemoryTTF(fontDataProp.data,
+                                   static_cast<int>(fontDataProp.size),
+                                   fontPropDotsToLoad);
 
     // Load fixed size font for statistics windows
-    io.Fonts->AddFontFromMemoryTTF(fontDataProggyClean.data, (int)fontDataProggyClean.size, fontFixedDotsToLoad);
+    io.Fonts->AddFontFromMemoryTTF(fontDataFixed.data,
+                                   static_cast<int>(fontDataFixed.size),
+                                   fontFixedDotsToLoad);
 
     deleteOpenGLObjects();
     createOpenGLObjects();
@@ -386,9 +393,9 @@ void SLGLImGui::onInitNewFrame(SLScene* s, SLSceneView* sv)
     // If no _build function is provided there is no ImGui
     if (!_build) return;
 
-    // if ((SLint)SLGLImGui::fontPropDots != (SLint)_fontPropDots ||
-    //     (SLint)SLGLImGui::fontFixedDots != (SLint)_fontFixedDots)
-    //     loadFonts(SLGLImGui::fontPropDots, SLGLImGui::fontFixedDots, _fontDir);
+    if ((SLint)SLGLImGui::fontPropDots != (SLint)_fontPropDots ||
+        (SLint)SLGLImGui::fontFixedDots != (SLint)_fontFixedDots)
+        loadFonts(SLGLImGui::fontPropDots, SLGLImGui::fontFixedDots);
 
     if (!_fontTexture)
         createOpenGLObjects();

@@ -28,6 +28,9 @@ struct SLIOBuffer
 {
     unsigned char* data;
     size_t         size;
+
+    SLIOBuffer copy();
+    void       deallocate();
 };
 //-----------------------------------------------------------------------------
 //! Enum of file kinds
@@ -81,7 +84,6 @@ SLIOStream* open(std::string path, SLIOStreamKind kind, SLIOStreamMode mode);
 void        close(SLIOStream* stream);
 bool        exists(std::string path, SLIOStreamKind kind);
 SLIOBuffer  readIntoBuffer(std::string path, SLIOStreamKind kind);
-void        deleteBuffer(SLIOBuffer& buffer);
 std::string readIntoString(std::string path, SLIOStreamKind kind);
 void        writeString(std::string path, SLIOStreamKind kind, const std::string& string);
 }

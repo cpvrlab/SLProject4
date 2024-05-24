@@ -55,7 +55,7 @@ void SLGLShader::load(const SLstring& filename)
 {
     SLIOBuffer buffer = SLFileStorage::readIntoBuffer(filename, IOK_shader);
     _code             = SLstring(buffer.data, buffer.data + buffer.size);
-    SLFileStorage::deleteBuffer(buffer);
+    buffer.deallocate();
 
     // Expand include pragmas. This has to be done here because we are not
     // allowed to perform I/O later on when compiling the shader.

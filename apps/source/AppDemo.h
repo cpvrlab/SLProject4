@@ -100,8 +100,8 @@ public:
     static SLstring                     calibIniPath;  //!< That's where data/calibrations folder is located
     static SLstring                     calibFilePath; //!< That's where calibrations are stored and loaded from
 
-    static SLIOBuffer fontDataDroidSans;
-    static SLIOBuffer fontDataProggyClean;
+    static SLIOBuffer fontDataProp;
+    static SLIOBuffer fontDataFixed;
 
     static const string CALIB_FTP_HOST;  //!< ftp host for calibration up and download
     static const string CALIB_FTP_USER;  //!< ftp login user for calibration up and download

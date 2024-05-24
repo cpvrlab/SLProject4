@@ -65,8 +65,8 @@ public:
               cbOnImGuiLoadConfig loadConfigCB,
               cbOnImGuiSaveConfig saveConfigCB,
               int                 dpi,
-              SLIOBuffer          fontDataDroidSans,
-              SLIOBuffer          fontDataProggyClean);
+              SLIOBuffer          fontDataProp,
+              SLIOBuffer          fontDataFixed);
     ~SLGLImGui() override;
     void init(const string& configPath) override;
 
@@ -85,7 +85,7 @@ public:
     void renderExtraFrame(SLScene* s, SLSceneView* sv, SLint mouseX, SLint mouseY) override;
     bool doNotDispatchKeyboard() override { return ImGui::GetIO().WantCaptureKeyboard; }
     bool doNotDispatchMouse() override { return ImGui::GetIO().WantCaptureMouse; }
-    void loadFonts(SLfloat fontPropDots, SLfloat fontFixedDots, SLIOBuffer fontDataDroidSans, SLIOBuffer fontDataProggyClean);
+    void loadFonts(SLfloat fontPropDots, SLfloat fontFixedDots);
     void drawMouseCursor(bool doDraw) override { ImGui::GetIO().MouseDrawCursor = doDraw; }
 
     // Default font dots
@@ -104,25 +104,27 @@ private:
     // save config callback
     cbOnImGuiSaveConfig _saveConfig = nullptr;
 
-    SLfloat  _timeSec;           //!< Time in seconds
-    SLVec2f  _mousePosPX;        //!< Mouse cursor position
-    SLfloat  _mouseWheel;        //!< Mouse wheel position
-    SLbool   _mousePressed[3];   //!< Mouse button press state
-    SLuint   _fontTexture;       //!< OpenGL texture id for font
-    SLint    _progHandle;        //!< OpenGL handle for shader program
-    SLint    _vertHandle;        //!< OpenGL handle for vertex shader
-    SLint    _fragHandle;        //!< OpenGL handle for fragment shader
-    SLint    _attribLocTex;      //!< OpenGL attribute location for texture
-    SLint    _attribLocProjMtx;  //!< OpenGL attribute location for ???
-    SLint    _attribLocPosition; //!< OpenGL attribute location for vertex pos.
-    SLint    _attribLocUV;       //!< OpenGL attribute location for texture coords
-    SLint    _attribLocColor;    //!< OpenGL attribute location for color
-    SLuint   _vboHandle;         //!< OpenGL handle for vertex buffer object
-    SLuint   _vaoHandle;         //!< OpenGL vertex array object handle
-    SLuint   _elementsHandle;    //!< OpenGL handle for vertex indexes
-    SLfloat  _fontPropDots;      //!< Active font size of proportional font
-    SLfloat  _fontFixedDots;     //!< Active font size of fixed size font
-    SLstring _configPath;
+    SLfloat    _timeSec;           //!< Time in seconds
+    SLVec2f    _mousePosPX;        //!< Mouse cursor position
+    SLfloat    _mouseWheel;        //!< Mouse wheel position
+    SLbool     _mousePressed[3];   //!< Mouse button press state
+    SLuint     _fontTexture;       //!< OpenGL texture id for font
+    SLint      _progHandle;        //!< OpenGL handle for shader program
+    SLint      _vertHandle;        //!< OpenGL handle for vertex shader
+    SLint      _fragHandle;        //!< OpenGL handle for fragment shader
+    SLint      _attribLocTex;      //!< OpenGL attribute location for texture
+    SLint      _attribLocProjMtx;  //!< OpenGL attribute location for ???
+    SLint      _attribLocPosition; //!< OpenGL attribute location for vertex pos.
+    SLint      _attribLocUV;       //!< OpenGL attribute location for texture coords
+    SLint      _attribLocColor;    //!< OpenGL attribute location for color
+    SLuint     _vboHandle;         //!< OpenGL handle for vertex buffer object
+    SLuint     _vaoHandle;         //!< OpenGL vertex array object handle
+    SLuint     _elementsHandle;    //!< OpenGL handle for vertex indexes
+    SLfloat    _fontPropDots;      //!< Active font size of proportional font
+    SLfloat    _fontFixedDots;     //!< Active font size of fixed size font
+    SLstring   _configPath;        //!< Path to config files
+    SLIOBuffer _fontDataProp;      //!< Raw data of proportional font file
+    SLIOBuffer _fontDataFixed;     //!< Raw data of fixed size font file
 };
 //-----------------------------------------------------------------------------
 #endif

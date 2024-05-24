@@ -122,10 +122,10 @@ void slRegisterCoreAssetsToLoad()
     al.addLoadTask([am, fontPath = AppDemo::fontPath] { am->generateStaticFonts(AppDemo::fontPath); });
 
     // Load data for ImGUI fonts.
-    al.addRawDataToLoad(AppDemo::fontDataDroidSans,
+    al.addRawDataToLoad(AppDemo::fontDataProp,
                         AppDemo::fontPath + "DroidSans.ttf",
                         IOK_font);
-    al.addRawDataToLoad(AppDemo::fontDataProggyClean,
+    al.addRawDataToLoad(AppDemo::fontDataFixed,
                         AppDemo::fontPath + "ProggyClean.ttf",
                         IOK_font);
 }
@@ -173,8 +173,8 @@ SLint slCreateSceneView(SLAssetManager* am,
                                  (cbOnImGuiLoadConfig)onImGuiLoadConfig,
                                  (cbOnImGuiSaveConfig)onImGuiSaveConfig,
                                  dotsPerInch,
-                                 AppDemo::fontDataDroidSans,
-                                 AppDemo::fontDataProggyClean);
+                                 AppDemo::fontDataProp,
+                                 AppDemo::fontDataFixed);
 
     sv->init("SceneView",
              screenWidth,

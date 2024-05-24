@@ -9,6 +9,8 @@
 
 #include <SLFileStorage.h>
 
+#include <cstring>
+
 #if defined(SL_STORAGE_FS)
 #    include <SLIONative.h>
 #elif defined(SL_STORAGE_WEB)
@@ -18,6 +20,20 @@
 #    include <SLIOBrowserPopup.h>
 #endif
 
+//-----------------------------------------------------------------------------
+//! Creates a copy of the data in the buffer
+SLIOBuffer SLIOBuffer::copy()
+{
+    unsigned char* copy = new unsigned char[size];
+    std::memcpy(copy, data, size);
+    return SLIOBuffer{copy, size};
+}
+//-----------------------------------------------------------------------------
+//! Deallocates the data owned by the buffer
+void SLIOBuffer::deallocate()
+{
+    delete[] data;
+}
 //-----------------------------------------------------------------------------
 //! Opens a file stream for I/O operations
 /*!
@@ -151,17 +167,6 @@ SLIOBuffer SLFileStorage::readIntoBuffer(std::string path, SLIOStreamKind kind)
     close(stream);
 
     return SLIOBuffer{data, size};
-}
-//-----------------------------------------------------------------------------
-//! Deallocates the data of a buffer returned by SLFileStorage::readIntoBuffer
-/*!
- * Deallocates the data owned by an SLIOBuffer. This function should be
- * called as soon as the memory of readIntoBuffer is not used anymore.
- * @param buffer Buffer to delete
- */
-void SLFileStorage::deleteBuffer(SLIOBuffer& buffer)
-{
-    delete[] buffer.data;
 }
 //-----------------------------------------------------------------------------
 //! Reads an entire file into a string

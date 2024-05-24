@@ -401,7 +401,7 @@ void CVImage::load(const string& filename,
     unsigned char* data = stbi_load_from_memory(encodedData, size, &width, &height, &numChannels, 0);
     _cvMat              = CVMat(height, width, CV_8UC(numChannels), data);
 
-    SLFileStorage::deleteBuffer(buffer);
+    buffer.deallocate();
 #endif
 
     if (!_cvMat.data)
