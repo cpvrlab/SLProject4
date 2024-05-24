@@ -7,54 +7,13 @@
 //              Please visit: http://opensource.org/licenses/GPL-3.0
 // #############################################################################
 
-#include <AppScene.h>
 #include <SLEnums.h>
-#include <SL.h>
+#include <CVCapture.h>
 #include <GlobalTimer.h>
 
-#include <CVCapture.h>
-#include <CVTrackedAruco.h>
-#include <CVTrackedChessboard.h>
-#include <CVTrackedFaces.h>
-#include <CVTrackedFeatures.h>
-#include <CVTrackedMediaPipeHands.h>
-#include <CVCalibrationEstimator.h>
-
-#include <SLAlgo.h>
+#include <AppScene.h>
 #include <AppDemo.h>
-#include <SLAssetManager.h>
-#include <SLAssimpImporter.h>
-#include <SLScene.h>
-#include <SLSceneView.h>
-#include <SLBox.h>
-#include <SLCone.h>
-#include <SLCoordAxis.h>
-#include <SLCylinder.h>
-#include <SLDisk.h>
-#include <SLGrid.h>
-#include <SLLens.h>
-#include <SLLightDirect.h>
-#include <SLLightRect.h>
-#include <SLLightSpot.h>
-#include <SLPoints.h>
-#include <SLPolygon.h>
-#include <SLRectangle.h>
-#include <SLSkybox.h>
-#include <SLSphere.h>
-#include <SLText.h>
-#include <SLTexColorLUT.h>
-#include <SLScene.h>
-#include <SLGLProgramManager.h>
-#include <SLGLTexture.h>
-#include <Profiler.h>
-#include "AppDemoGui.h"
-#include <SLDeviceLocation.h>
-#include <SLNodeLOD.h>
-#include <SLEntities.h>
-#include <SLFileStorage.h>
-#include <SLAssetLoader.h>
-#include <SLEnums.h>
-
+#include <AppDemoGui.h>
 #include <AppDemoScene2Dand3DText.h>
 #include <AppDemoSceneAnimNode.h>
 #include <AppDemoSceneAnimNodeMass.h>
@@ -76,7 +35,7 @@
 #include <AppDemoSceneJansUniverse.h>
 #include <AppDemoSceneMeshLoad.h>
 #include <AppDemoSceneMinimal.h>
-#include <AppDemoSceneLegacy.h>
+#include <AppDemoSceneLargeModel.h>
 #include <AppDemoSceneLevelOfDetail.h>
 #include <AppDemoSceneLotsOfNodes.h>
 #include <AppDemoSceneParticleComplexFire.h>
@@ -121,7 +80,6 @@
 #include <AppDemoSceneVolumeRayCast.h>
 #include <AppDemoSceneVolumeRayCastLighted.h>
 #include <AppDemoSceneZFighting.h>
-#include <AppDemoSceneLargeModel.h>
 
 #ifdef SL_BUILD_WAI
 #    include <CVTrackedWAI.h>
@@ -132,67 +90,6 @@
 extern SLGLTexture* gVideoTexture;
 extern CVTracked*   gVideoTracker;
 extern SLNode*      gVideoTrackedNode;
-//-----------------------------------------------------------------------------
-//! appDemoLoadScene builds a scene from source code.
-/*! appDemoLoadScene builds a scene from source code. Such a function must be
- passed as a void*-pointer to slCreateScene. It will be called from within
- slCreateSceneView as soon as the view is initialized. You could separate
- different scene by a different sceneID.<br>
- The purpose is to assemble a scene by creating scenegraph objects with nodes
- (SLNode) and meshes (SLMesh). See the scene with SID_Minimal for a minimal
- example of the different steps.
-*/
-void appDemoLoadScene(SLAssetManager* am,
-                      SLScene*        s,
-                      SLSceneView*    sv,
-                      SLSceneID       sceneID)
-{
-    PROFILE_FUNCTION();
-
-    SLfloat startLoadMS = GlobalTimer::timeMS();
-
-    SLGLState* stateGL = SLGLState::instance();
-
-    SLstring texPath    = AppDemo::texturePath;
-    SLstring dataPath   = AppDemo::dataPath;
-    SLstring modelPath  = AppDemo::modelPath;
-    SLstring shaderPath = AppDemo::shaderPath;
-    SLstring configPath = AppDemo::configPath;
-
-#ifdef SL_USE_ENTITIES_DEBUG
-    SLScene::entities.dump(true);
-#endif
-
-    /*
-    // call onInitialize on all scene views to init the scenegraph and stats
-    for (auto* sceneView : AppDemo::sceneViews)
-        if (sceneView != nullptr)
-            sceneView->onInitialize();
-
-    if (CVCapture::instance()->videoType() != VT_NONE)
-    {
-        if (sv->viewportSameAsVideo())
-        {
-            // Pass a negative value to the start function, so that the
-            // viewport aspect ratio can be adapted later to the video aspect.
-            // This will be known after start.
-            CVCapture::instance()->start(-1.0f);
-            SLVec2i videoAspect;
-            videoAspect.x = CVCapture::instance()->captureSize.width;
-            videoAspect.y = CVCapture::instance()->captureSize.height;
-            sv->setViewportFromRatio(videoAspect, sv->viewportAlign(), true);
-        }
-        else
-            CVCapture::instance()->start(sv->viewportWdivH());
-    }
-
-    s->loadTimeMS(GlobalTimer::timeMS() - startLoadMS);
-    */
-
-#ifdef SL_USE_ENTITIES_DEBUG
-    SLScene::entities.dump(true);
-#endif
-}
 //-----------------------------------------------------------------------------
 void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
 {
@@ -316,9 +213,9 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         case SID_RTMuttenzerBox: s = new AppDemoSceneRTMuttenzerBox(); break;
         case SID_RTDoF: s = new AppDemoSceneRTDoF(); break;
         case SID_RTLens: s = new AppDemoSceneRTLens(); break;
-        case SID_Benchmark_LargeModel: s = new AppDemoSceneLargeModel(); break;
         case SID_Benchmark_JansUniverse: s = new AppDemoSceneJansUniverse(); break;
         case SID_Benchmark_NodeAnimations: s = new AppDemoSceneAnimNodeMass2(); break;
+        case SID_Benchmark_LargeModel: s = new AppDemoSceneLargeModel(); break;
         case SID_Benchmark_LotsOfNodes: s = new AppDemoSceneLotsOfNodes(); break;
         case SID_Benchmark_ColumnsLOD: s = new AppDemoSceneLevelOfDetail(sceneID); break;
         case SID_Benchmark_ColumnsNoLOD: s = new AppDemoSceneLevelOfDetail(sceneID); break;
@@ -330,7 +227,7 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         case SID_ErlebAR_AventicumTheatre: s = new AppDemoSceneErlebARAventicumTheater(); break;
         case SID_ErlebAR_AventicumAmphiteatre: s = new AppDemoSceneErlebARAventicumAmphitheater(); break;
         case SID_ErlebAR_SutzKirchrain18: s = new AppDemoSceneErlebARSutz(); break;
-        default: s = new AppDemoSceneLegacy(sceneID); break;
+        default: SL_EXIT_MSG("appDemoSwitchScene: Unknown SceneID");
     }
 
     sv->scene(s);

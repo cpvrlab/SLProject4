@@ -12,7 +12,8 @@
 #include <SLLightSpot.h>
 
 //-----------------------------------------------------------------------------
-AppDemoSceneLargeModel::AppDemoSceneLargeModel() : AppScene("Large Model Benchmark Scene")
+AppDemoSceneLargeModel::AppDemoSceneLargeModel()
+  : AppScene("Large Model Benchmark Scene")
 {
     info("Large Model with 7.2 mio. triangles.");
 }
@@ -21,14 +22,16 @@ AppDemoSceneLargeModel::AppDemoSceneLargeModel() : AppScene("Large Model Benchma
 void AppDemoSceneLargeModel::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addNodeToLoad(_dragonModel,
-                     AppDemo::modelPath + "PLY/xyzrgb_dragon/xyzrgb_dragon.ply",
+                     AppDemo::modelPath +
+                       "PLY/xyzrgb_dragon/xyzrgb_dragon.ply",
                      nullptr,
                      false,
                      true,
                      nullptr,
                      0.2f,
                      false,
-                     SLProcess_Triangulate | SLProcess_JoinIdenticalVertices);
+                     SLProcess_Triangulate |
+                       SLProcess_JoinIdenticalVertices);
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
@@ -40,15 +43,24 @@ void AppDemoSceneLargeModel::assemble(SLAssetManager* am, SLSceneView* sv)
     cam1->clipNear(1);
     cam1->clipFar(10000);
     cam1->focalDist(220);
-    cam1->background().colors(SLCol4f(0.7f, 0.7f, 0.7f), SLCol4f(0.2f, 0.2f, 0.2f));
+    cam1->background().colors(SLCol4f(0.7f, 0.7f, 0.7f),
+                              SLCol4f(0.2f, 0.2f, 0.2f));
     cam1->setInitialState();
     cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
 
     // Material for glass
-    SLMaterial* diffuseMat = new SLMaterial(am, "diffuseMat", SLCol4f::WHITE, SLCol4f::WHITE);
+    SLMaterial* diffuseMat = new SLMaterial(am,
+                                            "diffuseMat",
+                                            SLCol4f::WHITE,
+                                            SLCol4f::WHITE);
     _dragonModel->mesh()->mat(diffuseMat);
 
-    SLLightSpot* light1 = new SLLightSpot(am, this, 200, 200, 200, 1);
+    SLLightSpot* light1 = new SLLightSpot(am,
+                                          this,
+                                          200,
+                                          200,
+                                          200,
+                                          1);
     light1->powers(0.1f, 1.0f, 1.0f);
     light1->attenuation(1, 0, 0);
 

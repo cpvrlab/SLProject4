@@ -1842,7 +1842,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 if (ImGui::BeginMenu("Benchmarks"))
                 {
 #ifndef SL_EMSCRIPTEN
-                    // The large models are too large for emscripten
+                    /* The large models are too large for emscripten
                     if (ImGui::MenuItem("Large Model (via FTP)", nullptr, sid == SID_Benchmark_LargeModel))
                     {
                         SLstring largeFile = AppDemo::configPath + "models/xyzrgb_dragon/xyzrgb_dragon.ply";
@@ -1920,7 +1920,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                     {
                         SLstring largeFile = AppDemo::configPath + "models/xyzrgb_dragon/xyzrgb_dragon.ply";
                         loadSceneWithLargeModel(s, sv, "xyzrgb_dragon.zip", largeFile, SID_Benchmark_LargeModel);
-                    }
+                    }*/
 #endif
                     if (ImGui::MenuItem("Large Model", nullptr, sid == SID_Benchmark_LargeModel))
                         AppDemo::sceneToLoad = SID_Benchmark_LargeModel;
