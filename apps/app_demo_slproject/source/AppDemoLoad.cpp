@@ -249,6 +249,11 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     // Reset the global SLGLState state
     SLGLState::instance()->initAll();
 
+
+    ///////////////////////////////
+    // Prepare for async loading //
+    ///////////////////////////////
+
     auto onDoneLoading = [s, sv, am, startLoadMS] {
         s->assemble(am, sv);
 
