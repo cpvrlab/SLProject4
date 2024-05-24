@@ -13,15 +13,15 @@
 #include "SLFileStorage.h"
 
 #include <condition_variable>
-#include <vector>
 #include <functional>
 #include <thread>
 #include <atomic>
 #include <optional>
 
-#include "SL.h"
-#include "SLGLTexture.h"
-#include "SLFileStorage.h"
+#include <SL.h>
+#include <SLGLTexture.h>
+#include <SLFileStorage.h>
+#include <SLImporter.h>
 
 class SLScene;
 class SLAssetManager;
@@ -128,7 +128,14 @@ public:
                        SLbool          loadMeshesOnly         = true,
                        SLMaterial*     overrideMat            = nullptr,
                        float           ambientFactor          = 0.5f,
-                       SLbool          forceCookTorranceRM    = false);
+                       SLbool          forceCookTorranceRM    = false,
+                       SLuint          flags =
+                         SLProcess_Triangulate |
+                         SLProcess_JoinIdenticalVertices |
+                         SLProcess_RemoveRedundantMaterials |
+                         SLProcess_FindDegenerates |
+                         SLProcess_FindInvalidData |
+                         SLProcess_SplitLargeMeshes);
 
     //! Add generic GLSL program with shader files to load
     void addProgramToLoad(SLGLProgram*&   program,

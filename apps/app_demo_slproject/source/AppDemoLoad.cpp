@@ -121,6 +121,7 @@
 #include <AppDemoSceneVolumeRayCast.h>
 #include <AppDemoSceneVolumeRayCastLighted.h>
 #include <AppDemoSceneZFighting.h>
+#include <AppDemoSceneLargeModel.h>
 
 #ifdef SL_BUILD_WAI
 #    include <CVTrackedWAI.h>
@@ -131,10 +132,6 @@
 extern SLGLTexture* gVideoTexture;
 extern CVTracked*   gVideoTracker;
 extern SLNode*      gVideoTrackedNode;
-//-----------------------------------------------------------------------------
-//! Global pointer to dragon model for threaded loading
-SLNode* gDragonModel = nullptr;
-//-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //! appDemoLoadScene builds a scene from source code.
 /*! appDemoLoadScene builds a scene from source code. Such a function must be
@@ -165,56 +162,6 @@ void appDemoLoadScene(SLAssetManager* am,
 #ifdef SL_USE_ENTITIES_DEBUG
     SLScene::entities.dump(true);
 #endif
-
-    if (sceneID == SID_Benchmark_LargeModel) //..............................................
-    {
-        SLstring largeFile = modelPath + "PLY/xyzrgb_dragon/xyzrgb_dragon.ply";
-
-        if (SLFileStorage::exists(largeFile, IOK_model))
-        {
-            s->name("Large Model Benchmark Scene");
-            s->info("Large Model with 7.2 mio. triangles.");
-
-            // Material for glass
-            SLMaterial* diffuseMat = new SLMaterial(am, "diffuseMat", SLCol4f::WHITE, SLCol4f::WHITE);
-
-            SLCamera* cam1 = new SLCamera("Camera 1");
-            cam1->translation(0, 0, 220);
-            cam1->lookAt(0, 0, 0);
-            cam1->clipNear(1);
-            cam1->clipFar(10000);
-            cam1->focalDist(220);
-            cam1->background().colors(SLCol4f(0.7f, 0.7f, 0.7f), SLCol4f(0.2f, 0.2f, 0.2f));
-            cam1->setInitialState();
-            cam1->devRotLoc(&AppDemo::devRot, &AppDemo::devLoc);
-
-            SLLightSpot* light1 = new SLLightSpot(am, s, 200, 200, 200, 1);
-            light1->powers(0.1f, 1.0f, 1.0f);
-            light1->attenuation(1, 0, 0);
-
-            SLAssimpImporter importer;
-            gDragonModel = importer.load(s->animManager(),
-                                         am,
-                                         largeFile,
-                                         texPath,
-                                         nullptr,
-                                         false, // delete tex images after build
-                                         true,
-                                         diffuseMat,
-                                         0.2f,
-                                         false,
-                                         nullptr,
-                                         SLProcess_Triangulate | SLProcess_JoinIdenticalVertices);
-
-            SLNode* scene = new SLNode("Scene");
-            s->root3D(scene);
-            scene->addChild(light1);
-            scene->addChild(gDragonModel);
-            scene->addChild(cam1);
-
-            sv->camera(cam1);
-        }
-    }
 
     /*
     // call onInitialize on all scene views to init the scenegraph and stats
@@ -369,6 +316,7 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         case SID_RTMuttenzerBox: s = new AppDemoSceneRTMuttenzerBox(); break;
         case SID_RTDoF: s = new AppDemoSceneRTDoF(); break;
         case SID_RTLens: s = new AppDemoSceneRTLens(); break;
+        case SID_Benchmark_LargeModel: s = new AppDemoSceneLargeModel(); break;
         case SID_Benchmark_JansUniverse: s = new AppDemoSceneJansUniverse(); break;
         case SID_Benchmark_NodeAnimations: s = new AppDemoSceneAnimNodeMass2(); break;
         case SID_Benchmark_LotsOfNodes: s = new AppDemoSceneLotsOfNodes(); break;

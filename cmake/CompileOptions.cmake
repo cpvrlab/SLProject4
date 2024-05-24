@@ -272,7 +272,7 @@ if ("${SYSTEM_NAME_UPPER}" MATCHES "EMSCRIPTEN")
 			# The bug can still occur when reloading the page, so restart Safari if this happens.
 			# Emscripten issue: https://github.com/emscripten-core/emscripten/issues/19374
 			# WebKit Bug: https://bugs.webkit.org/show_bug.cgi?id=255103
-			"-sMAXIMUM_MEMORY=1024mb"
+			"-sMAXIMUM_MEMORY=1536mb"
 
 			# Enable assertions that provide information about errors.
 			"-sASSERTIONS"

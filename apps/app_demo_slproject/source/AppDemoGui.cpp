@@ -60,10 +60,10 @@
 #endif
 
 //-----------------------------------------------------------------------------
-extern CVTracked*   gVideoTracker;      // Global pointer declared in AppDemoTracking
-extern SLNode*      gVideoTrackedNode;  // Global pointer declared in AppDemoTracking
-extern SLGLTexture* gTexMRI3D;    // Global pointer declared in AppDemoLoad
-extern SLNode*      gDragonModel; // Global pointer declared in AppDemoLoad
+extern CVTracked*   gVideoTracker;     // Global pointer declared in AppDemoTracking
+extern SLNode*      gVideoTrackedNode; // Global pointer declared in AppDemoTracking
+extern SLGLTexture* gTexMRI3D;         // Global pointer declared in AppDemoLoad
+extern SLNode*      gDragonModel;      // Global pointer declared in AppDemoLoad
 
 //-----------------------------------------------------------------------------
 //! Vector getter callback for combo and listbox with std::vector<std::string>
@@ -1921,9 +1921,9 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                         SLstring largeFile = AppDemo::configPath + "models/xyzrgb_dragon/xyzrgb_dragon.ply";
                         loadSceneWithLargeModel(s, sv, "xyzrgb_dragon.zip", largeFile, SID_Benchmark_LargeModel);
                     }
+#endif
                     if (ImGui::MenuItem("Large Model", nullptr, sid == SID_Benchmark_LargeModel))
                         AppDemo::sceneToLoad = SID_Benchmark_LargeModel;
-#endif
                     if (ImGui::MenuItem("Massive Nodes", nullptr, sid == SID_Benchmark_LotsOfNodes))
                         AppDemo::sceneToLoad = SID_Benchmark_LotsOfNodes;
                     if (ImGui::MenuItem("Massive Node Animations", nullptr, sid == SID_Benchmark_NodeAnimations))

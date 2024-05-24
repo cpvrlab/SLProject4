@@ -1,6 +1,7 @@
 #include "SLAssetLoader.h"
 
 #include <mutex>
+#include <iostream>
 
 #include "SLFileStorage.h"
 #include "SLGLProgramManager.h"
@@ -237,7 +238,8 @@ void SLAssetLoader::addNodeToLoad(SLNode*&        node,
                                   SLbool          loadMeshesOnly,
                                   SLMaterial*     overrideMat,
                                   float           ambientFactor,
-                                  SLbool          forceCookTorranceRM)
+                                  SLbool          forceCookTorranceRM,
+                                  SLuint          flags)
 {
     _loadTasks.push_back([this,
                           &node,
@@ -247,7 +249,8 @@ void SLAssetLoader::addNodeToLoad(SLNode*&        node,
                           loadMeshesOnly,
                           overrideMat,
                           ambientFactor,
-                          forceCookTorranceRM] {
+                          forceCookTorranceRM,
+                          flags] {
         SLAssimpImporter importer;
         node = importer.load(_scene->animManager(),
                              _scene->assetManager(),
@@ -258,7 +261,9 @@ void SLAssetLoader::addNodeToLoad(SLNode*&        node,
                              loadMeshesOnly,
                              overrideMat,
                              ambientFactor,
-                             forceCookTorranceRM); });
+                             forceCookTorranceRM,
+                             nullptr,
+                             flags); });
 }
 //-----------------------------------------------------------------------------
 void SLAssetLoader::addSkyboxToLoad(SLSkybox*&      skybox,
