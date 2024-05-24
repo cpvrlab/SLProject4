@@ -22,7 +22,11 @@ public:
     void assemble(SLAssetManager* am, SLSceneView* sv) override;
 
 private:
+#ifdef SL_EMSCRIPTEN
+    static const SLint _size = 10;
+#else
     static const SLint _size = 20;
+#endif
     SLNode*            _astroboy[_size*_size];
 };
 //-----------------------------------------------------------------------------
