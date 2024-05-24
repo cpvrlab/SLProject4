@@ -32,6 +32,7 @@ void AppDemoSceneLevelOfDetail::registerAssetsToLoad(SLAssetLoader& al)
                         "GLTF/CorinthianColumn/PavementSlateSquare2_2K_NRM.jpg",
                         SL_ANISOTROPY_MAX);
     al.addNodeToLoad(_columnLOD,
+                     AppDemo::modelPath,
                      "GLTF/CorinthianColumn/Corinthian-Column-Round-LOD.gltf");
 }
 //-----------------------------------------------------------------------------

@@ -48,7 +48,9 @@ void AppDemoSceneGLTF::registerAssetsToLoad(SLAssetLoader& al)
             break;
     }
 
-    al.addNodeToLoad(_modelGLTF, _modelFile);
+    al.addNodeToLoad(_modelGLTF,
+                     AppDemo::modelPath,
+                     _modelFile);
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

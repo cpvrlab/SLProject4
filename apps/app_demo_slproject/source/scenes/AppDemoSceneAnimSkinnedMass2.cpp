@@ -33,6 +33,7 @@ void AppDemoSceneAnimSkinnedMass2::registerAssetsToLoad(SLAssetLoader& al)
         for (SLint iX = 0; iX < _size; ++iX)
         {
             al.addNodeToLoad(_astroboy[iA++],
+                             AppDemo::modelPath,
                              "DAE/AstroBoy/AstroBoy.dae");
         }
     }

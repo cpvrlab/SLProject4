@@ -28,6 +28,7 @@ class SLAssetManager;
 class SLNode;
 class SLSkybox;
 class SLMaterial;
+class SLDeviceLocation;
 
 using std::atomic;
 using std::condition_variable;
@@ -118,9 +119,14 @@ public:
                           const SLstring&  name,
                           SLbool           loadGrayscaleIntoAlpha);
 
+    //! Add GeoTiff file to load for the SLDevLocation
+    void addGeoTiffToLoad(SLDeviceLocation& devLoc,
+                          const SLstring& imageFileWithPath);
+
     //! Add mesh from file to load via assimp loader
     void addNodeToLoad(SLNode*&        node,
-                       const SLstring& modelFileWithPath,
+                       const SLstring& modelPath,
+                       const SLstring& modelFile,
                        SLSkybox*       skybox                 = nullptr,
                        SLbool          deleteTexImgAfterBuild = false,
                        SLbool          loadMeshesOnly         = true,

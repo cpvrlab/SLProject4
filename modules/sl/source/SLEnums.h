@@ -187,15 +187,15 @@ enum SLSceneID
     SID_MaxPublicAssets,
 
     // These scenes are not part of the public data
-    SID_ErlebARBernChristoffel,
-    SID_ErlebARBielBFH,
-    SID_ErlebARAugustaRauricaTmp,
-    SID_ErlebARAugustaRauricaTht,
-    SID_ErlebARAugustaRauricaTmpTht,
-    SID_ErlebARAventicumAmphiteatre,
-    SID_ErlebARAventicumCigognier,
-    SID_ErlebARAventicumTheatre,
-    SID_ErlebARSutzKirchrain18,
+    SID_ErlebAR_BernChristoffel,
+    SID_ErlebAR_BielBFH,
+    SID_ErlebAR_AugustaRauricaTmp,
+    SID_ErlebAR_AugustaRauricaTht,
+    SID_ErlebAR_AugustaRauricaTmpTht,
+    SID_ErlebAR_AventicumAmphiteatre,
+    SID_ErlebAR_AventicumCigognier,
+    SID_ErlebAR_AventicumTheatre,
+    SID_ErlebAR_SutzKirchrain18,
 
     SID_MaxAll
 };

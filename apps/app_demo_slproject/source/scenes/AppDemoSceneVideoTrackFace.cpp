@@ -35,7 +35,9 @@ AppDemoSceneVideoTrackFace::AppDemoSceneVideoTrackFace(SLSceneID sid)
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneVideoTrackFace::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addNodeToLoad(_glasses, "FBX/Sunglasses.fbx");
+    al.addNodeToLoad(_glasses,
+                     AppDemo::modelPath,
+                     "FBX/Sunglasses.fbx");
 
     // Create video texture on global pointer updated in AppDemoVideo
     al.addTextureToLoad(gVideoTexture,

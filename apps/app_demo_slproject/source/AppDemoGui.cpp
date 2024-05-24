@@ -1253,7 +1253,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                 SLint   namedLocIndex = AppDemo::devLoc.activeNamedLocation();
                 SLVec3f lookAtPoint   = SLVec3f::ZERO;
 
-                if (AppDemo::sceneID == SID_ErlebARBernChristoffel)
+                if (AppDemo::sceneID == SID_ErlebAR_BernChristoffel)
                 {
                     ImGui::Begin("Christoffel",
                                  &showErlebAR,
@@ -1314,9 +1314,9 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                     balda_stahl = nullptr;
                     balda_glas  = nullptr;
                 }
-                if (AppDemo::sceneID == SID_ErlebARAugustaRauricaTmpTht ||
-                    AppDemo::sceneID == SID_ErlebARAugustaRauricaTht ||
-                    AppDemo::sceneID == SID_ErlebARAugustaRauricaTmp)
+                if (AppDemo::sceneID == SID_ErlebAR_AugustaRauricaTmpTht ||
+                    AppDemo::sceneID == SID_ErlebAR_AugustaRauricaTht ||
+                    AppDemo::sceneID == SID_ErlebAR_AugustaRauricaTmp)
                 {
                     ImGui::Begin("Augst-Theatre-Temple",
                                  &showErlebAR,
@@ -1336,7 +1336,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
 
                     ImGui::End();
                 }
-                if (AppDemo::sceneID == SID_ErlebARAventicumAmphiteatre)
+                if (AppDemo::sceneID == SID_ErlebAR_AventicumAmphiteatre)
                 {
                     ImGui::Begin("Avenche-Amphitheatre",
                                  &showErlebAR,
@@ -1356,7 +1356,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
 
                     ImGui::End();
                 }
-                if (AppDemo::sceneID == SID_ErlebARAventicumCigognier)
+                if (AppDemo::sceneID == SID_ErlebAR_AventicumCigognier)
                 {
                     ImGui::Begin("Avenche-Cigognier",
                                  &showErlebAR,
@@ -1375,7 +1375,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                     }
                     ImGui::End();
                 }
-                if (AppDemo::sceneID == SID_ErlebARAventicumTheatre)
+                if (AppDemo::sceneID == SID_ErlebAR_AventicumTheatre)
                 {
                     ImGui::Begin("Avenche-Theatre",
                                  &showErlebAR,
@@ -1395,7 +1395,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
 
                     ImGui::End();
                 }
-                if (AppDemo::sceneID == SID_ErlebARSutzKirchrain18)
+                if (AppDemo::sceneID == SID_ErlebAR_SutzKirchrain18)
                 {
                     ImGui::Begin("Sutz-Kirchrain18",
                                  &showErlebAR,
@@ -1810,40 +1810,40 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                     if (ImGui::BeginMenu("Erleb-AR"))
                     {
                         if (Utils::fileExists(modelBR2))
-                            if (ImGui::MenuItem("Bern: Christoffel Tower", nullptr, sid == SID_ErlebARBernChristoffel))
-                                AppDemo::sceneToLoad = SID_ErlebARBernChristoffel;
+                            if (ImGui::MenuItem("Bern: Christoffel Tower", nullptr, sid == SID_ErlebAR_BernChristoffel))
+                                AppDemo::sceneToLoad = SID_ErlebAR_BernChristoffel;
 
                         if (Utils::fileExists(modelBFH))
-                            if (ImGui::MenuItem("Biel: BFH", nullptr, sid == SID_ErlebARBielBFH))
-                                AppDemo::sceneToLoad = SID_ErlebARBielBFH;
+                            if (ImGui::MenuItem("Biel: BFH", nullptr, sid == SID_ErlebAR_BielBFH))
+                                AppDemo::sceneToLoad = SID_ErlebAR_BielBFH;
 
                         if (Utils::fileExists(modelAR1))
-                            if (ImGui::MenuItem("Augusta Raurica Temple", nullptr, sid == SID_ErlebARAugustaRauricaTmp))
-                                AppDemo::sceneToLoad = SID_ErlebARAugustaRauricaTmp;
+                            if (ImGui::MenuItem("Augusta Raurica Temple", nullptr, sid == SID_ErlebAR_AugustaRauricaTmp))
+                                AppDemo::sceneToLoad = SID_ErlebAR_AugustaRauricaTmp;
 
                         if (Utils::fileExists(modelAR2))
-                            if (ImGui::MenuItem("Augusta Raurica Theater", nullptr, sid == SID_ErlebARAugustaRauricaTht))
-                                AppDemo::sceneToLoad = SID_ErlebARAugustaRauricaTht;
+                            if (ImGui::MenuItem("Augusta Raurica Theater", nullptr, sid == SID_ErlebAR_AugustaRauricaTht))
+                                AppDemo::sceneToLoad = SID_ErlebAR_AugustaRauricaTht;
 
                         if (Utils::fileExists(modelAR3))
-                            if (ImGui::MenuItem("Augusta Raurica Temple & Theater", nullptr, sid == SID_ErlebARAugustaRauricaTmpTht))
-                                AppDemo::sceneToLoad = SID_ErlebARAugustaRauricaTmpTht;
+                            if (ImGui::MenuItem("Augusta Raurica Temple & Theater", nullptr, sid == SID_ErlebAR_AugustaRauricaTmpTht))
+                                AppDemo::sceneToLoad = SID_ErlebAR_AugustaRauricaTmpTht;
 
                         if (Utils::fileExists(modelAV1_AO))
-                            if (ImGui::MenuItem("Aventicum: Amphitheatre", nullptr, sid == SID_ErlebARAventicumAmphiteatre))
-                                AppDemo::sceneToLoad = SID_ErlebARAventicumAmphiteatre;
+                            if (ImGui::MenuItem("Aventicum: Amphitheatre", nullptr, sid == SID_ErlebAR_AventicumAmphiteatre))
+                                AppDemo::sceneToLoad = SID_ErlebAR_AventicumAmphiteatre;
 
                         if (Utils::fileExists(modelAV2_AO))
-                            if (ImGui::MenuItem("Aventicum: Cigognier", nullptr, sid == SID_ErlebARAventicumCigognier))
-                                AppDemo::sceneToLoad = SID_ErlebARAventicumCigognier;
+                            if (ImGui::MenuItem("Aventicum: Cigognier", nullptr, sid == SID_ErlebAR_AventicumCigognier))
+                                AppDemo::sceneToLoad = SID_ErlebAR_AventicumCigognier;
 
                         if (Utils::fileExists(modelAV3))
-                            if (ImGui::MenuItem("Aventicum: Theatre", nullptr, sid == SID_ErlebARAventicumTheatre))
-                                AppDemo::sceneToLoad = SID_ErlebARAventicumTheatre;
+                            if (ImGui::MenuItem("Aventicum: Theatre", nullptr, sid == SID_ErlebAR_AventicumTheatre))
+                                AppDemo::sceneToLoad = SID_ErlebAR_AventicumTheatre;
 
                         if (Utils::fileExists(modelSU1))
-                            if (ImGui::MenuItem("Sutz: Kirchrain 18", nullptr, sid == SID_ErlebARSutzKirchrain18))
-                                AppDemo::sceneToLoad = SID_ErlebARSutzKirchrain18;
+                            if (ImGui::MenuItem("Sutz: Kirchrain 18", nullptr, sid == SID_ErlebAR_SutzKirchrain18))
+                                AppDemo::sceneToLoad = SID_ErlebAR_SutzKirchrain18;
 
                         ImGui::EndMenu();
                     }
@@ -2923,8 +2923,8 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
             ImGui::Separator();
             ImGui::MenuItem("Infos on Device", nullptr, &showInfosDevice);
             ImGui::MenuItem("Infos on Sensors", nullptr, &showInfosSensors);
-            if (AppDemo::sceneID >= SID_ErlebARBielBFH &&
-                AppDemo::sceneID <= SID_ErlebARSutzKirchrain18)
+            if (AppDemo::sceneID >= SID_ErlebAR_BielBFH &&
+                AppDemo::sceneID <= SID_ErlebAR_SutzKirchrain18)
             {
                 ImGui::Separator();
                 ImGui::MenuItem("ErlebAR Settings", nullptr, &showErlebAR);

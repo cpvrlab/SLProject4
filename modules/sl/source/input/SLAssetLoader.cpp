@@ -9,6 +9,7 @@
 #include "SLAssimpImporter.h"
 #include "SLScene.h"
 #include "SLAssetManager.h"
+#include "SLDeviceLocation.h"
 
 //-----------------------------------------------------------------------------
 using std::unique_lock;
@@ -120,6 +121,7 @@ void SLAssetLoader::addTextureToLoad(SLGLTexture*&   texture,
                                      SLTextureType   type)
 {
     _loadTasks.push_back([this,
+                          &path,
                           &texture,
                           filenameXPos,
                           filenameXNeg,
@@ -130,12 +132,12 @@ void SLAssetLoader::addTextureToLoad(SLGLTexture*&   texture,
                           min_filter,
                           mag_filter,
                           type] { texture = new SLGLTexture(_scene->assetManager(),
-                                                            _texturePath + filenameXPos,
-                                                            _texturePath + filenameXNeg,
-                                                            _texturePath + filenameYPos,
-                                                            _texturePath + filenameYNeg,
-                                                            _texturePath + filenameZPos,
-                                                            _texturePath + filenameZNeg,
+                                                            path + filenameXPos,
+                                                            path + filenameXNeg,
+                                                            path + filenameYPos,
+                                                            path + filenameYNeg,
+                                                            path + filenameZPos,
+                                                            path + filenameZNeg,
                                                             min_filter,
                                                             mag_filter,
                                                             type); });
@@ -214,6 +216,14 @@ void SLAssetLoader::addTextureToLoad(SLGLTexture*&    texture,
                                                                               loadGrayscaleIntoAlpha); });
 }
 //-----------------------------------------------------------------------------
+void SLAssetLoader::addGeoTiffToLoad(SLDeviceLocation& devLoc,
+                                     const SLstring&   imageFileWithPath)
+{
+    _loadTasks.push_back([this,
+                          &devLoc,
+                          &imageFileWithPath] { devLoc.loadGeoTiff(imageFileWithPath); });
+}
+//-----------------------------------------------------------------------------
 void SLAssetLoader::addProgramGenericToLoad(SLGLProgram*&   program,
                                             const SLstring& vertShaderFile,
                                             const SLstring& fragShaderFile)
@@ -227,7 +237,8 @@ void SLAssetLoader::addProgramGenericToLoad(SLGLProgram*&   program,
 }
 //-----------------------------------------------------------------------------
 void SLAssetLoader::addNodeToLoad(SLNode*&        node,
-                                  const SLstring& modelFileWithPath,
+                                  const SLstring& modelPath,
+                                  const SLstring& modelFile,
                                   SLSkybox*       skybox,
                                   SLbool          deleteTexImgAfterBuild,
                                   SLbool          loadMeshesOnly,
@@ -237,7 +248,8 @@ void SLAssetLoader::addNodeToLoad(SLNode*&        node,
 {
     _loadTasks.push_back([this,
                           &node,
-                          modelFileWithPath,
+                          modelPath,
+                          modelFile,
                           skybox,
                           deleteTexImgAfterBuild,
                           loadMeshesOnly,
@@ -247,7 +259,7 @@ void SLAssetLoader::addNodeToLoad(SLNode*&        node,
         SLAssimpImporter importer;
         node = importer.load(_scene->animManager(),
                              _scene->assetManager(),
-                             _modelPath + modelFileWithPath,
+                             modelPath + modelFile,
                              _texturePath,
                              skybox,
                              deleteTexImgAfterBuild,

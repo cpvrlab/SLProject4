@@ -40,8 +40,12 @@ void AppDemoSceneShaderSkybox::registerAssetsToLoad(SLAssetLoader& al)
     al.addProgramGenericToLoad(_spRefr,
                                "RefractReflect.vert",
                                "RefractReflect.frag");
-    al.addNodeToLoad(_teapot, "FBX/Teapot/Teapot.fbx");
-    al.addNodeToLoad(_suzanne, "FBX/Suzanne/Suzanne.fbx");
+    al.addNodeToLoad(_teapot,
+                     AppDemo::modelPath,
+                     "FBX/Teapot/Teapot.fbx");
+    al.addNodeToLoad(_suzanne,
+                     AppDemo::modelPath,
+                     "FBX/Suzanne/Suzanne.fbx");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

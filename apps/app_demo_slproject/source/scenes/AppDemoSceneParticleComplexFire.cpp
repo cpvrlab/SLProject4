@@ -60,6 +60,7 @@ void AppDemoSceneParticleComplexFire::registerAssetsToLoad(SLAssetLoader& al)
                         GL_LINEAR);
 
     al.addNodeToLoad(_firewood,
+                     AppDemo::modelPath,
                      "GLTF/Firewood/Firewood1.gltf",
                      nullptr,
                      false,
@@ -68,6 +69,7 @@ void AppDemoSceneParticleComplexFire::registerAssetsToLoad(SLAssetLoader& al)
                      0.3f,
                      true);
     al.addNodeToLoad(_torchL,
+                     AppDemo::modelPath,
                      "GLTF/Torch/Torch.gltf",
                      nullptr,
                      false,

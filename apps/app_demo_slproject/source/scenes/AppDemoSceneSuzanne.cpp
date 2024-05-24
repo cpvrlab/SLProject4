@@ -23,6 +23,7 @@ AppDemoSceneSuzanne::AppDemoSceneSuzanne(SLstring name,
 void AppDemoSceneSuzanne::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addNodeToLoad(_suzanneInCube,
+                     AppDemo::modelPath,
                      "GLTF/AO-Baked-Test/AO-Baked-Test.gltf",
                      nullptr,
                      false,   // delete tex images after build

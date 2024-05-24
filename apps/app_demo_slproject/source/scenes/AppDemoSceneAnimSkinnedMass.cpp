@@ -22,7 +22,9 @@ AppDemoSceneAnimSkinnedMass::AppDemoSceneAnimSkinnedMass()
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneAnimSkinnedMass::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addNodeToLoad(_center, "DAE/AstroBoy/AstroBoy.dae");
+    al.addNodeToLoad(_center,
+                     AppDemo::modelPath,
+                     "DAE/AstroBoy/AstroBoy.dae");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

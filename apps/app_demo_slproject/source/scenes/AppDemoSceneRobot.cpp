@@ -23,7 +23,9 @@ AppDemoSceneRobot::AppDemoSceneRobot()
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneRobot::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addNodeToLoad(_robot, "GLTF/FanucCRX/Fanuc-CRX.gltf");
+    al.addNodeToLoad(_robot,
+                     AppDemo::modelPath,
+                     "GLTF/FanucCRX/Fanuc-CRX.gltf");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

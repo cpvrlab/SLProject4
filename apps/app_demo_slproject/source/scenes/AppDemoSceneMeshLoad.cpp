@@ -25,9 +25,15 @@ AppDemoSceneMeshLoad::AppDemoSceneMeshLoad() : AppScene("Mesh 3D Loader Test")
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneMeshLoad::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addNodeToLoad(_mesh3DS, "3DS/Halloween/jackolan.3ds");
-    al.addNodeToLoad(_meshFBX, "FBX/Duck/duck.fbx");
-    al.addNodeToLoad(_meshDAE, "DAE/AstroBoy/AstroBoy.dae");
+    al.addNodeToLoad(_mesh3DS,
+                     AppDemo::modelPath,
+                     "3DS/Halloween/jackolan.3ds");
+    al.addNodeToLoad(_meshFBX,
+                     AppDemo::modelPath,
+                     "FBX/Duck/duck.fbx");
+    al.addNodeToLoad(_meshDAE,
+                     AppDemo::modelPath,
+                     "DAE/AstroBoy/AstroBoy.dae");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
