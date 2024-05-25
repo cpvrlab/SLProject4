@@ -54,22 +54,32 @@ void AppDemoSceneSuzanne::assemble(SLAssetManager* am, SLSceneView* sv)
     light->attenuation(1, 0, 0);
     light->translate(0, 0, 0.5);
     light->lookAt(1, -1, 0.5);
-    SLAnimation* lightAnim = animManager().createNodeAnimation("LightAnim", 4.0f, true, EC_inOutSine, AL_pingPongLoop);
-    lightAnim->createNodeAnimTrackForRotation(light, -180, SLVec3f(0, 1, 0));
+    SLAnimation* lightAnim = animManager().createNodeAnimation("LightAnim",
+                                                               4.0f,
+                                                               true,
+                                                               EC_inOutSine,
+                                                               AL_pingPongLoop);
+    lightAnim->createNodeAnimTrackForRotation(light,
+                                              -180,
+                                              SLVec3f(0, 1, 0));
     scene->addChild(light);
 
     // Add shadow mapping
     if (_shadowMapping)
     {
         light->createsShadows(true);
-        light->createShadowMap(-3, 3, SLVec2f(5, 5), SLVec2i(2048, 2048));
+        light->createShadowMap(-3,
+                               3,
+                               SLVec2f(5, 5),
+                               SLVec2i(2048, 2048));
         light->doSmoothShadows(true);
     }
 
     SLCol4f stoneColor(0.56f, 0.50f, 0.44f);
 
     // Remove unwanted textures
-    auto materialUpdater = [=](SLMaterial* mat) {
+    auto materialUpdater = [=](SLMaterial* mat)
+    {
         if (!_textureMapping)
         {
             mat->removeTextureType(TT_diffuse);

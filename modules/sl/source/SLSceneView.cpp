@@ -873,7 +873,8 @@ void SLSceneView::draw3DGLNodes(SLVNode& nodes,
     // Depth sort with lambda function by their view distance
     if (depthSorted)
     {
-        std::sort(nodes.begin(), nodes.end(), [](SLNode* a, SLNode* b) {
+        std::sort(nodes.begin(), nodes.end(), [](SLNode* a, SLNode* b)
+                  {
                       if (!a) return false;
                       if (!b) return true;
                       return a->aabb()->sqrViewDist() > b->aabb()->sqrViewDist(); });
@@ -2094,7 +2095,8 @@ void SLSceneView::saveFrameBufferAsImage(SLstring pathFilename,
             Utils::exitMsg("SLProject", msg.c_str(), __LINE__, __FILE__);
         }
 #else
-        auto writer = [](void* context, void* data, int size) {
+        auto writer = [](void* context, void* data, int size)
+        {
             SLIOStream* stream = (SLIOStream*)context;
             stream->write(data, size);
         };

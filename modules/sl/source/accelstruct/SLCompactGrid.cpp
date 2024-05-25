@@ -168,19 +168,25 @@ void SLCompactGrid::build(SLVec3f minV, SLVec3f maxV)
     if (_m->I16.size())
     {
         _triangleIndexes16.resize(_voxelOffsets.back());
-        ifTriangleInVoxelDo([&](const SLushort& i, const SLuint& voxIndex)
-                            {
-            SLuint location              = --_voxelOffsets[voxIndex];
-            _triangleIndexes16[location] = i; });
+        ifTriangleInVoxelDo(
+          [&](const SLushort& i, const SLuint& voxIndex)
+          {
+              assert(_voxelOffsets[voxIndex] != 0);
+              SLuint location              = --_voxelOffsets[voxIndex];
+              _triangleIndexes16[location] = i;
+          });
         _triangleIndexes16.shrink_to_fit();
     }
     else
     {
         _triangleIndexes32.resize(_voxelOffsets.back());
-        ifTriangleInVoxelDo([&](const SLuint& i, const SLuint& voxIndex)
-                            {
-            SLuint location              = --_voxelOffsets[voxIndex];
-            _triangleIndexes32[location] = i; });
+        ifTriangleInVoxelDo(
+          [&](const SLuint& i, const SLuint& voxIndex)
+          {
+              assert(_voxelOffsets[voxIndex] != 0);
+              SLuint location              = --_voxelOffsets[voxIndex];
+              _triangleIndexes32[location] = i;
+          });
         _triangleIndexes32.shrink_to_fit();
     }
 

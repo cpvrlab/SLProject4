@@ -249,12 +249,12 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     // Reset the global SLGLState state
     SLGLState::instance()->initAll();
 
-
     ///////////////////////////////
     // Prepare for async loading //
     ///////////////////////////////
 
-    auto onDoneLoading = [s, sv, am, startLoadMS] {
+    auto onDoneLoading = [s, sv, am, startLoadMS]
+    {
         s->assemble(am, sv);
 
         // Make sure the scene view has a camera
@@ -293,6 +293,7 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     s->registerAssetsToLoad(*al);
 
     AppDemoGui::loadingString = "Loading...";
+
     al->loadAssetsAsync(onDoneLoading);
 }
 //-----------------------------------------------------------------------------
