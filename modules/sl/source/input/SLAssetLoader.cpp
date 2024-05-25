@@ -342,12 +342,18 @@ void SLAssetLoader::loadAssetsAsync(function<void()> onDoneLoading)
     _messageCondVar.notify_one();
 }
 //-----------------------------------------------------------------------------
+/*! This method is called from the main thread to check if the async loading is
+ * is finished. If so, the assembly can be done in _onDoneLoading. Don't try to
+ * to do the assembly also async because there are too many OpenGL calls that
+ * are not allowed in parallel threads.
+ */
 void SLAssetLoader::checkIfAsyncLoadingIsDone()
 {
     if (_state == State::DONE)
     {
         _state = State::IDLE;
         _loadTasks.clear();
+
         _onDoneLoading();
     }
 }

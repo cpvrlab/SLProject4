@@ -207,7 +207,7 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         case SID_ParticleSystem_RingOfFire: s = new AppDemoSceneParticleRingOfFire(); break;
         case SID_ParticleSystem_ComplexFire:
         case SID_Benchmark_ParticleSystemComplexFire: s = new AppDemoSceneParticleComplexFire(sceneID); break;
-        case SID_ParticleSystem_Many: s = new AppDemoSceneParticleMany; break;
+        case SID_ParticleSystem_Many: s = new AppDemoSceneParticleMany(); break;
         case SID_RTSpheres: s = new AppDemoSceneRTSpheres(sceneID); break;
         case SID_RTSoftShadows: s = new AppDemoSceneRTSpheres(sceneID); break;
         case SID_RTMuttenzerBox: s = new AppDemoSceneRTMuttenzerBox(); break;
