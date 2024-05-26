@@ -10,6 +10,7 @@
 #include <AppDemoSceneErlebARAugustaTmpTht.h>
 #include <CVCapture.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightDirect.h>
 #include <SLCoordAxis.h>
 
@@ -18,7 +19,7 @@ extern SLGLTexture* gVideoTexture;
 
 //-----------------------------------------------------------------------------
 AppDemoSceneErlebARAugustaTmpTht::AppDemoSceneErlebARAugustaTmpTht()
-  : AppScene("Augusta Raurica Temple and Theatre AR")
+  : SLScene("Augusta Raurica Temple and Theatre AR")
 {
     info("Augusta Raurica Temple AR and Theatre");
 }

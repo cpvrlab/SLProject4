@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEMINIMAL_H
 #define APPDEMOSCENEMINIMAL_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for minimal scene
-class AppDemoSceneMinimal : public AppScene
+class AppDemoSceneMinimal : public SLScene
 {
 public:
     AppDemoSceneMinimal();

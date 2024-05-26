@@ -8,12 +8,13 @@
 //#############################################################################
 
 #include <AppDemoSceneParticleFountain.h>
-#include <SLLightSpot.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
+#include <SLLightSpot.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneParticleFountain::AppDemoSceneParticleFountain()
-  : AppScene("Fountain Particle System")
+  : SLScene("Fountain Particle System")
 {
     info("This fountain particle system uses acceleration and gravity.\n"
          "See the properties window for the detailed settings of the particles system");

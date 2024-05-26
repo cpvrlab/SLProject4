@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEERLEBAR_SUTZ_H
 #define APPDEMOSCENEERLEBAR_SUTZ_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for ErlebAR model in Sutz
-class AppDemoSceneErlebARSutz : public AppScene
+class AppDemoSceneErlebARSutz : public SLScene
 {
 public:
     AppDemoSceneErlebARSutz();

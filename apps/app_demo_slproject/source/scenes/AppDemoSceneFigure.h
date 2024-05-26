@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEFIGURE_H
 #define APPDEMOSCENEFIGURE_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for the figure scene
-class AppDemoSceneFigure : public AppScene
+class AppDemoSceneFigure : public SLScene
 {
 public:
     AppDemoSceneFigure();

@@ -9,13 +9,14 @@
 
 #include <AppDemoSceneRTMuttenzerBox.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightRect.h>
 #include <SLRectangle.h>
 #include <SLSphere.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneRTMuttenzerBox::AppDemoSceneRTMuttenzerBox()
-  : AppScene("Muttenzer Box Ray Tracing")
+  : SLScene("Muttenzer Box Ray Tracing")
 {
     info("Muttenzer Box with environment mapped reflective sphere and "
          "transparent refractive glass sphere. Try ray tracing for real "

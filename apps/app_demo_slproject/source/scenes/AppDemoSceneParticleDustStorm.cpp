@@ -9,10 +9,11 @@
 
 #include <AppDemoSceneParticleDustStorm.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneParticleDustStorm::AppDemoSceneParticleDustStorm()
-  : AppScene("Dust Storm Particle System")
+  : SLScene("Dust Storm Particle System")
 {
     info("This dust storm particle system uses the box shape type for distribution.\n"
          "See the properties window for the detailed settings of the particles system");

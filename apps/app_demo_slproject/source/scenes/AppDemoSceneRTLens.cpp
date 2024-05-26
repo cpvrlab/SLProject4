@@ -9,13 +9,14 @@
 
 #include <AppDemoSceneRTLens.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLRectangle.h>
 #include <SLLens.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneRTLens::AppDemoSceneRTLens()
-  : AppScene("Ray tracing through a lens")
+  : SLScene("Ray tracing through a lens")
 {
     info("Ray tracing through a lens");
 }

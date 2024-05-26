@@ -8,12 +8,13 @@
 //#############################################################################
 
 #include <AppDemoScenePointClouds.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLPoints.h>
 #include <AppDemo.h>
 
 //-----------------------------------------------------------------------------
-AppDemoScenePointClouds::AppDemoScenePointClouds() : AppScene("Point Cloud Test Scene")
+AppDemoScenePointClouds::AppDemoScenePointClouds() : SLScene("Point Cloud Test Scene")
 {
     info("Point Clouds with normal and uniform distribution. "
          "You can select vertices with rectangle select (CTRL-LMB) "

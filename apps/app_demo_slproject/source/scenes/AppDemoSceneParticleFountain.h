@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEPARTICLEFOUNTAIN_H
 #define APPDEMOSCENEPARTICLEFOUNTAIN_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for simple particle system scene
-class AppDemoSceneParticleFountain : public AppScene
+class AppDemoSceneParticleFountain : public SLScene
 {
 public:
     AppDemoSceneParticleFountain();

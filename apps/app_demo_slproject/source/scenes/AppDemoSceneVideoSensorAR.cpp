@@ -8,8 +8,9 @@
 //#############################################################################
 
 #include <AppDemoSceneVideoSensorAR.h>
-#include <CVCapture.h>
 #include <AppDemo.h>
+#include <CVCapture.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLCoordAxis.h>
 #include <SLBox.h>
@@ -19,7 +20,7 @@ extern SLGLTexture* gVideoTexture;
 
 //-----------------------------------------------------------------------------
 AppDemoSceneVideoSensorAR::AppDemoSceneVideoSensorAR()
-  : AppScene("Video Sensor AR")
+  : SLScene("Video Sensor AR")
 {
     info("Minimal scene to test the devices IMU and GPS Sensors. "
          "See the sensor information. GPS needs a few sec. to improve the accuracy.");

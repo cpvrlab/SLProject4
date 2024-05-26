@@ -9,12 +9,13 @@
 
 #include <AppDemoSceneAnimSkinnedMass.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLRectangle.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneAnimSkinnedMass::AppDemoSceneAnimSkinnedMass()
-  : AppScene("Mass Skeletal Animation Test Scene")
+  : SLScene("Mass Skeletal Animation Test Scene")
 {
     info("Mass Skeletal Animation Test Scene");
 }

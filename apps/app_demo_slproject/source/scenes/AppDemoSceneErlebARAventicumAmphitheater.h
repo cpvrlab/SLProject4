@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEERLEBAR_AVENTICUMAMPHI_H
 #define APPDEMOSCENEERLEBAR_AVENTICUMAMPHI_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for ErlebAR model for Aventicum Amphitheater.
-class AppDemoSceneErlebARAventicumAmphitheater : public AppScene
+class AppDemoSceneErlebARAventicumAmphitheater : public SLScene
 {
 public:
     AppDemoSceneErlebARAventicumAmphitheater();

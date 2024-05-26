@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENETEXTURECOMPRESSION_H
 #define APPDEMOSCENETEXTURECOMPRESSION_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for texture compression test scene
-class AppDemoSceneTextureCompression : public AppScene
+class AppDemoSceneTextureCompression : public SLScene
 {
 public:
     AppDemoSceneTextureCompression();

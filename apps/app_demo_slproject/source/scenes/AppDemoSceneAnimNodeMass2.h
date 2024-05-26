@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEANIMMASS2_H
 #define APPDEMOSCENEANIMMASS2_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for benchmark mass animation test scene
-class AppDemoSceneAnimNodeMass2 : public AppScene
+class AppDemoSceneAnimNodeMass2 : public SLScene
 {
 public:
     AppDemoSceneAnimNodeMass2();

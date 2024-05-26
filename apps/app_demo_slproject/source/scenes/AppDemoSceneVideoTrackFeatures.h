@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEVIDEOFEATURE_H
 #define APPDEMOSCENEVIDEOFEATURE_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for feature tracking test scene
-class AppDemoSceneVideoTrackFeatures : public AppScene
+class AppDemoSceneVideoTrackFeatures : public SLScene
 {
 public:
     AppDemoSceneVideoTrackFeatures();

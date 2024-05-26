@@ -8,12 +8,13 @@
 //#############################################################################
 
 #include <AppDemoSceneFrustum.h>
+#include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLSphere.h>
-#include <AppDemo.h>
 
 //-----------------------------------------------------------------------------
-AppDemoSceneFrustum::AppDemoSceneFrustum() : AppScene("Frustum Culling Test Scene")
+AppDemoSceneFrustum::AppDemoSceneFrustum() : SLScene("Frustum Culling Test Scene")
 {
     info("View frustum culling: Only objects in view are rendered. "
          "You can turn view frustum culling on/off in the menu Preferences or with the key F.");

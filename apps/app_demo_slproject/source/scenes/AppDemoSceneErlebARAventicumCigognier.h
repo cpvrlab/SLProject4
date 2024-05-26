@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEERLEBAR_AVENTICUMCIG_H
 #define APPDEMOSCENEERLEBAR_AVENTICUMCIG_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for ErlebAR model for Aventicum Cigognier.
-class AppDemoSceneErlebARAventicumCigognier : public AppScene
+class AppDemoSceneErlebARAventicumCigognier : public SLScene
 {
 public:
     AppDemoSceneErlebARAventicumCigognier();

@@ -8,14 +8,14 @@
 //#############################################################################
 
 #include <AppDemoSceneShaderEarth.h>
-
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLSphere.h>
 #include <AppDemo.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneShaderEarth::AppDemoSceneShaderEarth()
-  : AppScene("Earth Shader Test")
+  : SLScene("Earth Shader Test")
 {
     info("Complex earth shader with 7 textures: day color, night color, "
          "normal, height & gloss map of earth, color & alpha-map of clouds.\n"

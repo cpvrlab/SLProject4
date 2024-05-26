@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENESHADOWCASCADED_H
 #define APPDEMOSCENESHADOWCASCADED_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for demo scene for cascaded shadow mapping
-class AppDemoSceneShadowCascaded : public AppScene
+class AppDemoSceneShadowCascaded : public SLScene
 {
 public:
     AppDemoSceneShadowCascaded();

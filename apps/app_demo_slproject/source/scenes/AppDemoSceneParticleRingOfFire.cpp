@@ -8,12 +8,13 @@
 //#############################################################################
 
 #include <AppDemoSceneParticleRingOfFire.h>
-#include <SLLightSpot.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
+#include <SLLightSpot.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneParticleRingOfFire::AppDemoSceneParticleRingOfFire()
-  : AppScene("Ring of Fire Particle System")
+  : SLScene("Ring of Fire Particle System")
 {
     info("This ring particle system uses the cone shape type for distribution.\n"
          "See the properties window for the settings of the particles system");

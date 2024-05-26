@@ -11,7 +11,7 @@ file(GLOB headers
         ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/scenes/*.h
 		${SL_PROJECT_ROOT}/apps/source/CVCapture.h
 		${SL_PROJECT_ROOT}/apps/source/AppDemo.h
-        ${SL_PROJECT_ROOT}/apps/source/AppScene.h
+        ${SL_PROJECT_ROOT}/apps/source/SLScene.h
 		${SL_PROJECT_ROOT}/apps/source/SLInterface.h
         ${SL_PROJECT_ROOT}/apps/source/Scene.h
     )

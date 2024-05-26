@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENERTMUTTENZ_H
 #define APPDEMOSCENERTMUTTENZ_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for the Muttenzer Box ray tracing scene
-class AppDemoSceneRTMuttenzerBox : public AppScene
+class AppDemoSceneRTMuttenzerBox : public SLScene
 {
 public:
     AppDemoSceneRTMuttenzerBox();

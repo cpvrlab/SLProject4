@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEGLTF_H
 #define APPDEMOSCENEGLTF_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for GLTF file loading demo scene
-class AppDemoSceneGLTF : public AppScene
+class AppDemoSceneGLTF : public SLScene
 {
 public:
     AppDemoSceneGLTF(SLSceneID sceneID);

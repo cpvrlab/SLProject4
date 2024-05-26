@@ -8,6 +8,7 @@
 //#############################################################################
 
 #include <AppDemoSceneShadowLightPoint.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLRectangle.h>
 #include <SLSpheric.h>
@@ -16,7 +17,7 @@
 
 //-----------------------------------------------------------------------------
 AppDemoSceneShadowLightPoint::AppDemoSceneShadowLightPoint()
-  : AppScene("Shadow Mapping for point lights")
+  : SLScene("Shadow Mapping for point lights")
 {
     info("Point lights use cubemaps to store shadow maps.");
 }

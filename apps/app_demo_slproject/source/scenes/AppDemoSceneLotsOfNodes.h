@@ -10,12 +10,12 @@
 #ifndef APPDEMOSCENELOTSOFNODES_H
 #define APPDEMOSCENELOTSOFNODES_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 #include <SLGLTexture.h>
 
 //-----------------------------------------------------------------------------
 //! Class for scene with lots of nodes
-class AppDemoSceneLotsOfNodes : public AppScene
+class AppDemoSceneLotsOfNodes : public SLScene
 {
 public:
     AppDemoSceneLotsOfNodes();

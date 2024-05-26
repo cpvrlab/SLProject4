@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEREVOLVER_H
 #define APPDEMOSCENEREVOLVER_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for revolver mesh scene
-class AppDemoSceneRevolver : public AppScene
+class AppDemoSceneRevolver : public SLScene
 {
 public:
     AppDemoSceneRevolver();

@@ -8,9 +8,10 @@
 //#############################################################################
 
 #include <AppDemoSceneVideoTrackFeatures.h>
+#include <AppDemo.h>
 #include <CVCapture.h>
 #include <CVTrackedFeatures.h>
-#include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLBox.h>
 #include <SLCoordAxis.h>
@@ -22,7 +23,7 @@ extern SLNode*      gVideoTrackedNode;
 
 //-----------------------------------------------------------------------------
 AppDemoSceneVideoTrackFeatures::AppDemoSceneVideoTrackFeatures()
-  : AppScene("2D Feature Tracking")
+  : SLScene("2D Feature Tracking")
 {
     info("Augmented Reality 2D Feature Tracking: You need to print out the "
          "stones image target from the file data/calibrations/vuforia_markers.pdf");

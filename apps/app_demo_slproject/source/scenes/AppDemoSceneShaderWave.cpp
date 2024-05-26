@@ -8,7 +8,7 @@
 //#############################################################################
 
 #include <AppDemoSceneShaderWave.h>
-
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLSphere.h>
 #include <SLRectangle.h>
@@ -16,7 +16,7 @@
 
 //-----------------------------------------------------------------------------
 AppDemoSceneShaderWave::AppDemoSceneShaderWave()
-  : AppScene("Per vertex wave shader")
+  : SLScene("Per vertex wave shader")
 {
 
     info("Vertex Shader with wave displacement. "

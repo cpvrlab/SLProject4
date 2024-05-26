@@ -148,7 +148,8 @@ void SLGLImGui::init(const string& configPath)
 }
 //-----------------------------------------------------------------------------
 //! Loads the proportional and fixed size font depending on the passed DPI
-void SLGLImGui::loadFonts(SLfloat fontPropDotsToLoad, SLfloat fontFixedDotsToLoad)
+void SLGLImGui::loadFonts(SLfloat fontPropDotsToLoad,
+                          SLfloat fontFixedDotsToLoad)
 {
     _fontPropDots  = fontPropDotsToLoad;
     _fontFixedDots = fontFixedDotsToLoad;

@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENESHADOWLIGHTSPOT_H
 #define APPDEMOSCENESHADOWLIGHTSPOT_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for demo scene for spotlight shadow mapping
-class AppDemoSceneShadowLightSpot : public AppScene
+class AppDemoSceneShadowLightSpot : public SLScene
 {
 public:
     AppDemoSceneShadowLightSpot();

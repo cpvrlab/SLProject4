@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENERTSPHERES_H
 #define APPDEMOSCENERTSPHERES_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for the ray tracing scene with sphere group
-class AppDemoSceneRTSpheres : public AppScene
+class AppDemoSceneRTSpheres : public SLScene
 {
 public:
     AppDemoSceneRTSpheres(SLSceneID sceneID);

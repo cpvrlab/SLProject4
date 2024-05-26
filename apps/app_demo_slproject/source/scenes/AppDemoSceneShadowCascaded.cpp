@@ -8,6 +8,7 @@
 //#############################################################################
 
 #include <AppDemoSceneShadowCascaded.h>
+#include <SLAssetLoader.h>
 #include <SLLightDirect.h>
 #include <SLBox.h>
 #include <SLSpheric.h>
@@ -15,7 +16,7 @@
 
 //-----------------------------------------------------------------------------
 AppDemoSceneShadowCascaded::AppDemoSceneShadowCascaded()
-  : AppScene("Cascaded Shadow Mapping Demo Scene")
+  : SLScene("Cascaded Shadow Mapping Demo Scene")
 {
     info("Cascaded Shadow Mapping uses several cascades of shadow maps to "
          "provide higher resolution shadows near the camera and lower "

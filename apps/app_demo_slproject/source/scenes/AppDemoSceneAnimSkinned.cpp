@@ -9,12 +9,13 @@
 
 #include <AppDemoSceneAnimSkinned.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLGrid.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneAnimSkinned::AppDemoSceneAnimSkinned()
-  : AppScene("Skeletal Animation Test Scene")
+  : SLScene("Skeletal Animation Test Scene")
 {
     info("Skeletal Animation Test Scene");
 }

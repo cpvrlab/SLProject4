@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENESHADERWAVE_H
 #define APPDEMOSCENESHADERWAVE_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for per vertex wave shader
-class AppDemoSceneShaderWave : public AppScene
+class AppDemoSceneShaderWave : public SLScene
 {
 public:
     AppDemoSceneShaderWave();

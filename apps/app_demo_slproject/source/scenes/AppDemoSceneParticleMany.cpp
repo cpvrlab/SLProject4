@@ -8,12 +8,13 @@
 //#############################################################################
 
 #include <AppDemoSceneParticleMany.h>
-#include <SLLightSpot.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
+#include <SLLightSpot.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneParticleMany::AppDemoSceneParticleMany()
-  : AppScene("Many Particle System")
+  : SLScene("Many Particle System")
 {
     info("This particle system with 1 mio. particles uses the box shape "
          "type for distribution. See the properties window for the detailed "

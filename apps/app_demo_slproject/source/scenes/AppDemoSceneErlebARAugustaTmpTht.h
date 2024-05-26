@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEERLEBAR_AUGUSTATMPTHT_H
 #define APPDEMOSCENEERLEBAR_AUGUSTATMPTHT_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for ErlebAR model for Augusta Raurica Tempel & Theater.
-class AppDemoSceneErlebARAugustaTmpTht : public AppScene
+class AppDemoSceneErlebARAugustaTmpTht : public SLScene
 {
 public:
     AppDemoSceneErlebARAugustaTmpTht();

@@ -8,12 +8,13 @@
 //#############################################################################
 
 #include <AppDemoSceneZFighting.h>
+#include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLRectangle.h>
-#include <AppDemo.h>
 
 //-----------------------------------------------------------------------------
-AppDemoSceneZFighting::AppDemoSceneZFighting() : AppScene("Z-Fighting Test Scene")
+AppDemoSceneZFighting::AppDemoSceneZFighting() : SLScene("Z-Fighting Test Scene")
 {
     info("The reason for this depth fighting is that the camera's near clipping distance "
          "is almost zero and the far clipping distance is too large. The depth buffer only "

@@ -10,6 +10,7 @@
 #include <AppDemoSceneErlebARSutz.h>
 #include <CVCapture.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightDirect.h>
 #include <SLCoordAxis.h>
 
@@ -18,7 +19,7 @@ extern SLGLTexture* gVideoTexture;
 
 //-----------------------------------------------------------------------------
 AppDemoSceneErlebARSutz::AppDemoSceneErlebARSutz()
-  : AppScene("Sutz AR")
+  : SLScene("Sutz AR")
 {
     info("Augmented Reality at Sutz");
 }

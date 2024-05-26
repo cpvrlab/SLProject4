@@ -8,9 +8,10 @@
 //#############################################################################
 
 #include <AppDemoSceneVideoTrackMediapipe.h>
+#include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <CVCapture.h>
 #include <CVTrackedMediaPipeHands.h>
-#include <AppDemo.h>
 #include <CVTracked.h>
 
 // Global pointers declared in AppDemoVideo
@@ -20,7 +21,7 @@ extern SLNode*      gVideoTrackedNode;
 
 //-----------------------------------------------------------------------------
 AppDemoSceneVideoTrackMediapipe::AppDemoSceneVideoTrackMediapipe()
-  : AppScene("Mediapipe Hand Tracking")
+  : SLScene("Mediapipe Hand Tracking")
 {
     info("Mediapipe Hand Tracking");
 }

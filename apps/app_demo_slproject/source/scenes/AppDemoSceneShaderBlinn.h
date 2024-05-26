@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENESHADERBLINN_H
 #define APPDEMOSCENESHADERBLINN_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for demo scene with Blinn-Phong lighting per vertex or per pixel
-class AppDemoSceneShaderBlinn : public AppScene
+class AppDemoSceneShaderBlinn : public SLScene
 {
 public:
     AppDemoSceneShaderBlinn(SLstring name,

@@ -8,13 +8,14 @@
 //#############################################################################
 
 #include <AppDemoSceneTextureFilter.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLPolygon.h>
 #include <SLSphere.h>
 #include <AppDemo.h>
 
 //-----------------------------------------------------------------------------
-AppDemoSceneTextureFilter::AppDemoSceneTextureFilter() : AppScene("Texture Filter Test")
+AppDemoSceneTextureFilter::AppDemoSceneTextureFilter() : SLScene("Texture Filter Test")
 {
     info("Texture minification filters: "
          "Bottom: nearest, left: linear, top: linear mipmap, right: anisotropic. "

@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENERTLENS_H
 #define APPDEMOSCENERTLENS_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for the lens ray tracing scene
-class AppDemoSceneRTLens : public AppScene
+class AppDemoSceneRTLens : public SLScene
 {
 public:
     AppDemoSceneRTLens();

@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENESHADOWLIGHTTYPES_H
 #define APPDEMOSCENESHADOWLIGHTTYPES_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for demo scene with all shadow mapping types
-class AppDemoSceneShadowLightTypes : public AppScene
+class AppDemoSceneShadowLightTypes : public SLScene
 {
 public:
     AppDemoSceneShadowLightTypes();

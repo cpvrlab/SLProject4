@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENESUZANNE_H
 #define APPDEMOSCENESUZANNE_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for all variants of generated shaders on the Suzanne head
-class AppDemoSceneSuzanne : public AppScene
+class AppDemoSceneSuzanne : public SLScene
 {
 public:
     AppDemoSceneSuzanne(SLstring name,

@@ -116,10 +116,12 @@ void slRegisterCoreAssetsToLoad()
     // FIXME: There are dependencies between these load tasks, how do we express this?
 
     // Load all core shader programs.
-    al.addLoadTask([am] { SLGLProgramManager::loadPrograms(); });
+    al.addLoadTask([am]
+                   { SLGLProgramManager::loadPrograms(); });
 
     // Generate static fonts.
-    al.addLoadTask([am, fontPath = AppDemo::fontPath] { am->generateStaticFonts(AppDemo::fontPath); });
+    al.addLoadTask([am, fontPath = AppDemo::fontPath]
+                   { am->generateStaticFonts(AppDemo::fontPath); });
 
     // Load data for ImGUI fonts.
     al.addRawDataToLoad(AppDemo::fontDataProp,
@@ -309,7 +311,8 @@ bool slPaintAllViews()
         {
             SLstring path = AppDemo::externalPath + "screenshots/";
             Utils::makeDirRecurse(path);
-            SLstring filename     = "Screenshot_" + Utils::getDateTime2String() + ".png";
+            SLstring filename = "Screenshot_" +
+                                Utils::getDateTime2String() + ".png";
             SLstring pathFilename = path + filename;
             sv->saveFrameBufferAsImage(pathFilename);
         }

@@ -8,12 +8,13 @@
 //#############################################################################
 
 #include <AppDemoSceneMeshLoad.h>
+#include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLRectangle.h>
-#include <AppDemo.h>
 
 //-----------------------------------------------------------------------------
-AppDemoSceneMeshLoad::AppDemoSceneMeshLoad() : AppScene("Mesh 3D Loader Test")
+AppDemoSceneMeshLoad::AppDemoSceneMeshLoad() : SLScene("Mesh 3D Loader Test")
 {
     info("We use the assimp library to load 3D file formats including materials, skeletons and animations. "
          "You can view the skeleton with key K. You can stop all animations with SPACE key.\n"

@@ -9,12 +9,13 @@
 
 #include <AppDemoSceneAnimNodeMass.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLBox.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneAnimNodeMass::AppDemoSceneAnimNodeMass()
-  : AppScene("Mass Animation Test Scene")
+  : SLScene("Mass Animation Test Scene")
 {
     info("Performance test for transform updates from many animations.");
 }

@@ -8,9 +8,10 @@
 //#############################################################################
 
 #include <AppDemoSceneVideoTrackAruco.h>
+#include <AppDemo.h>
 #include <CVCapture.h>
 #include <CVTrackedAruco.h>
-#include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLBox.h>
 #include <SLCoordAxis.h>
@@ -22,7 +23,7 @@ extern SLNode*      gVideoTrackedNode;
 
 //-----------------------------------------------------------------------------
 AppDemoSceneVideoTrackAruco::AppDemoSceneVideoTrackAruco(SLSceneID sid)
-  : AppScene("Aruco Marker Tracking"),
+  : SLScene("Aruco Marker Tracking"),
     _sceneID(sid)
 {
     if (_sceneID == SID_VideoTrackArucoMain)

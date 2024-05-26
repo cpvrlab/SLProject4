@@ -9,6 +9,7 @@
 
 #include <AppDemoSceneRevolver.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLCone.h>
 #include <SLDisk.h>
@@ -17,7 +18,7 @@
 #include <SLCylinder.h>
 
 //-----------------------------------------------------------------------------
-AppDemoSceneRevolver::AppDemoSceneRevolver() : AppScene("Revolving Mesh Test")
+AppDemoSceneRevolver::AppDemoSceneRevolver() : SLScene("Revolving Mesh Test")
 {
     info("Examples of revolving mesh objects constructed by rotating a 2D curve. "
          "The glass shader reflects and refracts the environment map. "

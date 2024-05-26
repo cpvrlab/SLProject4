@@ -5,7 +5,7 @@
 #include <AppDemo.h>
 
 //-----------------------------------------------------------------------------
-AppDemoSceneEmpty::AppDemoSceneEmpty() : AppScene("Empty Scene")
+AppDemoSceneEmpty::AppDemoSceneEmpty() : SLScene("Empty Scene")
 {
     info("No Scene loaded.");
 }

@@ -1,10 +1,10 @@
 #ifndef APPDEMOSCENEEMPTY_H
 #define APPDEMOSCENEEMPTY_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
-class AppDemoSceneEmpty : public AppScene
+class AppDemoSceneEmpty : public SLScene
 {
 public:
     AppDemoSceneEmpty();

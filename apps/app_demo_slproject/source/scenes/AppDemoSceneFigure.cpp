@@ -9,6 +9,7 @@
 
 #include <AppDemoSceneFigure.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLBox.h>
 #include <SLRectangle.h>
@@ -16,7 +17,7 @@
 #include <SLCylinder.h>
 
 //-----------------------------------------------------------------------------
-AppDemoSceneFigure::AppDemoSceneFigure() : AppScene("Hierarchical Figure Test")
+AppDemoSceneFigure::AppDemoSceneFigure() : SLScene("Hierarchical Figure Test")
 {
     info("Hierarchical scenegraph with multiple subgroups in the figure. "
          "The goal is design a figure with hierarchical transforms containing only rotations and translations. "

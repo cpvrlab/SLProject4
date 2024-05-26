@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENERTDOF_H
 #define APPDEMOSCENERTDOF_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for the depth of field ray tracing scene
-class AppDemoSceneRTDoF : public AppScene
+class AppDemoSceneRTDoF : public SLScene
 {
 public:
     AppDemoSceneRTDoF();

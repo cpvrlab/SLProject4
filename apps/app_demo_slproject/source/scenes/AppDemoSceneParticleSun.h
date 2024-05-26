@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEPARTICLESUN_H
 #define APPDEMOSCENEPARTICLESUN_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for sun particle system scene
-class AppDemoSceneParticleSun : public AppScene
+class AppDemoSceneParticleSun : public SLScene
 {
 public:
     AppDemoSceneParticleSun();

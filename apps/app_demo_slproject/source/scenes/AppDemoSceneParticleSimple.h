@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEPARTICLESIMPLE_H
 #define APPDEMOSCENEPARTICLESIMPLE_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for simple particle system scene
-class AppDemoSceneParticleSimple : public AppScene
+class AppDemoSceneParticleSimple : public SLScene
 {
 public:
     AppDemoSceneParticleSimple();

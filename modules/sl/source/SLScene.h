@@ -23,6 +23,7 @@
 
 class SLCamera;
 class SLSkybox;
+class SLAssetLoader;
 
 //-----------------------------------------------------------------------------
 //! C-Callback function typedef for scene load function
@@ -33,17 +34,14 @@ typedef void(SL_STDCALL* cbOnSceneLoad)(SLAssetManager* am,
 //-----------------------------------------------------------------------------
 //! The SLScene class represents the top level instance holding the scene structure
 /*!
- The SLScene class holds everything that is common for all scene views such as
- the root pointer (_root3D) to the scene, an array of lights as well as the
- global resources (_meshes (SLMesh), _materials (SLMaterial), _textures
- (SLGLTexture) and _shaderProgs (SLGLProgram)).
- All these resources and the scene with all nodes to which _root3D pointer points
- get deleted in the method unInit.\n
- A scene could have multiple scene views. A pointer of each is stored in the
- vector _sceneViews.\n
- The scene assembly takes place outside of the library in function of the application.
- A pointer for this function must be passed to the SLScene constructor. For the
- demo project this function is in AppDemoSceneLoad.cpp.
+ The SLScene class holds everything that is common for all sceneviews such as
+ the pointer (_root3D) to the root node of the scene.
+ The scene loading happens in 3 steps:\n
+ 1) Registering all expensive assets to load in registerAssetsToLoad.\n
+ 2) Parallel loading of assets in threads with SLAssetLoader::loadAll.\n
+ 3) Assembling the scene in assemble.\n
+ To load a scene you must therefore inherit from this class and override the
+ methods registerAssetsToLoad and assemble.\n
 */
 class SLScene : public SLObject
 {
@@ -54,6 +52,12 @@ public:
     ~SLScene() override;
 
     void initOculus(SLstring shaderDir);
+
+    //! All assets the should be loaded in parallel must be registered in here.
+    virtual void registerAssetsToLoad(SLAssetLoader& al)       = 0;
+
+    //! After parallel loading of the assets the scene gets assembled in here.
+    virtual void assemble(SLAssetManager* am, SLSceneView* sv) = 0;
 
     // Setters
     void root3D(SLNode* root3D)

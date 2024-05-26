@@ -11,11 +11,11 @@
 #define APPDEMOSCENEJANSUNIVERSE_H
 
 #include "SLGLTexture.h"
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for the benchmark scene for Jans Universe
-class AppDemoSceneJansUniverse : public AppScene
+class AppDemoSceneJansUniverse : public SLScene
 {
 public:
     AppDemoSceneJansUniverse();

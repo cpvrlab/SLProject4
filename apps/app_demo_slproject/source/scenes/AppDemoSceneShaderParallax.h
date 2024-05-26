@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENESHADERPARALLAX_H
 #define APPDEMOSCENESHADERPARALLAX_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for parallax bump mapping demo scene
-class AppDemoSceneShaderParallax : public AppScene
+class AppDemoSceneShaderParallax : public SLScene
 {
 public:
     AppDemoSceneShaderParallax();

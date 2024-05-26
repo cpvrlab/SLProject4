@@ -1,5 +1,15 @@
-#include <AppDemoSceneSuzanne.h>
+//#############################################################################
+//  File:      AppDemoSceneSuzanne.cpp
+//  Date:      May 2024
+//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
+//  Authors:   Marino von Wattenwyl
+//  License:   This software is provided under the GNU General Public License
+//             Please visit: http://opensource.org/licenses/GPL-3.0
+//#############################################################################
 
+
+#include <AppDemoSceneSuzanne.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLRectangle.h>
 #include <AppDemo.h>
@@ -10,7 +20,7 @@ AppDemoSceneSuzanne::AppDemoSceneSuzanne(SLstring name,
                                          bool     normalMapping,
                                          bool     occlusionMapping,
                                          bool     shadowMapping)
-  : AppScene(name),
+  : SLScene(name),
     _textureMapping(textureMapping),
     _normalMapping(normalMapping),
     _occlusionMapping(occlusionMapping),

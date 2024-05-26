@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENESHADEREARTH_H
 #define APPDEMOSCENESHADEREARTH_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for image base lighting demo scene
-class AppDemoSceneShaderEarth : public AppScene
+class AppDemoSceneShaderEarth : public SLScene
 {
 public:
     AppDemoSceneShaderEarth();

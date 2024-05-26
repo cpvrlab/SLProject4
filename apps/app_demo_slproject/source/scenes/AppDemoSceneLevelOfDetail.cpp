@@ -8,14 +8,14 @@
 //#############################################################################
 
 #include <AppDemoSceneLevelOfDetail.h>
-#include <SLLightSpot.h>
+#include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLRectangle.h>
 #include <SLNodeLOD.h>
-#include <AppDemo.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneLevelOfDetail::AppDemoSceneLevelOfDetail(SLSceneID sceneID)
-  : AppScene("Level of Detail Test"),
+  : SLScene("Level of Detail Test"),
     _sceneID(sceneID)
 {
 }

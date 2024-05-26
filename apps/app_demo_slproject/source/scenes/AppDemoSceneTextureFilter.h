@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENETEXTUREFILTER_H
 #define APPDEMOSCENETEXTUREFILTER_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for texture filtering scene
-class AppDemoSceneTextureFilter : public AppScene
+class AppDemoSceneTextureFilter : public SLScene
 {
 public:
     AppDemoSceneTextureFilter();

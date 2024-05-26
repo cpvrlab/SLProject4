@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEROBOT_H
 #define APPDEMOSCENEROBOT_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for a robot arm test scene
-class AppDemoSceneRobot : public AppScene
+class AppDemoSceneRobot : public SLScene
 {
 public:
     AppDemoSceneRobot();

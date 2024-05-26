@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEERLEBAR_BIELBFH_H
 #define APPDEMOSCENEERLEBAR_BIELBFH_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for ErlebAR model in Biel at BFH.
-class AppDemoSceneErlebARBielBFH : public AppScene
+class AppDemoSceneErlebARBielBFH : public SLScene
 {
 public:
     AppDemoSceneErlebARBielBFH();

@@ -10,6 +10,7 @@
 #include <AppDemoSceneErlebARBielBFH.h>
 #include <CVCapture.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightDirect.h>
 #include <SLCoordAxis.h>
 
@@ -18,7 +19,7 @@ extern SLGLTexture* gVideoTexture;
 
 //-----------------------------------------------------------------------------
 AppDemoSceneErlebARBielBFH::AppDemoSceneErlebARBielBFH()
-  : AppScene("Biel-BFH AR")
+  : SLScene("Biel-BFH AR")
 {
     info("Augmented Reality at Biel-BFH");
 }

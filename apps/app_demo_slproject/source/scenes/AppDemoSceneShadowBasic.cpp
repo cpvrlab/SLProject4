@@ -8,13 +8,14 @@
 //#############################################################################
 
 #include <AppDemoSceneShadowBasic.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLSpheric.h>
 #include <SLBox.h>
 #include <AppDemo.h>
 
 //-----------------------------------------------------------------------------
-AppDemoSceneShadowBasic::AppDemoSceneShadowBasic() : AppScene("Basic Shadow Mapping Scene")
+AppDemoSceneShadowBasic::AppDemoSceneShadowBasic() : SLScene("Basic Shadow Mapping Scene")
 {
     info("Shadow Mapping is a technique to render shadows in two passes."
          "In pass 1 the scene gets rendered from each light source.\n"

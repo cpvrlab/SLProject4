@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEANIMNODE_H
 #define APPDEMOSCENEANIMNODE_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for node animation test scene
-class AppDemoSceneAnimNode : public AppScene
+class AppDemoSceneAnimNode : public SLScene
 {
 public:
     AppDemoSceneAnimNode();

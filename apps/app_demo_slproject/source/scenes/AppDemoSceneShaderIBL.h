@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENESHADERIBL_H
 #define APPDEMOSCENESHADERIBL_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for image base lighting demo scene
-class AppDemoSceneShaderIBL : public AppScene
+class AppDemoSceneShaderIBL : public SLScene
 {
 public:
     AppDemoSceneShaderIBL();

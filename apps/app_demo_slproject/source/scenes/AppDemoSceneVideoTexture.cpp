@@ -8,8 +8,9 @@
 //#############################################################################
 
 #include <AppDemoSceneVideoTexture.h>
-#include <CVCapture.h>
 #include <AppDemo.h>
+#include <CVCapture.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLRectangle.h>
 #include <SLSphere.h>
@@ -19,7 +20,7 @@ extern SLGLTexture* gVideoTexture;
 
 //-----------------------------------------------------------------------------
 AppDemoSceneVideoTexture::AppDemoSceneVideoTexture(SLSceneID sid)
-  : AppScene("Texture from Video"),
+  : SLScene("Texture from Video"),
     _sceneID(sid)
 {
     // Set scene name and info string

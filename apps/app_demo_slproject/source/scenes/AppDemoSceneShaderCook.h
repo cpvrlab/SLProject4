@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENESHADERCOOK_H
 #define APPDEMOSCENESHADERCOOK_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for Cook-Torrance lighting demo scene
-class AppDemoSceneShaderCook : public AppScene
+class AppDemoSceneShaderCook : public SLScene
 {
 public:
     AppDemoSceneShaderCook();

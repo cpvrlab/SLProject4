@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEVIDEOSENSORAR_H
 #define APPDEMOSCENEVIDEOSENSORAR_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for devices IMU and GPS Sensors test scene.
-class AppDemoSceneVideoSensorAR : public AppScene
+class AppDemoSceneVideoSensorAR : public SLScene
 {
 public:
     AppDemoSceneVideoSensorAR();

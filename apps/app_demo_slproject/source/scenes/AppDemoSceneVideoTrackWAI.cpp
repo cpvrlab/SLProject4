@@ -8,8 +8,9 @@
 //#############################################################################
 
 #include <AppDemoSceneVideoTrackWAI.h>
-#include <CVCapture.h>
 #include <AppDemo.h>
+#include <CVCapture.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLBox.h>
 #include <SLCoordAxis.h>
@@ -27,7 +28,7 @@ extern SLNode*      gVideoTrackedNode;
 
 //-----------------------------------------------------------------------------
 AppDemoSceneVideoTrackWAI::AppDemoSceneVideoTrackWAI()
-  : AppScene("Feature Tracking with ORBSLAM library")
+  : SLScene("Feature Tracking with ORBSLAM library")
 {
     info("Feature Tracking with ORBSLAM library");
 }

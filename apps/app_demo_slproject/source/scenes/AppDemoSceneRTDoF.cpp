@@ -9,13 +9,14 @@
 
 #include <AppDemoSceneRTDoF.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLRectangle.h>
 #include <SLSphere.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneRTDoF::AppDemoSceneRTDoF()
-  : AppScene("Depth of Field Ray Tracing")
+  : SLScene("Depth of Field Ray Tracing")
 {
     info("Muttenzer Box with environment mapped reflective sphere and "
          "transparent refractive glass sphere. Try ray tracing for real "

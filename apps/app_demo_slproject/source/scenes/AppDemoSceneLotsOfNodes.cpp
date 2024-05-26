@@ -8,13 +8,14 @@
 //#############################################################################
 
 #include <AppDemoSceneLotsOfNodes.h>
+#include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLSphere.h>
-#include <AppDemo.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneLotsOfNodes::AppDemoSceneLotsOfNodes()
-  : AppScene("Lots of Nodes Benchmark Scene")
+  : SLScene("Lots of Nodes Benchmark Scene")
 {
     info("Lots of Nodes Benchmark Scene");
 }

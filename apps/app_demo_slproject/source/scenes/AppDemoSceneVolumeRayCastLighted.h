@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEVOLUMERAYCASTLIGHTED_H
 #define APPDEMOSCENEVOLUMERAYCASTLIGHTED_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for test scene for lighted volume rendering of an angiographic MRI scan"
-class AppDemoSceneVolumeRayCastLighted : public AppScene
+class AppDemoSceneVolumeRayCastLighted : public SLScene
 {
 public:
     AppDemoSceneVolumeRayCastLighted();

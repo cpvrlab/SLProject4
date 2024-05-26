@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENESHADERSKYBOX_H
 #define APPDEMOSCENESHADERSKYBOX_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for image base lighting demo scene
-class AppDemoSceneShaderSkybox : public AppScene
+class AppDemoSceneShaderSkybox : public SLScene
 {
 public:
     AppDemoSceneShaderSkybox();

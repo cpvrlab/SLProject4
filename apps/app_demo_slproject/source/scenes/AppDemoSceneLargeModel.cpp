@@ -9,11 +9,12 @@
 
 #include <AppDemoSceneLargeModel.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneLargeModel::AppDemoSceneLargeModel()
-  : AppScene("Large Model Benchmark Scene")
+  : SLScene("Large Model Benchmark Scene")
 {
     info("Large Model with 7.2 mio. triangles.");
 }

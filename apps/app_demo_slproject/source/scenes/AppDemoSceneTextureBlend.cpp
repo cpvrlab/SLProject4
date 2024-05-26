@@ -8,12 +8,13 @@
 //#############################################################################
 
 #include <AppDemoSceneTextureBlend.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLPolygon.h>
 #include <AppDemo.h>
 
 //-----------------------------------------------------------------------------
-AppDemoSceneTextureBlend::AppDemoSceneTextureBlend() : AppScene("Texture Blending Test")
+AppDemoSceneTextureBlend::AppDemoSceneTextureBlend() : SLScene("Texture Blending Test")
 {
     info("Texture map blending with depth sorting. Transparent tree rectangles in view "
          "frustum are rendered back to front. You can turn on/off alpha sorting in the "

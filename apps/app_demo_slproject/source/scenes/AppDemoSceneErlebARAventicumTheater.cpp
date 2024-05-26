@@ -10,6 +10,7 @@
 #include <AppDemoSceneErlebARAventicumTheater.h>
 #include <CVCapture.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightDirect.h>
 #include <SLCoordAxis.h>
 
@@ -18,7 +19,7 @@ extern SLGLTexture* gVideoTexture;
 
 //-----------------------------------------------------------------------------
 AppDemoSceneErlebARAventicumTheater::AppDemoSceneErlebARAventicumTheater()
-  : AppScene("Aventicum Theatre AR")
+  : SLScene("Aventicum Theatre AR")
 {
     info("Aventicum Theatre AR");
 }

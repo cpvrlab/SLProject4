@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEVIDEOTEX_H
 #define APPDEMOSCENEVIDEOTEX_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for live or file video on texture test scene
-class AppDemoSceneVideoTexture : public AppScene
+class AppDemoSceneVideoTexture : public SLScene
 {
 public:
     AppDemoSceneVideoTexture(SLSceneID sid);

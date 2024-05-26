@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENESHADOWBASIC_H
 #define APPDEMOSCENESHADOWBASIC_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for basic shadow mapping demo scene
-class AppDemoSceneShadowBasic : public AppScene
+class AppDemoSceneShadowBasic : public SLScene
 {
 public:
     AppDemoSceneShadowBasic();

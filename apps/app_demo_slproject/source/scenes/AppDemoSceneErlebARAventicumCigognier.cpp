@@ -10,6 +10,7 @@
 #include <AppDemoSceneErlebARAventicumCigognier.h>
 #include <CVCapture.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightDirect.h>
 #include <SLCoordAxis.h>
 
@@ -18,7 +19,7 @@ extern SLGLTexture* gVideoTexture;
 
 //-----------------------------------------------------------------------------
 AppDemoSceneErlebARAventicumCigognier::AppDemoSceneErlebARAventicumCigognier()
-  : AppScene("Aventicum Cigognier AR")
+  : SLScene("Aventicum Cigognier AR")
 {
     info("Aventicum Cigognier AR");
 }

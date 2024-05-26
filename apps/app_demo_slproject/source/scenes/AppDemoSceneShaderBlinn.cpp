@@ -8,7 +8,7 @@
 //#############################################################################
 
 #include <AppDemoSceneShaderBlinn.h>
-
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLLightRect.h>
 #include <SLSphere.h>
@@ -16,7 +16,7 @@
 
 //-----------------------------------------------------------------------------
 AppDemoSceneShaderBlinn::AppDemoSceneShaderBlinn(SLstring name, bool perVertex)
-  : AppScene(name),
+  : SLScene(name),
     _perVertex(perVertex)
 {
     if (_perVertex)

@@ -8,7 +8,7 @@
 //#############################################################################
 
 #include <AppDemoSceneShaderParallax.h>
-
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLLightDirect.h>
 #include <SLRectangle.h>
@@ -16,7 +16,7 @@
 
 //-----------------------------------------------------------------------------
 AppDemoSceneShaderParallax::AppDemoSceneShaderParallax()
-  : AppScene("Parallax Bump Mapping Test")
+  : SLScene("Parallax Bump Mapping Test")
 {
     info("Normal map parallax mapping with a spot and a directional light"
          "Use X-Key to increment (decrement w. shift) parallax scale."

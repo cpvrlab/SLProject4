@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENELARGEMODEL_H
 #define APPDEMOSCENELARGEMODEL_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for large model scene
-class AppDemoSceneLargeModel : public AppScene
+class AppDemoSceneLargeModel : public SLScene
 {
 public:
     AppDemoSceneLargeModel();

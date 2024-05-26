@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEVIDEOTRACKCHESS_H
 #define APPDEMOSCENEVIDEOTRACKCHESS_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for video for chessboard test scene
-class AppDemoSceneVideoTrackChessboard : public AppScene
+class AppDemoSceneVideoTrackChessboard : public SLScene
 {
 public:
     AppDemoSceneVideoTrackChessboard(SLSceneID sid);

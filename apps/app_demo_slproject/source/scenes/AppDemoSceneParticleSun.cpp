@@ -8,12 +8,13 @@
 //#############################################################################
 
 #include <AppDemoSceneParticleSun.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <AppDemo.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneParticleSun::AppDemoSceneParticleSun()
-  : AppScene("Sun Particle System")
+  : SLScene("Sun Particle System")
 {
     info("This sun particle system uses the sphere shape type for distribution.\n"
          "See the properties window for the detailed settings of the particles system");

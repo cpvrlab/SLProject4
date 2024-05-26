@@ -8,7 +8,7 @@
 //#############################################################################
 
 #include <AppDemoSceneShaderBump.h>
-
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLLightDirect.h>
 #include <SLRectangle.h>
@@ -16,7 +16,7 @@
 
 //-----------------------------------------------------------------------------
 AppDemoSceneShaderBump::AppDemoSceneShaderBump()
-  : AppScene("Normal Map Bump Mapping")
+  : SLScene("Normal Map Bump Mapping")
 {
     info("Normal map bump mapping combined with a spot and a directional lighting.");
 }

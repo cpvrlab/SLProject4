@@ -8,12 +8,13 @@
 //#############################################################################
 
 #include <AppDemoSceneParticleSimple.h>
-#include <SLLightSpot.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
+#include <SLLightSpot.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneParticleSimple::AppDemoSceneParticleSimple()
-  : AppScene("Simple Particle System")
+  : SLScene("Simple Particle System")
 {
     info("Simple Particle System with a flip book smoke particle.");
 }

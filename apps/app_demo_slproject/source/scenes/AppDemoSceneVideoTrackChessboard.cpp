@@ -8,10 +8,11 @@
 //#############################################################################
 
 #include <AppDemoSceneVideoTrackChessboard.h>
+#include <AppDemo.h>
 #include <CVCapture.h>
 #include <CVTrackedChessboard.h>
 #include <CVCalibrationEstimator.h>
-#include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLBox.h>
 #include <SLCoordAxis.h>
@@ -23,7 +24,7 @@ extern SLNode*      gVideoTrackedNode;
 
 //-----------------------------------------------------------------------------
 AppDemoSceneVideoTrackChessboard::AppDemoSceneVideoTrackChessboard(SLSceneID sid)
-  : AppScene("Chessboard Video"),
+  : SLScene("Chessboard Video"),
     _sceneID(sid)
 {
     switch (_sceneID)

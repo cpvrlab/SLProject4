@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENETEXTUREBLEND_H
 #define APPDEMOSCENETEXTUREBLEND_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for texture blending scene
-class AppDemoSceneTextureBlend : public AppScene
+class AppDemoSceneTextureBlend : public SLScene
 {
 public:
     AppDemoSceneTextureBlend();

@@ -8,13 +8,14 @@
 //#############################################################################
 
 #include <AppDemoScene2Dand3DText.h>
+#include <SLAssetManager.h>
 #include <SLLightSpot.h>
 #include <SLText.h>
 #include <SLSphere.h>
 #include <AppDemo.h>
 
 //-----------------------------------------------------------------------------
-AppDemoScene2Dand3DText::AppDemoScene2Dand3DText() : AppScene("2D and 3D Text Scene")
+AppDemoScene2Dand3DText::AppDemoScene2Dand3DText() : SLScene("2D and 3D Text Scene")
 {
     info("All 3D objects are in the _root3D scene and the center text is in the _root2D scene "
          "and rendered in orthographic projection in screen space.");

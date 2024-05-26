@@ -8,12 +8,13 @@
 //#############################################################################
 
 #include <AppDemoSceneMinimal.h>
+#include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLRectangle.h>
-#include <AppDemo.h>
 
 //-----------------------------------------------------------------------------
-AppDemoSceneMinimal::AppDemoSceneMinimal() : AppScene("Minimal Scene")
+AppDemoSceneMinimal::AppDemoSceneMinimal() : SLScene("Minimal Scene")
 {
     info("Minimal scene with a texture mapped rectangle with a point light source.\n"
          "You can find all other test scenes in the menu File > Load Test Scenes."

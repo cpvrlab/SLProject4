@@ -8,13 +8,14 @@
 //#############################################################################
 
 #include <AppDemoSceneVolumeRayCastLighted.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLBox.h>
 #include <AppDemo.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneVolumeRayCastLighted::AppDemoSceneVolumeRayCastLighted()
-  : AppScene("Lighted Volume Ray Cast Test")
+  : SLScene("Lighted Volume Ray Cast Test")
 {
     info("Lighted Volume Rendering of an angiographic MRI scan");
 }

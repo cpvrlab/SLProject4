@@ -8,6 +8,7 @@
 //#############################################################################
 
 #include <AppDemoSceneShadowLightSpot.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLBox.h>
 #include <SLSpheric.h>
@@ -15,7 +16,7 @@
 
 //-----------------------------------------------------------------------------
 AppDemoSceneShadowLightSpot::AppDemoSceneShadowLightSpot()
-  : AppScene("Shadow Mapping for 8 Spot lights")
+  : SLScene("Shadow Mapping for 8 Spot lights")
 {
     info("8 Spot lights use a perspective projection for their light space.");
 }

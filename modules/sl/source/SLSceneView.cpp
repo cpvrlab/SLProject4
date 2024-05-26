@@ -525,7 +525,8 @@ SLbool SLSceneView::onPaint()
         // update current scene
         sceneHasChanged = _s->onUpdate((_renderType == RT_rt),
                                        drawBit(SL_DB_VOXELS),
-                                       !drawBit(SL_DB_GPU_SKINNING) || drawBit(SL_DB_WITHEDGES));
+                                       !drawBit(SL_DB_GPU_SKINNING) ||
+                                         drawBit(SL_DB_WITHEDGES));
     }
 
     SLbool camUpdated = false;
@@ -1806,52 +1807,58 @@ SLstring SLSceneView::windowTitle()
     profiling = " *** PROFILING *** ";
 #endif
 
-    if (_renderType == RT_rt)
+    if (_s)
     {
-        int numThreads = _raytracer.doDistributed() ? _raytracer.numThreads() : 1;
+        if (_renderType == RT_rt)
+        {
+            int numThreads = _raytracer.doDistributed() ? _raytracer.numThreads() : 1;
 
-        if (_raytracer.doContinuous())
+            if (_raytracer.doContinuous())
+            {
+                snprintf(title,
+                         sizeof(title),
+                         "Ray Tracing: %s (fps: %4.1f, Threads: %d)",
+                         _s->name().c_str(),
+                         _s->fps(),
+                         numThreads);
+            }
+            else
+            {
+                snprintf(title,
+                         sizeof(title),
+                         "Ray Tracing: %s (Threads: %d)",
+                         _s->name().c_str(),
+                         numThreads);
+            }
+        }
+        else if (_renderType == RT_pt)
         {
             snprintf(title,
                      sizeof(title),
-                     "Ray Tracing: %s (fps: %4.1f, Threads: %d)",
+                     "Path Tracing: %s (Threads: %d)",
+                     _s->name().c_str(),
+                     _pathtracer.numThreads());
+        }
+        else
+        {
+            string format;
+            if (_s->fps() > 5)
+                format = "OpenGL Renderer: %s (fps: %4.0f, %u nodes of %u rendered)";
+            else
+                format = "OpenGL Renderer: %s (fps: %4.1f, %u nodes of %u rendered)";
+
+            snprintf(title,
+                     sizeof(title),
+                     format.c_str(),
                      _s->name().c_str(),
                      _s->fps(),
-                     numThreads);
+                     _stats3D.numNodesOpaque + _stats3D.numNodesBlended,
+                     _stats3D.numNodes);
         }
-        else
-        {
-            snprintf(title,
-                     sizeof(title),
-                     "Ray Tracing: %s (Threads: %d)",
-                     _s->name().c_str(),
-                     numThreads);
-        }
-    }
-    else if (_renderType == RT_pt)
-    {
-        snprintf(title,
-                 sizeof(title),
-                 "Path Tracing: %s (Threads: %d)",
-                 _s->name().c_str(),
-                 _pathtracer.numThreads());
     }
     else
-    {
-        string format;
-        if (_s->fps() > 5)
-            format = "OpenGL Renderer: %s (fps: %4.0f, %u nodes of %u rendered)";
-        else
-            format = "OpenGL Renderer: %s (fps: %4.1f, %u nodes of %u rendered)";
+        snprintf(title, sizeof(title), "Scene is loading ...");
 
-        snprintf(title,
-                 sizeof(title),
-                 format.c_str(),
-                 _s->name().c_str(),
-                 _s->fps(),
-                 _stats3D.numNodesOpaque + _stats3D.numNodesBlended,
-                 _stats3D.numNodes);
-    }
     return profiling + SLstring(title) + profiling;
 }
 //-----------------------------------------------------------------------------

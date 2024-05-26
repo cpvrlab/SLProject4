@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEANIMSKINNEDMASS2_H
 #define APPDEMOSCENEANIMSKINNEDMASS2_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for skinned animation test scene
-class AppDemoSceneAnimSkinnedMass2 : public AppScene
+class AppDemoSceneAnimSkinnedMass2 : public SLScene
 {
 public:
     AppDemoSceneAnimSkinnedMass2();

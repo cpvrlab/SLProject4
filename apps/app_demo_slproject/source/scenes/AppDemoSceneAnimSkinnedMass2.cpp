@@ -9,12 +9,13 @@
 
 #include <AppDemoSceneAnimSkinnedMass2.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLRectangle.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneAnimSkinnedMass2::AppDemoSceneAnimSkinnedMass2()
-  : AppScene("Mass Skeletal Animation Test Scene")
+  : SLScene("Mass Skeletal Animation Test Scene")
 {
     SLchar name[512];
     snprintf(name,

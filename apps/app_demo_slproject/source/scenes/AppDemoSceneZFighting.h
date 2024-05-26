@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEZFIGHTING_H
 #define APPDEMOSCENEZFIGHTING_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for z-fighting test scene
-class AppDemoSceneZFighting : public AppScene
+class AppDemoSceneZFighting : public SLScene
 {
 public:
     AppDemoSceneZFighting();

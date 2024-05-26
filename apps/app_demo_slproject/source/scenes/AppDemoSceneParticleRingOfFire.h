@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEPARTICLERING_H
 #define APPDEMOSCENEPARTICLERING_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for fire ring particle system scene
-class AppDemoSceneParticleRingOfFire : public AppScene
+class AppDemoSceneParticleRingOfFire : public SLScene
 {
 public:
     AppDemoSceneParticleRingOfFire();

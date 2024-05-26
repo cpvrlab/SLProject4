@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENESHADERBUMP_H
 #define APPDEMOSCENESHADERBUMP_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for normal map bump mapping
-class AppDemoSceneShaderBump : public AppScene
+class AppDemoSceneShaderBump : public SLScene
 {
 public:
     AppDemoSceneShaderBump();

@@ -8,13 +8,15 @@
 //#############################################################################
 
 #include <AppDemoSceneGLTF.h>
-
-#include <SLLightDirect.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
+#include <SLLightSpot.h>
+#include <SLSphere.h>
+#include <SLLightDirect.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneGLTF::AppDemoSceneGLTF(SLSceneID sceneID)
-  : AppScene("GLTF File Demo Scene"),
+  : SLScene("GLTF File Demo Scene"),
     _sceneID(sceneID)
 {
     info("GLTF File Format Test Scene");

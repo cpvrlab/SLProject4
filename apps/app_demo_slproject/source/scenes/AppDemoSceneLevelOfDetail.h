@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENELEVELOFDETAIL_H
 #define APPDEMOSCENELEVELOFDETAIL_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for level of detail test scene
-class AppDemoSceneLevelOfDetail : public AppScene
+class AppDemoSceneLevelOfDetail : public SLScene
 {
 public:
     AppDemoSceneLevelOfDetail(SLSceneID sceneID);

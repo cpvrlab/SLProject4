@@ -10,6 +10,7 @@
 #include <AppDemoSceneAnimNode.h>
 #include <AppDemoSceneFigure.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLRectangle.h>
 #include <SLSphere.h>
@@ -17,7 +18,7 @@
 
 //-----------------------------------------------------------------------------
 AppDemoSceneAnimNode::AppDemoSceneAnimNode()
-  : AppScene("Node Animation Test Scene")
+  : SLScene("Node Animation Test Scene")
 {
     info("Node animations with different easing curves.");
 }

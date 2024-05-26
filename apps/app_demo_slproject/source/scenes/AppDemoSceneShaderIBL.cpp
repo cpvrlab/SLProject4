@@ -8,7 +8,7 @@
 //#############################################################################
 
 #include <AppDemoSceneShaderIBL.h>
-
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLLightDirect.h>
 #include <SLSphere.h>
@@ -16,7 +16,7 @@
 
 //-----------------------------------------------------------------------------
 AppDemoSceneShaderIBL::AppDemoSceneShaderIBL()
-  : AppScene("Image Based Lighting Test Scene")
+  : SLScene("Image Based Lighting Test Scene")
 {
     info("Image-based lighting from skybox using high dynamic range images. "
          "It uses the Cook-Torrance reflection model also to calculate the "

@@ -8,14 +8,15 @@
 //#############################################################################
 
 #include <AppDemoSceneParticleComplexFire.h>
+#include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLRectangle.h>
-#include <AppDemo.h>
 #include <imgui_color_gradient.h> // For color over life, need to create own color interpolator
 
 //-----------------------------------------------------------------------------
 AppDemoSceneParticleComplexFire::AppDemoSceneParticleComplexFire(SLSceneID sceneID)
-  : AppScene("Complex Fire Particle System"),
+  : SLScene("Complex Fire Particle System"),
     _sceneID(sceneID)
 {
     info("The fire particle systems contain each multiple sub particle systems.\n"

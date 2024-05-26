@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEVIDEOTRACKWAI_H
 #define APPDEMOSCENEVIDEOTRACKWAI_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for Mediapipe hand tracking test scene
-class AppDemoSceneVideoTrackWAI : public AppScene
+class AppDemoSceneVideoTrackWAI : public SLScene
 {
 public:
     AppDemoSceneVideoTrackWAI();

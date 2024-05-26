@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEMESHLOAD_H
 #define APPDEMOSCENEMESHLOAD_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for mesh loading demo scene
-class AppDemoSceneMeshLoad : public AppScene
+class AppDemoSceneMeshLoad : public SLScene
 {
 public:
     AppDemoSceneMeshLoad();

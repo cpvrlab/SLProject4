@@ -9,13 +9,14 @@
 
 #include <AppDemoSceneRTSpheres.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLRectangle.h>
 #include <SLSphere.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneRTSpheres::AppDemoSceneRTSpheres(SLSceneID sceneID)
-  : AppScene("Ray Tracing Spheres"),
+  : SLScene("Ray Tracing Spheres"),
     _sceneID(sceneID)
 {
     if (sceneID == SID_RTSpheres)

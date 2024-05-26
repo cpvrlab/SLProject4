@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEPOINTCLOUDS_H
 #define APPDEMOSCENEPOINTCLOUDS_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for point cloud test scene
-class AppDemoScenePointClouds : public AppScene
+class AppDemoScenePointClouds : public SLScene
 {
 public:
     AppDemoScenePointClouds();

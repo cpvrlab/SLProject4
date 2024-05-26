@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEPARTICLEDUST_H
 #define APPDEMOSCENEPARTICLEDUST_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for simple particle system scene
-class AppDemoSceneParticleDustStorm : public AppScene
+class AppDemoSceneParticleDustStorm : public SLScene
 {
 public:
     AppDemoSceneParticleDustStorm();

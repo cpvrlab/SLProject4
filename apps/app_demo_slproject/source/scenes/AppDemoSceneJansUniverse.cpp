@@ -9,6 +9,7 @@
 
 #include <AppDemoSceneJansUniverse.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLRectangle.h>
 #include <SLSphere.h>
@@ -25,7 +26,7 @@ const SLuint NUM_CHILDREN = 8;
 
 //-----------------------------------------------------------------------------
 AppDemoSceneJansUniverse::AppDemoSceneJansUniverse()
-  : AppScene("Jan's Universe Test Scene")
+  : SLScene("Jan's Universe Test Scene")
 {
     info("Jan's Universe Test Scene");
 }

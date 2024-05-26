@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEPARTICLEMANY_H
 #define APPDEMOSCENEPARTICLEMANY_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for benchmark scene with a particle system with many particles
-class AppDemoSceneParticleMany : public AppScene
+class AppDemoSceneParticleMany : public SLScene
 {
 public:
     AppDemoSceneParticleMany();

@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEERLEBAR_CHRISTOFFEL_H
 #define APPDEMOSCENEERLEBAR_CHRISTOFFEL_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for ErlebAR model Christoffel Tower in Bern.
-class AppDemoSceneErlebARChristoffel : public AppScene
+class AppDemoSceneErlebARChristoffel : public SLScene
 {
 public:
     AppDemoSceneErlebARChristoffel();

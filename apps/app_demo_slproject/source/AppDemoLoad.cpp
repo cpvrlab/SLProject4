@@ -11,9 +11,13 @@
 #include <CVCapture.h>
 #include <GlobalTimer.h>
 
-#include <AppScene.h>
+#include <SLScene.h>
+#include <SLAssetManager.h>
+#include <SLAssetLoader.h>
+
 #include <AppDemo.h>
 #include <AppDemoGui.h>
+
 #include <AppDemoScene2Dand3DText.h>
 #include <AppDemoSceneAnimNode.h>
 #include <AppDemoSceneAnimNodeMass.h>
@@ -91,9 +95,17 @@ extern SLGLTexture* gVideoTexture;
 extern CVTracked*   gVideoTracker;
 extern SLNode*      gVideoTrackedNode;
 //-----------------------------------------------------------------------------
+/*!
+ * Deletes the current scene and creates a new one identified by the sceneID.
+ * All assets get registered for async loading while Imgui shows a progress
+ * spinner in the UI. After the parallel loading the scene gets assembled back
+ * in the main thread.
+ * @param sv Pointer to the sceneview
+ * @param sceneID Scene identifier defined in SLEnum
+ */
 void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
 {
-    AppScene*        s  = nullptr;
+    SLScene*         s  = nullptr;
     SLAssetManager*& am = AppDemo::assetManager;
     SLAssetLoader*&  al = AppDemo::assetLoader;
 
@@ -208,7 +220,7 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         case SID_ParticleSystem_ComplexFire:
         case SID_Benchmark_ParticleSystemComplexFire: s = new AppDemoSceneParticleComplexFire(sceneID); break;
         case SID_ParticleSystem_Many: s = new AppDemoSceneParticleMany(); break;
-        case SID_RTSpheres: s = new AppDemoSceneRTSpheres(sceneID); break;
+        case SID_RTSpheres:
         case SID_RTSoftShadows: s = new AppDemoSceneRTSpheres(sceneID); break;
         case SID_RTMuttenzerBox: s = new AppDemoSceneRTMuttenzerBox(); break;
         case SID_RTDoF: s = new AppDemoSceneRTDoF(); break;
@@ -217,7 +229,7 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         case SID_Benchmark_NodeAnimations: s = new AppDemoSceneAnimNodeMass2(); break;
         case SID_Benchmark_LargeModel: s = new AppDemoSceneLargeModel(); break;
         case SID_Benchmark_LotsOfNodes: s = new AppDemoSceneLotsOfNodes(); break;
-        case SID_Benchmark_ColumnsLOD: s = new AppDemoSceneLevelOfDetail(sceneID); break;
+        case SID_Benchmark_ColumnsLOD:
         case SID_Benchmark_ColumnsNoLOD: s = new AppDemoSceneLevelOfDetail(sceneID); break;
         case SID_Benchmark_SkinnedAnimations: s = new AppDemoSceneAnimSkinnedMass2(); break;
         case SID_ErlebAR_BernChristoffel: s = new AppDemoSceneErlebARChristoffel(); break;
@@ -230,7 +242,6 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         default: SL_EXIT_MSG("appDemoSwitchScene: Unknown SceneID");
     }
 
-    sv->scene(s);
     al->scene(s);
 
     AppDemo::sceneID = sceneID;
@@ -253,9 +264,19 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     // Prepare for async loading //
     ///////////////////////////////
 
+    s->registerAssetsToLoad(*al);
+
+    AppDemoGui::loadingString = "Loading...";
+
+    // This function will be called after loading in the main thread
     auto onDoneLoading = [s, sv, am, startLoadMS]
     {
         s->assemble(am, sv);
+
+        /* Assign the scene to the sceneview. The sceneview exists and is used
+         * before it knows its scene. This is new since we do async loading and
+         * show a spinner in the sceneview. */
+        sv->scene(s);
 
         // Make sure the scene view has a camera
         if (!sv->camera())
@@ -290,10 +311,8 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         s->loadTimeMS(GlobalTimer::timeMS() - startLoadMS);
     };
 
-    s->registerAssetsToLoad(*al);
-
-    AppDemoGui::loadingString = "Loading...";
-
+    ///////////////////////////////////////////
     al->loadAssetsAsync(onDoneLoading);
+    ///////////////////////////////////////////
 }
 //-----------------------------------------------------------------------------

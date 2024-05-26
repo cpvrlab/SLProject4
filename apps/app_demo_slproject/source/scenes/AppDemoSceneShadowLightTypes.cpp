@@ -8,6 +8,7 @@
 //#############################################################################
 
 #include <AppDemoSceneShadowLightTypes.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLLightRect.h>
 #include <SLSpheric.h>
@@ -16,7 +17,7 @@
 
 //-----------------------------------------------------------------------------
 AppDemoSceneShadowLightTypes::AppDemoSceneShadowLightTypes()
-  : AppScene("Shadow Mapping Types Demo Scene")
+  : SLScene("Shadow Mapping Types Demo Scene")
 {
     info("Shadow Mapping is implemented for these light types.");
 }

@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEFRUSTUM_H
 #define APPDEMOSCENEFRUSTUM_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for frustum culling test scene
-class AppDemoSceneFrustum : public AppScene
+class AppDemoSceneFrustum : public SLScene
 {
 public:
     AppDemoSceneFrustum();

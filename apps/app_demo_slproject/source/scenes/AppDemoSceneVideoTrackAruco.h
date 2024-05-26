@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEVIDEOARUCO_H
 #define APPDEMOSCENEVIDEOARUCO_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for ARUCO marker tracking test scene
-class AppDemoSceneVideoTrackAruco : public AppScene
+class AppDemoSceneVideoTrackAruco : public SLScene
 {
 public:
     AppDemoSceneVideoTrackAruco(SLSceneID sid);

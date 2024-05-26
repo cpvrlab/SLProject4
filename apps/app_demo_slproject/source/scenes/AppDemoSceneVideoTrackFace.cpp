@@ -8,9 +8,10 @@
 //#############################################################################
 
 #include <AppDemoSceneVideoTrackFace.h>
+#include <AppDemo.h>
 #include <CVCapture.h>
 #include <CVTrackedFaces.h>
-#include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLBox.h>
 #include <SLCoordAxis.h>
@@ -22,7 +23,7 @@ extern SLNode*      gVideoTrackedNode;
 
 //-----------------------------------------------------------------------------
 AppDemoSceneVideoTrackFace::AppDemoSceneVideoTrackFace(SLSceneID sid)
-  : AppScene("Facial Feature Tracking"),
+  : SLScene("Facial Feature Tracking"),
     _sceneID(sid)
 {
     if (_sceneID == SID_VideoTrackFaceMain)

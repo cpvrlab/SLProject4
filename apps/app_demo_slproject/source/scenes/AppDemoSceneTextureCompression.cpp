@@ -8,12 +8,13 @@
 //#############################################################################
 
 #include <AppDemoSceneTextureCompression.h>
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLRectangle.h>
 #include <AppDemo.h>
 
 //-----------------------------------------------------------------------------
-AppDemoSceneTextureCompression::AppDemoSceneTextureCompression() : AppScene("Texture Compression Test Scene")
+AppDemoSceneTextureCompression::AppDemoSceneTextureCompression() : SLScene("Texture Compression Test Scene")
 {
     info("Texture Compression Test Scene");
 }

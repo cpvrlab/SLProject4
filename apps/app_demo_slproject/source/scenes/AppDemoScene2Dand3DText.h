@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENE2DAND3DTEXT_H
 #define APPDEMOSCENE2DAND3DTEXT_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for 2D and 3D text scene
-class AppDemoScene2Dand3DText : public AppScene
+class AppDemoScene2Dand3DText : public SLScene
 {
 public:
     AppDemoScene2Dand3DText();

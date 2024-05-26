@@ -8,7 +8,7 @@
 //#############################################################################
 
 #include <AppDemoSceneShaderCook.h>
-
+#include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLLightDirect.h>
 #include <SLSphere.h>
@@ -16,7 +16,7 @@
 
 //-----------------------------------------------------------------------------
 AppDemoSceneShaderCook::AppDemoSceneShaderCook()
-  : AppScene("Cook-Torrance Shading")
+  : SLScene("Cook-Torrance Shading")
 {
     info("Cook-Torrance reflection model. Left-Right: roughness 0.05-1, Top-Down: metallic: 1-0. "
          "The center sphere has roughness and metallic encoded in textures. "

@@ -10,6 +10,7 @@
 #include <AppDemoSceneErlebARChristoffel.h>
 #include <CVCapture.h>
 #include <AppDemo.h>
+#include <SLAssetLoader.h>
 #include <SLLightDirect.h>
 #include <SLCoordAxis.h>
 
@@ -18,7 +19,7 @@ extern SLGLTexture* gVideoTexture;
 
 //-----------------------------------------------------------------------------
 AppDemoSceneErlebARChristoffel::AppDemoSceneErlebARChristoffel()
-  : AppScene("Christoffel Tower AR")
+  : SLScene("Christoffel Tower AR")
 {
     info("Augmented Reality Christoffel Tower");
 }

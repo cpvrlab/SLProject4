@@ -10,11 +10,11 @@
 #ifndef APPDEMOSCENEVIDEOFACE_H
 #define APPDEMOSCENEVIDEOFACE_H
 
-#include <AppScene.h>
+#include <SLScene.h>
 
 //-----------------------------------------------------------------------------
 //! Class for facial feature tracking test scene
-class AppDemoSceneVideoTrackFace : public AppScene
+class AppDemoSceneVideoTrackFace : public SLScene
 {
 public:
     AppDemoSceneVideoTrackFace(SLSceneID sid);

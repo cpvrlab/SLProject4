@@ -8,14 +8,14 @@
 //#############################################################################
 
 #include <AppDemoSceneRobot.h>
-
+#include <SLAssetLoader.h>
 #include <SLLightDirect.h>
 #include <SLRectangle.h>
 #include <AppDemo.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneRobot::AppDemoSceneRobot()
-  : AppScene("GLTF File Demo Scene")
+  : SLScene("GLTF File Demo Scene")
 {
     info("Fanuc-CRX Robot with forward kinematic movement.");
 }
