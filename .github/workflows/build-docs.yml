@@ -28,5 +28,8 @@ jobs:
       run: doxygen
 
     - name: Upload documentation
-      working-directory: ${{ github.workspace }}/docs/html
-      run: tar -czf - * | sshpass -p "${{ secrets.EMSCRIPTEN_DEPLOY_PASSWORD }}" ssh -o StrictHostKeyChecking=no github@pallas.ti.bfh.ch "rm -rf docs && mkdir docs && cd docs && tar xzvf -"
+      working-directory: ${{ github.workspace }}/docs
+      run: |
+        sshpass -p "${{ secrets.EMSCRIPTEN_DEPLOY_PASSWORD }}" sftp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${{ secrets.EMSCRIPTEN_DEPLOY_REMOTE }}" << EOF
+          put -r html public/www/docs
+        EOF
