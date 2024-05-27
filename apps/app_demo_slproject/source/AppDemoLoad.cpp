@@ -9,6 +9,7 @@
 
 #include <SLEnums.h>
 #include <CVCapture.h>
+#include <CVTracked.h>
 #include <GlobalTimer.h>
 
 #include <SLScene.h>
