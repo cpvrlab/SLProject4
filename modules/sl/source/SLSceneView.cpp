@@ -413,7 +413,7 @@ void SLSceneView::onInitialize()
         _s->root3D()->updateAABBRec(true);
         _s->root3D()->updateMeshAccelStructs();
 
-        SL_LOG("Time for AABBs  : %5.3f sec.",
+        SL_LOG("Time for AABBs   : %5.3f sec.",
                (SLfloat)(clock() - t) / (SLfloat)CLOCKS_PER_SEC);
 
         // Collect node statistics

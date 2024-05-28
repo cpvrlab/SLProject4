@@ -4735,7 +4735,7 @@ void AppDemoGui::saveConfig()
     SLFileStorage::writeString(fullPathAndFilename,
                                IOK_config,
                                configString);
-    SL_LOG("Config. saved   : %s", fullPathAndFilename.c_str());
+    SL_LOG("Config. saved    : %s", fullPathAndFilename.c_str());
 }
 //-----------------------------------------------------------------------------
 //! Adds a transform node for the selected node and toggles the edit mode
