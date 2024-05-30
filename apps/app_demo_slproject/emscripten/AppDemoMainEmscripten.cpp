@@ -53,6 +53,7 @@ static SLint       lastWidth;          //!< Last window width in pixels
 static SLint       lastHeight;         //!< Last window height in pixels
 static SLbool      fullscreen = false; //!< flag if window is in fullscreen mode
 
+static long   animationFrameID = 0;
 static SLbool coreAssetsLoaded = false;
 
 //-----------------------------------------------------------------------------
@@ -450,6 +451,11 @@ const char* emOnUnload(int         eventType,
                        void*       userData)
 {
     slTerminate();
+
+    // Cancel the current animation frame to prevent `update` being called after
+    // everything has been terminated and cleaned up.
+    emscripten_cancel_animation_frame(animationFrameID);
+
     return nullptr;
 }
 //-----------------------------------------------------------------------------
@@ -508,35 +514,39 @@ bool onPaint()
     return jobIsRunning || viewsNeedsRepaint || AppDemo::assetLoader->isLoading();
 }
 //-----------------------------------------------------------------------------
-void onLoop()
+EM_BOOL update(double time, void* userData)
 {
     if (coreAssetsLoaded)
         onPaint();
     else
     {
         if (AppDemo::assetLoader->isLoading())
-        {
             AppDemo::assetLoader->checkIfAsyncLoadingIsDone();
-            return;
+        else
+        {
+            coreAssetsLoaded = true;
+
+            slCreateSceneView(AppDemo::assetManager,
+                              AppDemo::scene,
+                              canvasWidth,
+                              canvasHeight,
+                              dpi,
+                              (SLSceneID)SID_Minimal,
+                              (void*)&onPaint,
+                              nullptr,
+                              (void*)createAppDemoSceneView,
+                              (void*)AppDemoGui::build,
+                              (void*)AppDemoGui::loadConfig,
+                              (void*)AppDemoGui::saveConfig);
+
+            EM_ASM(document.querySelector("#loading-overlay").style.opacity = 0);
         }
-
-        coreAssetsLoaded = true;
-
-        slCreateSceneView(AppDemo::assetManager,
-                          AppDemo::scene,
-                          canvasWidth,
-                          canvasHeight,
-                          dpi,
-                          (SLSceneID)SID_Minimal,
-                          (void*)&onPaint,
-                          nullptr,
-                          (void*)createAppDemoSceneView,
-                          (void*)AppDemoGui::build,
-                          (void*)AppDemoGui::loadConfig,
-                          (void*)AppDemoGui::saveConfig);
-
-        EM_ASM(document.querySelector("#loading-overlay").style.opacity = 0);
     }
+
+    // Request another animation frame from the browser to run the next iteration of `update`.
+    animationFrameID = emscripten_request_animation_frame(update, nullptr);
+
+    return EM_TRUE;
 }
 //-----------------------------------------------------------------------------
 int main(void)
@@ -620,10 +630,9 @@ int main(void)
     slRegisterCoreAssetsToLoad();
     AppDemo::assetLoader->loadAssetsAsync([] {});
 
-    // We cannot loop ourselves because that would block the page,
-    // but we can register an update function to be called in every iteration
-    // of the JavaScript event loop.
-    emscripten_set_main_loop(onLoop, 0, true);
+    // Request an animation frame from the browser. This will call the `update` function once.
+    // The `update` function itself requests the next animation frame, creating an update loop.
+    animationFrameID = emscripten_request_animation_frame(update, nullptr);
 
     return 0;
 }
