@@ -12,10 +12,14 @@
 #ifdef SL_STORAGE_WEB
 //-----------------------------------------------------------------------------
 #    include <emscripten/fetch.h>
+#    include <pthread.h>
+#    include <cassert>
 #    include <iostream>
 //-----------------------------------------------------------------------------
 bool SLIOReaderFetch::exists(std::string url)
 {
+    assert(pthread_self() != 0 && "Fetching is not allowed on the main thread");
+
     emscripten_fetch_attr_t attr;
     emscripten_fetch_attr_init(&attr);
     std::strcpy(attr.requestMethod, "HEAD");
@@ -30,6 +34,8 @@ bool SLIOReaderFetch::exists(std::string url)
 SLIOReaderFetch::SLIOReaderFetch(std::string url)
   : SLIOReaderMemory(url)
 {
+    assert(pthread_self() != 0 && "Fetching is not allowed on the main thread");
+
     std::cout << "FETCH \"" << url << "\"" << std::endl;
 
     emscripten_fetch_attr_t attr;

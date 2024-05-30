@@ -166,24 +166,24 @@ const string vertOutput_PS_struct_texNum = R"(
 const string vertOutput_PS_struct_End    = R"(
 } vert; )";
 
-const string vertOutput_PS_instanced_transparency   = R"(
+const string vertOutput_PS_instanced_transparency = R"(
 out float transparency;             // transparency of a particle )";
-const string fragInput_PS_instanced_transparency    = R"(
+const string fragInput_PS_instanced_transparency  = R"(
 in float transparency;              // transparency of a particle )";
 
-const string fragMain_PS_instanced_v_doColorOverLT  = R"(
+const string fragMain_PS_instanced_v_doColorOverLT = R"(
     vec4 color = vec4(colorByAge(v_age/u_tTL), 1.0);   // Particle color)";
-const string fragMain_PS_instanced_c                = R"(
+const string fragMain_PS_instanced_c               = R"(
     vec4 color = u_color;      // Particle color)";
-const string fragMain_PS_instanced_transparency     = R"(
+const string fragMain_PS_instanced_transparency    = R"(
     color.w *= transparency;   // Apply transparency)";
-const string vertInput_u_matrix_p                   = R"(
+const string vertInput_u_matrix_p                  = R"(
 uniform mat4  u_pMatrix;            // Projection matrix)";
-const string vertInput_u_matrix_vertBillboard       = R"(
+const string vertInput_u_matrix_vertBillboard      = R"(
 uniform mat4  u_vYawPMatrix;        // Projection matrix)";
-const string fragInput_PS_u_c                       = R"(
+const string fragInput_PS_u_c                      = R"(
 uniform vec4  u_color;              // Particle color)";
-const string vertInput_PS_u_ScaRa                   = R"(
+const string vertInput_PS_u_ScaRa                  = R"(
 uniform float u_scale;              // Particle scale
 uniform float u_radiusW;            // Particle width radius)
 uniform float u_radiusH;            // Particle height radius)";
@@ -208,29 +208,29 @@ const string vertOutput_PS_tf_initP         = R"(
 out     vec3  tf_initialPosition;   // To transform feedback)";
 
 //-----------------------------------------------------------------------------
-const string main_Begin                     = R"(
+const string main_Begin = R"(
 //-----------------------------------------------------------------------------
 void main()
 {)";
 //-----------------------------------------------------------------------------
-const string vertMain_v_P_VS                = R"(
+const string vertMain_v_P_VS      = R"(
     mat4 mvMatrix = u_vMatrix * u_mMatrix;
     v_P_VS = vec3(mvMatrix * ${localPosition});  // vertex position in view space)";
-const string vertMain_v_P_WS_Sm             = R"(
+const string vertMain_v_P_WS_Sm   = R"(
     v_P_WS = vec3(u_mMatrix * ${localPosition}); // vertex position in world space)";
-const string vertMain_v_N_VS                = R"(
+const string vertMain_v_N_VS      = R"(
     mat3 invMvMatrix = mat3(inverse(mvMatrix));
     mat3 nMatrix = transpose(invMvMatrix);
     v_N_VS = vec3(nMatrix * ${localNormal});     // vertex normal in view space)";
-const string vertMain_v_R_OS                = R"(
+const string vertMain_v_R_OS      = R"(
     vec3 I = normalize(v_P_VS);
     vec3 N = normalize(v_N_VS);
     v_R_OS = invMvMatrix * reflect(I, N); // R = I-2.0*dot(N,I)*N;)";
-const string vertMain_v_uv0                 = R"(
+const string vertMain_v_uv0       = R"(
     v_uv0 = a_uv0;  // pass diffuse color tex.coord. 1 for interpolation)";
-const string vertMain_v_uv1                 = R"(
+const string vertMain_v_uv1       = R"(
     v_uv1 = a_uv1;  // pass diffuse color tex.coord. 1 for interpolation)";
-const string vertMain_skinning              = R"(
+const string vertMain_skinning    = R"(
     vec4 skinnedPosition;
     vec3 skinnedNormal;
 
@@ -254,7 +254,7 @@ const string vertMain_skinning              = R"(
         skinnedNormal = a_normal;
     }
 )";
-const string vertMain_skinning_Nm           = R"(
+const string vertMain_skinning_Nm = R"(
     vec4 skinnedPosition;
     vec3 skinnedNormal;
     vec4 skinnedTangent;
@@ -281,7 +281,7 @@ const string vertMain_skinning_Nm           = R"(
         skinnedTangent = a_tangent;
     }
 )";
-const string vertMain_TBN_Nm                = R"(
+const string vertMain_TBN_Nm      = R"(
 
     // Building the matrix Eye Space -> Tangent Space
     // See the math behind at: http://www.terathon.com/code/tangent.html
@@ -309,51 +309,51 @@ const string vertMain_TBN_Nm                = R"(
 
 //-----------------------------------------------------------------------------
 // Things that goes directly to geometry shader
-const string vertMain_PS_v_t_default        = R"(
+const string vertMain_PS_v_t_default = R"(
     if(age < 0.0)
         vert.transparency = 0.0; // To be discard, because the particle is to be born
     else
         vert.transparency = 1.0;)";
-const string vertMain_PS_v_t_begin          = R"(
+const string vertMain_PS_v_t_begin   = R"(
     if(age < 0.0)
         vert.transparency = 0.0; // To be discard, because the particle is to be born
     else
     {
         vert.transparency = age / u_tTL;  // Get by the ratio age:lifetime)";
-const string vertMain_PS_v_t_linear         = R"(
+const string vertMain_PS_v_t_linear  = R"(
         vert.transparency = 1.0 - vert.transparency;  // Linear)";
-const string vertMain_PS_v_t_curve          = R"(
+const string vertMain_PS_v_t_curve   = R"(
         vert.transparency = pow(vert.transparency,3.0) * u_al_bernstein.x +
                             pow(vert.transparency,2.0) * u_al_bernstein.y +
                             vert.transparency * u_al_bernstein.z +
                             u_al_bernstein.w;  // Get transparency by bezier curve)";
-const string vertMain_PS_v_t_end            = R"(
+const string vertMain_PS_v_t_end     = R"(
     })";
-const string vertMain_PS_v_r                = R"(
+const string vertMain_PS_v_r         = R"(
     vert.rotation = a_rotation;)";
-const string vertMain_PS_v_s                = R"(
+const string vertMain_PS_v_s         = R"(
     vert.size = age / u_tTL;)";
-const string vertMain_PS_v_s_curve          = R"(
+const string vertMain_PS_v_s_curve   = R"(
     vert.size = pow(vert.size,3.0) * u_si_bernstein.x +
                 pow(vert.size,2.0) * u_si_bernstein.y +
                 vert.size * u_si_bernstein.z +
                 u_si_bernstein.w;  // Get transparency by bezier curve)";
 
-const string vertMain_PS_v_doColorOverLT    = R"(
+const string vertMain_PS_v_doColorOverLT = R"(
     vert.color = colorByAge(age/u_tTL);)";
-const string vertOutput_PS_age              = R"(
+const string vertOutput_PS_age           = R"(
 out float v_age; // Age of a particle)";
-const string fragInput_PS_age               = R"(
+const string fragInput_PS_age            = R"(
 in float v_age; // Age of a particle)";
-const string vertMain_PS_v_texNum           = R"(
+const string vertMain_PS_v_texNum        = R"(
     vert.texNum = a_texNum;)";
-const string vertMain_PS_v_a                = R"(
+const string vertMain_PS_v_a             = R"(
     float age = u_time - a_startTime;   // Get the age of the particle)";
-const string vertMain_PS_v_tC               = R"(
+const string vertMain_PS_v_tC            = R"(
     v_texCoord = 0.5 * (a_instancePos.xy + vec2(1.0));)";
-const string vertMain_PS_v_age              = R"(
+const string vertMain_PS_v_age           = R"(
     v_age = age;)";
-const string vertMain_PS_v_tC_flipbook      = R"(
+const string vertMain_PS_v_tC_flipbook   = R"(
     int actCI  = int(mod(float(a_texNum), float(u_col)));
     float actC = float(actCI);
     float actR  = floor(float(int(a_texNum) - actCI) / float(u_col));
@@ -846,7 +846,7 @@ const string fragMain_PS_endAll                 = R"(
    o_fragColor.rgb = pow(o_fragColor.rgb, vec3(u_oneOverGamma));
 })";
 //-----------------------------------------------------------------------------
-const string fragInput_u_lightAll           = R"(
+const string fragInput_u_lightAll    = R"(
 
 uniform bool        u_lightIsOn[NUM_LIGHTS];        // flag if light is on
 uniform vec4        u_lightPosVS[NUM_LIGHTS];       // position of light in view space
@@ -862,44 +862,44 @@ uniform bool        u_lightDoAtt[NUM_LIGHTS];       // flag if att. must be calc
 uniform vec4        u_globalAmbi;                   // Global ambient scene color
 uniform float       u_oneOverGamma;                 // 1.0f / Gamma correction value
 )";
-const string fragInput_u_matBlinnAll        = R"(
+const string fragInput_u_matBlinnAll = R"(
 uniform vec4        u_matAmbi;                      // ambient color reflection coefficient (ka)
 uniform vec4        u_matDiff;                      // diffuse color reflection coefficient (kd)
 uniform vec4        u_matSpec;                      // specular color reflection coefficient (ks)
 uniform vec4        u_matEmis;                      // emissive color for self-shining materials
 uniform float       u_matShin;                      // shininess exponent
 )";
-const string fragInput_u_matAmbi            = R"(
+const string fragInput_u_matAmbi     = R"(
 uniform vec4        u_matAmbi;                      // ambient color reflection coefficient (ka))";
-const string fragInput_u_matDiff            = R"(
+const string fragInput_u_matDiff     = R"(
 uniform vec4        u_matDiff;                      // diffuse color reflection coefficient (kd))";
-const string fragInput_u_matEmis            = R"(
+const string fragInput_u_matEmis     = R"(
 uniform vec4        u_matEmis;                      // emissive color (ke))";
-const string fragInput_u_matRough           = R"(
+const string fragInput_u_matRough    = R"(
 uniform float       u_matRough;                     // roughness factor (0-1))";
-const string fragInput_u_matMetal           = R"(
+const string fragInput_u_matMetal    = R"(
 uniform float       u_matMetal;                     // metalness factor (0-1)";
 //-----------------------------------------------------------------------------
-const string fragInput_u_matTexDm           = R"(
+const string fragInput_u_matTexDm       = R"(
 uniform sampler2D   u_matTextureDiffuse0;           // Diffuse color map)";
-const string fragInput_u_matTexNm           = R"(
+const string fragInput_u_matTexNm       = R"(
 uniform sampler2D   u_matTextureNormal0;            // Normal bump map)";
-const string fragInput_u_matTexEm           = R"(
+const string fragInput_u_matTexEm       = R"(
 uniform sampler2D   u_matTextureEmissive0;          // PBR material emissive texture)";
-const string fragInput_u_matTexOm           = R"(
+const string fragInput_u_matTexOm       = R"(
 uniform sampler2D   u_matTextureOcclusion0;         // Ambient occlusion map)";
-const string fragInput_u_matTexRm           = R"(
+const string fragInput_u_matTexRm       = R"(
 uniform sampler2D   u_matTextureRoughness0;         // PBR material roughness texture)";
-const string fragInput_u_matTexMm           = R"(
+const string fragInput_u_matTexMm       = R"(
 uniform sampler2D   u_matTextureMetallic0;          // PBR material metallic texture)";
-const string fragInput_u_matTexRmMm         = R"(
+const string fragInput_u_matTexRmMm     = R"(
 uniform sampler2D   u_matTextureRoughMetal0;        // PBR material roughness-metallic texture)";
-const string fragInput_u_matTexOmRmMm       = R"(
+const string fragInput_u_matTexOmRmMm   = R"(
 uniform sampler2D   u_matTextureOccluRoughMetal0;   // PBR material occlusion-roughness-metalic texture)";
-const string fragInput_u_matGetsSm          = R"(
+const string fragInput_u_matGetsSm      = R"(
 
 uniform bool        u_matGetsShadows;               // flag if material receives shadows)";
-const string fragInput_u_skyCookEnvMaps     = R"(
+const string fragInput_u_skyCookEnvMaps = R"(
 uniform samplerCube u_skyIrradianceCubemap;         // PBR skybox irradiance light
 uniform samplerCube u_skyRoughnessCubemap;          // PBR skybox cubemap for rough reflections
 uniform sampler2D   u_skyBrdfLutTexture;            // PBR lighting lookup table for BRDF
@@ -1925,8 +1925,8 @@ void SLGLProgramGenerated::buildProgramCodePS(SLMaterial* mat,
 
 //-----------------------------------------------------------------------------
 void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat,
-                                           SLVLight* lights,
-                                           SLbool supportGPUSkinning)
+                                           SLVLight*   lights,
+                                           SLbool      supportGPUSkinning)
 {
     assert(mat && lights);
     assert(_shaders.size() > 1 &&
@@ -2054,8 +2054,8 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat,
 }
 //-----------------------------------------------------------------------------
 void SLGLProgramGenerated::buildPerPixBlinn(SLMaterial* mat,
-                                            SLVLight* lights,
-                                            SLbool supportGPUSkinning)
+                                            SLVLight*   lights,
+                                            SLbool      supportGPUSkinning)
 {
     assert(mat && lights);
     assert(_shaders.size() > 1 &&
@@ -2192,10 +2192,10 @@ void SLGLProgramGenerated::buildPerPixParticleInstanced(SLMaterial* mat)
     vertCode += shaderHeader();
 
     // Vertex shader inputs
-    vertCode += vertInput_PS_a_InstPos;     // instance position
-    vertCode += vertInput_PS_a_p;           // position
-    vertCode += vertInput_PS_a_st;          // start time
-    if (rot) vertCode += vertInput_PS_a_r;  // rotation as float
+    vertCode += vertInput_PS_a_InstPos;    // instance position
+    vertCode += vertInput_PS_a_p;          // position
+    vertCode += vertInput_PS_a_st;         // start time
+    if (rot) vertCode += vertInput_PS_a_r; // rotation as float
 
     if (FlBoTex)
     {
@@ -2940,6 +2940,7 @@ void SLGLProgramGenerated::addCodeToShader(SLGLShader*   shader,
 #endif
     shader->name(name);
 
+#ifndef SL_EMSCRIPTEN
     // Check if generatedShaderPath folder exists
     generatedShaderPath = SLGLProgramManager::configPath + "generatedShaders/";
     if (!Utils::dirExists(SLGLProgramManager::configPath))
@@ -2953,6 +2954,7 @@ void SLGLProgramGenerated::addCodeToShader(SLGLShader*   shader,
     }
 
     shader->file(generatedShaderPath + name);
+#endif
 }
 //-----------------------------------------------------------------------------
 //! Sets a variable in the shader code.

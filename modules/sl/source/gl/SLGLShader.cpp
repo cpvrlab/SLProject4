@@ -158,10 +158,11 @@ SLbool SLGLShader::createAndCompile(SLVLight* lights)
         return false;
     }
 
+#ifndef SL_EMSCRIPTEN
     // Write generated shader out
     if (!_file.empty())
     {
-#if defined(DEBUG) || defined(_DEBUG)
+#    if defined(DEBUG) || defined(_DEBUG)
         string filename = Utils::getFileName(_file);
         string path     = Utils::getDirName(_file);
         if (Utils::dirExists(path))
@@ -174,7 +175,7 @@ SLbool SLGLShader::createAndCompile(SLVLight* lights)
         }
         else
             SL_WARN_MSG("**** No path to write shader ***");
-#else
+#    else
         if (!SLFileStorage::exists(_file, IOK_shader))
         {
             string filename = Utils::getFileName(_file);
@@ -187,10 +188,11 @@ SLbool SLGLShader::createAndCompile(SLVLight* lights)
             else
                 SL_WARN_MSG("**** No path to write shader ***");
         }
-#endif
+#    endif
     }
     else
         SL_WARN_MSG("**** No shader path and filename for shader ***");
+#endif
 
     return true;
 }

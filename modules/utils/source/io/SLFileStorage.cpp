@@ -63,19 +63,9 @@ SLIOStream* SLFileStorage::open(std::string    path,
 
     if (mode == IOM_read)
     {
-        if (kind == IOK_shader)
+        if (kind == IOK_shader || kind == IOK_image || kind == IOK_model || kind == IOK_font)
         {
-            // Generated shaders exist in memory, pre-written shaders
-            // need to be downloaded from the server.
-
-            if (SLIOMemory::exists(path))
-                return new SLIOReaderMemory(path);
-            else
-                return new SLIOReaderFetch(path);
-        }
-        else if (kind == IOK_image || kind == IOK_model || kind == IOK_font)
-        {
-            // Images, models and fonts are always stored on the server.
+            // Shaders, images, models and fonts are always stored on the server.
             return new SLIOReaderFetch(path);
         }
         else if (kind == IOK_config)
@@ -92,14 +82,11 @@ SLIOStream* SLFileStorage::open(std::string    path,
     }
     else if (mode == IOM_write)
     {
-        // Generated shaders are written to memory, config files are written
-        // to local storage, so they can be read when the website is reloaded,
-        // images (e.g. screenshots) are displayed in the browser window so
-        // the user can download them.
+        // Config files are written to local storage so they can be read when
+        // the website is reloaded, images (e.g. screenshots) are displayed in
+        // the browser window so the user can download them.
 
-        if (kind == IOK_shader)
-            return new SLIOWriterMemory(path);
-        else if (kind == IOK_config)
+        if (kind == IOK_config)
             return new SLIOWriterLocalStorage(path);
         else if (kind == IOK_image)
             return new SLIOWriterBrowserPopup(path);
@@ -140,7 +127,7 @@ bool SLFileStorage::exists(std::string path, SLIOStreamKind kind)
         return false;
 
     if (kind == IOK_shader)
-        return SLIOMemory::exists(path) || SLIOReaderFetch::exists(path);
+        return SLIOReaderFetch::exists(path);
     else if (kind == IOK_config)
         return SLIOLocalStorage::exists(path) || SLIOReaderFetch::exists(path);
     else
