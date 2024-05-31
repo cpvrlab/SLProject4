@@ -218,7 +218,7 @@ class SLVec3
                 T h = fmod(fmod(hsv.x, Utils::TWOPI) + Utils::TWOPI, Utils::TWOPI); // 0 deg <= H <= 360 deg
                 T s = clamp(hsv.y, 0.0f, 1.0f);
                 T v = clamp(hsv.z, 0.0f, 1.0f);
-                T a = clamp(hsv.w, 0.0f, 1.0f);
+                T a = clamp(hsv.x, 0.0f, 1.0f);
 
                 T c = v * s;
                 T x = c * (1.0f - fabs(fmod(h*3.0f / M_PI, 2.0f) - 1.0f));

@@ -1,6 +1,5 @@
 #!/bin/sh
-#ATTENTION: you have to install libzstd-dev (see: https://github.com/KhronosGroup/KTX-Software/blob/master/BUILDING.md)
-VERSION=v4.0.0-beta7
+VERSION="5fc739c"
 ARCH=emscripten
 BUILD_D="$ARCH"_debug_"$VERSION"
 BUILD_R="$ARCH"_release_"$VERSION"
@@ -15,12 +14,13 @@ if [ ! -d "KTX-Software/.git" ]; then
     git clone https://github.com/KhronosGroup/KTX-Software.git
 fi
 
+# Enable pthreads
+export CFLAGS="-pthread"
+export CXXFLAGS="-pthread"
+
 cd KTX-Software
 git checkout $VERSION
 git pull origin $VERSION
-
-# Replace #include <sys/timex.h> with #include <sys/time.h>
-sed -i 's/#include <sys\/timex.h>/#include <sys\/time.h>/g' lib/basisu/encoder/basisu_enc.cpp
 
 echo "============================================================"
 echo "Building Debug"
