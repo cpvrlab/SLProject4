@@ -24,7 +24,6 @@ jobs:
           -B ${{ github.workspace }}/build \
           -DSL_BUILD_WAI=OFF \
           -DSL_BUILD_WITH_OPENSSL=OFF \
-          -DSL_BUILD_WITH_KTX=OFF \
           -DSL_BUILD_WITH_MEDIAPIPE=OFF \
           -DSL_DOWNLOAD_DATA=OFF \
           -DCMAKE_BUILD_TYPE=Release
