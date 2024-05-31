@@ -521,17 +521,20 @@ SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
 SLGLTexture::~SLGLTexture()
 {
     // SL_LOG("~SLGLTexture(%s)", name().c_str());
-    deleteData();
+    deleteData(true);
 }
 //-----------------------------------------------------------------------------
 //! Delete all data (CVImages and GPU textures)
-void SLGLTexture::deleteData()
+void SLGLTexture::deleteData(SLbool deleteAlsoOnGPU)
 {
     deleteImages();
-    deleteDataGpu();
+
+    // Delete date on GPU only from the main thread where OpenGL calls are allowed
+    if (deleteAlsoOnGPU)
+        deleteDataGpu();
 
 #ifdef SL_BUILD_WITH_KTX
-    if (_ktxTexture)
+    if (deleteAlsoOnGPU && _ktxTexture)
         ktxTexture_Destroy((ktxTexture*)_ktxTexture);
 #endif
 
@@ -556,6 +559,8 @@ void SLGLTexture::deleteImages()
 }
 //-----------------------------------------------------------------------------
 //! Deletes the OpenGL texture objects and releases the memory on the GPU
+/*! Call this function only from the main thread where OpenGL calls are allowed
+ */
 void SLGLTexture::deleteDataGpu()
 {
     glDeleteTextures(1, &_texID);

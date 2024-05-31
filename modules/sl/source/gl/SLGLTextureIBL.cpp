@@ -90,7 +90,7 @@ SLGLTextureIBL::SLGLTextureIBL(SLAssetManager* am,
 //-----------------------------------------------------------------------------
 SLGLTextureIBL::~SLGLTextureIBL()
 {
-    deleteData();
+    deleteData(true);
 
     glDeleteVertexArrays(1, &_cubeVAO);
     _cubeVAO = 0;

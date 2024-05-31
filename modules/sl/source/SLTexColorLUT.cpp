@@ -187,7 +187,7 @@ void SLTexColorLUT::generateTexture()
            "SLTexColorLUT::generateTexture: Not enough color values.");
 
     // Delete old data in case of regeneration
-    deleteData();
+    deleteData(false);
 
     SLfloat delta = 1.0f / (SLfloat)_length;
 

@@ -91,7 +91,7 @@ void SLBackground::colors(const SLCol4f& topColor,
     _avgColor  = (topColor + bottomColor) / 2.0f;
     _isUniform = false;
     _texture   = nullptr;
-    _vao.clearAttribs();
+    //_vao.clearAttribs(); Not allowed here during assembly
 }
 //-----------------------------------------------------------------------------
 //! Sets a gradient background color with a color per corner

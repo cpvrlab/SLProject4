@@ -186,7 +186,7 @@ public:
 
     virtual void build(SLint texUnit);
 
-    void     deleteData();
+    void     deleteData(SLbool deleteAlsoOnGPU);
     void     deleteDataGpu();
     void     deleteImages();
     void     bindActive(SLuint texUnit = 0);
