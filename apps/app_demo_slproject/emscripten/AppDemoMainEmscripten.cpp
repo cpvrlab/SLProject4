@@ -337,7 +337,7 @@ EM_BOOL emOnKeyPressed(int                            eventType,
 
     slKeyPress(svIndex, key, modifiers);
 
-    return EM_TRUE;
+    return EM_FALSE;
 }
 //-----------------------------------------------------------------------------
 EM_BOOL emOnKeyReleased(int                            eventType,
@@ -348,7 +348,7 @@ EM_BOOL emOnKeyReleased(int                            eventType,
     SLKey modifiers = mapModifiersToSLModifiers(keyEvent);
     slKeyRelease(svIndex, key, modifiers);
 
-    return EM_TRUE;
+    return EM_FALSE;
 }
 //-----------------------------------------------------------------------------
 EM_BOOL emOnTouchStart(int                         eventType,
@@ -377,6 +377,7 @@ EM_BOOL emOnTouchStart(int                         eventType,
 
     lastTouchDownX = mouseX;
     lastTouchDownY = mouseY;
+
     return EM_TRUE;
 }
 //-----------------------------------------------------------------------------
@@ -589,28 +590,6 @@ int main(void)
     emscripten_set_touchend_callback("#canvas", nullptr, false, emOnTouchEnd);
     emscripten_set_touchmove_callback("#canvas", nullptr, false, emOnTouchMove);
     emscripten_set_beforeunload_callback(nullptr, emOnUnload);
-
-    // HACK: Fixes to make this able to run in an <iframe>
-    // clang-format off
-    EM_ASM({
-        const canvas = document.querySelector("#canvas");
-        
-        // Focus the canvas element on click.
-        canvas.addEventListener("click", event => canvas.focus());
-
-        // Prevent the events from bubbling up to the parent page.
-        canvas.addEventListener("mousedown", event => event.preventDefault());
-        canvas.addEventListener("mouseup", event => event.preventDefault());
-        canvas.addEventListener("dblclick", event => event.preventDefault());
-        canvas.addEventListener("mousemove", event => event.preventDefault());
-        canvas.addEventListener("wheel", event => event.preventDefault());
-        document.addEventListener("keydown", event => event.preventDefault());
-        document.addEventListener("keyup", event => event.preventDefault());
-        canvas.addEventListener("touchstart", event => event.preventDefault());
-        canvas.addEventListener("touchend", event => event.preventDefault());
-        canvas.addEventListener("touchmove", event => event.preventDefault());
-    });
-    // clang-format on
 
     AppDemo::calibIniPath = "data/calibrations/";
 
