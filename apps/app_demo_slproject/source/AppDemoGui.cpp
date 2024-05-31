@@ -1952,13 +1952,13 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 AppDemo::sceneToLoad = SID_Empty;
 
             if (ImGui::MenuItem("Next Scene",
-                                "Shift-Alt-Right",
+                                "Shift-Alt->",
                                 nullptr,
                                 AppDemo::sceneID < SID_MaxPublicAssets - 1))
                 AppDemo::sceneToLoad = static_cast<SLSceneID>(AppDemo::sceneID + 1);
 
             if (ImGui::MenuItem("Previous Scene",
-                                "Shift-Alt-Left",
+                                "Shift-Alt-<",
                                 nullptr,
                                 AppDemo::sceneID > SID_Empty))
                 AppDemo::sceneToLoad = static_cast<SLSceneID>(AppDemo::sceneID - 1);
