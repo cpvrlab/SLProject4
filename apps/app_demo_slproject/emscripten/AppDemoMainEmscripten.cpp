@@ -22,9 +22,6 @@
 #include <CVCapture.h>
 #include <SLAssetLoader.h>
 
-#include <GLFW/glfw3.h>
-#include <GLES3/gl3.h>
-
 #include <emscripten.h>
 #include <emscripten/html5.h>
 #include <emscripten/val.h>
@@ -36,22 +33,21 @@ static int    lastTouchDownX;
 static int    lastTouchDownY;
 static double lastTouchDownTimeMS;
 
-static GLFWwindow* window;             //!< The global glfw window handle
-static SLint       svIndex;            //!< SceneView index
-static SLint       scrWidth;           //!< Window width at start up
-static SLint       scrHeight;          //!< Window height at start up
-static SLbool      fixAspectRatio;     //!< Flag if wnd aspect ratio should be fixed
-static SLfloat     scrWdivH;           //!< aspect ratio screen width divided by height
-static SLint       dpi = 142;          //!< Dot per inch resolution of screen
-static SLint       startX;             //!< start position x in pixels
-static SLint       startY;             //!< start position y in pixels
-static SLint       mouseX;             //!< Last mouse position x in pixels
-static SLint       mouseY;             //!< Last mouse position y in pixels
-static SLVec2i     touch2;             //!< Last finger touch 2 position in pixels
-static SLVec2i     touchDelta;         //!< Delta between two fingers in x
-static SLint       lastWidth;          //!< Last window width in pixels
-static SLint       lastHeight;         //!< Last window height in pixels
-static SLbool      fullscreen = false; //!< flag if window is in fullscreen mode
+static SLint   svIndex;            //!< SceneView index
+static SLint   scrWidth;           //!< Window width at start up
+static SLint   scrHeight;          //!< Window height at start up
+static SLbool  fixAspectRatio;     //!< Flag if wnd aspect ratio should be fixed
+static SLfloat scrWdivH;           //!< aspect ratio screen width divided by height
+static SLint   dpi = 142;          //!< Dot per inch resolution of screen
+static SLint   startX;             //!< start position x in pixels
+static SLint   startY;             //!< start position y in pixels
+static SLint   mouseX;             //!< Last mouse position x in pixels
+static SLint   mouseY;             //!< Last mouse position y in pixels
+static SLVec2i touch2;             //!< Last finger touch 2 position in pixels
+static SLVec2i touchDelta;         //!< Delta between two fingers in x
+static SLint   lastWidth;          //!< Last window width in pixels
+static SLint   lastHeight;         //!< Last window height in pixels
+static SLbool  fullscreen = false; //!< flag if window is in fullscreen mode
 
 static long   animationFrameID = 0;
 static SLbool coreAssetsLoaded = false;
@@ -240,23 +236,23 @@ EM_BOOL emOnMouseDoubleClicked(int                         eventType,
 
     switch (mouseEvent->button)
     {
-        case GLFW_MOUSE_BUTTON_LEFT:
+        case 0:
             slDoubleClick(svIndex,
                           MB_left,
                           x,
                           y,
                           modifiers);
             break;
-        case GLFW_MOUSE_BUTTON_RIGHT:
+        case 1:
             slDoubleClick(svIndex,
-                          MB_right,
+                          MB_middle,
                           x,
                           y,
                           modifiers);
             break;
-        case GLFW_MOUSE_BUTTON_MIDDLE:
+        case 2:
             slDoubleClick(svIndex,
-                          MB_middle,
+                          MB_right,
                           x,
                           y,
                           modifiers);

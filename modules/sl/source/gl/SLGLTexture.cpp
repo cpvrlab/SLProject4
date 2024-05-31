@@ -639,7 +639,7 @@ void SLGLTexture::load(const SLstring& filename,
             // the available compression extensions to pick the right format.
             if (SLGLState::instance()->hasExtension("WEBGL_compressed_texture_s3tc"))
                 _compressionFormat = KTX_TTF_BC3_RGBA;
-            if (SLGLState::instance()->hasExtension("WEBGL_compressed_texture_etc"))
+            else if (SLGLState::instance()->hasExtension("WEBGL_compressed_texture_etc"))
                 _compressionFormat = KTX_TTF_ETC2_RGBA;
             else
                 SL_EXIT_MSG("No valid compression format found for this WebGL context");

@@ -1257,7 +1257,7 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "EMSCRIPTEN")
     # KTX for Emscripten #
     ######################
 
-    set(ktx_VERSION "v4.0.0-beta7")
+    set(ktx_VERSION "5fc739c")
     set(ktx_PREBUILT_DIR "emscripten_ktx_${ktx_VERSION}")
     set(ktx_DIR "${PREBUILT_PATH}/${ktx_PREBUILT_DIR}")
     set(ktx_INCLUDE_DIR "${ktx_DIR}/include")

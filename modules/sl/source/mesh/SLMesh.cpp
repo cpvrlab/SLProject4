@@ -23,9 +23,13 @@ using std::set;
 #    pragma clang diagnostic push
 #    pragma clang diagnostic ignored "-Weverything"
 #endif
-#include <igl/remove_duplicate_vertices.h>
-#include <igl/per_face_normals.h>
-#include <igl/unique_edge_map.h>
+
+#ifndef SL_EMSCRIPTEN
+#    include <igl/remove_duplicate_vertices.h>
+#    include <igl/per_face_normals.h>
+#    include <igl/unique_edge_map.h>
+#endif
+
 #ifdef __clang__
 #    pragma clang diagnostic pop
 #endif
@@ -814,7 +818,7 @@ void SLMesh::computeHardEdgesIndices(float angleDEG,
 {
 #ifdef SL_EMSCRIPTEN
     return;
-#endif
+#else
 
     // dihedral angle considered to sharp
     float angleRAD = angleDEG * Utils::DEG2RAD;
@@ -898,6 +902,7 @@ void SLMesh::computeHardEdgesIndices(float angleDEG,
             }
         }
     }
+#endif
 }
 //-----------------------------------------------------------------------------
 /*!

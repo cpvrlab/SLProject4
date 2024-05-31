@@ -16,7 +16,7 @@ jobs:
     - name: Install Emscripten
       uses: mymindstorm/setup-emsdk@v11
       with:
-        version: 3.1.51
+        version: 3.1.60
 
     - name: Configure CMake
       run: |
@@ -24,7 +24,6 @@ jobs:
           -B ${{ github.workspace }}/build \
           -DSL_BUILD_WAI=OFF \
           -DSL_BUILD_WITH_OPENSSL=OFF \
-          -DSL_BUILD_WITH_KTX=OFF \
           -DSL_BUILD_WITH_MEDIAPIPE=OFF \
           -DSL_DOWNLOAD_DATA=OFF \
           -DCMAKE_BUILD_TYPE=Release
