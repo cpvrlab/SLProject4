@@ -7,7 +7,6 @@
 //             Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
 
-
 #include <AppDemoSceneSuzanne.h>
 #include <SLAssetLoader.h>
 #include <SLLightSpot.h>
@@ -19,14 +18,17 @@ AppDemoSceneSuzanne::AppDemoSceneSuzanne(SLstring name,
                                          bool     textureMapping,
                                          bool     normalMapping,
                                          bool     occlusionMapping,
-                                         bool     shadowMapping)
+                                         bool     shadowMapping,
+                                         bool     environmentMapping)
   : SLScene(name),
     _textureMapping(textureMapping),
     _normalMapping(normalMapping),
     _occlusionMapping(occlusionMapping),
-    _shadowMapping(shadowMapping)
+    _shadowMapping(shadowMapping),
+    _environmentMapping(environmentMapping)
 {
     info(name);
+    _skybox = nullptr;
 }
 //-----------------------------------------------------------------------------
 //! All assets the should be loaded in parallel must be registered in here.
@@ -40,6 +42,13 @@ void AppDemoSceneSuzanne::registerAssetsToLoad(SLAssetLoader& al)
                      true,    // load meshes only
                      nullptr, // override material
                      0.5f);
+
+    if (_environmentMapping)
+        al.addSkyboxToLoad(_skybox,
+                           al.modelPath() +
+                             "GLTF/glTF-Sample-Models/hdris/envmap_malibu.hdr",
+                           SLVec2i(256, 256),
+                           "HDR Skybox");
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
@@ -58,20 +67,36 @@ void AppDemoSceneSuzanne::assemble(SLAssetManager* am, SLSceneView* sv)
     scene->addChild(cam1);
 
     // Create directional light for the sunlight
-    SLLightDirect* light = new SLLightDirect(am, this, 0.1f);
-    light->ambientPower(0.6f);
-    light->diffusePower(0.6f);
-    light->attenuation(1, 0, 0);
-    light->translate(0, 0, 0.5);
-    light->lookAt(1, -1, 0.5);
-    SLAnimation* lightAnim = animManager().createNodeAnimation("LightAnim",
-                                                               4.0f,
-                                                               true,
-                                                               EC_inOutSine,
-                                                               AL_pingPongLoop);
-    lightAnim->createNodeAnimTrackForRotation(light,
-                                              -180,
-                                              SLVec3f(0, 1, 0));
+    SLLightDirect* light;
+
+    if (_environmentMapping)
+    {
+        SLLight::gamma = 2.0f;
+        light = new SLLightDirect(am, this, 0.1f);
+        light->ambientPower(0.0f);
+        light->diffusePower(3.0f);
+        light->attenuation(1, 0, 0);
+        light->translate(0, 0, 0.5);
+        light->lookAt(-1, -1, -1);
+    }
+    else
+    {
+        SLLight::gamma = 1.0f;
+        light = new SLLightDirect(am, this, 0.1f);
+        light->ambientPower(0.6f);
+        light->diffusePower(0.6f);
+        light->attenuation(1, 0, 0);
+        light->translate(0, 0, 0.5);
+        light->lookAt(1, -1, 0.5);
+        SLAnimation* lightAnim = animManager().createNodeAnimation("LightAnim",
+                                                                   4.0f,
+                                                                   true,
+                                                                   EC_inOutSine,
+                                                                   AL_pingPongLoop);
+        lightAnim->createNodeAnimTrackForRotation(light,
+                                                  -180,
+                                                  SLVec3f(0, 1, 0));
+    }
     scene->addChild(light);
 
     // Add shadow mapping
@@ -96,10 +121,21 @@ void AppDemoSceneSuzanne::assemble(SLAssetManager* am, SLSceneView* sv)
             mat->ambientDiffuse(stoneColor);
         }
 
-        if (!_normalMapping) mat->removeTextureType(TT_normal);
-        if (!_occlusionMapping) mat->removeTextureType(TT_occlusion);
+        if (!_normalMapping)
+            mat->removeTextureType(TT_normal);
+
+        if (!_occlusionMapping)
+            mat->removeTextureType(TT_occlusion);
+
+        if (_environmentMapping)
+        {
+            mat->skybox(_skybox);
+            mat->reflectionModel(RM_CookTorrance);
+            this->skybox(_skybox);
+        }
     };
-    _suzanneInCube->updateMeshMat(materialUpdater, true);
+    _suzanneInCube->updateMeshMat(materialUpdater,
+                                  true);
 
     scene->addChild(_suzanneInCube);
 

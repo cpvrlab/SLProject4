@@ -107,7 +107,7 @@ void AppDemoSceneGLTF::assemble(SLAssetManager* am, SLSceneView* sv)
 
     // Add directional light with a position that corresponds roughly to the sun direction
     SLLight::gamma        = 2.2f;
-    SLLightDirect* light1 = new SLLightDirect(am,
+    SLLightDirect* light = new SLLightDirect(am,
                                               this,
                                               0.55f,
                                               1.0f,
@@ -116,18 +116,18 @@ void AppDemoSceneGLTF::assemble(SLAssetManager* am, SLSceneView* sv)
                                               0,
                                               1,
                                               1);
-    light1->lookAt(0, 0, 0);
-    light1->attenuation(1, 0, 0);
-    light1->createsShadows(true);
-    light1->createShadowMapAutoSize(cam1,
+    light->lookAt(0, 0, 0);
+    light->attenuation(1, 0, 0);
+    light->createsShadows(true);
+    light->createShadowMapAutoSize(cam1,
                                     SLVec2i(2048, 2048),
                                     4);
-    light1->shadowMap()->cascadesFactor(1.0);
-    light1->doSmoothShadows(true);
-    light1->castsShadows(false);
-    light1->shadowMinBias(0.001f);
-    light1->shadowMaxBias(0.003f);
-    scene->addChild(light1);
+    light->shadowMap()->cascadesFactor(1.0);
+    light->doSmoothShadows(true);
+    light->castsShadows(false);
+    light->shadowMinBias(0.001f);
+    light->shadowMaxBias(0.003f);
+    scene->addChild(light);
 
     // Update all materials and set their skybox to _skybox
     _modelGLTF->updateMeshMat([=](SLMaterial* m) { m->skybox(_skybox); },

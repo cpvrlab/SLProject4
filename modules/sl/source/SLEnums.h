@@ -128,6 +128,7 @@ enum SLSceneID
     SID_SuzannePerPixBlinnTmNmAo,
     SID_SuzannePerPixBlinnTmNmSm,
     SID_SuzannePerPixBlinnTmNmAoSm,
+    SID_SuzannePerPixCookTmNmAoSmEm,
 
     SID_glTF_DamagedHelmet,
     SID_glTF_FlightHelmet,

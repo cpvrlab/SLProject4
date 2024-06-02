@@ -21,17 +21,20 @@ public:
                         bool     textureMapping,
                         bool     normalMapping,
                         bool     occlusionMapping,
-                        bool     shadowMapping);
+                        bool     shadowMapping,
+                        bool     environmentMapping);
 
     void registerAssetsToLoad(SLAssetLoader& al) override;
     void assemble(SLAssetManager* am, SLSceneView* sv) override;
 
 private:
-    SLNode* _suzanneInCube;
-    bool    _textureMapping;
-    bool    _normalMapping;
-    bool    _occlusionMapping;
-    bool    _shadowMapping;
+    SLNode*   _suzanneInCube;
+    SLSkybox* _skybox;
+    bool      _textureMapping;
+    bool      _normalMapping;
+    bool      _occlusionMapping;
+    bool      _shadowMapping;
+    bool      _environmentMapping;
 };
 //-----------------------------------------------------------------------------
 

@@ -125,7 +125,7 @@ out     vec3  v_N_VS;                   // Normal at P_VS in view space (VS))";
 const string vertOutput_v_R_OS       = R"(
 out     vec3  v_R_OS;                   // Reflection vector in object space (WS))";
 const string vertOutput_v_uv0        = R"(
-out     vec2  v_uv0;                    // Texture coordinate 1 output)";
+out     vec2  v_uv0;                    // Texture coordinate 0 output)";
 const string vertOutput_v_uv1        = R"(
 out     vec2  v_uv1;                    // Texture coordinate 1 output)";
 const string vertOutput_v_lightVecTS = R"(
@@ -227,7 +227,7 @@ const string vertMain_v_R_OS      = R"(
     vec3 N = normalize(v_N_VS);
     v_R_OS = invMvMatrix * reflect(I, N); // R = I-2.0*dot(N,I)*N;)";
 const string vertMain_v_uv0       = R"(
-    v_uv0 = a_uv0;  // pass diffuse color tex.coord. 1 for interpolation)";
+    v_uv0 = a_uv0;  // pass diffuse color tex.coord. 0 for interpolation)";
 const string vertMain_v_uv1       = R"(
     v_uv1 = a_uv1;  // pass diffuse color tex.coord. 1 for interpolation)";
 const string vertMain_skinning    = R"(
@@ -770,9 +770,9 @@ in      vec3        v_N_VS;                     // Interpol. normal at v_P_VS in
 const string fragInput_v_R_OS       = R"(
 in      vec3        v_R_OS;                     // Interpol. reflect in object space)";
 const string fragInput_v_uv0        = R"(
-in      vec2        v_uv0;                      // Texture coordinate varying)";
+in      vec2        v_uv0;                      // Texture coordinate varying for uv 0)";
 const string fragInput_v_uv1        = R"(
-in      vec2        v_uv1;                      // Texture coordinate varying)";
+in      vec2        v_uv1;                      // Texture coordinate varying for uv 1)";
 const string fragInput_v_lightVecTS = R"(
 in      vec3        v_eyeDirTS;                 // Vector to the eye in tangent space
 in      vec3        v_lightDirTS[NUM_LIGHTS];   // Vector to light 0 in tangent space
@@ -1263,6 +1263,7 @@ const string fragMain_1_EN_in_VS    = R"(
 )";
 const string fragMain_1_EN_in_TS    = R"(
     vec3 E = normalize(v_eyeDirTS);   // normalized interpolated eye direction
+
     // Get normal from normal map, move from [0,1] to [-1, 1] range & normalize
     vec3 N = normalize(texture(u_matTextureNormal0, v_uv0).rgb * 2.0 - 1.0);
 )";
@@ -1279,6 +1280,7 @@ const string fragMain_1_matOccl_Om1 = R"(
 //-----------------------------------------------------------------------------
 const string fragMainBlinn_2_LightLoop     = R"(
 
+    // Get the reflection from all lights into Ia, Id & Is
     for (int i = 0; i < NUM_LIGHTS; ++i)
     {
         if (u_lightIsOn[i])
@@ -1300,6 +1302,7 @@ const string fragMainBlinn_2_LightLoop     = R"(
 )";
 const string fragMainBlinn_2_LightLoopNm   = R"(
 
+    // Get the reflection from all lights into Ia, Id & Is
     for (int i = 0; i < NUM_LIGHTS; ++i)
     {
         if (u_lightIsOn[i])
@@ -1321,6 +1324,7 @@ const string fragMainBlinn_2_LightLoopNm   = R"(
 )";
 const string fragMainBlinn_2_LightLoopSm   = R"(
 
+    // Get the reflection from all lights into Ia, Id & Is
     for (int i = 0; i < NUM_LIGHTS; ++i)
     {
         if (u_lightIsOn[i])
@@ -1348,6 +1352,7 @@ const string fragMainBlinn_2_LightLoopSm   = R"(
 )";
 const string fragMainBlinn_2_LightLoopNmSm = R"(
 
+    // Get the reflection from all lights into Ia, Id & Is
     for (int i = 0; i < NUM_LIGHTS; ++i)
     {
         if (u_lightIsOn[i])
@@ -1436,22 +1441,24 @@ const string fragMainCook_1_matRough_RMm  = R"(
 const string fragMainCook_1_matRough_ORMm = R"(
     float matRough = texture(u_matTextureOccluRoughMetal0, v_uv0).g;)";
 const string fragMainCook_1_matMetal      = R"(
-     float matMetal = u_matMetal;)";
+    float matMetal = u_matMetal;)";
 const string fragMainCook_1_matMetal_Mm   = R"(
-     float matMetal = texture(u_matTextureMetallic0, v_uv0).r;)";
+    float matMetal = texture(u_matTextureMetallic0, v_uv0).r;)";
 const string fragMainCook_1_matMetal_RMm  = R"(
-     float matMetal = texture(u_matTextureRoughMetal0, v_uv0).b;)";
+    float matMetal = texture(u_matTextureRoughMetal0, v_uv0).b;)";
 const string fragMainCook_1_matMetal_ORMm = R"(
     float matMetal = texture(u_matTextureOccluRoughMetal0, v_uv0).b;)";
 const string fragMainCook_1_matOcclu_1    = R"(
-     float matOccl  = 1.0;)";
-const string fragMainCook_1_matOcclu_Om   = R"(
-     float matOccl  = texture(u_matTextureOcclusion0, v_uv0).r;)";
+    float matOccl  = 1.0;)";
+const string fragMainCook_1_matOcclu_Om0  = R"(
+    float matOccl  = texture(u_matTextureOcclusion0, v_uv0).r;)";
+const string fragMainCook_1_matOcclu_Om1  = R"(
+    float matOccl  = texture(u_matTextureOcclusion0, v_uv1).r;)";
 const string fragMainCook_1_matOcclu_ORMm = R"(
     float matOccl  = texture(u_matTextureOccluRoughMetal0, v_uv0).r;)";
 const string fragMainCook_2_LightLoop     = R"(
-    // Init Fresnel reflection at 90 deg. (0 to N)
-    vec3 F0 = vec3(0.04);
+
+    vec3 F0 = vec3(0.04); // Init Fresnel reflection at 90 deg. (0 to N)
     F0 = mix(F0, matDiff.rgb, matMetal);
 
     // Get the reflection from all lights into Lo
@@ -1486,8 +1493,8 @@ const string fragMainCook_2_LightLoop     = R"(
     }
 )";
 const string fragMainCook_2_LightLoopNm   = R"(
-    // Init Fresnel reflection at 90 deg. (0 to N)
-    vec3 F0 = vec3(0.04);
+
+    vec3 F0 = vec3(0.04); // Init Fresnel reflection at 90 deg. (0 to N)
     F0 = mix(F0, matDiff.rgb, matMetal);
 
     // Get the reflection from all lights into Lo
@@ -1522,8 +1529,8 @@ const string fragMainCook_2_LightLoopNm   = R"(
     }
 )";
 const string fragMainCook_2_LightLoopSm   = R"(
-    // Init Fresnel reflection at 90 deg. (0 to N)
-    vec3 F0 = vec3(0.04);
+
+    vec3 F0 = vec3(0.04); // Init Fresnel reflection at 90 deg. (0 to N)
     F0 = mix(F0, matDiff.rgb, matMetal);
 
     // Get the reflection from all lights into Lo
@@ -1564,8 +1571,8 @@ const string fragMainCook_2_LightLoopSm   = R"(
     }
 )";
 const string fragMainCook_2_LightLoopNmSm = R"(
-    // Init Fresnel reflection at 90 deg. (0 to N)
-    vec3 F0 = vec3(0.04);
+
+    vec3 F0 = vec3(0.04); // Init Fresnel reflection at 90 deg. (0 to N)
     F0 = mix(F0, matDiff.rgb, matMetal);
 
     // Get the reflection from all lights into Lo
@@ -1941,7 +1948,8 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat,
     bool Mm   = mat->hasTextureType(TT_metallic);
     bool RMm  = mat->hasTextureType(TT_roughMetal);
     bool Em   = mat->hasTextureType(TT_emissive);
-    bool Om   = mat->hasTextureType(TT_occlusion);
+    bool Om0  = mat->hasTextureTypeWithUVIndex(TT_occlusion, 0, 0);
+    bool Om1  = mat->hasTextureTypeWithUVIndex(TT_occlusion, 0, 1);
     bool ORMm = mat->hasTextureType(TT_occluRoughMetal);
     bool Vm   = mat->hasTextureType(TT_videoBkgd);
     bool Sm   = lightsDoShadowMapping(lights);
@@ -1956,10 +1964,10 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat,
     // Vertex shader inputs
     vertCode += vertInput_a_pn;
     if (uv0) vertCode += vertInput_a_uv0;
+    if (uv1) vertCode += vertInput_a_uv1;
     if (Nm) vertCode += vertInput_a_tangent;
     if (supportGPUSkinning) vertCode += vertInput_a_skinning;
     vertCode += vertInput_u_matrices_all;
-    // if (sky) vertCode += vertInput_u_matrix_invMv;
     if (Nm) vertCode += vertInput_u_lightNm;
     if (supportGPUSkinning) vertCode += vertInput_u_skinning;
 
@@ -1969,6 +1977,7 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat,
     vertCode += vertOutput_v_N_VS;
     if (sky) vertCode += vertOutput_v_R_OS;
     if (uv0) vertCode += vertOutput_v_uv0;
+    if (uv1) vertCode += vertOutput_v_uv1;
     if (Nm) vertCode += vertOutput_v_lightVecTS;
 
     // Vertex shader main loop
@@ -1979,6 +1988,7 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat,
     vertCode += vertMain_v_N_VS;
     if (sky) vertCode += vertMain_v_R_OS;
     if (uv0) vertCode += vertMain_v_uv0;
+    if (uv1) vertCode += vertMain_v_uv1;
     if (Nm) vertCode += vertMain_TBN_Nm;
     vertCode += vertMain_EndAll;
 
@@ -1999,6 +2009,7 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat,
     fragCode += fragInput_v_N_VS;
     if (sky) fragCode += fragInput_v_R_OS;
     if (uv0) fragCode += fragInput_v_uv0;
+    if (uv1) fragCode += fragInput_v_uv1;
     if (Nm) fragCode += fragInput_v_lightVecTS;
 
     // Fragment shader uniforms
@@ -2013,7 +2024,7 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat,
     if (!Rm && !RMm && !ORMm) fragCode += fragInput_u_matRough;
     if (!Mm && !RMm && !ORMm) fragCode += fragInput_u_matMetal;
     if (Nm) fragCode += fragInput_u_matTexNm;
-    if (Om) fragCode += fragInput_u_matTexOm;
+    if (Om0 || Om1) fragCode += fragInput_u_matTexOm;
     if (Sm) fragCode += fragInput_u_matGetsSm;
     if (Sm) fragCode += fragInput_u_shadowMaps(lights);
     if (sky) fragCode += fragInput_u_skyCookEnvMaps;
@@ -2041,8 +2052,9 @@ void SLGLProgramGenerated::buildPerPixCook(SLMaterial* mat,
     fragCode += ORMm ? fragMainCook_1_matMetal_ORMm : RMm ? fragMainCook_1_matMetal_RMm
                                                     : Rm  ? fragMainCook_1_matMetal_Mm
                                                           : fragMainCook_1_matMetal;
-    fragCode += ORMm ? fragMainCook_1_matOcclu_ORMm : Om ? fragMainCook_1_matOcclu_Om
-                                                         : fragMainCook_1_matOcclu_1;
+    fragCode += ORMm ? fragMainCook_1_matOcclu_ORMm : Om0 ? fragMainCook_1_matOcclu_Om0
+                                                    : Om1 ? fragMainCook_1_matOcclu_Om1
+                                                          : fragMainCook_1_matOcclu_1;
     fragCode += Nm && Sm ? fragMainCook_2_LightLoopNmSm : Nm ? fragMainCook_2_LightLoopNm
                                                         : Sm ? fragMainCook_2_LightLoopSm
                                                              : fragMainCook_2_LightLoop;
@@ -2921,8 +2933,7 @@ float shadowTest(in int i, in vec3 N, in vec3 lightDir)
     }
 
     return 0.0;
-}
-)";
+})";
 
     return shadowTestCode;
 }

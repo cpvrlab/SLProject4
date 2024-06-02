@@ -1600,6 +1600,8 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                         AppDemo::sceneToLoad = SID_SuzannePerPixBlinnTmNmSm;
                     if (ImGui::MenuItem("w. PL, TM, NM, AO, SM", nullptr, sid == SID_SuzannePerPixBlinnTmNmAoSm))
                         AppDemo::sceneToLoad = SID_SuzannePerPixBlinnTmNmAoSm;
+                    if (ImGui::MenuItem("w. PL, TM, NM, AO, SM, EM", nullptr, sid == SID_SuzannePerPixCookTmNmAoSmEm))
+                        AppDemo::sceneToLoad = SID_SuzannePerPixCookTmNmAoSmEm;
                     ImGui::EndMenu();
                 }
 

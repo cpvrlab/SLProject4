@@ -177,20 +177,21 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
         case SID_ShadowMappingSpotLights: s = new AppDemoSceneShadowLightSpot(); break;
         case SID_ShadowMappingPointLights: s = new AppDemoSceneShadowLightPoint(); break;
         case SID_ShadowMappingCascaded: s = new AppDemoSceneShadowCascaded(); break;
-        case SID_SuzannePerPixBlinn: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and reflection colors", false, false, false, false); break;
-        case SID_SuzannePerPixBlinnTm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and texture mapping", true, false, false, false); break;
-        case SID_SuzannePerPixBlinnNm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and normal mapping", false, true, false, false); break;
-        case SID_SuzannePerPixBlinnAo: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and ambient occlusion", false, false, true, false); break;
-        case SID_SuzannePerPixBlinnSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and shadow mapping", false, false, false, true); break;
-        case SID_SuzannePerPixBlinnTmNm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting, texture and normal mapping", true, true, false, false); break;
-        case SID_SuzannePerPixBlinnTmAo: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting, texture mapping and ambient occlusion", true, false, true, false); break;
-        case SID_SuzannePerPixBlinnNmAo: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting, normal mapping and ambient occlusion", false, true, true, false); break;
-        case SID_SuzannePerPixBlinnTmSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting, texture mapping and shadow mapping", true, false, false, true); break;
-        case SID_SuzannePerPixBlinnNmSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting, normal mapping and shadow mapping", false, true, false, true); break;
-        case SID_SuzannePerPixBlinnAoSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting, ambient occlusion and shadow mapping", false, false, true, true); break;
-        case SID_SuzannePerPixBlinnTmNmAo: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and diffuse, normal, ambient occlusion and shadow mapping", true, true, true, false); break;
-        case SID_SuzannePerPixBlinnTmNmSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and diffuse, normal and shadow mapping ", true, true, false, true); break;
-        case SID_SuzannePerPixBlinnTmNmAoSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel lighting and diffuse, normal, ambient occlusion and shadow mapping", true, true, true, true); break;
+        case SID_SuzannePerPixBlinn: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and reflection colors", false, false, false, false, false); break;
+        case SID_SuzannePerPixBlinnTm: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and texture mapping", true, false, false, false, false); break;
+        case SID_SuzannePerPixBlinnNm: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and normal mapping", false, true, false, false, false); break;
+        case SID_SuzannePerPixBlinnAo: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and ambient occlusion", false, false, true, false, false); break;
+        case SID_SuzannePerPixBlinnSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and shadow mapping", false, false, false, true, false); break;
+        case SID_SuzannePerPixBlinnTmNm: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting, texture and normal mapping", true, true, false, false, false); break;
+        case SID_SuzannePerPixBlinnTmAo: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting, texture mapping and ambient occlusion", true, false, true, false, false); break;
+        case SID_SuzannePerPixBlinnNmAo: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting, normal mapping and ambient occlusion", false, true, true, false, false); break;
+        case SID_SuzannePerPixBlinnTmSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting, texture mapping and shadow mapping", true, false, false, true, false); break;
+        case SID_SuzannePerPixBlinnNmSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting, normal mapping and shadow mapping", false, true, false, true, false); break;
+        case SID_SuzannePerPixBlinnAoSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting, ambient occlusion and shadow mapping", false, false, true, true, false); break;
+        case SID_SuzannePerPixBlinnTmNmAo: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and diffuse, normal, ambient occlusion and shadow mapping", true, true, true, false, false); break;
+        case SID_SuzannePerPixBlinnTmNmSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and diffuse, normal and shadow mapping ", true, true, false, true, false); break;
+        case SID_SuzannePerPixBlinnTmNmAoSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and diffuse, normal, ambient occlusion and shadow mapping", true, true, true, true, false); break;
+        case SID_SuzannePerPixCookTmNmAoSmEm: s = new AppDemoSceneSuzanne("Suzanne with per pixel Cook-Torrance lighting and diffuse, normal, ambient occlusion, shadow and environment mapping", true, true, true, true, true); break;
         case SID_glTF_DamagedHelmet:
         case SID_glTF_FlightHelmet:
         case SID_glTF_Sponza:
