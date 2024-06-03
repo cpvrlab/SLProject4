@@ -53,7 +53,6 @@ static long   animationFrameID = 0;
 static SLbool coreAssetsLoaded = false;
 
 //-----------------------------------------------------------------------------
-void        appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID);
 extern bool onUpdateVideo();
 //-----------------------------------------------------------------------------
 void updateCanvas()
@@ -488,7 +487,7 @@ bool onPaint()
 
     if (AppDemo::sceneToLoad)
     {
-        appDemoSwitchScene(sv, *AppDemo::sceneToLoad);
+        slSwitchScene(sv, *AppDemo::sceneToLoad);
         AppDemo::sceneToLoad = {};
     }
 
@@ -602,8 +601,7 @@ int main(void)
       "AppDemoEmscripten",
       (void*)nullptr);
 
-    slRegisterCoreAssetsToLoad();
-    AppDemo::assetLoader->loadAssetsAsync([] {});
+    slLoadCoreAssetsAsync();
 
     // Request an animation frame from the browser. This will call the `update` function once.
     // The `update` function itself requests the next animation frame, creating an update loop.

@@ -116,6 +116,30 @@ void AppDemo::createAppAndScene(SLstring appName)
 #endif
 }
 //-----------------------------------------------------------------------------
+void AppDemo::registerCoreAssetsLoad()
+{
+    SLAssetLoader&  al = *AppDemo::assetLoader;
+    SLAssetManager* am = AppDemo::assetManager;
+
+    // FIXME: There are dependencies between these load tasks, how do we express this?
+
+    // Load all core shader programs.
+    al.addLoadTask([am]
+                   { SLGLProgramManager::loadPrograms(); });
+
+    // Generate static fonts.
+    al.addLoadTask([am, fontPath = AppDemo::fontPath]
+                   { am->generateStaticFonts(AppDemo::fontPath); });
+
+    // Load data for ImGUI fonts.
+    al.addRawDataToLoad(AppDemo::fontDataProp,
+                        AppDemo::fontPath + "DroidSans.ttf",
+                        IOK_font);
+    al.addRawDataToLoad(AppDemo::fontDataFixed,
+                        AppDemo::fontPath + "ProggyClean.ttf",
+                        IOK_font);
+}
+//-----------------------------------------------------------------------------
 //! Calls the destructor of the single scene instance.
 /*! Destroys all data by calling the destructor of the single scene instance.
 All other date gets destroyed from there. This function gets called by the

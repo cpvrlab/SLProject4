@@ -10,6 +10,7 @@
 
 #include <SLInterface.h>
 #include <AppDemo.h>
+#include <AppLoad.h>
 #include <SLAssimpImporter.h>
 #include <SLInputManager.h>
 #include <SLScene.h>
@@ -108,30 +109,6 @@ void slCreateAppAndScene(SLVstring&      cmdLineArgs,
     AppDemo::createAppAndScene(applicationName);
 }
 //-----------------------------------------------------------------------------
-void slRegisterCoreAssetsToLoad()
-{
-    SLAssetLoader&  al = *AppDemo::assetLoader;
-    SLAssetManager* am = AppDemo::assetManager;
-
-    // FIXME: There are dependencies between these load tasks, how do we express this?
-
-    // Load all core shader programs.
-    al.addLoadTask([am]
-                   { SLGLProgramManager::loadPrograms(); });
-
-    // Generate static fonts.
-    al.addLoadTask([am, fontPath = AppDemo::fontPath]
-                   { am->generateStaticFonts(AppDemo::fontPath); });
-
-    // Load data for ImGUI fonts.
-    al.addRawDataToLoad(AppDemo::fontDataProp,
-                        AppDemo::fontPath + "DroidSans.ttf",
-                        IOK_font);
-    al.addRawDataToLoad(AppDemo::fontDataFixed,
-                        AppDemo::fontPath + "ProggyClean.ttf",
-                        IOK_font);
-}
-//-----------------------------------------------------------------------------
 /*! Global creation function for a SLSceneview instance returning the index of
 the sceneview. It creates the new SLSceneView instance by calling the callback
 function slNewSceneView. If you have a custom SLSceneView inherited class you
@@ -199,6 +176,23 @@ SLint slCreateSceneView(SLAssetManager* am,
 
     // return the identifier index
     return (SLint)AppDemo::sceneViews.size() - 1;
+}
+//-----------------------------------------------------------------------------
+void slLoadCoreAssetsSync()
+{
+    AppDemo::registerCoreAssetsLoad();
+    AppDemo::assetLoader->loadAssetsSync();
+}
+//-----------------------------------------------------------------------------
+void slLoadCoreAssetsAsync()
+{
+    AppDemo::registerCoreAssetsLoad();
+    AppDemo::assetLoader->loadAssetsAsync([] {});
+}
+//-----------------------------------------------------------------------------
+void slSwitchScene(SLSceneView* sv, SLSceneID sceneID)
+{
+    AppLoad::switchScene(sv, *AppDemo::sceneToLoad);
 }
 //-----------------------------------------------------------------------------
 /*! Global sceneview construction function returning the index of the created

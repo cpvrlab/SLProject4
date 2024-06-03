@@ -4,6 +4,7 @@ file(GLOB headers
         ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/*.h
         ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/scenes/*.h
         ${SL_PROJECT_ROOT}/apps/source/AppDemo.h
+        ${SL_PROJECT_ROOT}/apps/source/AppLoad.h
         ${SL_PROJECT_ROOT}/apps/source/SLInterface.h
         ${SL_PROJECT_ROOT}/apps/source/Scene.h
         ${SL_PROJECT_ROOT}/apps/source/CVCapture.h
@@ -14,6 +15,7 @@ file(GLOB sources
         ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/*.cpp
         ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/scenes/*.cpp
         ${SL_PROJECT_ROOT}/apps/source/AppDemo.cpp
+        ${SL_PROJECT_ROOT}/apps/source/AppLoad.cpp
         ${SL_PROJECT_ROOT}/apps/source/SLInterface.cpp
         ${SL_PROJECT_ROOT}/apps/source/CVCapture.cpp
         ${SL_PROJECT_ROOT}/apps/source/WebCamera.cpp

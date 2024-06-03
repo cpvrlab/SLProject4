@@ -26,10 +26,7 @@
 #include <GLFW/glfw3.h>
 
 //-----------------------------------------------------------------------------
-//! Forward declaration of the scene definition function from AppDemoLoad.cpp
-void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID);
 bool onUpdateVideo();
-
 //-----------------------------------------------------------------------------
 // Global application variables
 static GLFWwindow* window;                     //!< The global glfw window handle
@@ -50,7 +47,6 @@ static SLint       lastHeight;                 //!< Last window height in pixels
 static SLfloat     lastMouseDownTime = 0.0f;   //!< Last mouse press time
 static SLKey       modifiers         = K_none; //!< last modifier keys
 static SLbool      fullscreen        = false;  //!< flag if window is in fullscreen mode
-
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -129,7 +125,7 @@ SLbool onPaint()
 
     if (AppDemo::sceneToLoad)
     {
-        appDemoSwitchScene(sv, *AppDemo::sceneToLoad);
+        slSwitchScene(sv, *AppDemo::sceneToLoad);
         AppDemo::sceneToLoad = {}; // sets optional to false
     }
 
@@ -545,8 +541,7 @@ void initSL(SLVstring& cmdLineArgs)
                         (void*)nullptr);
     /////////////////////////////////////////////////////////
 
-    slRegisterCoreAssetsToLoad();
-    AppDemo::assetLoader->loadAssetsSync();
+    slLoadCoreAssetsSync();
 
     /////////////////////////////////////////////////////////
     slCreateSceneView(AppDemo::assetManager,

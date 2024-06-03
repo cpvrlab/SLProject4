@@ -19,8 +19,6 @@
 #include <SLAssetLoader.h>
 #include <GLFW/glfw3.h>
 
-void appNodeSwitchScene(SLSceneView* sv, SLSceneID sceneID);
-
 //-----------------------------------------------------------------------------
 // Global application variables
 GLFWwindow* window;                     //!< The global GLFW window handle.
@@ -503,8 +501,7 @@ int main(int argc, char* argv[])
                         (void*)nullptr);
     //////////////////////////////////////////////////////////
 
-    slRegisterCoreAssetsToLoad();
-    AppDemo::assetLoader->loadAssetsSync();
+    slLoadCoreAssetsSync();
 
     //////////////////////////////////////////////////////////
     svIndex = slCreateSceneView(AppDemo::assetManager,
@@ -519,7 +516,7 @@ int main(int argc, char* argv[])
                                 (void*)AppNodeGui::build);
     //////////////////////////////////////////////////////////
 
-    appNodeSwitchScene(AppDemo::sceneViews[svIndex], SID_Empty);
+    slSwitchScene(AppDemo::sceneViews[svIndex], SID_Empty);
 
     // Event loop
     while (!slShouldClose())

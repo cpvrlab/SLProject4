@@ -60,6 +60,7 @@ public:
     static optional<SLSceneID> sceneToLoad;
 
     static void createAppAndScene(SLstring appName);
+    static void registerCoreAssetsLoad();
     static void deleteAppAndScene();
 
     static SLstring name;          //!< Application name

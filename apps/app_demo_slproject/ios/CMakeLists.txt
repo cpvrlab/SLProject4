@@ -59,6 +59,7 @@ set(headers
     ${SL_PROJECT_ROOT}/apps/app_demo_slproject/include/AppDemoSceneView.h
 	${SL_PROJECT_ROOT}/apps/source/CVCapture.h
 	${SL_PROJECT_ROOT}/apps/source/AppDemo.h
+    ${SL_PROJECT_ROOT}/apps/source/AppLoad.h
 	${SL_PROJECT_ROOT}/apps/source/SLInterface.h
     ${CMAKE_CURRENT_SOURCE_DIR}/AppDelegate.h
 	${CMAKE_CURRENT_SOURCE_DIR}/ViewController.h
@@ -71,6 +72,7 @@ set(sources
     ${SL_PROJECT_ROOT}/apps/app_demo_slproject/source/AppDemoSceneView.cpp
 	${SL_PROJECT_ROOT}/apps/source/CVCapture.cpp
 	${SL_PROJECT_ROOT}/apps/source/AppDemo.cpp
+    ${SL_PROJECT_ROOT}/apps/source/AppLoad.cpp
 	${SL_PROJECT_ROOT}/apps/source/SLInterface.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/AppDelegate.mm
 	${CMAKE_CURRENT_SOURCE_DIR}/main.m

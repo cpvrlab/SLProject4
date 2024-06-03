@@ -45,8 +45,6 @@ void slCreateAppAndScene(SLVstring&      cmdLineArgs,
                          const SLstring& applicationName,
                          void*           onSceneLoadCallback = nullptr);
 //-----------------------------------------------------------------------------
-void slRegisterCoreAssetsToLoad();
-//-----------------------------------------------------------------------------
 SLint slCreateSceneView(SLAssetManager* am,
                         SLScene*        scene,
                         int             screenWidth,
@@ -59,6 +57,10 @@ SLint slCreateSceneView(SLAssetManager* am,
                         void*           onImGuiBuild             = nullptr,
                         void*           onImGuiLoadConfig        = nullptr,
                         void*           onImGuiSaveConfig        = nullptr);
+//-----------------------------------------------------------------------------
+void slLoadCoreAssetsSync();
+void slLoadCoreAssetsAsync();
+void slSwitchScene(SLSceneView* sv, SLSceneID sceneID);
 //-----------------------------------------------------------------------------
 SLSceneView* slNewSceneView(SLScene* s, int dotsPerInch, SLInputManager& inputManager);
 bool         slShouldClose();
