@@ -1,5 +1,13 @@
-#include <AppDemoSceneEmpty.h>
+//#############################################################################
+//  File:      AppDemoSceneEmpty.cpp
+//  Date:      May 2024
+//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
+//  Authors:   Marino von Wattenwyl
+//  License:   This software is provided under the GNU General Public License
+//             Please visit: http://opensource.org/licenses/GPL-3.0
+//#############################################################################
 
+#include <AppDemoSceneEmpty.h>
 #include <SLLightSpot.h>
 #include <SLRectangle.h>
 #include <AppDemo.h>
