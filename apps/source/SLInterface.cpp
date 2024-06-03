@@ -53,16 +53,15 @@ See examples usages in:
   - app-Demo-SLProject/android: native-lib.cpp      in Java_ch_fhnw_comgr_GLES3Lib_onInit()
   - app_demo_slproject/ios:     ViewController.m    in viewDidLoad()
 */
-void slCreateAppAndScene(SLVstring&      cmdLineArgs,
-                         const SLstring& dataPath,
-                         const SLstring& shaderPath,
-                         const SLstring& modelPath,
-                         const SLstring& texturePath,
-                         const SLstring& fontPath,
-                         const SLstring& videoPath,
-                         const SLstring& configPath,
-                         const SLstring& applicationName,
-                         void*           onSceneLoadCallback)
+void slCreateApp(SLVstring&      cmdLineArgs,
+                 const SLstring& dataPath,
+                 const SLstring& shaderPath,
+                 const SLstring& modelPath,
+                 const SLstring& texturePath,
+                 const SLstring& fontPath,
+                 const SLstring& videoPath,
+                 const SLstring& configPath,
+                 const SLstring& applicationName)
 {
     assert(AppDemo::scene == nullptr && "SLScene is already created!");
 
@@ -106,7 +105,7 @@ void slCreateAppAndScene(SLVstring&      cmdLineArgs,
     SL_LOG("OpenGL GLSL Ver. : %s (%s) ", stateGL->glSLVersion().c_str(), stateGL->getSLVersionNO().c_str());
     SL_LOG("------------------------------------------------------------------");
 
-    AppDemo::createAppAndScene(applicationName);
+    AppDemo::createApp(applicationName);
 }
 //-----------------------------------------------------------------------------
 /*! Global creation function for a SLSceneview instance returning the index of
@@ -232,8 +231,8 @@ void slTerminate()
 {
     SL_LOG("Begin of Terminate");
 
-    // Deletes all remaining sceneviews the current scene instance
-    AppDemo::deleteAppAndScene();
+    // Deletes all remaining sceneviews and the current scene instance
+    AppDemo::deleteApp();
 
     // For more info on PROFILING read Utils/lib-utils/source/Profiler.h
 #if PROFILING

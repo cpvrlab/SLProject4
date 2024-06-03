@@ -91,8 +91,8 @@ float GetSeconds()
     CGPoint m_touchDownPos1;    //!< Pos. of touch down for finger 1
 
     // Video stuff
-    AVCaptureSession* m_avSession;          //!< Audio video session
-    NSString*         m_avSessionPreset;    //!< Session name
+    AVCaptureSession* m_avSession;       //!< Audio video session
+    NSString*         m_avSessionPreset; //!< Session name
     bool              m_lastVideoImageIsConsumed;
     int               m_lastVideoType;      //! VT_NONE=0,VT_MAIN=1,VT_SCND=2
     int               m_lastVideoSizeIndex; //! 0=1920x1080, 1=1280x720 else 640x480
@@ -105,7 +105,7 @@ float GetSeconds()
 @end
 //-----------------------------------------------------------------------------
 @implementation ViewController
-@synthesize     context = _context;
+@synthesize context = _context;
 
 - (void)dealloc
 {
@@ -171,16 +171,15 @@ float GetSeconds()
                                             AppDemo::configPath);        // for stored calibrations
 
     /////////////////////////////////////////////
-    slCreateAppAndScene(cmdLineArgs,
-                        AppDemo::exePath + "data/",
-                        AppDemo::exePath + "data/shaders/",
-                        AppDemo::exePath + "data/models/",
-                        AppDemo::exePath + "data/images/textures/",
-                        AppDemo::exePath + "data/images/fonts/",
-                        AppDemo::exePath + "data/videos/",
-                        AppDemo::configPath,
-                        "AppDemo_iOS",
-                        (void*)appDemoLoadScene);
+    slCreateApp(cmdLineArgs,
+                AppDemo::exePath + "data/",
+                AppDemo::exePath + "data/shaders/",
+                AppDemo::exePath + "data/models/",
+                AppDemo::exePath + "data/images/textures/",
+                AppDemo::exePath + "data/images/fonts/",
+                AppDemo::exePath + "data/videos/",
+                AppDemo::configPath,
+                "AppDemo_iOS");
 
     ///////////////////////////////////////////////////////////////////////
     svIndex = slCreateSceneView(AppDemo::assetManager,

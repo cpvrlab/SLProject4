@@ -79,7 +79,7 @@ const string AppDemo::PROFILE_FTP_DIR = "profiles";
 //-----------------------------------------------------------------------------
 //! Application and Scene creation function
 /*! Writes and inits the static application information and create the single
-instance of the scene. Gets called by the C-interface function slCreateAppAndScene.
+instance of the scene. Gets called by the C-interface function slCreateApp.
 <br>
 <br>
 See examples usages in:
@@ -90,7 +90,7 @@ See examples usages in:
 /param applicationName The apps name
 /param onSceneLoadCallback C Callback function as void* pointer for the scene creation.
 */
-void AppDemo::createAppAndScene(SLstring appName)
+void AppDemo::createApp(SLstring appName)
 {
     assert(AppDemo::scene == nullptr &&
            "You can create only one AppDemo");
@@ -146,7 +146,7 @@ All other date gets destroyed from there. This function gets called by the
 SLProject C-Interface function slTerminate that should be called at the end of
 any SLProject application.
 */
-void AppDemo::deleteAppAndScene()
+void AppDemo::deleteApp()
 {
     // The WebGL context is apparently already destroyed when we call this function
 #ifndef SL_EMSCRIPTEN

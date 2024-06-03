@@ -110,22 +110,21 @@ extern "C" JNIEXPORT void JNICALL Java_ch_bfh_cpvrlab_GLES3Lib_onInit(JNIEnv* en
     string device_path_msg = "Device path:" + devicePath;
     SL_LOG(device_path_msg.c_str(), 0);
 
-    AppDemo::calibFilePath = devicePath + "/data/config/";               //that's where calibrations are stored an loaded from
+    AppDemo::calibFilePath = devicePath + "/data/config/"; //that's where calibrations are stored an loaded from
     AppDemo::calibIniPath  = devicePath + "/data/calibrations/";
     CVCapture::instance()->loadCalibrations(Utils::ComputerInfos::get(), // deviceInfo string
                                             AppDemo::calibFilePath);     // for calibrations made
 
     ////////////////////////////////////////////////////
-    slCreateAppAndScene(*cmdLineArgs,
-                        devicePath + "/data/",
-                        devicePath + "/data/shaders/",
-                        devicePath + "/data/models/",
-                        devicePath + "/data/images/textures/",
-                        devicePath + "/data/images/fonts/",
-                        devicePath + "/data/videos/",
-                        devicePath + "/",
-                        "AppDemoAndroid",
-                        (void*)appDemoLoadScene);
+    slCreateApp(*cmdLineArgs,
+                devicePath + "/data/",
+                devicePath + "/data/shaders/",
+                devicePath + "/data/models/",
+                devicePath + "/data/images/textures/",
+                devicePath + "/data/images/fonts/",
+                devicePath + "/data/videos/",
+                devicePath + "/",
+                "AppDemoAndroid");
 
     ////////////////////////////////////////////////////////////////////
     svIndex = slCreateSceneView(AppDemo::assetManager,

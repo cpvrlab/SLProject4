@@ -529,16 +529,15 @@ void initSL(SLVstring& cmdLineArgs)
                                             AppDemo::calibFilePath);
 
     /////////////////////////////////////////////////////////
-    slCreateAppAndScene(cmdLineArgs,
-                        projectRoot + "/data/",
-                        projectRoot + "/data/shaders/",
-                        projectRoot + "/data/models/",
-                        projectRoot + "/data/images/textures/",
-                        projectRoot + "/data/images/fonts/",
-                        projectRoot + "/data/videos/",
-                        configDir,
-                        "AppDemoGLFW",
-                        (void*)nullptr);
+    slCreateApp(cmdLineArgs,
+                projectRoot + "/data/",
+                projectRoot + "/data/shaders/",
+                projectRoot + "/data/models/",
+                projectRoot + "/data/images/textures/",
+                projectRoot + "/data/images/fonts/",
+                projectRoot + "/data/videos/",
+                configDir,
+                "AppDemoGLFW");
     /////////////////////////////////////////////////////////
 
     slLoadCoreAssetsSync();

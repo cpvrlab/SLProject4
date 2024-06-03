@@ -60,7 +60,7 @@ struct InstrumentationSession
  the profileResults will be stored in memory instead of being written into the
  file stream which is pretty slow. Of course the in memory storage can quickly
  use a lot of memory depending how fine grained your profiling is.
- In app-Demo-SLProject this is done in SLInterface::slCreateAppAndScene.
+ In app-Demo-SLProject this is done in slCreateApp.
 
  In between you can add either PROFILE_FUNCTION(); at the beginning of any routine
  or PROFILE_SCOPE(scopeName) at the beginning of any scope you want to measure.

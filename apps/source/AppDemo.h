@@ -37,8 +37,8 @@ using std::optional;
  manager, the scene pointer, the vector of all sceneviews, the gui pointer,
  the camera calibration objects and the device rotation and location
  information.<br>
- The static function createAppAndScene is called by the C-interface
- functions slCreateAppAndScene and the function deleteAppAndScene by slTerminate.
+ The static function createApp is called by the C-interface
+ functions slCreateApp and the function deleteApp by slTerminate.
  At the moment only one scene can be open at the time.
  <br>
  AppDemo holds two static video camera calibrations, one for a main camera
@@ -59,9 +59,9 @@ public:
     static SLDeviceLocation    devLoc;     //!< Mobile device location from GPS
     static optional<SLSceneID> sceneToLoad;
 
-    static void createAppAndScene(SLstring appName);
+    static void createApp(SLstring appName);
     static void registerCoreAssetsLoad();
-    static void deleteAppAndScene();
+    static void deleteApp();
 
     static SLstring name;          //!< Application name
     static SLstring appTag;        //!< Tag string used in logging

@@ -589,17 +589,15 @@ int main(void)
     AppDemo::calibIniPath = "data/calibrations/";
 
     SLVstring args;
-    slCreateAppAndScene(
-      args,
-      "data/",
-      "data/shaders/",
-      "data/models/",
-      "data/images/textures/",
-      "data/images/fonts/",
-      "data/videos/",
-      "data/config/",
-      "AppDemoEmscripten",
-      (void*)nullptr);
+    slCreateApp(args,
+                "data/",
+                "data/shaders/",
+                "data/models/",
+                "data/images/textures/",
+                "data/images/fonts/",
+                "data/videos/",
+                "data/config/",
+                "AppDemoEmscripten");
 
     slLoadCoreAssetsAsync();
 

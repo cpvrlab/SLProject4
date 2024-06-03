@@ -489,16 +489,15 @@ int main(int argc, char* argv[])
     SLstring configPath  = Utils::getAppsWritableDir();
 
     //////////////////////////////////////////////////////////
-    slCreateAppAndScene(cmdLineArgs,
-                        projectRoot + "/data/",
-                        projectRoot + "/data/shaders/",
-                        projectRoot + "/data/models/",
-                        projectRoot + "/data/images/textures/",
-                        projectRoot + "/data/images/fonts/",
-                        projectRoot + "/data/videos/",
-                        configPath,
-                        "AppNode_GLFW",
-                        (void*)nullptr);
+    slCreateApp(cmdLineArgs,
+                projectRoot + "/data/",
+                projectRoot + "/data/shaders/",
+                projectRoot + "/data/models/",
+                projectRoot + "/data/images/textures/",
+                projectRoot + "/data/images/fonts/",
+                projectRoot + "/data/videos/",
+                configPath,
+                "AppNode_GLFW");
     //////////////////////////////////////////////////////////
 
     slLoadCoreAssetsSync();
