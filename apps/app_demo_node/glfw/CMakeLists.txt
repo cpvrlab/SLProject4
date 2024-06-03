@@ -7,8 +7,9 @@ set(include_path "${CMAKE_CURRENT_SOURCE_DIR}")
 set(source_path "${CMAKE_CURRENT_SOURCE_DIR}")
 
 file(GLOB headers
-        ${SL_PROJECT_ROOT}/apps/app_demo_node/include/AppNodeGui.h
-        ${SL_PROJECT_ROOT}/apps/app_demo_node/include/AppNodeSceneView.h
+        ${SL_PROJECT_ROOT}/apps/app_demo_node/source/AppNodeGui.h
+        ${SL_PROJECT_ROOT}/apps/app_demo_node/source/AppNodeScene.h
+        ${SL_PROJECT_ROOT}/apps/app_demo_node/source/AppNodeSceneView.h
         ${SL_PROJECT_ROOT}/apps/source/AppDemo.h
         ${SL_PROJECT_ROOT}/apps/source/SLInterface.h
         ${SL_PROJECT_ROOT}/apps/source/SLScene.h
@@ -17,6 +18,7 @@ file(GLOB headers
 file(GLOB sources
         ${SL_PROJECT_ROOT}/apps/app_demo_node/source/AppNodeGui.cpp
         ${SL_PROJECT_ROOT}/apps/app_demo_node/source/AppNodeLoad.cpp
+        ${SL_PROJECT_ROOT}/apps/app_demo_node/source/AppNodeScene.cpp
         ${SL_PROJECT_ROOT}/apps/app_demo_node/source/AppNodeSceneView.cpp
         ${SL_PROJECT_ROOT}/apps/source/AppDemo.cpp
         ${SL_PROJECT_ROOT}/apps/source/SLInterface.cpp
@@ -42,7 +44,7 @@ set_target_properties(
 target_include_directories(
         ${target}
         PRIVATE
-        ${SL_PROJECT_ROOT}/apps/app_demo_node/include
+        ${SL_PROJECT_ROOT}/apps/app_demo_node/source
         ${SL_PROJECT_ROOT}/modules/sl/source
         ${SL_PROJECT_ROOT}/modules/sl/externals/imgui
         ${SL_PROJECT_ROOT}/modules/sl/externals/spa

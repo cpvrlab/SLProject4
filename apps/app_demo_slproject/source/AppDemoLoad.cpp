@@ -99,6 +99,109 @@ extern SLNode*      gVideoTrackedNode;
 static void onDoneLoading(SLSceneView* sv, SLScene* s, SLfloat startLoadMS);
 static void onDoneAssembling(SLSceneView* sv, SLScene* s, SLfloat startLoadMS);
 //-----------------------------------------------------------------------------
+SLScene* createScene(SLSceneID sceneID)
+{
+    switch (sceneID)
+    {
+        case SID_Empty: return new AppDemoSceneEmpty();
+        case SID_Figure: return new AppDemoSceneFigure();
+        case SID_Minimal: return new AppDemoSceneMinimal();
+        case SID_MeshLoad: return new AppDemoSceneMeshLoad();
+        case SID_Revolver: return new AppDemoSceneRevolver();
+        case SID_TextureBlend: return new AppDemoSceneTextureBlend();
+        case SID_TextureFilter: return new AppDemoSceneTextureFilter();
+#ifdef SL_BUILD_WITH_KTX
+        case SID_TextureCompression: return new AppDemoSceneTextureCompression();
+#endif
+        case SID_FrustumCull: return new AppDemoSceneFrustum();
+        case SID_2Dand3DText: return new AppDemoScene2Dand3DText();
+        case SID_PointClouds: return new AppDemoScenePointClouds();
+        case SID_ZFighting: return new AppDemoSceneZFighting();
+        case SID_ShaderPerVertexBlinn: return new AppDemoSceneShaderBlinn("Per Vertex Blinn-Phong Lighting", true);
+        case SID_ShaderPerPixelBlinn: return new AppDemoSceneShaderBlinn("Per Pixel Blinn-Phong Lighting", false);
+        case SID_ShaderPerPixelCook: return new AppDemoSceneShaderCook();
+        case SID_ShaderIBL: return new AppDemoSceneShaderIBL();
+        case SID_ShaderWave: return new AppDemoSceneShaderWave();
+        case SID_ShaderBumpNormal: return new AppDemoSceneShaderBump();
+        case SID_ShaderBumpParallax: return new AppDemoSceneShaderParallax();
+        case SID_ShaderSkybox: return new AppDemoSceneShaderSkybox();
+        case SID_ShaderEarth: return new AppDemoSceneShaderEarth();
+        case SID_ShadowMappingBasicScene: return new AppDemoSceneShadowBasic();
+        case SID_ShadowMappingLightTypes: return new AppDemoSceneShadowLightTypes();
+        case SID_ShadowMappingSpotLights: return new AppDemoSceneShadowLightSpot();
+        case SID_ShadowMappingPointLights: return new AppDemoSceneShadowLightPoint();
+        case SID_ShadowMappingCascaded: return new AppDemoSceneShadowCascaded();
+        case SID_SuzannePerPixBlinn: return new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and reflection colors", false, false, false, false, false);
+        case SID_SuzannePerPixBlinnTm: return new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and texture mapping", true, false, false, false, false);
+        case SID_SuzannePerPixBlinnNm: return new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and normal mapping", false, true, false, false, false);
+        case SID_SuzannePerPixBlinnAo: return new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and ambient occlusion", false, false, true, false, false);
+        case SID_SuzannePerPixBlinnSm: return new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and shadow mapping", false, false, false, true, false);
+        case SID_SuzannePerPixBlinnTmNm: return new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting, texture and normal mapping", true, true, false, false, false);
+        case SID_SuzannePerPixBlinnTmAo: return new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting, texture mapping and ambient occlusion", true, false, true, false, false);
+        case SID_SuzannePerPixBlinnNmAo: return new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting, normal mapping and ambient occlusion", false, true, true, false, false);
+        case SID_SuzannePerPixBlinnTmSm: return new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting, texture mapping and shadow mapping", true, false, false, true, false);
+        case SID_SuzannePerPixBlinnNmSm: return new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting, normal mapping and shadow mapping", false, true, false, true, false);
+        case SID_SuzannePerPixBlinnAoSm: return new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting, ambient occlusion and shadow mapping", false, false, true, true, false);
+        case SID_SuzannePerPixBlinnTmNmAo: return new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and diffuse, normal, ambient occlusion and shadow mapping", true, true, true, false, false);
+        case SID_SuzannePerPixBlinnTmNmSm: return new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and diffuse, normal and shadow mapping ", true, true, false, true, false);
+        case SID_SuzannePerPixBlinnTmNmAoSm: return new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and diffuse, normal, ambient occlusion and shadow mapping", true, true, true, true, false);
+        case SID_SuzannePerPixCookTmNmAoSmEm: return new AppDemoSceneSuzanne("Suzanne with per pixel Cook-Torrance lighting and diffuse, normal, ambient occlusion, shadow and environment mapping", true, true, true, true, true);
+        case SID_glTF_DamagedHelmet:
+        case SID_glTF_FlightHelmet:
+        case SID_glTF_Sponza:
+        case SID_glTF_WaterBottle: return new AppDemoSceneGLTF(sceneID);
+        case SID_Robotics_FanucCRX_FK: return new AppDemoSceneRobot();
+        case SID_VolumeRayCast: return new AppDemoSceneVolumeRayCast();
+        case SID_VolumeRayCastLighted: return new AppDemoSceneVolumeRayCastLighted();
+        case SID_AnimationNode: return new AppDemoSceneAnimNode();
+        case SID_AnimationNodeMass: return new AppDemoSceneAnimNodeMass();
+        case SID_AnimationSkinned: return new AppDemoSceneAnimSkinned();
+        case SID_AnimationSkinnedMass: return new AppDemoSceneAnimSkinnedMass();
+        case SID_VideoTextureFile:
+        case SID_VideoTextureLive: return new AppDemoSceneVideoTexture(sceneID);
+        case SID_VideoTrackChessMain:
+        case SID_VideoTrackChessScnd:
+        case SID_VideoCalibrateMain:
+        case SID_VideoCalibrateScnd: return new AppDemoSceneVideoTrackChessboard(sceneID);
+        case SID_VideoTrackArucoMain:
+        case SID_VideoTrackArucoScnd: return new AppDemoSceneVideoTrackAruco(sceneID);
+        case SID_VideoTrackFaceMain:
+        case SID_VideoTrackFaceScnd: return new AppDemoSceneVideoTrackFace(sceneID);
+        case SID_VideoTrackFeature2DMain: return new AppDemoSceneVideoTrackFeatures();
+        case SID_VideoTrackMediaPipeHandsMain: return new AppDemoSceneVideoTrackMediapipe();
+        case SID_VideoTrackWAI: return new AppDemoSceneVideoTrackWAI();
+        case SID_VideoSensorAR: return new AppDemoSceneVideoSensorAR();
+        case SID_ParticleSystem_Simple: return new AppDemoSceneParticleSimple();
+        case SID_ParticleSystem_DustStorm: return new AppDemoSceneParticleDustStorm();
+        case SID_ParticleSystem_Fountain: return new AppDemoSceneParticleFountain();
+        case SID_ParticleSystem_Sun: return new AppDemoSceneParticleSun();
+        case SID_ParticleSystem_RingOfFire: return new AppDemoSceneParticleRingOfFire();
+        case SID_ParticleSystem_ComplexFire:
+        case SID_Benchmark_ParticleSystemComplexFire: return new AppDemoSceneParticleComplexFire(sceneID);
+        case SID_ParticleSystem_Many: return new AppDemoSceneParticleMany();
+        case SID_RTSpheres:
+        case SID_RTSoftShadows: return new AppDemoSceneRTSpheres(sceneID);
+        case SID_RTMuttenzerBox: return new AppDemoSceneRTMuttenzerBox();
+        case SID_RTDoF: return new AppDemoSceneRTDoF();
+        case SID_RTLens: return new AppDemoSceneRTLens();
+        case SID_Benchmark_JansUniverse: return new AppDemoSceneJansUniverse();
+        case SID_Benchmark_NodeAnimations: return new AppDemoSceneAnimNodeMass2();
+        case SID_Benchmark_LargeModel: return new AppDemoSceneLargeModel();
+        case SID_Benchmark_LotsOfNodes: return new AppDemoSceneLotsOfNodes();
+        case SID_Benchmark_ColumnsLOD:
+        case SID_Benchmark_ColumnsNoLOD: return new AppDemoSceneLevelOfDetail(sceneID);
+        case SID_Benchmark_SkinnedAnimations: return new AppDemoSceneAnimSkinnedMass2();
+        case SID_ErlebAR_BernChristoffel: return new AppDemoSceneErlebARChristoffel();
+        case SID_ErlebAR_BielBFH: return new AppDemoSceneErlebARBielBFH();
+        case SID_ErlebAR_AugustaRauricaTmpTht: return new AppDemoSceneErlebARAugustaTmpTht();
+        case SID_ErlebAR_AventicumCigognier: return new AppDemoSceneErlebARAventicumCigognier();
+        case SID_ErlebAR_AventicumTheatre: return new AppDemoSceneErlebARAventicumTheater();
+        case SID_ErlebAR_AventicumAmphiteatre: return new AppDemoSceneErlebARAventicumAmphitheater();
+        case SID_ErlebAR_SutzKirchrain18: return new AppDemoSceneErlebARSutz();
+        default: SL_EXIT_MSG("appDemoSwitchScene: Unknown SceneID");
+    }
+}
+//-----------------------------------------------------------------------------
 /*!
  * Deletes the current scene and creates a new one identified by the sceneID.
  * All assets get registered for async loading while Imgui shows a progress
@@ -109,7 +212,6 @@ static void onDoneAssembling(SLSceneView* sv, SLScene* s, SLfloat startLoadMS);
  */
 void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
 {
-    SLScene*         s  = nullptr;
     SLAssetManager*& am = AppDemo::assetManager;
     SLAssetLoader*&  al = AppDemo::assetLoader;
 
@@ -133,6 +235,10 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     gVideoTexture     = nullptr; // The video texture will be deleted by scene uninit
     gVideoTrackedNode = nullptr; // The tracked node will be deleted by scene uninit
 
+    // Deactivate in general the device sensors
+    AppDemo::devRot.init();
+    AppDemo::devLoc.init();
+
     // reset existing sceneviews
     for (auto* sceneview : AppDemo::sceneViews)
         sceneview->unInit();
@@ -147,109 +253,8 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     // Init new scene //
     ////////////////////
 
-    switch (sceneID)
-    {
-        case SID_Empty: s = new AppDemoSceneEmpty(); break;
-        case SID_Figure: s = new AppDemoSceneFigure(); break;
-        case SID_Minimal: s = new AppDemoSceneMinimal(); break;
-        case SID_MeshLoad: s = new AppDemoSceneMeshLoad(); break;
-        case SID_Revolver: s = new AppDemoSceneRevolver(); break;
-        case SID_TextureBlend: s = new AppDemoSceneTextureBlend(); break;
-        case SID_TextureFilter: s = new AppDemoSceneTextureFilter(); break;
-#ifdef SL_BUILD_WITH_KTX
-        case SID_TextureCompression: s = new AppDemoSceneTextureCompression(); break;
-#endif
-        case SID_FrustumCull: s = new AppDemoSceneFrustum(); break;
-        case SID_2Dand3DText: s = new AppDemoScene2Dand3DText(); break;
-        case SID_PointClouds: s = new AppDemoScenePointClouds(); break;
-        case SID_ZFighting: s = new AppDemoSceneZFighting(); break;
-        case SID_ShaderPerVertexBlinn: s = new AppDemoSceneShaderBlinn("Per Vertex Blinn-Phong Lighting", true); break;
-        case SID_ShaderPerPixelBlinn: s = new AppDemoSceneShaderBlinn("Per Pixel Blinn-Phong Lighting", false); break;
-        case SID_ShaderPerPixelCook: s = new AppDemoSceneShaderCook(); break;
-        case SID_ShaderIBL: s = new AppDemoSceneShaderIBL(); break;
-        case SID_ShaderWave: s = new AppDemoSceneShaderWave(); break;
-        case SID_ShaderBumpNormal: s = new AppDemoSceneShaderBump(); break;
-        case SID_ShaderBumpParallax: s = new AppDemoSceneShaderParallax(); break;
-        case SID_ShaderSkybox: s = new AppDemoSceneShaderSkybox(); break;
-        case SID_ShaderEarth: s = new AppDemoSceneShaderEarth(); break;
-        case SID_ShadowMappingBasicScene: s = new AppDemoSceneShadowBasic(); break;
-        case SID_ShadowMappingLightTypes: s = new AppDemoSceneShadowLightTypes(); break;
-        case SID_ShadowMappingSpotLights: s = new AppDemoSceneShadowLightSpot(); break;
-        case SID_ShadowMappingPointLights: s = new AppDemoSceneShadowLightPoint(); break;
-        case SID_ShadowMappingCascaded: s = new AppDemoSceneShadowCascaded(); break;
-        case SID_SuzannePerPixBlinn: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and reflection colors", false, false, false, false, false); break;
-        case SID_SuzannePerPixBlinnTm: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and texture mapping", true, false, false, false, false); break;
-        case SID_SuzannePerPixBlinnNm: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and normal mapping", false, true, false, false, false); break;
-        case SID_SuzannePerPixBlinnAo: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and ambient occlusion", false, false, true, false, false); break;
-        case SID_SuzannePerPixBlinnSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and shadow mapping", false, false, false, true, false); break;
-        case SID_SuzannePerPixBlinnTmNm: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting, texture and normal mapping", true, true, false, false, false); break;
-        case SID_SuzannePerPixBlinnTmAo: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting, texture mapping and ambient occlusion", true, false, true, false, false); break;
-        case SID_SuzannePerPixBlinnNmAo: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting, normal mapping and ambient occlusion", false, true, true, false, false); break;
-        case SID_SuzannePerPixBlinnTmSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting, texture mapping and shadow mapping", true, false, false, true, false); break;
-        case SID_SuzannePerPixBlinnNmSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting, normal mapping and shadow mapping", false, true, false, true, false); break;
-        case SID_SuzannePerPixBlinnAoSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting, ambient occlusion and shadow mapping", false, false, true, true, false); break;
-        case SID_SuzannePerPixBlinnTmNmAo: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and diffuse, normal, ambient occlusion and shadow mapping", true, true, true, false, false); break;
-        case SID_SuzannePerPixBlinnTmNmSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and diffuse, normal and shadow mapping ", true, true, false, true, false); break;
-        case SID_SuzannePerPixBlinnTmNmAoSm: s = new AppDemoSceneSuzanne("Suzanne with per pixel Blinn-Phong lighting and diffuse, normal, ambient occlusion and shadow mapping", true, true, true, true, false); break;
-        case SID_SuzannePerPixCookTmNmAoSmEm: s = new AppDemoSceneSuzanne("Suzanne with per pixel Cook-Torrance lighting and diffuse, normal, ambient occlusion, shadow and environment mapping", true, true, true, true, true); break;
-        case SID_glTF_DamagedHelmet:
-        case SID_glTF_FlightHelmet:
-        case SID_glTF_Sponza:
-        case SID_glTF_WaterBottle: s = new AppDemoSceneGLTF(sceneID); break;
-        case SID_Robotics_FanucCRX_FK: s = new AppDemoSceneRobot(); break;
-        case SID_VolumeRayCast: s = new AppDemoSceneVolumeRayCast(); break;
-        case SID_VolumeRayCastLighted: s = new AppDemoSceneVolumeRayCastLighted(); break;
-        case SID_AnimationNode: s = new AppDemoSceneAnimNode(); break;
-        case SID_AnimationNodeMass: s = new AppDemoSceneAnimNodeMass(); break;
-        case SID_AnimationSkinned: s = new AppDemoSceneAnimSkinned(); break;
-        case SID_AnimationSkinnedMass: s = new AppDemoSceneAnimSkinnedMass(); break;
-        case SID_VideoTextureFile:
-        case SID_VideoTextureLive: s = new AppDemoSceneVideoTexture(sceneID); break;
-        case SID_VideoTrackChessMain:
-        case SID_VideoTrackChessScnd:
-        case SID_VideoCalibrateMain:
-        case SID_VideoCalibrateScnd: s = new AppDemoSceneVideoTrackChessboard(sceneID); break;
-        case SID_VideoTrackArucoMain:
-        case SID_VideoTrackArucoScnd: s = new AppDemoSceneVideoTrackAruco(sceneID); break;
-        case SID_VideoTrackFaceMain:
-        case SID_VideoTrackFaceScnd: s = new AppDemoSceneVideoTrackFace(sceneID); break;
-        case SID_VideoTrackFeature2DMain: s = new AppDemoSceneVideoTrackFeatures(); break;
-        case SID_VideoTrackMediaPipeHandsMain: s = new AppDemoSceneVideoTrackMediapipe(); break;
-        case SID_VideoTrackWAI: s = new AppDemoSceneVideoTrackWAI(); break;
-        case SID_VideoSensorAR: s = new AppDemoSceneVideoSensorAR(); break;
-        case SID_ParticleSystem_Simple: s = new AppDemoSceneParticleSimple(); break;
-        case SID_ParticleSystem_DustStorm: s = new AppDemoSceneParticleDustStorm(); break;
-        case SID_ParticleSystem_Fountain: s = new AppDemoSceneParticleFountain(); break;
-        case SID_ParticleSystem_Sun: s = new AppDemoSceneParticleSun(); break;
-        case SID_ParticleSystem_RingOfFire: s = new AppDemoSceneParticleRingOfFire(); break;
-        case SID_ParticleSystem_ComplexFire:
-        case SID_Benchmark_ParticleSystemComplexFire: s = new AppDemoSceneParticleComplexFire(sceneID); break;
-        case SID_ParticleSystem_Many: s = new AppDemoSceneParticleMany(); break;
-        case SID_RTSpheres:
-        case SID_RTSoftShadows: s = new AppDemoSceneRTSpheres(sceneID); break;
-        case SID_RTMuttenzerBox: s = new AppDemoSceneRTMuttenzerBox(); break;
-        case SID_RTDoF: s = new AppDemoSceneRTDoF(); break;
-        case SID_RTLens: s = new AppDemoSceneRTLens(); break;
-        case SID_Benchmark_JansUniverse: s = new AppDemoSceneJansUniverse(); break;
-        case SID_Benchmark_NodeAnimations: s = new AppDemoSceneAnimNodeMass2(); break;
-        case SID_Benchmark_LargeModel: s = new AppDemoSceneLargeModel(); break;
-        case SID_Benchmark_LotsOfNodes: s = new AppDemoSceneLotsOfNodes(); break;
-        case SID_Benchmark_ColumnsLOD:
-        case SID_Benchmark_ColumnsNoLOD: s = new AppDemoSceneLevelOfDetail(sceneID); break;
-        case SID_Benchmark_SkinnedAnimations: s = new AppDemoSceneAnimSkinnedMass2(); break;
-        case SID_ErlebAR_BernChristoffel: s = new AppDemoSceneErlebARChristoffel(); break;
-        case SID_ErlebAR_BielBFH: s = new AppDemoSceneErlebARBielBFH(); break;
-        case SID_ErlebAR_AugustaRauricaTmpTht: s = new AppDemoSceneErlebARAugustaTmpTht(); break;
-        case SID_ErlebAR_AventicumCigognier: s = new AppDemoSceneErlebARAventicumCigognier(); break;
-        case SID_ErlebAR_AventicumTheatre: s = new AppDemoSceneErlebARAventicumTheater(); break;
-        case SID_ErlebAR_AventicumAmphiteatre: s = new AppDemoSceneErlebARAventicumAmphitheater(); break;
-        case SID_ErlebAR_SutzKirchrain18: s = new AppDemoSceneErlebARSutz(); break;
-        default: SL_EXIT_MSG("appDemoSwitchScene: Unknown SceneID");
-    }
-
-    al->scene(s);
-
     AppDemo::sceneID = sceneID;
+    SLScene* s       = createScene(sceneID);
 
     // Initialize all preloaded stuff from SLScene
     s->init(am);
@@ -257,10 +262,6 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
 #ifndef SL_EMSCRIPTEN
     s->initOculus(AppDemo::dataPath + "shaders/");
 #endif
-
-    // Deactivate in general the device sensors
-    AppDemo::devRot.init();
-    AppDemo::devLoc.init();
 
     // Reset the global SLGLState state
     SLGLState::instance()->initAll();
@@ -270,6 +271,7 @@ void appDemoSwitchScene(SLSceneView* sv, SLSceneID sceneID)
     ///////////////////////////////
 
     // Register assets on the loader that have to be loaded before assembly.
+    al->scene(s);
     s->registerAssetsToLoad(*al);
 
     // `onDone` is a wrapper around `onDoneLoading` that will be called

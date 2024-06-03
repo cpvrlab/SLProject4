@@ -122,7 +122,7 @@ public:
 
     //! Add mesh from file to load via assimp loader
     void addNodeToLoad(SLNode*&        node,
-                       const SLstring& imagePath,
+                       const SLstring& modelPath,
                        SLSkybox*       skybox                 = nullptr,
                        SLbool          deleteTexImgAfterBuild = false,
                        SLbool          loadMeshesOnly         = true,

@@ -51,42 +51,16 @@ AppNodeSceneView::~AppNodeSceneView()
 //-----------------------------------------------------------------------------
 void AppNodeSceneView::postSceneLoad()
 {
-    assert(_s->assetManager() && "No asset manager assigned to scene");
-
-    SLAssetManager* am   = _s->assetManager();
-    SLMaterial*     rMat = new SLMaterial(am, "rMat", SLCol4f(1.0f, 0.7f, 0.7f));
-    SLMaterial*     gMat = new SLMaterial(am, "gMat", SLCol4f(0.7f, 1.0f, 0.7f));
-
-    // build parent box
-    _moveBox = new SLNode("Parent");
-    _moveBox->translation(0, 0, 2);
-    _moveBox->rotation(22.5f, SLVec3f(0, -1, 0));
-    _moveBox->addMesh(new SLBox(am, -0.3f, -0.3f, -0.3f, 0.3f, 0.3f, 0.3f, "Box", rMat));
-    _moveBox->setInitialState();
-
-    // build child box
-    _moveBoxChild = new SLNode("Child");
-    _moveBoxChild->translation(0, 1, 0);
-    _moveBoxChild->rotation(22.5f, SLVec3f(0, -1, 0));
-    _moveBoxChild->setInitialState();
-    _moveBoxChild->addMesh(new SLBox(am, -0.2f, -0.2f, -0.2f, 0.2f, 0.2f, 0.2f, "Box", gMat));
-    _moveBox->addChild(_moveBoxChild);
-
-    // load coordinate axis arrows
-    SLAssimpImporter importer;
-    _axesNode = importer.load(_s->animManager(),
-                              am,
-                              AppDemo::modelPath + "FBX/Axes/axes_blender.fbx",
-                              AppDemo::texturePath);
-
-    _s->root3D()->addChild(_moveBox);
-    _s->root3D()->addChild(_axesNode);
+    _moveBox      = _s->root3D()->findChild<SLNode>("Parent");
+    _moveBoxChild = _s->root3D()->findChild<SLNode>("Child");
+    _axesNode     = _s->root3D()->findChild<SLNode>("Axes");
 
     if (!_curObject)
     {
         _curObject = _moveBoxChild;
         _s->selectNodeMesh(_curObject, _curObject->mesh());
     }
+
     updateInfoText();
     updateCurOrigin();
 }

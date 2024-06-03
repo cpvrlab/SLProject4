@@ -9,19 +9,17 @@
 //#############################################################################
 
 #include <AppDemo.h>
-#include "AppNodeGui.h"
-#include "AppNodeSceneView.h"
+#include <AppNodeGui.h>
+#include <AppNodeSceneView.h>
 #include <SLAssetManager.h>
 #include <SLGLState.h>
 #include <SLEnums.h>
 #include <SLInterface.h>
 #include <SLSceneView.h>
+#include <SLAssetLoader.h>
 #include <GLFW/glfw3.h>
 
-extern void appNodeLoadScene(SLAssetManager* am,
-                             SLScene*        s,
-                             SLSceneView*    sv,
-                             SLSceneID       sid);
+void appNodeSwitchScene(SLSceneView* sv, SLSceneID sceneID);
 
 //-----------------------------------------------------------------------------
 // Global application variables
@@ -64,6 +62,9 @@ SLbool onPaint()
     if (AppDemo::sceneViews.empty())
         return false;
     SLSceneView* sv = AppDemo::sceneViews[svIndex];
+
+    if (AppDemo::assetLoader->isLoading())
+        AppDemo::assetLoader->checkIfAsyncLoadingIsDone();
 
     ///////////////////////////////////////////////
     bool jobIsRunning      = slUpdateParallelJob();
@@ -499,8 +500,11 @@ int main(int argc, char* argv[])
                         projectRoot + "/data/videos/",
                         configPath,
                         "AppNode_GLFW",
-                        (void*)appNodeLoadScene);
+                        (void*)nullptr);
     //////////////////////////////////////////////////////////
+
+    slRegisterCoreAssetsToLoad();
+    AppDemo::assetLoader->loadAssetsSync();
 
     //////////////////////////////////////////////////////////
     svIndex = slCreateSceneView(AppDemo::assetManager,
@@ -514,6 +518,8 @@ int main(int argc, char* argv[])
                                 (void*)createAppNodeSceneView,
                                 (void*)AppNodeGui::build);
     //////////////////////////////////////////////////////////
+
+    appNodeSwitchScene(AppDemo::sceneViews[svIndex], SID_Empty);
 
     // Event loop
     while (!slShouldClose())

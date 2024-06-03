@@ -15,6 +15,7 @@
 #include <SLScene.h>
 #include <SLFileStorage.h>
 #include <GlobalTimer.h>
+#include <cstddef>
 
 //-----------------------------------------------------------------------------
 SLfloat SLGLImGui::fontPropDots  = 16.0f;
@@ -261,26 +262,24 @@ void SLGLImGui::createOpenGLObjects()
 
     GET_GL_ERROR;
 
-#define OFFSETOF(TYPE, ELEMENT) ((size_t) & (((TYPE*)nullptr)->ELEMENT))
     glVertexAttribPointer((SLuint)_attribLocPosition,
                           2,
                           GL_FLOAT,
                           GL_FALSE,
                           sizeof(ImDrawVert),
-                          (GLvoid*)OFFSETOF(ImDrawVert, pos));
+                          (GLvoid*)offsetof(ImDrawVert, pos));
     glVertexAttribPointer((SLuint)_attribLocUV,
                           2,
                           GL_FLOAT,
                           GL_FALSE,
                           sizeof(ImDrawVert),
-                          (GLvoid*)OFFSETOF(ImDrawVert, uv));
+                          (GLvoid*)offsetof(ImDrawVert, uv));
     glVertexAttribPointer((SLuint)_attribLocColor,
                           4,
                           GL_UNSIGNED_BYTE,
                           GL_TRUE,
                           sizeof(ImDrawVert),
-                          (GLvoid*)OFFSETOF(ImDrawVert, col));
-#undef OFFSETOF
+                          (GLvoid*)offsetof(ImDrawVert, col));
 
     GET_GL_ERROR;
 
