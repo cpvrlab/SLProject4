@@ -20,7 +20,9 @@ class AppDemoSceneView : public SLSceneView
 public:
     AppDemoSceneView(SLScene* s, int dpi, SLInputManager& inputManager);
 
-    // From SLSceneView overwritten
+    // Overwritten from SLSceneView
+    SLbool onKeyPress(SLKey key, SLKey mod) final;
+    SLbool onKeyRelease(SLKey key, SLKey mod) final;
     SLbool onMouseDown(SLMouseButton button, SLint x, SLint y, SLKey mod) final;
     SLbool grab = false;
 };

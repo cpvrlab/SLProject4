@@ -57,8 +57,8 @@ void AppLoad::switchScene(SLSceneView* sv, SLSceneID sceneID)
     AppDemo::devLoc.init();
 
     // reset existing sceneviews
-    for (auto* sceneview : AppDemo::sceneViews)
-        sceneview->unInit();
+    for (auto* sceneView : AppDemo::sceneViews)
+        sceneView->unInit();
 
     // Clear all data in the asset manager
     am->clear();

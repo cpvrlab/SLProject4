@@ -8,6 +8,7 @@ function(sl_add_app)
     message(STATUS "Adding app: ${APP_TARGET}")
 
     file(GLOB headers
+        ${SL_PROJECT_ROOT}/apps/source/App.h
         ${SL_PROJECT_ROOT}/apps/source/CVCapture.h
         ${SL_PROJECT_ROOT}/apps/source/AppDemo.h
         ${SL_PROJECT_ROOT}/apps/source/AppLoad.h
@@ -26,7 +27,9 @@ function(sl_add_app)
         ${APP_SOURCES}
     )
 
-    if(APP_KIND STREQUAL "EMSCRIPTEN")
+    if(APP_KIND STREQUAL "GLFW")
+        set(sources ${sources} ${SL_PROJECT_ROOT}/apps/source/AppGLFW.cpp)
+    elseif (APP_KIND STREQUAL "EMSCRIPTEN")
         set(headers ${headers} ${SL_PROJECT_ROOT}/apps/source/WebCamera.h)
         set(sources ${sources} ${SL_PROJECT_ROOT}/apps/source/WebCamera.cpp)
     endif()
