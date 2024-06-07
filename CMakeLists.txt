@@ -66,6 +66,7 @@ option(LIBIGL_USE_STATIC_LIBRARY "Specifies if LibIGL should be built statically
 message(STATUS "----------------------------------------------------------------")
 message(STATUS "System: ${SYSTEM_NAME_UPPER}")
 message(STATUS "Architecture: ${CMAKE_SYSTEM_PROCESSOR}")
+message(STATUS "Platform: ${SL_PLATFORM}")
 message(STATUS "----------------------------------------------------------------")
 message(STATUS "SL_DOWNLOAD_PREBUILTS: ${SL_DOWNLOAD_PREBUILTS}")
 message(STATUS "SL_BUILD_WAI: ${SL_BUILD_WAI}")
@@ -83,15 +84,14 @@ message(STATUS "----------------------------------------------------------------
 
 if (SL_DOWNLOAD_DATA)
     include(cmake/DownloadData.cmake)
+    message(STATUS "----------------------------------------------------------------")
 endif ()
-
-message(STATUS "----------------------------------------------------------------")
 
 if (SL_DOWNLOAD_PREBUILTS)
     include(cmake/DownloadPrebuilts.cmake)
+    message(STATUS "Finished downloading prebuilts")
+    message(STATUS "----------------------------------------------------------------")
 endif ()
-
-message(STATUS "----------------------------------------------------------------")
 
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Android")
     message(STATUS "SL_APP: ${SL_APP}")
@@ -109,6 +109,8 @@ add_subdirectory(modules/cv)
 if (SL_BUILD_WAI)
     add_subdirectory(modules/wai)
 endif ()
+
+message(STATUS "----------------------------------------------------------------")
 
 if (SL_BUILD_APPS)
     add_subdirectory(apps)

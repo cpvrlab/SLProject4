@@ -1,9 +1,7 @@
 //#############################################################################
-//  File:      AppDemoMainGLFW.cpp
+//  File:      AppDemoMain.cpp
 //  Purpose:   The demo application demonstrates most features of the SLProject
-//             framework. Implementation of the GUI with the GLFW3 framework
-//             that can create a window and receive system event on desktop OS
-//             such as Windows, MacOS and Linux.
+//             framework.
 //  Date:      July 2014
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
 //  Authors:   Marcus Hudritsch

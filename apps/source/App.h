@@ -19,6 +19,7 @@ class SLSceneView;
 class SLInputManager;
 
 //-----------------------------------------------------------------------------
+
 namespace App
 {
 typedef SLSceneView* (*OnNewSceneViewCallback)(SLScene* scene, int curDPI, SLInputManager& inputManager);

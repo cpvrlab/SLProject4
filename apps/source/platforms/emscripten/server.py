@@ -11,7 +11,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         ".html": "text/html",
         ".js": "text/javascript",
         ".wasm": "application/wasm",
-        ".data": "application/octet-stream"
+        ".data": "application/octet-stream",
     }
 
     def do_GET(self):
@@ -22,8 +22,10 @@ class RequestHandler(BaseHTTPRequestHandler):
             content = file.read()
             file.close()
 
-            file_ext = file_path[file_path.rindex("."):]
-            mime_type = RequestHandler.MIME_TYPES.get(file_ext, "application/octet-stream")
+            file_ext = file_path[file_path.rindex(".") :]
+            mime_type = RequestHandler.MIME_TYPES.get(
+                file_ext, "application/octet-stream"
+            )
 
             self.send_response(200)
             self.send_header("Content-Type", mime_type)
@@ -45,7 +47,8 @@ class RequestHandler(BaseHTTPRequestHandler):
         url = urllib.parse.urlparse(self.path)
         file_path = url.path
         if file_path == "/":
-            file_path = "/app-Demo-SLProject.html"
+            # "TARGET" is replaced with the actual name of the target in apps/CMakeLists.txt
+            file_path = "/TARGET.html"
         if file_path.startswith("/data/"):
             file_path = "/.." + file_path
 

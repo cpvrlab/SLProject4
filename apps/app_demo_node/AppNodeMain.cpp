@@ -1,6 +1,5 @@
 //#############################################################################
-//  File:      AppNodeMainGLFW.cpp
-//  Purpose:   Implementation of the GUI with the GLFW3 (http://www.glfw.org/)
+//  File:      AppNodeMain.cpp
 //  Date:      July 2014
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
 //  Authors:   Marcus Hudritsch
@@ -12,9 +11,6 @@
 #include <App.h>
 #include <AppNodeGui.h>
 #include <AppNodeSceneView.h>
-#include <SLInterface.h>
-#include <SLAssetLoader.h>
-#include <GLFW/glfw3.h>
 
 //-----------------------------------------------------------------------------
 SLSceneView* createSceneView(SLScene*        scene,

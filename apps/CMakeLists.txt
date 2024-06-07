@@ -1,11 +1,18 @@
 function(sl_add_app)
     # Parse function arguments.
     set(options)
-    set(oneValueArgs TARGET KIND)
-    set(multiValueArgs HEADERS SOURCES INCLUDE_DIRECTORIES COMPILE_DEFINITIONS)
+    set(oneValueArgs TARGET)
+    set(multiValueArgs PLATFORMS HEADERS SOURCES INCLUDE_DIRECTORIES COMPILE_DEFINITIONS)
     cmake_parse_arguments(APP "${options}" "${oneValueArgs}" "${multiValueArgs}" "${ARGN}")
 
     message(STATUS "Adding app: ${APP_TARGET}")
+    list(JOIN APP_PLATFORMS ", " platformsString)  
+    message(STATUS "  Platforms: ${platformsString}")  
+    
+    if(NOT SL_PLATFORM IN_LIST APP_PLATFORMS)
+        message(STATUS "  Disabled on this platform")    
+        return()
+    endif()
 
     file(GLOB headers
         ${SL_PROJECT_ROOT}/apps/source/App.h
@@ -27,12 +34,12 @@ function(sl_add_app)
         ${APP_SOURCES}
     )
 
-    if(APP_KIND STREQUAL "GLFW")
+    if(SL_PLATFORM STREQUAL "GLFW")
         set(sources
             ${sources}
-            ${SL_PROJECT_ROOT}/apps/platforms/glfw/AppGLFW.cpp
+            ${SL_PROJECT_ROOT}/apps/source/platforms/glfw/AppGLFW.cpp
         )
-    elseif(APP_KIND STREQUAL "EMSCRIPTEN")
+    elseif(SL_PLATFORM STREQUAL "EMSCRIPTEN")
         set(headers
             ${headers}
             ${SL_PROJECT_ROOT}/apps/source/WebCamera.h
@@ -41,7 +48,7 @@ function(sl_add_app)
         set(sources
             ${sources}
             ${SL_PROJECT_ROOT}/apps/source/WebCamera.cpp
-            ${SL_PROJECT_ROOT}/apps/platforms/emscripten/AppEmscripten.cpp
+            ${SL_PROJECT_ROOT}/apps/source/platforms/emscripten/AppEmscripten.cpp
         )
     endif()
 
@@ -53,7 +60,7 @@ function(sl_add_app)
 
     enable_warnings(${APP_TARGET})
 
-    if(APP_KIND STREQUAL "GLFW")    
+    if(SL_PLATFORM STREQUAL "GLFW")    
         # Group source files for IDEs
         source_group_by_path("${CMAKE_CURRENT_SOURCE_DIR}" "\\\\.h$|\\\\.hpp$" "Header Files" ${headers})
         source_group_by_path("${CMAKE_CURRENT_SOURCE_DIR}" "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$" "Source Files" ${sources})
@@ -97,6 +104,20 @@ function(sl_add_app)
         ${OpenCV_LIBS}
         ${glfw_LIBS}
     )
+
+    if (SL_PLATFORM STREQUAL "EMSCRIPTEN")
+        # Copy the HTML page and the server script to the target directory and replace
+        # the string "TARGET" in them with the name of the target.
+        # If you change these files, you have to re-run CMake.
+
+        file(READ "${SL_PROJECT_ROOT}/apps/source/platforms/emscripten/index.html" INDEX_SOURCE)
+        string(REPLACE "TARGET" "${APP_TARGET}" INDEX_SOURCE "${INDEX_SOURCE}")
+        file(WRITE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_TARGET}.html" "${INDEX_SOURCE}")
+
+        file(READ "${SL_PROJECT_ROOT}/apps/source/platforms/emscripten/server.py" SERVER_SOURCE)
+        string(REPLACE "TARGET" "${APP_TARGET}" SERVER_SOURCE "${SERVER_SOURCE}")
+        file(WRITE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/serve-${APP_TARGET}.py" "${SERVER_SOURCE}")
+    endif ()
 endfunction()
 
 if("${SYSTEM_NAME_UPPER}" MATCHES "ANDROID")
