@@ -4451,13 +4451,13 @@ void AppDemoGui::showTexInfos(SLGLTexture* tex)
             if (typeid(*tex) == typeid(SLTexColorLUT))
             {
                 SLTexColorLUT* lut = (SLTexColorLUT*)tex;
-                if (ImGui::TreeNode("Color Points in Transfer Function"))
+                if (ImGui::TreeNode("Color Points in Gradient"))
                 {
                     showLUTColors(lut);
                     ImGui::TreePop();
                 }
 
-                if (ImGui::TreeNode("Alpha Points in Transfer Function"))
+                if (ImGui::TreeNode("Alpha Points in Gradient"))
                 {
                     for (SLulong a = 0; a < lut->alphas().size(); ++a)
                     {

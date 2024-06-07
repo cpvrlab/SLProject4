@@ -105,18 +105,18 @@ void SLTexColorLUT::colors(SLColorLUTType lutType)
         case CLUT_BW:
             _colors.push_back(SLColorLUTPoint(SLCol3f::BLACK, 0.0f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::WHITE, 1.0f));
-            name("Transfer Function: Color LUT: B-W");
+            name("Gradient Texture (LUT): B-W");
             break;
         case CLUT_WB:
             _colors.push_back(SLColorLUTPoint(SLCol3f::WHITE, 0.0f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::BLACK, 1.0f));
-            name("Transfer Function: Color LUT: W-B");
+            name("Gradient Texture (LUT): W-B");
             break;
         case CLUT_WYR:
             _colors.push_back(SLColorLUTPoint(SLCol3f::WHITE, 0.0f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::YELLOW, 0.5f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::RED, 1.0f));
-            name("Transfer Function: Color LUT: W-B");
+            name("Gradient Texture (LUT): W-Y-R");
             break;
         case CLUT_RYGCB:
             _colors.push_back(SLColorLUTPoint(SLCol3f::RED, 0.00f));
@@ -124,7 +124,7 @@ void SLTexColorLUT::colors(SLColorLUTType lutType)
             _colors.push_back(SLColorLUTPoint(SLCol3f::GREEN, 0.50f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::CYAN, 0.75f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::BLUE, 1.00f));
-            name("Transfer Function: Color LUT: R-Y-G-C-B");
+            name("Gradient Texture (LUT): R-Y-G-C-B");
             break;
         case CLUT_BCGYR:
             _colors.push_back(SLColorLUTPoint(SLCol3f::BLUE, 0.00f));
@@ -132,7 +132,7 @@ void SLTexColorLUT::colors(SLColorLUTType lutType)
             _colors.push_back(SLColorLUTPoint(SLCol3f::GREEN, 0.50f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::YELLOW, 0.75f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::RED, 1.00f));
-            name("Transfer Function: Color LUT: B-C-G-Y-R");
+            name("Gradient Texture (LUT): B-C-G-Y-R");
             break;
         case CLUT_RYGCBK:
             _colors.push_back(SLColorLUTPoint(SLCol3f::RED, 0.00f));
@@ -141,7 +141,7 @@ void SLTexColorLUT::colors(SLColorLUTType lutType)
             _colors.push_back(SLColorLUTPoint(SLCol3f::CYAN, 0.60f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::BLUE, 0.80f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::BLACK, 1.00f));
-            name("Transfer Function: Color LUT: R-Y-G-C-B-K");
+            name("Gradient Texture (LUT): R-Y-G-C-B-K");
             break;
         case CLUT_KBCGYR:
             _colors.push_back(SLColorLUTPoint(SLCol3f::BLACK, 0.00f));
@@ -150,7 +150,7 @@ void SLTexColorLUT::colors(SLColorLUTType lutType)
             _colors.push_back(SLColorLUTPoint(SLCol3f::GREEN, 0.60f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::YELLOW, 0.00f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::RED, 1.00f));
-            name("Transfer Function: Color LUT: K-B-C-G-Y-R");
+            name("Gradient Texture (LUT): K-B-C-G-Y-R");
             break;
         case CLUT_RYGCBM:
             _colors.push_back(SLColorLUTPoint(SLCol3f::RED, 0.00f));
@@ -159,7 +159,7 @@ void SLTexColorLUT::colors(SLColorLUTType lutType)
             _colors.push_back(SLColorLUTPoint(SLCol3f::CYAN, 0.60f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::BLUE, 0.80f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::MAGENTA, 1.00f));
-            name("Transfer Function: Color LUT: R-Y-G-C-B-M");
+            name("Gradient Texture (LUT): R-Y-G-C-B-M");
             break;
         case CLUT_MBCGYR:
             _colors.push_back(SLColorLUTPoint(SLCol3f::MAGENTA, 0.00f));
@@ -168,7 +168,7 @@ void SLTexColorLUT::colors(SLColorLUTType lutType)
             _colors.push_back(SLColorLUTPoint(SLCol3f::GREEN, 0.60f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::YELLOW, 0.00f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::RED, 1.00f));
-            name("Transfer Function: Color LUT: M-B-C-G-Y-R");
+            name("Gradient Texture (LUT): M-B-C-G-Y-R");
             break;
         case CLUT_DAYLIGHT:
             // Daylight color ramp with white at noon in the middle
@@ -177,7 +177,7 @@ void SLTexColorLUT::colors(SLColorLUTType lutType)
             _colors.push_back(SLColorLUTPoint(SLCol3f(1, 243.0f / 255.0f, 6.0f / 255.0f), 0.10f));
             _colors.push_back(SLColorLUTPoint(SLCol3f(1, 1, 245.0f / 255.0f), 0.20f));
             _colors.push_back(SLColorLUTPoint(SLCol3f(1, 1, 1), 1.00f));
-            name("Color LUT: For daylight");
+            name("Gradient Texture (LUT): For daylight");
             break;
         default:
             SL_EXIT_MSG("SLTexColorLUT::colors: undefined color LUT.");
