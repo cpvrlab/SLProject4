@@ -16,6 +16,7 @@
 #include <SLEnums.h>
 #include <SLVec2.h>
 #include <math/SLRect.h>
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
 #include <SLUiInterface.h>
 #include "SLFileStorage.h"
