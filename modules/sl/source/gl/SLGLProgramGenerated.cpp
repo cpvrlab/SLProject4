@@ -2553,6 +2553,7 @@ void SLGLProgramGenerated::buildPerPixParticleUpdate(SLMaterial* mat)
     addCodeToShader(_shaders[1], fragCode, _name + ".frag");
 }
 //-----------------------------------------------------------------------------
+//! Assemble shaders for video on background
 void SLGLProgramGenerated::buildPerPixVideoBkgdSm(SLVLight* lights)
 {
     assert(_shaders.size() > 1 &&

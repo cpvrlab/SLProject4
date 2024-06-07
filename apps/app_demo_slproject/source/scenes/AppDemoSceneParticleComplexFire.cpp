@@ -12,7 +12,7 @@
 #include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLRectangle.h>
-#include <imgui_color_gradient.h> // For color over life, need to create own color interpolator
+#include <SLTexColorLUT.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneParticleComplexFire::AppDemoSceneParticleComplexFire(SLSceneID sceneID)
@@ -474,7 +474,8 @@ SLNode* AppDemoSceneParticleComplexFire::createComplexFire(SLAssetManager* am,
                                                                   1.2f,
                                                                   texCircle,
                                                                   "Fire sparks rising PS",
-                                                                  texFireFlm);
+                                                                  texFireFlm,
+                                                                  new SLTexColorLUT(am, CLUT_WYR, 256));
         fireSparksRising->scale(0.05f);
         fireSparksRising->radiusH(0.8f);
         fireSparksRising->radiusW(0.3f);
@@ -487,15 +488,6 @@ SLNode* AppDemoSceneParticleComplexFire::createComplexFire(SLAssetManager* am,
         fireSparksRising->doColor(true);
         fireSparksRising->doColorOverLT(true);
         fireSparksRising->doBlendBrightness(true);
-        fireSparksRising->colorPoints().clear();
-        fireSparksRising->colorPoints().push_back(SLColorLUTPoint(SLCol3f::WHITE, 0.0f));
-        fireSparksRising->colorPoints().push_back(SLColorLUTPoint(SLCol3f::YELLOW, 0.5f));
-        fireSparksRising->colorPoints().push_back(SLColorLUTPoint(SLCol3f::RED, 1.0f));
-        ImGradient gradient;
-        gradient.getMarks().clear();
-        for (auto cp : fireSparksRising->colorPoints())
-            gradient.addMark(cp.pos, ImColor(cp.color.r, cp.color.g, cp.color.b));
-        fireSparksRising->colorArr(gradient.cachedValues());
         fireSparksRising->doSizeOverLT(false);
         fireSparksRising->doAlphaOverLT(false);
         fireSparksRising->doGravity(false);

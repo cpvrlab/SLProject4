@@ -45,7 +45,6 @@
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
-#include <imgui_color_gradient.h>
 
 #ifndef SL_EMSCRIPTEN
 #    include <ftplib.h>
@@ -3964,6 +3963,7 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
                                 {
                                     ps->doBlendBrightness(color_bright);
                                 }
+
                                 // Color
                                 if (ps->doColorOverLT())
                                     ImGui::BeginDisabled();
@@ -3977,34 +3977,16 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
                                 // Color over lifetime
                                 SLbool doColorOverLT_group = ps->doColorOverLT();
 
-                                static ImGradient      gradient;
-                                static ImGradientMark* draggingMark = nullptr;
-                                static ImGradientMark* selectedMark = nullptr;
-
-                                static bool once = [ps]()
-                                {
-                                    gradient.getMarks().clear();
-                                    for (auto cp : ps->colorPoints())
-                                        gradient.addMark(cp.pos, ImColor(cp.color.r, cp.color.g, cp.color.b));
-                                    return true;
-                                }();
-
                                 if (ImGui::Checkbox("Color over lifetime", &doColorOverLT_group))
                                 {
                                     ps->doColorOverLT(doColorOverLT_group);
-                                    ps->colorArr(gradient.cachedValues());
+                                    //ps->colorArr(gradient.cachedValues());
                                     m->program(nullptr);
                                 }
 
                                 if (ImGui::CollapsingHeader("Color over lifetime", &doColorOverLT_group))
                                 {
-                                    if (ImGui::GradientEditor(&gradient, draggingMark, selectedMark))
-                                    {
-                                        ps->colorPoints().clear();
-                                        for (auto cp : gradient.getMarks())
-                                            ps->colorPoints().push_back(SLColorLUTPoint(SLCol3f(cp->color), cp->position));
-                                        ps->colorArr(gradient.cachedValues());
-                                    }
+                                    ImGui::Text("Edit gradient colors in the texture section.");
                                 }
                                 ImGui::Unindent();
                             }
@@ -4284,7 +4266,7 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
                             }
 
                             // Flipbook texture
-                            if (ps->textureFlipbook() == nullptr)
+                            if (ps->texFlipbook() == nullptr)
                                 ImGui::BeginDisabled();
                             SLbool flipbookTex_group = ps->doFlipBookTexture();
                             if (ImGui::Checkbox("Flipbook texture", &flipbookTex_group))
@@ -4305,7 +4287,7 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
                                 }
                                 ImGui::Unindent();
                             }
-                            if (ps->textureFlipbook() == nullptr)
+                            if (ps->texFlipbook() == nullptr)
                                 ImGui::EndDisabled();
 
                             ImGui::PopItemWidth();

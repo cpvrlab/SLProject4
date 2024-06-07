@@ -43,6 +43,7 @@ public:
                      SLGLTexture*    texC,
                      const SLstring& name               = "Particle System",
                      SLGLTexture*    texFlipbook        = nullptr,
+                     SLTexColorLUT*  texGradient        = nullptr,
                      const bool      doInstancedDrawing = false);
 
     void draw(SLSceneView* sv, SLNode* node, SLuint instances = 1);
@@ -56,19 +57,17 @@ public:
     void calcNormals() { N.push_back(SLVec3f(0, 1, 0)); };
 
     // Getters
-
-    SLVec3f           acceleration() { return _acceleration; }
-    SLfloat           accelerationConst() { return _accelerationConst; }
-    SLint             amount() { return _amount; }
-    SLfloat           angularVelocityConst() { return _angularVelocityConst; }
-    SLVec2f           angularVelocityRange() { return _angularVelocityRange; }
-    float*            bezierControlPointAlpha() { return _bezierControlPointAlpha; }
-    float*            bezierStartEndPointAlpha() { return _bezierStartEndPointAlpha; }
-    float*            bezierControlPointSize() { return _bezierControlPointSize; }
-    float*            bezierStartEndPointSize() { return _bezierStartEndPointSize; }
-    SLBillboardType   billboardType() { return _billboardType; }
-    SLCol4f           color() { return _color; }
-    SLVColorLUTPoint& colorPoints() { return _colorPoints; }
+    SLVec3f         acceleration() { return _acceleration; }
+    SLfloat         accelerationConst() { return _accelerationConst; }
+    SLint           amount() { return _amount; }
+    SLfloat         angularVelocityConst() { return _angularVelocityConst; }
+    SLVec2f         angularVelocityRange() { return _angularVelocityRange; }
+    float*          bezierControlPointAlpha() { return _bezierControlPointAlpha; }
+    float*          bezierStartEndPointAlpha() { return _bezierStartEndPointAlpha; }
+    float*          bezierControlPointSize() { return _bezierControlPointSize; }
+    float*          bezierStartEndPointSize() { return _bezierStartEndPointSize; }
+    SLBillboardType billboardType() { return _billboardType; }
+    SLCol4f         color() { return _color; }
 
     SLbool doInstancedDrawing() { return _doInstancedDrawing; }
     SLbool doAcc() { return _doAcceleration; }
@@ -93,34 +92,35 @@ public:
     SLbool doSpeedRange() { return _doSpeedRange; }
     SLbool doWorldSpace() { return _doWorldSpace; }
 
-    SLVec3f      direction() { return _direction; }
-    AvgFloat&    drawTime() { return _drawTime; }
-    SLVec3f      emitterPos() const { return _emitterPos; }
-    SLVec3f      gravity() { return _gravity; }
-    SLint        flipbookColumns() { return _flipbookColumns; }
-    SLint        flipbookRows() { return _flipbookRows; }
-    int          frameRateFB() { return _flipbookFPS; }
-    SLbool       isGenerated() { return _isGenerated; }
-    SLbool       isPaused() { return _isPaused; }
-    SLfloat      radiusW() { return _radiusW; }
-    SLfloat      radiusH() { return _radiusH; }
-    SLfloat      scale() { return _scale; }
-    SLShapeType  shapeType() { return _shapeType; }
-    SLfloat      shapeAngle() { return _shapeAngle; }
-    SLfloat      shapeHeight() { return _shapeHeight; }
-    SLfloat      shapeRadius() { return _shapeRadius; }
-    SLVec3f      shapeScale() { return _shapeScale; }
-    SLfloat      shapeWidth() { return _shapeWidth; }
-    SLfloat      speed() { return _speed; }
-    SLVec2f      speedRange() { return _speedRange; }
-    SLGLTexture* textureFirst() { return _textureFirst; }
-    SLGLTexture* textureFlipbook() { return _textureFlipbook; }
-    SLfloat      timeToLive() { return _timeToLive; }
-    AvgFloat&    updateTime() { return _updateTime; }
-    SLint        velocityType() { return _velocityType; }
-    SLVec3f      velocityConst() { return _velocityConst; }
-    SLVec3f      velocityRndMin() { return _velocityRndMin; }
-    SLVec3f      velocityRndMax() { return _velocityRndMax; }
+    SLVec3f        direction() { return _direction; }
+    AvgFloat&      drawTime() { return _drawTime; }
+    SLVec3f        emitterPos() const { return _emitterPos; }
+    SLVec3f        gravity() { return _gravity; }
+    SLint          flipbookColumns() { return _flipbookColumns; }
+    SLint          flipbookRows() { return _flipbookRows; }
+    int            frameRateFB() { return _flipbookFPS; }
+    SLbool         isGenerated() { return _isGenerated; }
+    SLbool         isPaused() { return _isPaused; }
+    SLfloat        radiusW() { return _radiusW; }
+    SLfloat        radiusH() { return _radiusH; }
+    SLfloat        scale() { return _scale; }
+    SLShapeType    shapeType() { return _shapeType; }
+    SLfloat        shapeAngle() { return _shapeAngle; }
+    SLfloat        shapeHeight() { return _shapeHeight; }
+    SLfloat        shapeRadius() { return _shapeRadius; }
+    SLVec3f        shapeScale() { return _shapeScale; }
+    SLfloat        shapeWidth() { return _shapeWidth; }
+    SLfloat        speed() { return _speed; }
+    SLVec2f        speedRange() { return _speedRange; }
+    SLGLTexture*   texParticle() { return _texParticle; }
+    SLGLTexture*   texFlipbook() { return _texFlipbook; }
+    SLTexColorLUT* texGradient() { return _texGradient; }
+    SLfloat        timeToLive() { return _timeToLive; }
+    AvgFloat&      updateTime() { return _updateTime; }
+    SLint          velocityType() { return _velocityType; }
+    SLVec3f        velocityConst() { return _velocityConst; }
+    SLVec3f        velocityRndMin() { return _velocityRndMin; }
+    SLVec3f        velocityRndMax() { return _velocityRndMax; }
 
     // Setters
     void doInstancedDrawing(bool instanced) { _doInstancedDrawing = instanced; }
@@ -170,7 +170,6 @@ public:
         _bezierStartEndPointSize[3] = arrayPoint[3];
     }
     void color(SLCol4f c) { _color = c; }
-    void colorArr(SLfloat* arr) { std::copy(arr, arr + 256 * 3, _colorArr); }
     void direction(SLVec3f v) { _direction = v; }
     void direction(SLfloat vX, SLfloat vY, SLfloat vZ)
     {
@@ -234,8 +233,9 @@ public:
     void shapeHeight(SLfloat f) { _shapeHeight = f; }
     void shapeWidth(SLfloat f) { _shapeWidth = f; }
     void timeToLive(SLfloat f) { _timeToLive = f; }
-    void textureFirst(SLGLTexture* t) { _textureFirst = t; }
-    void textureFlipbook(SLGLTexture* t) { _textureFlipbook = t; }
+    void texParticle(SLGLTexture* tp) { _texParticle = tp; }
+    void texFlipbook(SLGLTexture* tf) { _texFlipbook = tf; }
+    void texGradient(SLTexColorLUT* tg) { _texGradient = tg; }
     void velocityType(SLint i) { _velocityType = i; }
     void velocityConst(SLVec3f v) { _velocityConst = v; }
     void velocityConst(SLfloat vX, SLfloat vY, SLfloat vZ)
@@ -309,9 +309,7 @@ private:
     SLVec2f _speedRange = SLVec2f(1, 2);    //!< Speed random between two value
 
     // Color
-    SLCol4f          _color = SLCol4f(0.66f, 0.0f, 0.66f, 0.2f); //!< Color for particle
-    SLfloat          _colorArr[256 * 3];                         //!< Color values of color gradient widget
-    SLVColorLUTPoint _colorPoints;                               //! Color gradient points
+    SLCol4f _color = SLCol4f(0.66f, 0.0f, 0.66f, 0.2f); //!< Color for particle
 
     // Int (but boolean) to switch buffer
     int _drawBuf = 0; //!< Boolean to switch buffer
@@ -353,8 +351,9 @@ private:
     SLint           _velocityType  = 0;         //!< Velocity type
 
     // Textures
-    SLGLTexture* _textureFirst;    //!< Main texture of PS (non flipbook)
-    SLGLTexture* _textureFlipbook; //!< Flipbook texture with e.g. multiple flames at subsequent frames
+    SLGLTexture*   _texParticle;     //!< Main texture of PS (non flipbook)
+    SLGLTexture*   _texFlipbook;     //!< Flipbook texture with e.g. multiple flames at subsequent frames
+    SLTexColorLUT* _texGradient; //!< Color gradient texture
 
     // VAOs
     SLGLVertexArray _vao1;         //!< 1. VAO for swapping between updating/drawing

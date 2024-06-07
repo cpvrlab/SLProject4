@@ -17,7 +17,6 @@ set(headers
         ${include_path}/imgui/imstb_textedit.h
         ${include_path}/imgui/imstb_truetype.h
         ${include_path}/imgui-addons/bezier.hpp
-        ${include_path}/imgui-addons/imgui_color_gradient.h
         ${include_path}/spa/spa.h
         )
 
@@ -28,7 +27,6 @@ set(sources
         ${include_path}/imgui/imgui_tables.cpp
         ${include_path}/imgui/imgui_widgets.cpp
         ${include_path}/imgui-addons/bezier.cpp
-        ${include_path}/imgui-addons/imgui_color_gradient.cpp
         ${include_path}/spa/spa.cpp
         )
 

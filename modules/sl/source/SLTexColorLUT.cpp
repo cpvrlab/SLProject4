@@ -112,6 +112,12 @@ void SLTexColorLUT::colors(SLColorLUTType lutType)
             _colors.push_back(SLColorLUTPoint(SLCol3f::BLACK, 1.0f));
             name("Transfer Function: Color LUT: W-B");
             break;
+        case CLUT_WYR:
+            _colors.push_back(SLColorLUTPoint(SLCol3f::WHITE, 0.0f));
+            _colors.push_back(SLColorLUTPoint(SLCol3f::YELLOW, 0.5f));
+            _colors.push_back(SLColorLUTPoint(SLCol3f::RED, 1.0f));
+            name("Transfer Function: Color LUT: W-B");
+            break;
         case CLUT_RYGCB:
             _colors.push_back(SLColorLUTPoint(SLCol3f::RED, 0.00f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::YELLOW, 0.25f));
@@ -240,7 +246,8 @@ void SLTexColorLUT::generateTexture()
             SL_EXIT_MSG("SLTexColorLUT::generateTexture: Color position deltas to small.");
 
     // Clamp all colors
-    for (auto c : _colors) c.color.clampMinMax(0.0f, 1.0f);
+    for (auto c : _colors)
+        c.color.clampMinMax(0.0f, 1.0f);
 
     // Finally create color LUT vector by lerping color and alpha values
     SLuint  c      = 0;    // current color segment index
@@ -316,5 +323,38 @@ SLVfloat SLTexColorLUT::allAlphas()
     }
 
     return allA;
+}
+//-----------------------------------------------------------------------------
+//! Returns all alpha values of the transfer function as a float vector
+SLVCol3f SLTexColorLUT::allColors()
+{
+    // Finally create color LUT vector by lerping color and alpha values
+    SLuint  c      = 0;    // current color segment index
+    SLfloat pos    = 0.0f; // overall position between 0-1
+    SLfloat posC   = 0.0f; // position in color segment
+    SLfloat delta  = 1.0f / (SLfloat)_length;
+    SLfloat deltaC = 1.0f / ((_colors[c + 1].pos - _colors[c].pos) / delta);
+
+    SLVCol3f lut;
+    lut.resize((SLuint)_length);
+
+    // Interpolate color values
+    for (SLuint i = 0; i < _length; ++i)
+    {
+        lut[i].r = Utils::lerp(posC, _colors[c].color.r, _colors[c + 1].color.r);
+        lut[i].g = Utils::lerp(posC, _colors[c].color.g, _colors[c + 1].color.g);
+        lut[i].b = Utils::lerp(posC, _colors[c].color.b, _colors[c + 1].color.b);
+
+        pos += delta;
+        posC += deltaC;
+
+        if (pos > _colors[c + 1].pos && c < _colors.size() - 2)
+        {
+            c++;
+            posC   = 0.0f;
+            deltaC = 1.0f / ((_colors[c + 1].pos - _colors[c].pos) / delta);
+        }
+    }
+    return lut;
 }
 //-----------------------------------------------------------------------------

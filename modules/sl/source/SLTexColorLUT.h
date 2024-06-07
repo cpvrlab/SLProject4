@@ -24,6 +24,7 @@ typedef enum
 {
     CLUT_BW,       //!< black to white
     CLUT_WB,       //!< white to black
+    CLUT_WYR,      //!< white to black
     CLUT_RYGCB,    //!< red to yellow to green to cyan to blue
     CLUT_BCGYR,    //!< blue to cyan to green to yellow to red
     CLUT_RYGCBK,   //!< red to yellow to green to cyan to blue to black
@@ -92,6 +93,7 @@ public:
     SLVColorLUTPoint& colors() { return _colors; }
     SLVAlphaLUTPoint& alphas() { return _alphas; }
     SLVfloat          allAlphas();
+    SLVCol3f          allColors();
 
 protected:
     SLuint           _length;   //! Length of transfer function (default 256)
