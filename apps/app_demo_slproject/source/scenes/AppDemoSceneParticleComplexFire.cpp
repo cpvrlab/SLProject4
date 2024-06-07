@@ -318,8 +318,7 @@ SLNode* AppDemoSceneParticleComplexFire::createComplexFire(SLAssetManager* am,
                                                       SLVec3f(0.1f, 0.0f, 0.1f),
                                                       4.0f,
                                                       texFireCld,
-                                                      "Fire glow PS",
-                                                      texFireFlm);
+                                                      "Fire glow PS");
         glow->timeToLive(2.0f);
         glow->billboardType(BT_Camera);
         glow->radiusW(0.4f);
@@ -392,8 +391,7 @@ SLNode* AppDemoSceneParticleComplexFire::createComplexFire(SLAssetManager* am,
                                                         SLVec3f(0.0f, 0.7f, 0.0f),
                                                         2.0f,
                                                         texSmokeB,
-                                                        "Fire smoke black PS",
-                                                        texFireFlm);
+                                                        "Fire smoke black PS");
         smokeB->doColor(false);
 
         // Fire smoke black size
@@ -432,8 +430,7 @@ SLNode* AppDemoSceneParticleComplexFire::createComplexFire(SLAssetManager* am,
                                                         SLVec3f(0.0f, 0.6f, 0.0f),
                                                         4.0f,
                                                         texSmokeW,
-                                                        "Fire smoke white PS",
-                                                        texFireFlm);
+                                                        "Fire smoke white PS");
 
         smokeW->doColor(false);
 
@@ -474,7 +471,7 @@ SLNode* AppDemoSceneParticleComplexFire::createComplexFire(SLAssetManager* am,
                                                                   1.2f,
                                                                   texCircle,
                                                                   "Fire sparks rising PS",
-                                                                  texFireFlm,
+                                                                  nullptr,
                                                                   new SLTexColorLUT(am,
                                                                                     CLUT_WYR,
                                                                                     256));
@@ -535,8 +532,7 @@ SLNode* AppDemoSceneParticleComplexFire::createTorchFire(SLAssetManager* am,
                                                       SLVec3f(0.1f, 0.0f, 0.1f),
                                                       1.5f,
                                                       texFireCld,
-                                                      "Torch Glow PS",
-                                                      texFireFlm);
+                                                      "Torch Glow PS");
         glow->color(SLCol4f(0.9f, 0.5f, 0, 0.63f));
         glow->doBlendBrightness(true);
         glow->radiusW(0.15f);
