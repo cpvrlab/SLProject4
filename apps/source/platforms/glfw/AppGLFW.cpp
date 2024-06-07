@@ -152,15 +152,13 @@ int App::run(Config config)
     glfwGetWindowSize(window, &scrWidth, &scrHeight);
 
     // Set your own physical screen dpi
-    Utils::log("SLProject", "------------------------------------------------------------------");
-    Utils::log("SLProject",
-               "GUI-Framwork     : GLFW (Version: %d.%d.%d",
-               GLFW_VERSION_MAJOR,
-               GLFW_VERSION_MINOR,
-               GLFW_VERSION_REVISION);
-    Utils::log("SLProject",
-               "Resolution (DPI) : %d",
-               dpi);
+    SL_LOG("------------------------------------------------------------------");
+    SL_LOG("Platform         : GLFW (Version: %d.%d.%d)",
+           GLFW_VERSION_MAJOR,
+           GLFW_VERSION_MINOR,
+           GLFW_VERSION_REVISION);
+    SL_LOG("Resolution (DPI) : %d",
+           dpi);
 
     // get executable path
     SLstring projectRoot = SLstring(SL_PROJECT_ROOT);
@@ -202,8 +200,6 @@ int App::run(Config config)
                       reinterpret_cast<void*>(config.onGuiLoadConfig),
                       reinterpret_cast<void*>(config.onGuiSaveConfig));
     /////////////////////////////////////////////////////////
-
-    AppDemo::sceneToLoad = config.startSceneID;
 
     // Event loop
     while (!slShouldClose())

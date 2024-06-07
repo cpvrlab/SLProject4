@@ -135,6 +135,9 @@ int App::run(Config config)
     emscripten_set_touchmove_callback("#canvas", nullptr, false, onTouchMove);
     emscripten_set_beforeunload_callback(nullptr, onUnload);
 
+    SL_LOG("------------------------------------------------------------------");
+    SL_LOG("Platform         : Emscripten");
+
     AppDemo::calibIniPath = "data/calibrations/";
 
     SLVstring args;
@@ -160,8 +163,6 @@ int App::run(Config config)
 // Paint event handler that passes the event to the slPaintAllViews function.
 static SLbool onPaint()
 {
-    PROFILE_SCOPE("AppEmscripten::onPaint");
-
     if (AppDemo::sceneViews.empty())
         return false;
 
@@ -232,8 +233,6 @@ static void onLoadingCoreAssets()
                       reinterpret_cast<void*>(config.onGuiBuild),
                       reinterpret_cast<void*>(config.onGuiLoadConfig),
                       reinterpret_cast<void*>(config.onGuiSaveConfig));
-
-    AppDemo::sceneToLoad = config.startSceneID;
 
     EM_ASM(document.querySelector("#loading-overlay").style.opacity = 0);
 }
@@ -417,28 +416,6 @@ static EM_BOOL onKeyPressed(int                            eventType,
 
     SLKey key       = mapKeyToSLKey(keyEvent->keyCode);
     SLKey modifiers = mapModifiersToSLModifiers(keyEvent);
-
-    if (modifiers & K_alt && modifiers & K_shift)
-    {
-        SLSceneView* sv = AppDemo::sceneViews[0];
-
-        if (key == '0' && sv)
-        {
-            AppDemo::sceneToLoad = SID_Empty;
-            SL_LOG("Loading SceneID: %d", AppDemo::sceneID);
-        }
-        else if (key == K_left && sv && AppDemo::sceneID > 0)
-        {
-            AppDemo::sceneToLoad = static_cast<SLSceneID>(AppDemo::sceneID - 1);
-            SL_LOG("Loading SceneID: %d", AppDemo::sceneID);
-        }
-        else if (key == K_right && sv && AppDemo::sceneID < SID_MaxNoBenchmarks - 1)
-        {
-            AppDemo::sceneToLoad = static_cast<SLSceneID>(AppDemo::sceneID + 1);
-            SL_LOG("Loading SceneID: %d", AppDemo::sceneID);
-        }
-    }
-
     slKeyPress(svIndex, key, modifiers);
 
     return EM_FALSE;
