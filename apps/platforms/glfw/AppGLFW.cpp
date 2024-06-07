@@ -46,14 +46,29 @@ static SLVec2i     windowPosBeforeFullscreen;  //!< Window position before enter
 
 //-----------------------------------------------------------------------------
 // Function forward declarations
-static SLbool onPaint(SLint svIndex);
-static void   onGLFWError(int error, const char* description);
-static void   onResize(GLFWwindow* myWindow, int width, int height);
-static void   onMouseButton(GLFWwindow* myWindow, int button, int action, int mods);
-static void   onMouseMove(GLFWwindow* myWindow, double x, double y);
-static void   onMouseWheel(GLFWwindow* myWindow, double xscroll, double yscroll);
-static void   onKey(GLFWwindow* myWindow, int GLFWKey, int scancode, int action, int mods);
-static void   onCharInput(GLFWwindow*, SLuint c);
+static SLbool onPaint();
+static void   onGLFWError(int         error,
+                          const char* description);
+static void   onResize(GLFWwindow* myWindow,
+                       int         width,
+                       int         height);
+static void   onMouseButton(GLFWwindow* myWindow,
+                            int         button,
+                            int         action,
+                            int         mods);
+static void   onMouseMove(GLFWwindow* myWindow,
+                          double      x,
+                          double      y);
+static void   onMouseWheel(GLFWwindow* myWindow,
+                           double      xscroll,
+                           double      yscroll);
+static void   onKey(GLFWwindow* myWindow,
+                    int         GLFWKey,
+                    int         scancode,
+                    int         action,
+                    int         mods);
+static void   onCharInput(GLFWwindow*,
+                          SLuint c);
 static void   onClose(GLFWwindow* myWindow);
 static SLKey  mapKeyToSLKey(int key);
 
@@ -194,7 +209,7 @@ int App::run(Config config)
     while (!slShouldClose())
     {
         /////////////////////////////
-        SLbool doRepaint = onPaint(svIndex);
+        SLbool doRepaint = onPaint();
         /////////////////////////////
 
         // Fast copy the back buffer to the front buffer. This is OS dependent.
@@ -219,9 +234,9 @@ int App::run(Config config)
 }
 //-----------------------------------------------------------------------------
 // Paint event handler that passes the event to the slPaintAllViews function.
-static SLbool onPaint(SLint svIndex)
+static SLbool onPaint()
 {
-    PROFILE_SCOPE("GLFW::onPaint");
+    PROFILE_SCOPE("AppGLFW::onPaint");
 
     if (AppDemo::sceneViews.empty())
         return false;
@@ -287,7 +302,7 @@ static void onResize(GLFWwindow* myWindow, int width, int height)
     // width & height are in screen coords.
     slResize(svIndex, width, height);
 
-    onPaint(svIndex);
+    onPaint();
 }
 //-----------------------------------------------------------------------------
 /*!

@@ -28,10 +28,21 @@ function(sl_add_app)
     )
 
     if(APP_KIND STREQUAL "GLFW")
-        set(sources ${sources} ${SL_PROJECT_ROOT}/apps/source/AppGLFW.cpp)
-    elseif (APP_KIND STREQUAL "EMSCRIPTEN")
-        set(headers ${headers} ${SL_PROJECT_ROOT}/apps/source/WebCamera.h)
-        set(sources ${sources} ${SL_PROJECT_ROOT}/apps/source/WebCamera.cpp)
+        set(sources
+            ${sources}
+            ${SL_PROJECT_ROOT}/apps/platforms/glfw/AppGLFW.cpp
+        )
+    elseif(APP_KIND STREQUAL "EMSCRIPTEN")
+        set(headers
+            ${headers}
+            ${SL_PROJECT_ROOT}/apps/source/WebCamera.h
+        )
+        
+        set(sources
+            ${sources}
+            ${SL_PROJECT_ROOT}/apps/source/WebCamera.cpp
+            ${SL_PROJECT_ROOT}/apps/platforms/emscripten/AppEmscripten.cpp
+        )
     endif()
 
     add_executable(
