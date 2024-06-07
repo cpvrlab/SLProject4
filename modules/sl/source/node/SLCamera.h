@@ -208,13 +208,13 @@ protected:
     SLVec3f   _trackballStartVec; //!< Trackball vector at mouse down
     SLfloat   _trackballSize;     //!< Size of trackball (0.8 = 80% of window size)
 
-    SLVec3f _moveDir;      //!< accumulated movement directions based on pressed buttons
-    SLfloat _drag;         //!< simple constant drag that affects velocity
-    SLfloat _maxSpeed;     //!< maximum speed in m/s, with high drag values this speed might not be achievable at all
-    SLVec3f _velocity;     //!< current velocity vector
-    SLVec3f _acceleration; //!< current acceleration vector
-    SLfloat _brakeAccel;   //!< brake acceleration
-    SLfloat _moveAccel;    //!< move acceleration
+    SLchar  _keyStates[256]; //!< Stores for all movement keys whether they are pressed
+    SLfloat _drag;           //!< simple constant drag that affects velocity
+    SLfloat _maxSpeed;       //!< maximum speed in m/s, with high drag values this speed might not be achievable at all
+    SLVec3f _velocity;       //!< current velocity vector
+    SLVec3f _acceleration;   //!< current acceleration vector
+    SLfloat _brakeAccel;     //!< brake acceleration
+    SLfloat _moveAccel;      //!< move acceleration
 
     // ray tracing parameters
     SLfloat        _focalDist;    //!< distance to lookAt point on the focal plane from lens
