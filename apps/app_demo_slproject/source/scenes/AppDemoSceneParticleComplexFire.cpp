@@ -475,7 +475,9 @@ SLNode* AppDemoSceneParticleComplexFire::createComplexFire(SLAssetManager* am,
                                                                   texCircle,
                                                                   "Fire sparks rising PS",
                                                                   texFireFlm,
-                                                                  new SLTexColorLUT(am, CLUT_WYR, 256));
+                                                                  new SLTexColorLUT(am,
+                                                                                    CLUT_WYR,
+                                                                                    256));
         fireSparksRising->scale(0.05f);
         fireSparksRising->radiusH(0.8f);
         fireSparksRising->radiusW(0.3f);
@@ -491,7 +493,8 @@ SLNode* AppDemoSceneParticleComplexFire::createComplexFire(SLAssetManager* am,
         fireSparksRising->doSizeOverLT(false);
         fireSparksRising->doAlphaOverLT(false);
         fireSparksRising->doGravity(false);
-        fireComplex->addChild(new SLNode(fireSparksRising, "Fire sparks rising node"));
+        fireComplex->addChild(new SLNode(fireSparksRising,
+                                         "Fire sparks rising node"));
     }
 
     return fireComplex;
