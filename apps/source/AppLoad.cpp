@@ -14,16 +14,8 @@
 #include <SLAssetManager.h>
 #include <SLAssetLoader.h>
 #include <AppDemo.h>
+#include <App.h>
 
-//-----------------------------------------------------------------------------
-//! These functions have to be implemented by every app or you will get a
-// linking error. For the SLProject demo, they are implemented in
-// AppDemoLoad.cpp
-SLScene* appCreateScene(SLSceneID sceneID);
-void     appBeforeSceneDelete(SLSceneView* sv, SLScene* s);
-void     appBeforeSceneLoad(SLSceneView* sv, SLScene* s);
-void     appBeforeSceneAssembly(SLSceneView* sv, SLScene* s);
-void     appAfterSceneAssembly(SLSceneView* sv, SLScene* s);
 //-----------------------------------------------------------------------------
 /*!
  * Deletes the current scene and creates a new one identified by the sceneID.
@@ -44,7 +36,8 @@ void AppLoad::switchScene(SLSceneView* sv, SLSceneID sceneID)
     // Delete old scene //
     //////////////////////
 
-    appBeforeSceneDelete(sv, AppDemo::scene);
+    if (App::config.onBeforeSceneDelete)
+        App::config.onBeforeSceneDelete(sv, AppDemo::scene);
 
     if (AppDemo::scene)
     {
@@ -68,7 +61,7 @@ void AppLoad::switchScene(SLSceneView* sv, SLSceneID sceneID)
     ////////////////////
 
     AppDemo::sceneID = sceneID;
-    SLScene* s       = appCreateScene(sceneID);
+    SLScene* s       = App::config.onNewScene(sceneID);
 
     // Initialize all preloaded stuff from SLScene
     s->init(am);
@@ -95,7 +88,8 @@ void AppLoad::switchScene(SLSceneView* sv, SLSceneID sceneID)
     // Start loading assets asynchronously.
     al->loadAssetsAsync(onDone);
 
-    appBeforeSceneLoad(sv, s);
+    if (App::config.onBeforeSceneLoad)
+        App::config.onBeforeSceneLoad(sv, s);
 }
 //-----------------------------------------------------------------------------
 void AppLoad::onDoneLoading(SLSceneView* sv, SLScene* s, SLfloat startLoadMS)
@@ -113,7 +107,8 @@ void AppLoad::onDoneLoading(SLSceneView* sv, SLScene* s, SLfloat startLoadMS)
     // Start assembling the scene asynchronously.
     al->loadAssetsAsync(onDone);
 
-    appBeforeSceneAssembly(sv, s);
+    if (App::config.onBeforeSceneAssembly)
+        App::config.onBeforeSceneAssembly(sv, s);
 }
 //-----------------------------------------------------------------------------
 void AppLoad::onDoneAssembling(SLSceneView* sv, SLScene* s, SLfloat startLoadMS)
@@ -134,7 +129,9 @@ void AppLoad::onDoneAssembling(SLSceneView* sv, SLScene* s, SLfloat startLoadMS)
             sceneView->onInitialize();
 
     AppDemo::scene = s;
-    appAfterSceneAssembly(sv, s);
+
+    if (App::config.onAfterSceneAssembly)
+        App::config.onAfterSceneAssembly(sv, s);
 
     s->loadTimeMS(GlobalTimer::timeMS() - startLoadMS);
 }

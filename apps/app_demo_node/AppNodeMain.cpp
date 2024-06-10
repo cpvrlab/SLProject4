@@ -8,16 +8,22 @@
 //#############################################################################
 
 #include <AppDemo.h>
-#include <App.h>
 #include <AppNodeGui.h>
 #include <AppNodeSceneView.h>
+#include <AppNodeScene.h>
+#include <App.h>
 
 //-----------------------------------------------------------------------------
-SLSceneView* createSceneView(SLScene*        scene,
-                             int             myDPI,
-                             SLInputManager& inputManager)
+static SLSceneView* createSceneView(SLScene*        scene,
+                                    int             myDPI,
+                                    SLInputManager& inputManager)
 {
     return new AppNodeSceneView(scene, myDPI, inputManager);
+}
+//-----------------------------------------------------------------------------
+static SLScene* createScene(SLSceneID sceneID)
+{
+    return new AppNodeScene();
 }
 //-----------------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -28,6 +34,7 @@ int main(int argc, char* argv[])
                      .windowWidth    = 640,
                      .windowHeight   = 480,
                      .onNewSceneView = createSceneView,
+                     .onNewScene     = createScene,
                      .onGuiBuild     = AppNodeGui::build});
 }
 //-----------------------------------------------------------------------------

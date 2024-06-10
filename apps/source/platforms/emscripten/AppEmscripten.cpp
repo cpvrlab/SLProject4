@@ -25,24 +25,24 @@
 
 //-----------------------------------------------------------------------------
 // Global variables
-static App::Config config;     //!< The configuration set in App::run
-static SLint       svIndex;    //!< Scene view index
-static SLint       dpi = 142;  //!< Dot per inch resolution of screen
-static SLint       startX;     //!< start position x in pixels
-static SLint       startY;     //!< start position y in pixels
-static SLint       mouseX;     //!< Last mouse position x in pixels
-static SLint       mouseY;     //!< Last mouse position y in pixels
-static SLVec2i     touch2;     //!< Last finger touch 2 position in pixels
-static SLVec2i     touchDelta; //!< Delta between two fingers in x
-static SLint       lastWidth;  //!< Last window width in pixels
-static SLint       lastHeight; //!< Last window height in pixels
-static int         canvasWidth;
-static int         canvasHeight;
-static int         lastTouchDownX;
-static int         lastTouchDownY;
-static double      lastTouchDownTimeMS;
-static long        animationFrameID = 0;
-static SLbool      coreAssetsLoaded = false;
+App::Config    App::config; //!< The configuration set in App::run
+static SLint   svIndex;     //!< Scene view index
+static SLint   dpi = 142;   //!< Dot per inch resolution of screen
+static SLint   startX;      //!< start position x in pixels
+static SLint   startY;      //!< start position y in pixels
+static SLint   mouseX;      //!< Last mouse position x in pixels
+static SLint   mouseY;      //!< Last mouse position y in pixels
+static SLVec2i touch2;      //!< Last finger touch 2 position in pixels
+static SLVec2i touchDelta;  //!< Delta between two fingers in x
+static SLint   lastWidth;   //!< Last window width in pixels
+static SLint   lastHeight;  //!< Last window height in pixels
+static int     canvasWidth;
+static int     canvasHeight;
+static int     lastTouchDownX;
+static int     lastTouchDownY;
+static double  lastTouchDownTimeMS;
+static long    animationFrameID = 0;
+static SLbool  coreAssetsLoaded = false;
 
 //-----------------------------------------------------------------------------
 // Function forward declarations
@@ -92,9 +92,9 @@ static SLKey             mapModifiersToSLModifiers(const EmscriptenMouseEvent* m
 static SLKey             mapModifiersToSLModifiers(const EmscriptenKeyboardEvent* keyEvent);
 
 //-----------------------------------------------------------------------------
-int App::run(Config configuration)
+int App::run(Config config)
 {
-    ::config = configuration;
+    App::config = config;
 
     canvasWidth  = EM_ASM_INT(return window.innerWidth);
     canvasHeight = EM_ASM_INT(return window.innerHeight);
@@ -153,12 +153,9 @@ int App::run(Config configuration)
 
     slLoadCoreAssetsAsync();
 
-    // Request an animation frame from the browser.
-    // This will call the `update` function once.
-    // The `update` function itself requests the next animation frame,
-    // creating an update loop.
-    animationFrameID = emscripten_request_animation_frame(onAnimationFrame,
-                                                          nullptr);
+    // Request an animation frame from the browser. This will call the `update` function once.
+    // The `update` function itself requests the next animation frame, creating an update loop.
+    animationFrameID = emscripten_request_animation_frame(onAnimationFrame, nullptr);
 
     return 0;
 }
@@ -193,12 +190,12 @@ static SLbool onPaint()
     if (AppDemo::assetLoader->isLoading())
         AppDemo::assetLoader->checkIfAsyncLoadingIsDone();
 
-    ////////////////////////////////////////////////////////////////
-    SLbool appNeedsUpdate  = config.onUpdate && config.onUpdate(sv);
+    ////////////////////////////////////////////////
+    SLbool appNeedsUpdate  = App::config.onUpdate && App::config.onUpdate(sv);
     SLbool jobIsRunning    = slUpdateParallelJob();
     SLbool isLoading       = AppDemo::assetLoader->isLoading();
     SLbool viewNeedsUpdate = slPaintAllViews();
-    ////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////
 
     return appNeedsUpdate || viewNeedsUpdate || jobIsRunning || isLoading;
 }
@@ -229,13 +226,13 @@ static void onLoadingCoreAssets()
                       canvasWidth,
                       canvasHeight,
                       dpi,
-                      config.startSceneID,
+                      App::config.startSceneID,
                       reinterpret_cast<void*>(onPaint),
                       nullptr,
-                      reinterpret_cast<void*>(config.onNewSceneView),
-                      reinterpret_cast<void*>(config.onGuiBuild),
-                      reinterpret_cast<void*>(config.onGuiLoadConfig),
-                      reinterpret_cast<void*>(config.onGuiSaveConfig));
+                      reinterpret_cast<void*>(App::config.onNewSceneView),
+                      reinterpret_cast<void*>(App::config.onGuiBuild),
+                      reinterpret_cast<void*>(App::config.onGuiLoadConfig),
+                      reinterpret_cast<void*>(App::config.onGuiSaveConfig));
 
     EM_ASM(document.querySelector("#loading-overlay").style.opacity = 0);
 }

@@ -24,7 +24,7 @@
 
 //-----------------------------------------------------------------------------
 // Global variables
-static App::Config config;                     //!< The configuration set in App::run
+App::Config        App::config;                //!< The configuration set in App::run
 static GLFWwindow* window;                     //!< The global glfw window handle
 static SLint       svIndex;                    //!< Scene view index
 static SLint       scrWidth;                   //!< Window width at start up
@@ -58,7 +58,7 @@ static SLKey  mapKeyToSLKey(int key);
 //-----------------------------------------------------------------------------
 int App::run(Config configuration)
 {
-    ::config = configuration;
+    App::config = configuration;
 
     // set command line arguments
     SLVstring cmdLineArgs;
@@ -228,7 +228,7 @@ static SLbool onPaint()
         AppDemo::assetLoader->checkIfAsyncLoadingIsDone();
 
     ////////////////////////////////////////////////////////////////
-    SLbool appNeedsUpdate  = config.onUpdate && config.onUpdate(sv);
+    SLbool appNeedsUpdate  = App::config.onUpdate && App::config.onUpdate(sv);
     SLbool jobIsRunning    = slUpdateParallelJob();
     SLbool isLoading       = AppDemo::assetLoader->isLoading();
     SLbool viewNeedsUpdate = slPaintAllViews();
