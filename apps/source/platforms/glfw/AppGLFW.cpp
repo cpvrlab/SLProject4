@@ -35,8 +35,6 @@ static SLint       startX;                     //!< start position x in pixels
 static SLint       startY;                     //!< start position y in pixels
 static SLint       mouseX;                     //!< Last mouse position x in pixels
 static SLint       mouseY;                     //!< Last mouse position y in pixels
-static SLVec2i     touch2;                     //!< Last finger touch 2 position in pixels
-static SLVec2i     touchDelta;                 //!< Delta between two fingers in x
 static SLint       lastWidth;                  //!< Last window width in pixels
 static SLint       lastHeight;                 //!< Last window height in pixels
 static SLfloat     lastMouseDownTime = 0.0f;   //!< Last mouse press time
@@ -47,35 +45,20 @@ static SLVec2i     windowPosBeforeFullscreen;  //!< Window position before enter
 //-----------------------------------------------------------------------------
 // Function forward declarations
 static SLbool onPaint();
-static void   onGLFWError(int         error,
-                          const char* description);
-static void   onResize(GLFWwindow* myWindow,
-                       int         width,
-                       int         height);
-static void   onMouseButton(GLFWwindow* myWindow,
-                            int         button,
-                            int         action,
-                            int         mods);
-static void   onMouseMove(GLFWwindow* myWindow,
-                          double      x,
-                          double      y);
-static void   onMouseWheel(GLFWwindow* myWindow,
-                           double      xscroll,
-                           double      yscroll);
-static void   onKey(GLFWwindow* myWindow,
-                    int         GLFWKey,
-                    int         scancode,
-                    int         action,
-                    int         mods);
-static void   onCharInput(GLFWwindow*,
-                          SLuint c);
+static void   onGLFWError(int error, const char* description);
+static void   onResize(GLFWwindow* myWindow, int width, int height);
+static void   onMouseButton(GLFWwindow* myWindow, int button, int action, int mods);
+static void   onMouseMove(GLFWwindow* myWindow, double x, double y);
+static void   onMouseWheel(GLFWwindow* myWindow, double xscroll, double yscroll);
+static void   onKey(GLFWwindow* myWindow, int GLFWKey, int scancode, int action, int mods);
+static void   onCharInput(GLFWwindow*, SLuint c);
 static void   onClose(GLFWwindow* myWindow);
 static SLKey  mapKeyToSLKey(int key);
 
 //-----------------------------------------------------------------------------
-int App::run(Config config)
+int App::run(Config configuration)
 {
-    ::config = config;
+    ::config = configuration;
 
     // set command line arguments
     SLVstring cmdLineArgs;
@@ -84,12 +67,8 @@ int App::run(Config config)
 
     // parse cmd line arguments
     for (int i = 1; i < cmdLineArgs.size(); ++i)
-    {
         if (cmdLineArgs[i] == "-onlyErrorLogs")
-        {
             Utils::onlyErrorLogs = true;
-        }
-    }
 
     if (!glfwInit())
     {
@@ -248,12 +227,12 @@ static SLbool onPaint()
     if (AppDemo::assetLoader->isLoading())
         AppDemo::assetLoader->checkIfAsyncLoadingIsDone();
 
-    ////////////////////////////////////////////////
-    SLbool appNeedsUpdate  = config.onUpdate ? config.onUpdate(sv) : false;
+    ////////////////////////////////////////////////////////////////
+    SLbool appNeedsUpdate  = config.onUpdate && config.onUpdate(sv);
     SLbool jobIsRunning    = slUpdateParallelJob();
     SLbool isLoading       = AppDemo::assetLoader->isLoading();
     SLbool viewNeedsUpdate = slPaintAllViews();
-    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
 
     return appNeedsUpdate || viewNeedsUpdate || jobIsRunning || isLoading;
 }
@@ -396,9 +375,15 @@ static void onMouseMove(GLFWwindow* myWindow,
     mouseY = (int)y;
 
     if (modifiers & K_alt && modifiers & K_ctrl)
-        slTouch2Move(svIndex, (int)(x - 20), (int)y, (int)(x + 20), (int)y);
+        slTouch2Move(svIndex,
+                     (int)(x - 20),
+                     (int)y,
+                     (int)(x + 20),
+                     (int)y);
     else
-        slMouseMove(svIndex, (int)x, (int)y);
+        slMouseMove(svIndex,
+                    (int)x,
+                    (int)y);
 }
 //-----------------------------------------------------------------------------
 /*!

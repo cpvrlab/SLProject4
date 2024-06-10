@@ -92,9 +92,9 @@ static SLKey             mapModifiersToSLModifiers(const EmscriptenMouseEvent* m
 static SLKey             mapModifiersToSLModifiers(const EmscriptenKeyboardEvent* keyEvent);
 
 //-----------------------------------------------------------------------------
-int App::run(Config config)
+int App::run(Config configuration)
 {
-    ::config = config;
+    ::config = configuration;
 
     canvasWidth  = EM_ASM_INT(return window.innerWidth);
     canvasHeight = EM_ASM_INT(return window.innerHeight);
@@ -153,9 +153,12 @@ int App::run(Config config)
 
     slLoadCoreAssetsAsync();
 
-    // Request an animation frame from the browser. This will call the `update` function once.
-    // The `update` function itself requests the next animation frame, creating an update loop.
-    animationFrameID = emscripten_request_animation_frame(onAnimationFrame, nullptr);
+    // Request an animation frame from the browser.
+    // This will call the `update` function once.
+    // The `update` function itself requests the next animation frame,
+    // creating an update loop.
+    animationFrameID = emscripten_request_animation_frame(onAnimationFrame,
+                                                          nullptr);
 
     return 0;
 }
@@ -190,12 +193,12 @@ static SLbool onPaint()
     if (AppDemo::assetLoader->isLoading())
         AppDemo::assetLoader->checkIfAsyncLoadingIsDone();
 
-    ////////////////////////////////////////////////
-    SLbool appNeedsUpdate  = config.onUpdate ? config.onUpdate(sv) : false;
+    ////////////////////////////////////////////////////////////////
+    SLbool appNeedsUpdate  = config.onUpdate && config.onUpdate(sv);
     SLbool jobIsRunning    = slUpdateParallelJob();
     SLbool isLoading       = AppDemo::assetLoader->isLoading();
     SLbool viewNeedsUpdate = slPaintAllViews();
-    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
 
     return appNeedsUpdate || viewNeedsUpdate || jobIsRunning || isLoading;
 }

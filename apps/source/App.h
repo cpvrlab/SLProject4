@@ -22,7 +22,9 @@ class SLInputManager;
 
 namespace App
 {
-typedef SLSceneView* (*OnNewSceneViewCallback)(SLScene* scene, int curDPI, SLInputManager& inputManager);
+typedef SLSceneView* (*OnNewSceneViewCallback)(SLScene*        scene,
+                                               int             curDPI,
+                                               SLInputManager& inputManager);
 typedef bool (*OnUpdateCallback)(SLSceneView* sv);
 typedef void (*OnGuiBuildCallback)(SLScene* s, SLSceneView* sv);
 typedef void (*OnGuiLoadConfigCallback)(SLint dotsPerInch);
