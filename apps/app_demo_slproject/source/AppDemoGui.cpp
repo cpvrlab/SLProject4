@@ -4331,8 +4331,7 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
                     }
 
                     // Textures
-                    if (m->numTextures() > 0 &&
-                        ImGui::TreeNode("Tex", "Textures (%d)", m->numTextures()))
+                    if (m->numTextures() > 0 && ImGui::TreeNode("Tex", "Textures (%d)", m->numTextures()))
                     {
                         for (int tt = 0; tt < TT_numTextureType; ++tt)
                             for (auto& tex : m->textures((SLTextureType)tt))
@@ -4381,6 +4380,8 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
                                 }
                             }
                         }
+
+                        ImGui::TreePop();
                     }
 
                     ImGui::TreePop();

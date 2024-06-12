@@ -52,8 +52,8 @@ void AppDemoSceneRobot::assemble(SLAssetManager* am, SLSceneView* sv)
                                               2,
                                               2,
                                               0.2f,
-                                              1,
-                                              1,
+                                              0.6f,
+                                              0.8f,
                                               1);
     light1->lookAt(0, 0, 0);
     light1->attenuation(1, 0, 0);
