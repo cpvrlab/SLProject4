@@ -93,3 +93,4 @@ Tester
 /externals/prebuild_scripts/openssl
 
 docs/html
+.clangd
