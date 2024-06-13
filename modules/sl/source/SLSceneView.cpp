@@ -513,18 +513,21 @@ SLbool SLSceneView::onPaint()
     // this function is called for multiple SceneViews. In this way we only
     // update the geometric representations if all SceneViews got painted once.
     // (can only happen during raytracing)
-    if (_gotPainted && _s)
+    if (_gotPainted)
     {
         _gotPainted = false;
 
         // Process queued up system events and poll custom input devices
         viewConsumedEvents = _inputManager.pollAndProcessEvents(this);
 
-        // update current scene
-        sceneHasChanged = _s->onUpdate((_renderType == RT_rt),
-                                       drawBit(SL_DB_VOXELS),
-                                       !drawBit(SL_DB_GPU_SKINNING) ||
-                                         drawBit(SL_DB_WITHEDGES));
+        if (_s)
+        {
+            // update current scene
+            sceneHasChanged = _s->onUpdate((_renderType == RT_rt),
+                                           drawBit(SL_DB_VOXELS),
+                                           !drawBit(SL_DB_GPU_SKINNING) ||
+                                             drawBit(SL_DB_WITHEDGES));
+        }
     }
 
     SLbool camUpdated = false;

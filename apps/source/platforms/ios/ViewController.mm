@@ -171,16 +171,16 @@ float GetSeconds()
     ///////////////////////////////////////////////////////////////////////
     svIndex = slCreateSceneView(AppDemo::assetManager,
                                 AppDemo::scene,
-                                self.view.bounds.size.height * screenScale,
                                 self.view.bounds.size.width * screenScale,
+                                self.view.bounds.size.height * screenScale,
                                 dpi,
                                 SID_Revolver,
-                                static_cast<void*>(onPaintRTGL),
+                                reinterpret_cast<void*>(onPaintRTGL),
                                 0,
-                                static_cast<void*>(App::config.onNewSceneView),
-                                static_cast<void*>(App::config.onGuiBuild),
-                                static_cast<void*>(App::config.onGuiLoadConfig),
-                                static_cast<void*>(App::config.onGuiSaveConfig));
+                                reinterpret_cast<void*>(App::config.onNewSceneView),
+                                reinterpret_cast<void*>(App::config.onGuiBuild),
+                                reinterpret_cast<void*>(App::config.onGuiLoadConfig),
+                                reinterpret_cast<void*>(App::config.onGuiSaveConfig));
     ///////////////////////////////////////////////////////////////////////
 
     [self setupMotionManager:1.0 / 20.0];
