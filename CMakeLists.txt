@@ -110,8 +110,6 @@ if (SL_BUILD_WAI)
     add_subdirectory(modules/wai)
 endif ()
 
-message(STATUS "----------------------------------------------------------------")
-
 if (SL_BUILD_APPS)
     add_subdirectory(apps)
 endif ()

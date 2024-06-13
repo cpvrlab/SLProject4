@@ -737,7 +737,7 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "DARWIN" AND
 elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "DARWIN" AND
         "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "arm64") #-----------------------------------------------------------------
 
-    message(STATUS "Configure prebuilts for MacOS-arm64 -----------------------------------")
+    message(STATUS "Configure prebuilts for MacOS-arm64")
 
     set(COPY_LIBS_TO_CONFIG_FOLDER TRUE)
 
@@ -897,7 +897,7 @@ elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "DARWIN" AND
 
 elseif ("${SYSTEM_NAME_UPPER}" STREQUAL "IOS") #------------------------------------------------------------------------
 
-    message(STATUS "Configure prebuilts for iOS_arm64 -------------------------------------")
+    message(STATUS "Configure prebuilts for iOS_arm64")
 
     ##################
     # OpenCV for iOS #

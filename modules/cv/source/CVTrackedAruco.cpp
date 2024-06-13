@@ -71,7 +71,7 @@ bool CVTrackedAruco::trackAll(CVMat          imageGray,
     assert(!calib->cameraMat().empty() && "Calibration is empty");
 
 #if CV_MAJOR_VERSION < 4 || CV_MINOR_VERSION < 7
-    if (params.arucoParams.empty() || params.dictionary.empty())
+    if (_params.arucoParams.empty() || _params.dictionary.empty())
     {
         Utils::warnMsg("SLProject",
                        "CVTrackedAruco::track: Aruco paramters are empty.",
@@ -95,10 +95,10 @@ bool CVTrackedAruco::trackAll(CVMat          imageGray,
 
 #if CV_MAJOR_VERSION < 4 || CV_MINOR_VERSION < 7
     cv::aruco::detectMarkers(croppedImageGray,
-                             params.dictionary,
+                             _params.dictionary,
                              corners,
                              arucoIDs,
-                             params.arucoParams,
+                             _params.arucoParams,
                              rejected);
 #else
     cv::aruco::ArucoDetector detector(_params.dictionary, _params.arucoParams);

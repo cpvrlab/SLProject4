@@ -13,28 +13,22 @@
 //#############################################################################
 
 // Objective C imports
-#import "ViewController.h"
+#import <ViewController.h>
 #import <CoreMotion/CoreMotion.h>
 
 // C++ includes for the SceneLibrary
 #include <Utils.h>
-#include "Utils_iOS.h"
+#include <Utils_iOS.h>
 #include <SLAssetManager.h>
 #include <SLInterface.h>
+#include <SLAssetLoader.h>
 #include <CVCapture.h>
 #include <AppDemo.h>
-#include <AppDemoGui.h>
-#include <AppDemoSceneView.h>
+#include <App.h>
+
 #include <mach/mach_time.h>
 #import <sys/utsname.h>
 #import <mach-o/arch.h>
-
-// Forward declaration of C functions in other files
-extern void appDemoLoadScene(SLAssetManager* am,
-                             SLScene*        s,
-                             SLSceneView*    sv,
-                             SLSceneID       sceneID);
-extern bool onUpdateVideo();
 
 //-----------------------------------------------------------------------------
 // C-Prototypes
@@ -58,15 +52,6 @@ SLbool onPaintRTGL()
     return true;
 }
 
-//-----------------------------------------------------------------------------
-//! Alternative SceneView creation C-function passed by slCreateSceneView
-SLSceneView* createAppDemoSceneView(SLScene*        scene,
-                                    int             dpi,
-                                    SLInputManager& inputManager)
-{
-    // The sceneview will be deleted by SLScene::~SLScene()
-    return new AppDemoSceneView(scene, dpi, inputManager);
-}
 //-----------------------------------------------------------------------------
 /*!
  Returns the absolute time in seconds since the system started. It is based
@@ -181,6 +166,8 @@ float GetSeconds()
                 AppDemo::configPath,
                 "AppDemo_iOS");
 
+    slLoadCoreAssetsSync();
+
     ///////////////////////////////////////////////////////////////////////
     svIndex = slCreateSceneView(AppDemo::assetManager,
                                 AppDemo::scene,
@@ -188,12 +175,12 @@ float GetSeconds()
                                 self.view.bounds.size.width * screenScale,
                                 dpi,
                                 SID_Revolver,
-                                (void*)&onPaintRTGL,
+                                static_cast<void*>(onPaintRTGL),
                                 0,
-                                (void*)createAppDemoSceneView,
-                                (void*)AppDemoGui::build,
-                                (void*)AppDemoGui::loadConfig,
-                                (void*)AppDemoGui::saveConfig);
+                                static_cast<void*>(App::config.onNewSceneView),
+                                static_cast<void*>(App::config.onGuiBuild),
+                                static_cast<void*>(App::config.onGuiLoadConfig),
+                                static_cast<void*>(App::config.onGuiSaveConfig));
     ///////////////////////////////////////////////////////////////////////
 
     [self setupMotionManager:1.0 / 20.0];
@@ -230,6 +217,11 @@ float GetSeconds()
 //-----------------------------------------------------------------------------
 - (void)glkView:(GLKView*)view drawInRect:(CGRect)rect
 {
+    if (AppDemo::sceneViews.empty())
+        return;
+
+    SLSceneView* sv = AppDemo::sceneViews[svIndex];
+
     [self setVideoType:CVCapture::instance()->videoType()
         videoSizeIndex:CVCapture::instance()->activeCamera->camSizeIndex()];
 
@@ -238,10 +230,20 @@ float GetSeconds()
     else
         [self stopLocationManager];
 
+    if (AppDemo::sceneToLoad)
+    {
+        slSwitchScene(sv, *AppDemo::sceneToLoad);
+        AppDemo::sceneToLoad = {}; // sets optional to empty
+    }
+
+    if (AppDemo::assetLoader->isLoading())
+        AppDemo::assetLoader->checkIfAsyncLoadingIsDone();
+
     ////////////////////////////////////////////////
-    bool trackingGotUpdated = onUpdateVideo();
-    bool jobIsRunning       = slUpdateParallelJob();
-    bool viewsNeedsRepaint  = slPaintAllViews();
+    SLbool appNeedsUpdate  = App::config.onUpdate && App::config.onUpdate(sv);
+    SLbool jobIsRunning    = slUpdateParallelJob();
+    SLbool isLoading       = AppDemo::assetLoader->isLoading();
+    SLbool viewNeedsUpdate = slPaintAllViews();
     ////////////////////////////////////////////////
 
     m_lastVideoImageIsConsumed = true;
