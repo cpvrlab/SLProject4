@@ -1,80 +1,7 @@
-# === Headers, sources, and include directories shared by all platforms ===
-
-file(GLOB COMMON_HEADERS
-    ${SL_PROJECT_ROOT}/apps/source/App.h
-    ${SL_PROJECT_ROOT}/apps/source/CVCapture.h
-    ${SL_PROJECT_ROOT}/apps/source/AppDemo.h
-    ${SL_PROJECT_ROOT}/apps/source/AppLoad.h
-    ${SL_PROJECT_ROOT}/apps/source/SLScene.h
-    ${SL_PROJECT_ROOT}/apps/source/SLInterface.h
-    ${SL_PROJECT_ROOT}/apps/source/Scene.h
-)
-
-file(GLOB COMMON_SOURCES
-    ${SL_PROJECT_ROOT}/apps/source/CVCapture.cpp
-    ${SL_PROJECT_ROOT}/apps/source/AppDemo.cpp
-    ${SL_PROJECT_ROOT}/apps/source/AppLoad.cpp
-    ${SL_PROJECT_ROOT}/apps/source/SLInterface.cpp
-    ${SL_PROJECT_ROOT}/apps/source/SLProjectScene.cpp
-)
-
-set(COMMON_INCLUDE_DIRECTORIES
-    ${SL_PROJECT_ROOT}/apps/source
-)
-
-# === GLFW headers, sources, and include directories ===
-
-set(PLATFORM_GLFW_HEADERS
-)
-
-set(PLATFORM_GLFW_SOURCES
-    ${SL_PROJECT_ROOT}/apps/source/platforms/glfw/AppGLFW.cpp
-)
-
-set(PLATFORM_GLFW_INCLUDE_DIRECTORIES
-    ${SL_PROJECT_ROOT}/apps/source/platforms/glfw
-)
-
-# === Emscripten headers, sources, and include directories ===
-
-set(PLATFORM_EMSCRIPTEN_HEADERS
-    ${SL_PROJECT_ROOT}/apps/source/WebCamera.h
-)
-
-set(PLATFORM_EMSCRIPTEN_SOURCES
-    ${SL_PROJECT_ROOT}/apps/source/WebCamera.cpp
-    ${SL_PROJECT_ROOT}/apps/source/platforms/emscripten/AppEmscripten.cpp
-)
-
-set(PLATFORM_EMSCRIPTEN_INCLUDE_DIRECTORIES
-    ${SL_PROJECT_ROOT}/apps/source/platforms/emscripten
-)
-
-# === iOS headers, sources, and include directories ===
-
-set(PLATFORM_IOS_HEADERS
-    ${SL_PROJECT_ROOT}/apps/source/platforms/ios/AppDelegate.h
-    ${SL_PROJECT_ROOT}/apps/source/platforms/ios/Utils_iOS.h
-    ${SL_PROJECT_ROOT}/apps/source/platforms/ios/ViewController.h
-)
-
-set(PLATFORM_IOS_SOURCES
-    ${SL_PROJECT_ROOT}/apps/source/platforms/ios/AppDelegate.mm
-    ${SL_PROJECT_ROOT}/apps/source/platforms/ios/ViewController.mm
-    ${SL_PROJECT_ROOT}/apps/source/platforms/ios/AppIOS.mm
-)
-
-set(PLATFORM_IOS_INCLUDE_DIRECTORIES
-    ${SL_PROJECT_ROOT}/apps/source/platforms/ios
-)
-
 function(sl_add_app)
-    #
+    # -------------------------------------------------------------------------
     # Parse CMake function arguments.
-    #
-
-    set(options
-    )
+    # -------------------------------------------------------------------------
     
     set(oneValueArgs
         TARGET
@@ -92,11 +19,11 @@ function(sl_add_app)
         IOS_RESOURCES
     )
     
-    cmake_parse_arguments(APP "${options}" "${oneValueArgs}" "${multiValueArgs}" "${ARGN}")
+    cmake_parse_arguments(APP "" "${oneValueArgs}" "${multiValueArgs}" "${ARGN}")
 
-    #
+    # -------------------------------------------------------------------------
     # Print app information and check platform support.
-    #
+    # -------------------------------------------------------------------------
 
     message(STATUS "Adding app: ${APP_TARGET}")
     list(JOIN APP_PLATFORMS ", " platformsString)  
@@ -107,41 +34,134 @@ function(sl_add_app)
         return()
     endif()
 
-    #
-    # Collect headers, sources, and include directories.
-    #
+    # -------------------------------------------------------------------------
+    # Define headers and sources shared by all platforms.
+    # This includes the headers and sources for the current app.
+    # -------------------------------------------------------------------------
 
-    file(GLOB HEADERS
-        ${COMMON_HEADERS}
-        ${PLATFORM_${SL_PLATFORM}_HEADERS}
+    file(GLOB COMMON_HEADERS
+        ${SL_PROJECT_ROOT}/apps/source/App.h
+        ${SL_PROJECT_ROOT}/apps/source/CVCapture.h
+        ${SL_PROJECT_ROOT}/apps/source/AppDemo.h
+        ${SL_PROJECT_ROOT}/apps/source/AppLoad.h
+        ${SL_PROJECT_ROOT}/apps/source/SLScene.h
+        ${SL_PROJECT_ROOT}/apps/source/SLInterface.h
+        ${SL_PROJECT_ROOT}/apps/source/Scene.h
         ${APP_HEADERS}
     )
 
-    file(GLOB SOURCES
-        ${COMMON_SOURCES}
-        ${PLATFORM_${SL_PLATFORM}_SOURCES}
+    file(GLOB COMMON_SOURCES
+        ${SL_PROJECT_ROOT}/apps/source/CVCapture.cpp
+        ${SL_PROJECT_ROOT}/apps/source/AppDemo.cpp
+        ${SL_PROJECT_ROOT}/apps/source/AppLoad.cpp
+        ${SL_PROJECT_ROOT}/apps/source/SLInterface.cpp
+        ${SL_PROJECT_ROOT}/apps/source/SLProjectScene.cpp
         ${APP_SOURCES}
     )
-
-    set(INCLUDE_DIRECTORIES
-        ${COMMON_INCLUDE_DIRECTORIES}
-        ${PLATFORM_${SL_PLATFORM}_INCLUDE_DIRECTORIES}
-        ${APP_INCLUDE_DIRECTORIES}
-    )
-
-    #
-    # Add the executable target.
-    #
-
+ 
     if(SL_PLATFORM STREQUAL "GLFW")
+        # ---------------------------------------------------------------------
+        # Configuration for platform GLFW
+        # ---------------------------------------------------------------------
+
+        file(GLOB HEADERS
+            ${COMMON_HEADERS}
+        )
+
+        file(GLOB SOURCES
+            ${COMMON_SOURCES}
+            ${SL_PROJECT_ROOT}/apps/source/platforms/glfw/AppGLFW.cpp
+        )
+
         add_executable(
             ${APP_TARGET}
             ${HEADERS}
             ${SOURCES}
         )
+
+        # Group source files for IDEs
+        source_group_by_path("${CMAKE_CURRENT_SOURCE_DIR}" "\\\\.h$|\\\\.hpp$" "Header Files" ${HEADERS})
+        source_group_by_path("${CMAKE_CURRENT_SOURCE_DIR}" "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$" "Source Files" ${SOURCES})
+
+        set_target_properties(
+            ${APP_TARGET}
+            PROPERTIES
+            ${DEFAULT_PROJECT_OPTIONS}
+            FOLDER "apps"
+        )
+
+        target_include_directories(
+            ${APP_TARGET}
+            PRIVATE
+            ${SL_PROJECT_ROOT}/apps/source/platforms/glfw
+        )
+
+        target_link_libraries(
+            ${APP_TARGET}
+            PRIVATE
+            ${glfw_LIBS}
+        )
+    elseif(SL_PLATFORM STREQUAL "EMSCRIPTEN")
+        # ---------------------------------------------------------------------
+        # Configuration for platform Emscripten
+        # ---------------------------------------------------------------------
+        
+        file(GLOB HEADERS
+            ${COMMON_HEADERS}
+            ${SL_PROJECT_ROOT}/apps/source/WebCamera.h
+        )
+
+        file(GLOB SOURCES
+            ${COMMON_SOURCES}
+            ${SL_PROJECT_ROOT}/apps/source/WebCamera.cpp
+            ${SL_PROJECT_ROOT}/apps/source/platforms/emscripten/AppEmscripten.cpp
+        )
+
+        add_executable(
+            ${APP_TARGET}
+            ${HEADERS}
+            ${SOURCES}
+        )
+    
+        target_include_directories(
+            ${APP_TARGET}
+            PRIVATE
+            ${SL_PROJECT_ROOT}/apps/source/platforms/emscripten
+        )
+
+        # Copy the HTML page and the server script to the target directory and replace
+        # the string "TARGET" in them with the name of the target.
+        # If you change these files, you have to re-run CMake.
+
+        file(READ "${SL_PROJECT_ROOT}/apps/source/platforms/emscripten/index.html" INDEX_SOURCE)
+        string(REPLACE "TARGET" "${APP_TARGET}" INDEX_SOURCE "${INDEX_SOURCE}")
+        file(WRITE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_TARGET}.html" "${INDEX_SOURCE}")
+
+        file(READ "${SL_PROJECT_ROOT}/apps/source/platforms/emscripten/server.py" SERVER_SOURCE)
+        string(REPLACE "TARGET" "${APP_TARGET}" SERVER_SOURCE "${SERVER_SOURCE}")
+        file(WRITE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/serve-${APP_TARGET}.py" "${SERVER_SOURCE}")
     elseif(SL_PLATFORM STREQUAL "IOS")
+        # ---------------------------------------------------------------------
+        # Configuration for platform iOS
+        # ---------------------------------------------------------------------
+        
+        file(GLOB HEADERS
+            ${COMMON_HEADERS}
+            ${SL_PROJECT_ROOT}/apps/source/platforms/ios/AppDelegate.h
+            ${SL_PROJECT_ROOT}/apps/source/platforms/ios/Utils_iOS.h
+            ${SL_PROJECT_ROOT}/apps/source/platforms/ios/ViewController.h
+        )
+
+        file(GLOB SOURCES
+            ${COMMON_SOURCES}
+            ${SL_PROJECT_ROOT}/apps/source/platforms/ios/AppDelegate.mm
+            ${SL_PROJECT_ROOT}/apps/source/platforms/ios/ViewController.mm
+            ${SL_PROJECT_ROOT}/apps/source/platforms/ios/AppIOS.mm
+        )
+
         # Copy defined resources to build directory and add get folder
         # reference using file(GLOB) (this is a secret trick that nobody knows).
+
         include(CopyResourcesAppDemoSLProject)
         set(DATA_DIR "${CMAKE_BINARY_DIR}/data")
         copy_resources_slprojectdemo("${DATA_DIR}")
@@ -162,26 +182,7 @@ function(sl_add_app)
             ${SOURCES}
             ${RESOURCES}
         )
-    endif()
 
-    enable_warnings(${APP_TARGET})
-
-    # 
-    # Set target-specific properties.
-    #
-
-    if(SL_PLATFORM STREQUAL "GLFW")    
-        # Group source files for IDEs
-        source_group_by_path("${CMAKE_CURRENT_SOURCE_DIR}" "\\\\.h$|\\\\.hpp$" "Header Files" ${HEADERS})
-        source_group_by_path("${CMAKE_CURRENT_SOURCE_DIR}" "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$" "Source Files" ${SOURCES})
-    
-        set_target_properties(
-            ${APP_TARGET}
-            PROPERTIES
-            ${DEFAULT_PROJECT_OPTIONS}
-            FOLDER "apps"
-        )
-    elseif(SL_PLATFORM STREQUAL "IOS")
         set(BUNDLE_IDENTIFIER "ch.bfh.ti.${APP_TARGET}")
         set(XCODE_CODESIGNIDENTITY "iPhone Developer")
         set(XCODE_DEVELOPMENTTEAM ${XCODE_DEVELOPMENTTEAM})
@@ -241,45 +242,13 @@ function(sl_add_app)
             XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ${XCODE_CODESIGNIDENTITY}
             XCODE_ATTRIBUTE_DEVELOPMENT_TEAM ${XCODE_DEVELOPMENTTEAM}
         )
-    endif()
 
-    #
-    # Add include directories, compile definitions, compile options, and libraries to link.
-    #
+        target_include_directories(
+            ${APP_TARGET}
+            PRIVATE
+            ${SL_PROJECT_ROOT}/apps/source/platforms/ios
+        )
 
-    target_include_directories(
-        ${APP_TARGET}
-        PRIVATE
-        ${INCLUDE_DIRECTORIES}
-    )
-    
-    target_compile_definitions(
-        ${APP_TARGET}
-        PRIVATE
-        ${DEFAULT_COMPILE_DEFINITIONS}
-        ${APP_COMPILE_DEFINITIONS}
-    )
-    
-    target_compile_options(
-        ${APP_TARGET}
-        PRIVATE
-        ${DEFAULT_COMPILE_OPTIONS}
-    )
-    
-    target_link_libraries(
-        ${APP_TARGET}
-        PRIVATE
-        ${DEFAULT_LINKER_OPTIONS}
-        ${PlatformLinkLibs}
-        sl
-        sl_external
-        sl_utils
-        ${OpenCV_LIBS}
-    )
-
-    if(SL_PLATFORM STREQUAL "GLFW")
-        target_link_libraries(${APP_TARGET} PRIVATE ${glfw_LIBS})
-    elseif(SL_PLATFORM STREQUAL "IOS")
         # Find system frameworks (libraries).
         find_library(AVFOUNDATION AVFoundation required)
         find_library(COREGRAPHICS CoreGraphics required)
@@ -306,19 +275,42 @@ function(sl_add_app)
         )
     endif()
 
-    if (SL_PLATFORM STREQUAL "EMSCRIPTEN")
-        # Copy the HTML page and the server script to the target directory and replace
-        # the string "TARGET" in them with the name of the target.
-        # If you change these files, you have to re-run CMake.
+    # -------------------------------------------------------------------------
+    # Set target configuration shared by all platforms.
+    # -------------------------------------------------------------------------
 
-        file(READ "${SL_PROJECT_ROOT}/apps/source/platforms/emscripten/index.html" INDEX_SOURCE)
-        string(REPLACE "TARGET" "${APP_TARGET}" INDEX_SOURCE "${INDEX_SOURCE}")
-        file(WRITE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_TARGET}.html" "${INDEX_SOURCE}")
+    enable_warnings(${APP_TARGET})
 
-        file(READ "${SL_PROJECT_ROOT}/apps/source/platforms/emscripten/server.py" SERVER_SOURCE)
-        string(REPLACE "TARGET" "${APP_TARGET}" SERVER_SOURCE "${SERVER_SOURCE}")
-        file(WRITE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/serve-${APP_TARGET}.py" "${SERVER_SOURCE}")
-    endif ()
+    target_include_directories(
+        ${APP_TARGET}
+        PRIVATE
+        ${SL_PROJECT_ROOT}/apps/source
+        ${APP_INCLUDE_DIRECTORIES}
+    )
+    
+    target_compile_definitions(
+        ${APP_TARGET}
+        PRIVATE
+        ${DEFAULT_COMPILE_DEFINITIONS}
+        ${APP_COMPILE_DEFINITIONS}
+    )
+    
+    target_compile_options(
+        ${APP_TARGET}
+        PRIVATE
+        ${DEFAULT_COMPILE_OPTIONS}
+    )
+    
+    target_link_libraries(
+        ${APP_TARGET}
+        PRIVATE
+        ${DEFAULT_LINKER_OPTIONS}
+        ${PlatformLinkLibs}
+        sl
+        sl_external
+        sl_utils
+        ${OpenCV_LIBS}
+    )
 endfunction()
 
 add_subdirectory(app_demo_slproject)
