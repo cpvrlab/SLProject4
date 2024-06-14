@@ -30,7 +30,8 @@
                   android:launchMode="singleTask"
                   android:keepScreenOn = "true"
                   android:screenOrientation = "landscape"
-                  android:configChanges="keyboardHidden">
+                  android:configChanges="keyboardHidden"
+                  android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

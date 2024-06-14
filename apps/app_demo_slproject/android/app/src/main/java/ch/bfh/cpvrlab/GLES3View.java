@@ -101,12 +101,8 @@ public class GLES3View extends GLSurfaceView
                 GLES3Lib.grabVideoFileFrame();
 
             //////////////////////////////////////////////////////
-            boolean videoUpdated = GLES3Lib.onUpdateVideo();
-            boolean sceneUpdated = GLES3Lib.onUpdateParallelJob();
-            boolean viewUpdated  = GLES3Lib.onPaintAllViews();
+            boolean doRepaint = GLES3Lib.onUpdate();
             //////////////////////////////////////////////////////
-
-            boolean doRepaint = videoUpdated || sceneUpdated || viewUpdated;
 
             // Only request new rendering for non-live video
             // For live video the camera service will call requestRenderer

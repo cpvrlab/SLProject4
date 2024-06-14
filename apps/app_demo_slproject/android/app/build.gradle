@@ -10,15 +10,16 @@ android {
             storePassword '?' // Change to your store password
         }
     }
-    compileSdkVersion 29
     defaultConfig {
         applicationId "ch.bfh.cpvrlab"
         minSdkVersion 24
-        targetSdkVersion 29
+        targetSdkVersion 34
+        compileSdk 34
         versionCode 2
         versionName "3.0.000"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {
+            //noinspection ChromeOsAbiSupport
             abiFilters 'arm64-v8a'
         }
         externalNativeBuild {
@@ -63,5 +64,6 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.20'
 }

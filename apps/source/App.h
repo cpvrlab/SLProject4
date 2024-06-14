@@ -13,13 +13,18 @@
 #include <SL.h>
 #include <SLEnums.h>
 
+#ifndef SL_OS_ANDROID
+#    define SL_MAIN_FUNCTION main
+#else
+#    define SL_MAIN_FUNCTION slAndroidMain
+#endif
+
 //-----------------------------------------------------------------------------
 class SLScene;
 class SLSceneView;
 class SLInputManager;
 
 //-----------------------------------------------------------------------------
-
 namespace App
 {
 typedef SLSceneView* (*OnNewSceneViewCallback)(SLScene*        scene,

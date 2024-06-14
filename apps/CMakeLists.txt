@@ -5,6 +5,7 @@ function(sl_add_app)
     
     set(oneValueArgs
         TARGET
+        ANDROID_APP_DIR
         IOS_INFO_PLIST
         IOS_DISPLAY_NAME
         IOS_COPYRIGHT
@@ -58,6 +59,11 @@ function(sl_add_app)
         ${SL_PROJECT_ROOT}/apps/source/SLProjectScene.cpp
         ${APP_SOURCES}
     )
+
+    # -------------------------------------------------------------------------
+    # Create the target and configure platform-specific things like libraries
+    # to link or assets to copy on mobile platforms.
+    # -------------------------------------------------------------------------
  
     if(SL_PLATFORM STREQUAL "GLFW")
         # ---------------------------------------------------------------------
@@ -140,6 +146,51 @@ function(sl_add_app)
         file(READ "${SL_PROJECT_ROOT}/apps/source/platforms/emscripten/server.py" SERVER_SOURCE)
         string(REPLACE "TARGET" "${APP_TARGET}" SERVER_SOURCE "${SERVER_SOURCE}")
         file(WRITE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/serve-${APP_TARGET}.py" "${SERVER_SOURCE}")
+    elseif(SL_PLATFORM STREQUAL "ANDROID")
+        # ---------------------------------------------------------------------
+        # Configuration for platform Android
+        # For more information about using CMake with Android Studio, read the
+        # documentation: https://d.android.com/studio/projects/add-native-code.html
+        # ---------------------------------------------------------------------
+
+        file(GLOB HEADERS
+            ${COMMON_HEADERS}
+        )
+        
+        file(GLOB SOURCES
+            ${COMMON_SOURCES}
+            ${SL_PROJECT_ROOT}/apps/source/platforms/android/AppAndroid.cpp
+            ${APP_ANDROID_APP_DIR}/src/main/cpp/AppDemoAndroidJNI.cpp
+        )
+
+        # Copy APK contents.
+        include(CopyResourcesAppDemoSLProject)
+        copy_resources_slprojectdemo("${APP_ANDROID_APP_DIR}/src/main/assets/data")
+        
+        file(GLOB_RECURSE
+            MEDIAPIPE_ASSETS
+            ${SL_PROJECT_ROOT}/data/mediapipe/*.tflite
+            ${SL_PROJECT_ROOT}/data/mediapipe/*.txt
+        )
+        
+        foreach (ASSET_PATH ${MEDIAPIPE_ASSETS})
+            get_filename_component(ASSET_FILENAME "${ASSET_PATH}" NAME)
+            file(COPY "${ASSET_PATH}" DESTINATION "${APP_ANDROID_APP_DIR}/src/main/assets")
+        endforeach ()
+        
+        add_library(
+            ${APP_TARGET}
+            SHARED
+            ${HEADERS}
+            ${SOURCES}
+        )
+                
+        target_link_libraries(
+            ${APP_TARGET}
+            PRIVATE
+            libc++_shared.so
+            z
+        )
     elseif(SL_PLATFORM STREQUAL "IOS")
         # ---------------------------------------------------------------------
         # Configuration for platform iOS

@@ -5,10 +5,14 @@ sl_add_app(
     "GLFW"
     "EMSCRIPTEN"
     "IOS"
+    "ANDROID"
     
     HEADERS "*.h"
     SOURCES "*.cpp"
     INCLUDE_DIRECTORIES "."
+
+    # On Android, set the path to the `app` directory
+    ANDROID_APP_DIR "${SL_PROJECT_ROOT}/apps/app_demo_slproject/android/app"
 
     # On iOS, set the path to the Info.plist template as well as some other properties.
     IOS_INFO_PLIST "${SL_PROJECT_ROOT}/apps/app_demo_slproject/ios/plist.in" 

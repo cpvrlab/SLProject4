@@ -30,7 +30,7 @@ import javax.microedition.khronos.egl.EGLContext;
 public class GLES3Lib {
 
     static {
-        System.loadLibrary("native-lib");
+        System.loadLibrary("app-Demo-Node");
     }
 
     public static Application App = null;
@@ -49,8 +49,7 @@ public class GLES3Lib {
     public static final int VIDEO_TYPE_FILE = 3;    // Maps to Androids front facing camera
 
     public static native void    onInit             (int width, int height, int dotsPerInch, String FilePath);
-    public static native boolean onUpdateVideo      ();
-    public static native boolean onUpdateParallelJob();
+    public static native boolean onUpdate           ();
     public static native boolean onPaintAllViews    ();
     public static native void    onResize           (int width, int height);
     public static native void    onMouseDown        (int button, int x, int y);

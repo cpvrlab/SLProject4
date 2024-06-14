@@ -10,11 +10,11 @@
 
 #include <jni.h>
 #include <SLInterface.h>
+#include <SLAssetLoader.h>
 #include <SLScene.h>
 #include <AppDemo.h>
 #include <CVCapture.h>
-#include <AppDemoGui.h>
-#include <AppDemoSceneView.h>
+#include <App.h>
 
 #include "mediapipe.h"
 
@@ -22,6 +22,10 @@
 // Some global variable for the JNI interface
 JNIEnv* environment; //! Pointer to JAVA environment used in ray tracing callback
 int     svIndex = 0; //!< SceneView index
+
+//-----------------------------------------------------------------------------
+int slAndroidMain(int argc, char* argv[]);
+
 //-----------------------------------------------------------------------------
 /*! Java Native Interface (JNI) function declarations. These functions are
 called by the Java interface class GLES3Lib. The function name follows the pattern
@@ -32,9 +36,8 @@ in SLInterface.h.
 extern "C" {
 JNIEXPORT void JNICALL Java_ch_bfh_cpvrlab_GLES3Lib_onInit(JNIEnv* env, jclass obj, jint width, jint height, jint dpi, jstring filePath);
 JNIEXPORT void JNICALL Java_ch_bfh_cpvrlab_GLES3Lib_onTerminate(JNIEnv* env, jclass obj);
-JNIEXPORT bool JNICALL Java_ch_bfh_cpvrlab_GLES3Lib_onUpdateVideo(JNIEnv* env, jclass obj);
-JNIEXPORT bool JNICALL Java_ch_bfh_cpvrlab_GLES3Lib_onUpdateParallelJob(JNIEnv* env, jclass obj);
 JNIEXPORT bool JNICALL Java_ch_bfh_cpvrlab_GLES3Lib_onPaintAllViews(JNIEnv* env, jclass obj);
+JNIEXPORT bool JNICALL Java_ch_bfh_cpvrlab_GLES3Lib_onUpdate(JNIEnv* env, jclass obj);
 JNIEXPORT void JNICALL Java_ch_bfh_cpvrlab_GLES3Lib_onResize(JNIEnv* env, jclass obj, jint width, jint height);
 JNIEXPORT void JNICALL Java_ch_bfh_cpvrlab_GLES3Lib_onMouseDown(JNIEnv* env, jclass obj, jint button, jint x, jint y);
 JNIEXPORT void JNICALL Java_ch_bfh_cpvrlab_GLES3Lib_onMouseUp(JNIEnv* env, jclass obj, jint button, jint x, jint y);
@@ -89,12 +92,6 @@ std::string jstring2stdstring(JNIEnv* env, jstring jStr)
     return stdString;
 }
 //-----------------------------------------------------------------------------
-//! Alternative SceneView creation C-function passed by slCreateSceneView
-SLSceneView* createAppDemoSceneView(SLScene* scene, int dpi, SLInputManager& inputManger)
-{
-    return new AppDemoSceneView(scene, dpi, inputManger);
-}
-//-----------------------------------------------------------------------------
 //! Creates the scene and sceneview instance
 extern "C" JNIEXPORT void JNICALL Java_ch_bfh_cpvrlab_GLES3Lib_onInit(JNIEnv* env, jclass obj, jint width, jint height, jint dpi, jstring filePath)
 {
@@ -102,6 +99,9 @@ extern "C" JNIEXPORT void JNICALL Java_ch_bfh_cpvrlab_GLES3Lib_onInit(JNIEnv* en
     const char* nativeString = env->GetStringUTFChars(filePath, 0);
     string      devicePath(nativeString);
     env->ReleaseStringUTFChars(filePath, nativeString);
+
+    slAndroidMain(0, nullptr);
+    const App::Config& config = App::config;
 
     SLVstring* cmdLineArgs = new SLVstring();
 
@@ -126,6 +126,8 @@ extern "C" JNIEXPORT void JNICALL Java_ch_bfh_cpvrlab_GLES3Lib_onInit(JNIEnv* en
                 devicePath + "/",
                 "AppDemoAndroid");
 
+    slLoadCoreAssetsSync();
+
     ////////////////////////////////////////////////////////////////////
     svIndex = slCreateSceneView(AppDemo::assetManager,
                                 AppDemo::scene,
@@ -135,10 +137,10 @@ extern "C" JNIEXPORT void JNICALL Java_ch_bfh_cpvrlab_GLES3Lib_onInit(JNIEnv* en
                                 SID_Revolver,
                                 (void*)&Java_renderRaytracingCallback,
                                 0,
-                                (void*)createAppDemoSceneView,
-                                (void*)AppDemoGui::build,
-                                (void*)AppDemoGui::loadConfig,
-                                (void*)AppDemoGui::saveConfig);
+                                reinterpret_cast<void*>(config.onNewSceneView),
+                                reinterpret_cast<void*>(config.onGuiBuild),
+                                reinterpret_cast<void*>(config.onGuiLoadConfig),
+                                reinterpret_cast<void*>(config.onGuiSaveConfig));
     ////////////////////////////////////////////////////////////////////
 
     delete cmdLineArgs;
@@ -149,19 +151,35 @@ extern "C" JNIEXPORT void JNICALL Java_ch_bfh_cpvrlab_GLES3Lib_onTerminate(JNIEn
     slTerminate();
 }
 //-----------------------------------------------------------------------------
-extern "C" JNIEXPORT bool JNICALL Java_ch_bfh_cpvrlab_GLES3Lib_onUpdateVideo(JNIEnv* env, jclass obj)
-{
-    return onUpdateVideo();
-}
-//-----------------------------------------------------------------------------
-extern "C" JNIEXPORT bool JNICALL Java_ch_bfh_cpvrlab_GLES3Lib_onUpdateParallelJob(JNIEnv* env, jclass obj)
-{
-    return slUpdateParallelJob();
-}
-//-----------------------------------------------------------------------------
 extern "C" JNIEXPORT bool JNICALL Java_ch_bfh_cpvrlab_GLES3Lib_onPaintAllViews(JNIEnv* env, jclass obj)
 {
     return slPaintAllViews();
+}
+//-----------------------------------------------------------------------------
+extern "C" JNIEXPORT bool JNICALL Java_ch_bfh_cpvrlab_GLES3Lib_onUpdate(JNIEnv* env, jclass obj)
+{
+    if (AppDemo::sceneViews.empty())
+        return false;
+
+    SLSceneView* sv = AppDemo::sceneViews[svIndex];
+
+    if (AppDemo::sceneToLoad)
+    {
+        slSwitchScene(sv, *AppDemo::sceneToLoad);
+        AppDemo::sceneToLoad = {}; // sets optional to empty
+    }
+
+    if (AppDemo::assetLoader->isLoading())
+        AppDemo::assetLoader->checkIfAsyncLoadingIsDone();
+
+    ////////////////////////////////////////////////////////////////
+    SLbool appNeedsUpdate  = App::config.onUpdate && App::config.onUpdate(sv);
+    SLbool jobIsRunning    = slUpdateParallelJob();
+    SLbool isLoading       = AppDemo::assetLoader->isLoading();
+    SLbool viewNeedsUpdate = slPaintAllViews();
+    ////////////////////////////////////////////////////////////////
+
+    return appNeedsUpdate || viewNeedsUpdate || jobIsRunning || isLoading;
 }
 //-----------------------------------------------------------------------------
 extern "C" JNIEXPORT void JNICALL Java_ch_bfh_cpvrlab_GLES3Lib_onResize(JNIEnv* env, jclass obj, jint width, jint height)

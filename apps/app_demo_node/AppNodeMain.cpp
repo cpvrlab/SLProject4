@@ -26,7 +26,7 @@ static SLScene* createScene(SLSceneID sceneID)
     return new AppNodeScene();
 }
 //-----------------------------------------------------------------------------
-int main(int argc, char* argv[])
+int SL_MAIN_FUNCTION(int argc, char* argv[])
 {
     return App::run({.argc           = argc,
                      .argv           = argv,
