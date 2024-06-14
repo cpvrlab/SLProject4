@@ -65,7 +65,6 @@ intermediate/
 cmake-build*/
 *Snapchat3D/
 .cache/
-apps/app_demo_slproject/android/app.properties
 
 Profile_*
 

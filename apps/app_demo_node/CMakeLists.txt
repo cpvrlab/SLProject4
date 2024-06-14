@@ -12,7 +12,7 @@ sl_add_app(
     INCLUDE_DIRECTORIES "."
 
     # On Android, set the path to the `app` directory
-    ANDROID_APP_DIR "${SL_PROJECT_ROOT}/apps/app_demo_slproject/android/app"
+    ANDROID_APP_DIR "${SL_PROJECT_ROOT}/apps/source/platforms/android/example_project/app"
 
     # On iOS, set the path to the Info.plist template as well as some other properties.
     IOS_INFO_PLIST "${SL_PROJECT_ROOT}/apps/source/platforms/ios/example_project/plist.in"

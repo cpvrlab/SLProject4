@@ -201,6 +201,13 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCH
 	endif()
 endif ()
 
+# Android options
+if(SYSTEM_NAME_UPPER STREQUAL "ANDROID")
+	set(DEFAULT_COMPILE_OPTIONS
+		${DEFAULT_COMPILE_OPTIONS}
+		"-Wno-error=format-security"
+	)
+endif()
 
 # Clang only compiler options
 #if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")

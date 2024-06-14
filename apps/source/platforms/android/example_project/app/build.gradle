@@ -29,7 +29,6 @@ android {
         }
         externalNativeBuild {
             cmake {
-                cppFlags "-frtti -fexceptions -std=c++14 -w -Wno-error=format-security"
                 arguments "-DANDROID_STL=c++_shared", "-DSL_BUILD_WAI=ON", "-DSL_BUILD_WITH_MEDIAPIPE=ON"
                 targets "${properties['appLibraryName']}"
             }
@@ -39,7 +38,7 @@ android {
     externalNativeBuild {
         cmake {
             version "3.27.0"
-            path "../../../../CMakeLists.txt"
+            path "../../../../../../CMakeLists.txt"
         }
     }
     sourceSets {
