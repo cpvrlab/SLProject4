@@ -20,16 +20,14 @@ import android.util.Log;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class GLES3View extends GLSurfaceView
-{
-    private static String TAG = "SLProject";
+public class GLES3View extends GLSurfaceView {
+    private static final String TAG = "SLProject";
     private static final int VT_NONE = 0;
     private static final int VT_MAIN = 1;
     private static final int VT_SCND = 2;
     private static final int VT_FILE = 3;
 
-    public GLES3View(Context context)
-    {
+    public GLES3View(Context context) {
         super(context);
 
         setEGLConfigChooser(8, 8, 8, 0, 16, 0);
@@ -65,9 +63,9 @@ public class GLES3View extends GLSurfaceView
             Log.i(TAG, "Renderer.onSurfaceCreated");
             int w = GLES3Lib.view.getWidth();
             int h = GLES3Lib.view.getHeight();
-            GLES3Lib.onInit(w, h,
-                            GLES3Lib.dpi,
-                            GLES3Lib.App.getApplicationContext().getFilesDir().getAbsolutePath());
+            AppAndroidJNI.onInit(w, h,
+                    GLES3Lib.dpi,
+                    GLES3Lib.App.getApplicationContext().getFilesDir().getAbsolutePath());
 
             // Get main event handler of UI thread
             mainLoop = new Handler(Looper.getMainLooper());
@@ -75,41 +73,41 @@ public class GLES3View extends GLSurfaceView
 
         public void onSurfaceChanged(GL10 gl, int width, int height) {
             Log.i(TAG, "Renderer.onSurfaceChanged");
-            GLES3Lib.onResize(width, height);
+            AppAndroidJNI.onResize(width, height);
             GLES3Lib.view.requestRender();
         }
 
         public void onDrawFrame(GL10 gl) {
-            int videoType = GLES3Lib.getVideoType();
-            int sizeIndex = GLES3Lib.getVideoSizeIndex();
-            boolean usesRotation = GLES3Lib.usesRotation();
-            boolean usesLocation = GLES3Lib.usesLocation();
+            int videoType = AppAndroidJNI.getVideoType();
+            int sizeIndex = AppAndroidJNI.getVideoSizeIndex();
+            boolean usesRotation = AppAndroidJNI.usesRotation();
+            boolean usesLocation = AppAndroidJNI.usesLocation();
 
-            if (videoType==VT_MAIN || videoType==VT_SCND)
-                 mainLoop.post(new Runnable() {@Override public void run() {GLES3Lib.activity.cameraStart(videoType, sizeIndex);}});
-            else mainLoop.post(new Runnable() {@Override public void run() {GLES3Lib.activity.cameraStop();}});
+            if (videoType == VT_MAIN || videoType == VT_SCND)
+                mainLoop.post(() -> GLES3Lib.activity.cameraStart(videoType, sizeIndex));
+            else mainLoop.post(() -> GLES3Lib.activity.cameraStop());
 
             if (usesRotation)
-                 mainLoop.post(new Runnable() {@Override public void run() {GLES3Lib.activity.rotationSensorStart();}});
-            else mainLoop.post(new Runnable() {@Override public void run() {GLES3Lib.activity.rotationSensorStop();}});
+                mainLoop.post(() -> GLES3Lib.activity.rotationSensorStart());
+            else mainLoop.post(() -> GLES3Lib.activity.rotationSensorStop());
 
             if (usesLocation)
-                 mainLoop.post(new Runnable() {@Override public void run() {GLES3Lib.activity.locationSensorStart();}});
-            else mainLoop.post(new Runnable() {@Override public void run() {GLES3Lib.activity.locationSensorStop();}});
+                mainLoop.post(() -> GLES3Lib.activity.locationSensorStart());
+            else mainLoop.post(() -> GLES3Lib.activity.locationSensorStop());
 
-            if (videoType==VT_FILE)
-                GLES3Lib.grabVideoFileFrame();
+            if (videoType == VT_FILE)
+                AppAndroidJNI.grabVideoFileFrame();
 
             //////////////////////////////////////////////////////
-            boolean doRepaint = GLES3Lib.onUpdate();
+            boolean doRepaint = AppAndroidJNI.onUpdate();
             //////////////////////////////////////////////////////
 
             // Only request new rendering for non-live video
             // For live video the camera service will call requestRenderer
-            if (doRepaint && (videoType==VT_NONE || videoType==VT_FILE))
+            if (doRepaint && (videoType == VT_NONE || videoType == VT_FILE))
                 GLES3Lib.view.requestRender();
 
-            if (videoType!=VT_NONE)
+            if (videoType != VT_NONE)
                 GLES3Lib.lastVideoImageIsConsumed.set(true);
         }
     }

@@ -4,8 +4,8 @@ sl_add_app(
     PLATFORMS
     "GLFW"
     "EMSCRIPTEN"
-    "IOS"
     "ANDROID"
+    "IOS"
     
     HEADERS "*.h"
     SOURCES "*.cpp"

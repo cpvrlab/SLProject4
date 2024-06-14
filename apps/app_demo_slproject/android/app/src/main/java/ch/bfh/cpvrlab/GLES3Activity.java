@@ -125,7 +125,7 @@ public class GLES3Activity extends Activity implements View.OnTouchListener, Sen
             }, PERMISSIONS_MULTIPLE_REQUEST);
         }
 
-        GLES3Lib.initMediaPipeAssetManager(this, getCacheDir().getAbsolutePath());
+        AppAndroidJNI.initMediaPipeAssetManager(this, getCacheDir().getAbsolutePath());
     }
 
     // After on onCreate
@@ -173,8 +173,8 @@ public class GLES3Activity extends Activity implements View.OnTouchListener, Sen
     // The process of this activity is getting killed (e.g. with the back button)
     protected void onDestroy() {
         Log.i(TAG, "GLES3Activity.onDestroy begin");
-        //myView.queueEvent(new Runnable() {public void run() {GLES3Lib.onClose();}});
-        GLES3Lib.onClose();
+        //myView.queueEvent(new Runnable() {public void run() {AppAndroidJNI.onClose();}});
+        AppAndroidJNI.onClose();
         super.onDestroy();
         finish();
         Log.i(TAG, "GLES3Activity.onDestroy end");
@@ -234,18 +234,18 @@ public class GLES3Activity extends Activity implements View.OnTouchListener, Sen
             final float y = YPR[0];
             final float p = YPR[1];
             final float r = YPR[2];
-            myView.queueEvent(new Runnable() {public void run() {GLES3Lib.onRotationPYR(p, y, r);}});
+            myView.queueEvent(new Runnable() {public void run() {AppAndroidJNI.onRotationPYR(p, y, r);}});
             */
 
             // Get the rotation quaternion from the XYZ-rotation vector (see docs)
-            final float Q[] = new float[4];
+            final float[] Q = new float[4];
             SensorManager.getQuaternionFromVector(Q, event.values);
 
             // Send the quaternion as x,y,z & w to SLScene::onRotationQUAT
             // See the following routines how the rotation is used:
             // SLScene::onRotationQUAT calculates the offset if _zeroYawAtStart is true
             // SLCamera::setView how the device rotation is processed for the camera's view
-            myView.queueEvent(new Runnable() {public void run() {GLES3Lib.onRotationQUAT(Q[1],Q[2],Q[3],Q[0]);}});
+            myView.queueEvent(() -> AppAndroidJNI.onRotationQUAT(Q[1],Q[2],Q[3],Q[0]));
         }
     }
 
@@ -353,7 +353,7 @@ public class GLES3Activity extends Activity implements View.OnTouchListener, Sen
         }
 
         String absPath = slProjectDataPath;
-        myView.queueEvent( new Runnable() {public void run() {GLES3Lib.onSetupExternalDir(absPath);}});
+        myView.queueEvent(() -> AppAndroidJNI.onSetupExternalDir(absPath));
     }
 
     /**
@@ -391,23 +391,23 @@ public class GLES3Activity extends Activity implements View.OnTouchListener, Sen
             lastTouchDownMS = touchNowMS;
 
             if (touchDeltaMS < 250)
-                myView.queueEvent(new Runnable() {public void run() {GLES3Lib.onDoubleClick(1, lastTouchDownX, lastTouchDownY);}});
+                myView.queueEvent(() -> AppAndroidJNI.onDoubleClick(1, lastTouchDownX, lastTouchDownY));
             else
-                myView.queueEvent(new Runnable() {public void run() {GLES3Lib.onMouseDown(1, lastTouchDownX, lastTouchDownY);}});
+                myView.queueEvent(() -> AppAndroidJNI.onMouseDown(1, lastTouchDownX, lastTouchDownY));
         }
 
         // it's two fingers but one delayed (already executed mouse down
         else if (touchCount == 2 && pointersDown == 1) {
             final int x1 = (int) event.getX(1);
             final int y1 = (int) event.getY(1);
-            myView.queueEvent(new Runnable() {public void run() {GLES3Lib.onMouseUp(1, lastTouchDownX, lastTouchDownY);}});
-            myView.queueEvent(new Runnable() {public void run() {GLES3Lib.onTouch2Down(lastTouchDownX, lastTouchDownY, x1, y1);}});
+            myView.queueEvent(() -> AppAndroidJNI.onMouseUp(1, lastTouchDownX, lastTouchDownY));
+            myView.queueEvent(() -> AppAndroidJNI.onTouch2Down(lastTouchDownX, lastTouchDownY, x1, y1));
             // it's two fingers at the same time
         }
         else if (touchCount == 2) {
             final int x1 = (int) event.getX(1);
             final int y1 = (int) event.getY(1);
-            myView.queueEvent(new Runnable() {public void run() {GLES3Lib.onTouch2Down(lastTouchDownX, lastTouchDownY, x1, y1);}});
+            myView.queueEvent(() -> AppAndroidJNI.onTouch2Down(lastTouchDownX, lastTouchDownY, x1, y1));
         }
 
         pointersDown = touchCount;
@@ -422,12 +422,12 @@ public class GLES3Activity extends Activity implements View.OnTouchListener, Sen
         //Log.i(TAG, "Mv:" + touchCount);
 
         if (touchCount == 1) {
-            myView.queueEvent(new Runnable() {public void run() {GLES3Lib.onMouseMove(x0, y0);}});
+            myView.queueEvent(() -> AppAndroidJNI.onMouseMove(x0, y0));
         }
         else if (touchCount == 2) {
             final int x1 = (int) event.getX(1);
             final int y1 = (int) event.getY(1);
-            myView.queueEvent(new Runnable() {public void run() {GLES3Lib.onTouch2Move(x0, y0, x1, y1);}});
+            myView.queueEvent(() -> AppAndroidJNI.onTouch2Move(x0, y0, x1, y1));
         }
 
         myView.requestRender();
@@ -447,15 +447,15 @@ public class GLES3Activity extends Activity implements View.OnTouchListener, Sen
         if (touchCount == 1) {
             // Long touch as right mouse button touch
             if (dMS > 800 && dX < 15 && dY < 15) {
-                myView.queueEvent(new Runnable() {public void run() {GLES3Lib.onMouseDown(3, lastTouchDownX, lastTouchDownY);}});
-                myView.queueEvent(new Runnable() {public void run() {GLES3Lib.onMouseUp(3, lastTouchDownX, lastTouchDownY);}});
+                myView.queueEvent(() -> AppAndroidJNI.onMouseDown(3, lastTouchDownX, lastTouchDownY));
+                myView.queueEvent(() -> AppAndroidJNI.onMouseUp(3, lastTouchDownX, lastTouchDownY));
             } else
-                myView.queueEvent(new Runnable() {public void run() {GLES3Lib.onMouseUp(1, x0, y0);}});
+                myView.queueEvent(() -> AppAndroidJNI.onMouseUp(1, x0, y0));
         }
         else if (touchCount == 2) {
             final int x1 = (int) event.getX(1);
             final int y1 = (int) event.getY(1);
-            myView.queueEvent(new Runnable() {public void run() {GLES3Lib.onTouch2Up(x0, y0, x1, y1);}});
+            myView.queueEvent(() -> AppAndroidJNI.onTouch2Up(x0, y0, x1, y1));
         }
 
         pointersDown = touchCount;
@@ -479,7 +479,7 @@ public class GLES3Activity extends Activity implements View.OnTouchListener, Sen
                 GLES3Camera2Service.isTransitioning = true;
                 GLES3Camera2Service.requestedVideoSizeIndex = requestedVideoSizeIndex;
 
-                if (requestedVideoType == GLES3Lib.VIDEO_TYPE_MAIN) {
+                if (requestedVideoType == AppAndroidJNI.VIDEO_TYPE_MAIN) {
                     GLES3Camera2Service.videoType = CameraCharacteristics.LENS_FACING_BACK;
                     Log.i(TAG, "Going to start main back camera service ...");
                 } else {
@@ -542,12 +542,10 @@ public class GLES3Activity extends Activity implements View.OnTouchListener, Sen
             if (sm != null) {
                 sm.registerListener(this,
                         sm.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
-                        sm.SENSOR_DELAY_GAME);
+                        SensorManager.SENSOR_DELAY_GAME);
                 _rotationSensorStartTime = System.currentTimeMillis();
-                _rotationSensorIsRunning = true;
-            } else {
-                _rotationSensorIsRunning = true;
             }
+            _rotationSensorIsRunning = true;
         }
         catch (Exception e) {
             Log.i(TAG, "Exception: " + e.getMessage());
@@ -641,14 +639,10 @@ public class GLES3Activity extends Activity implements View.OnTouchListener, Sen
         //if (!loc.hasAccuracy() || loc.getAccuracy() == 0) return;
 
         //Log.i(TAG, "onLocationChanged: " + String.valueOf(loc.getLatitude()) + "," + String.valueOf(loc.getLongitude()));
-        myView.queueEvent(new Runnable() {
-            public void run() {
-                GLES3Lib.onLocationLatLonAlt(
-                        loc.getLatitude(),
-                        loc.getLongitude(),
-                        loc.getAltitude(),
-                        loc.getAccuracy());
-            }
-        });
+        myView.queueEvent(() -> AppAndroidJNI.onLocationLatLonAlt(
+                loc.getLatitude(),
+                loc.getLongitude(),
+                loc.getAltitude(),
+                loc.getAccuracy()));
     }
 }

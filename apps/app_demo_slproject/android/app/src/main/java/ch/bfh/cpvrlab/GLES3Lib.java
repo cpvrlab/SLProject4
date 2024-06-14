@@ -29,10 +29,6 @@ import javax.microedition.khronos.egl.EGLContext;
 // Java class that encapsulates the native C-functions into SLProject
 public class GLES3Lib {
 
-    static {
-        System.loadLibrary("app-Demo-Node");
-    }
-
     public static Application App = null;
     public static String FilesPath = null;
     public static GLES3View view;
@@ -43,40 +39,6 @@ public class GLES3Lib {
     // flag to indicate if the last video images was displayed at all
     public static AtomicBoolean lastVideoImageIsConsumed = new AtomicBoolean(false);
 
-    public static final int VIDEO_TYPE_NONE = 0;    // No video at all is used
-    public static final int VIDEO_TYPE_MAIN = 1;    // Maps to Androids back facing camera
-    public static final int VIDEO_TYPE_SCND = 2;    // Maps to Androids front facing camera
-    public static final int VIDEO_TYPE_FILE = 3;    // Maps to Androids front facing camera
-
-    public static native void    onInit             (int width, int height, int dotsPerInch, String FilePath);
-    public static native boolean onUpdate           ();
-    public static native boolean onPaintAllViews    ();
-    public static native void    onResize           (int width, int height);
-    public static native void    onMouseDown        (int button, int x, int y);
-    public static native void    onMouseUp          (int button, int x, int y);
-    public static native void    onMouseMove        (int x, int y);
-    public static native void    onTouch2Down       (int x1, int y1, int x2, int y2);
-    public static native void    onTouch2Move       (int x1, int y1, int x2, int y2);
-    public static native void    onTouch2Up         (int x1, int y1, int x2, int y2);
-    public static native void    onDoubleClick      (int button, int x, int y);
-    public static native void    onRotationQUAT     (float quatX, float quatY, float quatZ, float quatW);
-    public static native void    onClose            ();
-    public static native boolean usesRotation       ();
-    public static native boolean usesLocation       ();
-    public static native void    onLocationLatLonAlt      (double latitudeDEG, double longitudeDEG, double altitudeM, float accuracyM);
-    public static native int     getVideoType       ();
-    public static native int     getVideoSizeIndex  ();
-    public static native void    grabVideoFileFrame ();
-    public static native void    copyVideoImage     (int imgWidth, int imgHeight, byte[] imgBuffer);
-    public static native void    copyVideoYUVPlanes (int srcW, int srcH,
-                                                     byte[] y, int ySize, int yPixStride, int yLineStride,
-                                                     byte[] u, int uSize, int uPixStride, int uLineStride,
-                                                     byte[] v, int vSize, int vPixStride, int vLineStride);
-    public static native void    onSetupExternalDir (String externalDirPath);
-    public static native void    setCameraSize      (int sizeIndex, int sizeIndexMax, int width, int height);
-    public static native void    setDeviceParameter (String parameter, String value);
-    public static native void    initMediaPipeAssetManager(Context androidContext, String cacheDirPath);
-
     /**
      * The Raytracing Callback function is used to repaint the ray tracing image during the
      * ray tracing process. Only the GUI bound OpenGL context can call the swap the buffer
@@ -86,7 +48,7 @@ public class GLES3Lib {
      */
     public static boolean RaytracingCallback() {
         // calls the OpenGL rendering to display the RT image on a simple rectangle
-        boolean stopSignal = GLES3Lib.onPaintAllViews();
+        boolean stopSignal = AppAndroidJNI.onPaintAllViews();
 
         // Do the OpenGL back to front buffer swap
         EGL10 mEgl = (EGL10) EGLContext.getEGL();

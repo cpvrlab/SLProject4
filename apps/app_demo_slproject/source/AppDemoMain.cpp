@@ -268,6 +268,12 @@ static SLbool onUpdate(SLSceneView* sv)
     return trackingGotUpdated;
 }
 //-----------------------------------------------------------------------------
+// The entry point of our application.
+// On most platforms, SL_MAIN_FUNCTION is simply `main`.
+// On Android though, there is no `main` function, so we emulate it by setting
+// SL_MAIN_FUNCTION to `slAndroidMain`, which creates a "fake" main function.
+// This `slAndroidMain` function is then called in the JNI initialization code
+// to set up the application configuration.
 int SL_MAIN_FUNCTION(int argc, char* argv[])
 {
     return App::run({.argc                  = argc,

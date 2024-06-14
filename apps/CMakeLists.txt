@@ -160,7 +160,6 @@ function(sl_add_app)
         file(GLOB SOURCES
             ${COMMON_SOURCES}
             ${SL_PROJECT_ROOT}/apps/source/platforms/android/AppAndroid.cpp
-            ${APP_ANDROID_APP_DIR}/src/main/cpp/AppDemoAndroidJNI.cpp
         )
 
         # Copy APK contents.
