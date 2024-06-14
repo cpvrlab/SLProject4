@@ -1,5 +1,10 @@
 apply plugin: 'com.android.application'
 
+def properties = new Properties()
+rootProject.file('app.properties').withInputStream { stream ->
+    properties.load(stream)
+}
+
 android {
     signingConfigs {
         // Please create your own release key with Build > Generate Signed Bundle or APK
@@ -24,10 +29,17 @@ android {
         }
         externalNativeBuild {
             cmake {
-                version "3.3"
                 cppFlags "-frtti -fexceptions -std=c++14 -w -Wno-error=format-security"
-                arguments "-DANDROID_STL=c++_shared", "-DSL_GUI_JAVA=true", "-DAPP_USES_GLES=true", "-DSL_BUILD_WAI=ON", "-DSL_BUILD_WITH_MEDIAPIPE=ON"
+                arguments "-DANDROID_STL=c++_shared", "-DSL_BUILD_WAI=ON", "-DSL_BUILD_WITH_MEDIAPIPE=ON"
+                targets "${properties['appLibraryName']}"
             }
+        }
+        buildConfigField("String", "APP_LIBRARY_NAME", "\"${properties['appLibraryName']}\"")
+    }
+    externalNativeBuild {
+        cmake {
+            version "3.27.0"
+            path "../../../../CMakeLists.txt"
         }
     }
     sourceSets {
@@ -43,11 +55,6 @@ android {
         }
         debug {
             jniDebuggable true
-        }
-    }
-    externalNativeBuild {
-        cmake {
-            path "../../../../CMakeLists.txt"
         }
     }
     compileOptions {

@@ -5,7 +5,7 @@ import android.content.Context;
 public class AppAndroidJNI {
 
     static {
-        System.loadLibrary("app-Demo-SLProject");
+        System.loadLibrary(BuildConfig.APP_LIBRARY_NAME);
     }
 
     public static final int VIDEO_TYPE_NONE = 0;    // No video at all is used
