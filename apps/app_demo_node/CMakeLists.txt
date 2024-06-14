@@ -15,16 +15,16 @@ sl_add_app(
     ANDROID_APP_DIR "${SL_PROJECT_ROOT}/apps/app_demo_slproject/android/app"
 
     # On iOS, set the path to the Info.plist template as well as some other properties.
-    IOS_INFO_PLIST "${SL_PROJECT_ROOT}/apps/app_demo_slproject/ios/plist.in" 
-    IOS_DISPLAY_NAME "SL Nodes"
+    IOS_INFO_PLIST "${SL_PROJECT_ROOT}/apps/source/platforms/ios/example_project/plist.in"
+    IOS_DISPLAY_NAME "SL Demo"
     IOS_COPYRIGHT "Copyright Berner Fachhochschule (Marcus Hudritsch)"
     IOS_ICON_NAME "AppIcon"
 
     # Define additional Xcode app resources for iOS.
     IOS_RESOURCES
-    "${SL_PROJECT_ROOT}/apps/app_demo_slproject/ios/Base.lproj/ViewController_iPad.xib"
-    "${SL_PROJECT_ROOT}/apps/app_demo_slproject/ios/Base.lproj/ViewController_iPhone.xib"
-    "${SL_PROJECT_ROOT}/apps/app_demo_slproject/ios/LaunchScreenSLDemo.storyboard"
-    "${SL_PROJECT_ROOT}/apps/app_demo_slproject/ios/Images/Images.xcassets"
-    "${SL_PROJECT_ROOT}/apps/app_demo_slproject/ios/Images/LaunchImage_1024x768.png"
+    "${SL_PROJECT_ROOT}/apps/source/platforms/ios/example_project/Base.lproj/ViewController_iPad.xib"
+    "${SL_PROJECT_ROOT}/apps/source/platforms/ios/example_project/Base.lproj/ViewController_iPhone.xib"
+    "${SL_PROJECT_ROOT}/apps/source/platforms/ios/example_project/LaunchScreenSLDemo.storyboard"
+    "${SL_PROJECT_ROOT}/apps/source/platforms/ios/example_project/Images/Images.xcassets"
+    "${SL_PROJECT_ROOT}/apps/source/platforms/ios/example_project/Images/LaunchImage_1024x768.png"
 )

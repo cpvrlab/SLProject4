@@ -174,7 +174,7 @@ float GetSeconds()
                                 self.view.bounds.size.width * screenScale,
                                 self.view.bounds.size.height * screenScale,
                                 dpi,
-                                config.startSceneID,
+                                App::config.startSceneID,
                                 reinterpret_cast<void*>(onPaintRTGL),
                                 0,
                                 reinterpret_cast<void*>(App::config.onNewSceneView),

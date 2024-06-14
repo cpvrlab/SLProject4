@@ -43,6 +43,21 @@ endif ()
 include(cmake/SetGitBranchNameAndCommitID.cmake)
 include(cmake/CompileOptions.cmake)
 
+# Determine the platform that apps will run on.
+# On desktop operating systems, the platform is GLFW.
+# On Android, iOS, and Emscripten, the platform name is just directly the system name.
+if(SYSTEM_NAME_UPPER MATCHES "^(WINDOWS|DARWIN|LINUX)$")
+	set(SL_PLATFORM "GLFW")
+elseif(SYSTEM_NAME_UPPER STREQUAL "ANDROID")
+	set(SL_PLATFORM "ANDROID")
+elseif(SYSTEM_NAME_UPPER STREQUAL "IOS")
+	set(SL_PLATFORM "IOS")
+elseif(SYSTEM_NAME_UPPER STREQUAL "EMSCRIPTEN")
+	set(SL_PLATFORM "EMSCRIPTEN")
+else()
+	set(SL_PLATFORM "UNKNOWN")
+endif()
+
 option(SL_DOWNLOAD_DATA "Specifies if the data ZIP file should be downloaded" ON)
 option(SL_DOWNLOAD_PREBUILTS "Specifies if prebuilt libraries should be downloaded" ON)
 option(SL_BUILD_WAI "Specifies if the WAI library should be built" ON)
