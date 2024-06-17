@@ -66,6 +66,14 @@ SLGLImGui::SLGLImGui(cbOnImGuiBuild      buildCB,
 
     // load GUI fonts depending on the resolution
     loadFonts(SLGLImGui::fontPropDots, SLGLImGui::fontFixedDots);
+
+    // Scale for proportional and fixed size fonts
+    SLfloat dpiScaleProp  = (float)dpi / 120.0f;
+    SLfloat dpiScaleFixed = (float)dpi / 142.0f;
+
+    // Default settings for the first time
+    SLGLImGui::fontPropDots  = std::max(16.0f * dpiScaleProp, 16.0f);
+    SLGLImGui::fontFixedDots = std::max(13.0f * dpiScaleFixed, 13.0f);
 }
 //-----------------------------------------------------------------------------
 SLGLImGui::~SLGLImGui()
@@ -391,7 +399,7 @@ void SLGLImGui::printCompileErrors(SLint shaderHandle, const SLchar* src)
 void SLGLImGui::onInitNewFrame(SLScene* s, SLSceneView* sv)
 {
     // If no _build function is provided there is no ImGui
-    if (!_build) return;
+    // if (!_build) return;
 
     if ((SLint)SLGLImGui::fontPropDots != (SLint)_fontPropDots ||
         (SLint)SLGLImGui::fontFixedDots != (SLint)_fontFixedDots)
