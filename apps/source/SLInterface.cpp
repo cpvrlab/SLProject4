@@ -88,7 +88,6 @@ void slCreateApp(SLVstring&      cmdLineArgs,
     AppDemo::configPath  = configPath;
 
     SLGLState* stateGL = SLGLState::instance();
-
     SL_LOG("Path to exe      : %s", AppDemo::exePath.c_str());
     SL_LOG("Path to Models   : %s", modelPath.c_str());
     SL_LOG("Path to Shaders  : %s", shaderPath.c_str());

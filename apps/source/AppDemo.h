@@ -66,6 +66,7 @@ public:
     static SLstring name;          //!< Application name
     static SLstring appTag;        //!< Tag string used in logging
     static SLstring version;       //!< SLProject version string
+    static SLstring asciiLabel;    //!< SLProject ascii label string
     static SLstring configuration; //!< Debug or Release configuration
     static SLstring gitBranch;     //!< Current GIT branch
     static SLstring gitCommit;     //!< Current GIT commit short hash id

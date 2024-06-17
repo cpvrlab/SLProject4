@@ -132,6 +132,7 @@ int App::run(Config configuration)
 
     // Set your own physical screen dpi
     SL_LOG("------------------------------------------------------------------");
+    SL_LOG("%s", AppDemo::asciiLabel.c_str());
     SL_LOG("Platform         : GLFW (Version: %d.%d.%d)",
            GLFW_VERSION_MAJOR,
            GLFW_VERSION_MINOR,

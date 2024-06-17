@@ -32,7 +32,17 @@ SLDeviceLocation         AppDemo::devLoc;
 std::optional<SLSceneID> AppDemo::sceneToLoad;
 SLstring                 AppDemo::name    = "SLProjectApp";
 SLstring                 AppDemo::appTag  = "SLProject";
-SLstring                 AppDemo::version = "4.1.003";
+SLstring                 AppDemo::version = "4.2.000";
+
+//! ASCII Label: https://patorjk.com/software/taag/#p=display&f=Small%20Slant&t=SLProject%204.2
+SLstring AppDemo::asciiLabel = R"(
+   ______   ___             _         __    ____   ___ 
+  / __/ /  / _ \_______    (_)__ ____/ /_  / / /  |_  |
+ _\ \/ /__/ ___/ __/ _ \  / / -_) __/ __/ /_  _/ / __/ 
+/___/____/_/  /_/  \___/_/ /\__/\__/\__/   /_/(_)____/ 
+                      |___/  
+)";
+
 #ifdef _DEBUG
 SLstring AppDemo::configuration = "Debug";
 #else
