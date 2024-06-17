@@ -1,0 +1,47 @@
+name: Deploy GitHub Pages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Doxygen
+        run: sudo apt install -y doxygen
+
+      - name: Install Graphviz
+        run: sudo apt install -y graphviz
+
+      - name: Install Doxygen Awesome
+        working-directory: ${{ github.workspace }}/docs
+        run: git clone https://github.com/jothepro/doxygen-awesome-css.git -b v2.2.1
+
+      - name: Run Doxygen
+        working-directory: ${{ github.workspace }}/docs
+        run: doxygen
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "${{ github.workspace }}/docs/html"
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
