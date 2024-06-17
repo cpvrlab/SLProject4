@@ -41,11 +41,15 @@ void AppDemoSceneShaderBump::assemble(SLAssetManager* am, SLSceneView* sv)
     SLCamera* cam1 = new SLCamera("Camera 1");
     cam1->translation(-10, 10, 10);
     cam1->lookAt(0, 0, 0);
-    cam1->focalDist(20);
+    cam1->focalDist(cam1->translationWS().distance(SLVec3f::ZERO));
     cam1->background().colors(SLCol4f(0.5f, 0.5f, 0.5f));
     cam1->setInitialState();
 
-    SLLightSpot* light1 = new SLLightSpot(am, this, 0.3f, 40, true);
+    SLLightSpot* light1 = new SLLightSpot(am,
+                                          this,
+                                          0.3f,
+                                          40,
+                                          true);
     light1->powers(0.1f, 1.0f, 1.0f);
     light1->attenuation(1, 0, 0);
     light1->translation(0, 0, 5);
@@ -59,14 +63,25 @@ void AppDemoSceneShaderBump::assemble(SLAssetManager* am, SLSceneView* sv)
     light2->lookAt(0, 0, 0);
     light2->attenuation(1, 0, 0);
 
-    SLAnimation* anim = this->animManager().createNodeAnimation("light1_anim", 2.0f);
-    anim->createNodeAnimTrackForEllipse(light1, 2.0f, A_x, 2.0f, A_Y);
+    SLAnimation* anim = this->animManager().createNodeAnimation("light1_anim",
+                                                                2.0f);
+    anim->createNodeAnimTrackForEllipse(light1,
+                                        2.0f,
+                                        A_x,
+                                        2.0f,
+                                        A_Y);
 
     SLNode* scene = new SLNode;
     this->root3D(scene);
     scene->addChild(light1);
     scene->addChild(light2);
-    scene->addChild(new SLNode(new SLRectangle(am, SLVec2f(-5, -5), SLVec2f(5, 5), 1, 1, "Rect", m1)));
+    scene->addChild(new SLNode(new SLRectangle(am,
+                                               SLVec2f(-5, -5),
+                                               SLVec2f(5, 5),
+                                               1,
+                                               1,
+                                               "Rect",
+                                               m1)));
     scene->addChild(cam1);
 
     sv->camera(cam1);

@@ -27,14 +27,11 @@ AppDemoSceneShaderParallax::AppDemoSceneShaderParallax()
 void AppDemoSceneShaderParallax::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_texC,
-                        AppDemo::texturePath +
-                          "brickwall0512_C.jpg");
+                        AppDemo::texturePath + "brickwall0512_C.jpg");
     al.addTextureToLoad(_texN,
-                        AppDemo::texturePath +
-                          "brickwall0512_N.jpg");
+                        AppDemo::texturePath + "brickwall0512_N.jpg");
     al.addTextureToLoad(_texH,
-                        AppDemo::texturePath +
-                          "brickwall0512_H.jpg");
+                        AppDemo::texturePath + "brickwall0512_H.jpg");
     al.addProgramToLoad(_sp,
                         AppDemo::shaderPath + "PerPixBlinnTmNm.vert",
                         AppDemo::shaderPath + "PerPixBlinnTmPm.frag");
@@ -74,7 +71,7 @@ void AppDemoSceneShaderParallax::assemble(SLAssetManager* am, SLSceneView* sv)
     SLCamera* cam1 = new SLCamera("Camera 1");
     cam1->translation(-10, 10, 10);
     cam1->lookAt(0, 0, 0);
-    cam1->focalDist(20);
+    cam1->focalDist(cam1->translationWS().distance(SLVec3f::ZERO));
     cam1->background().colors(SLCol4f(0.5f, 0.5f, 0.5f));
     cam1->setInitialState();
 

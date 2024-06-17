@@ -29,8 +29,7 @@ private:
     SLGLTexture* _woodTexture;
 };
 //-----------------------------------------------------------------------------
-AppMinimalScene::AppMinimalScene()
-  : SLScene("Minimal Demo Scene")
+AppMinimalScene::AppMinimalScene() : SLScene("Minimal Demo Scene")
 {
 }
 //-----------------------------------------------------------------------------
@@ -51,9 +50,19 @@ void AppMinimalScene::assemble(SLAssetManager* am, SLSceneView* sv)
     light->translate(-0.5f, 1.0f, 0.75f);
     light->lookAt(0, 0, 0);
 
-    SLMaterial* material = new SLMaterial(am, "Wood Material", _woodTexture);
+    SLMaterial* material = new SLMaterial(am,
+                                          "Wood Material",
+                                          _woodTexture);
     SLNode*     box      = new SLNode("Box Node");
-    box->addMesh(new SLBox(am, -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, "Box", material));
+    box->addMesh(new SLBox(am,
+                           -0.5f,
+                           -0.5f,
+                           -0.5f,
+                           0.5f,
+                           0.5f,
+                           0.5f,
+                           "Box",
+                           material));
 
     SLNode* scene = new SLNode();
     scene->addChild(light);
@@ -62,7 +71,7 @@ void AppMinimalScene::assemble(SLAssetManager* am, SLSceneView* sv)
     root3D(scene);
 
     sv->camera(camera);
-    sv->doWaitOnIdle(false);
+    sv->doWaitOnIdle(true);
 }
 //-----------------------------------------------------------------------------
 static SLScene* createScene(SLSceneID sceneID)
