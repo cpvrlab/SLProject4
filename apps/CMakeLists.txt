@@ -365,6 +365,7 @@ endfunction()
 
 add_subdirectory(app_demo_slproject)
 add_subdirectory(app_demo_node)
+add_subdirectory(app_demo_minimal)
 
 if(NOT SYSTEM_NAME_UPPER MATCHES "^(ANDROID|IOS)$")
     if (SL_BUILD_EXERCISES)
