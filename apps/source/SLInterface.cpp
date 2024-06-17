@@ -146,6 +146,14 @@ SLint slCreateSceneView(SLAssetManager* am,
     // maintain multiple scene views in AppDemo
     AppDemo::sceneViews.push_back(sv);
 
+    // Scale for proportional and fixed size fonts
+    SLfloat dpiScaleProp  = (float)dotsPerInch / 120.0f;
+    SLfloat dpiScaleFixed = (float)dotsPerInch / 142.0f;
+
+    // Default settings for the first time
+    SLGLImGui::fontPropDots  = std::max(16.0f * dpiScaleProp, 16.0f);
+    SLGLImGui::fontFixedDots = std::max(13.0f * dpiScaleFixed, 13.0f);
+
     AppDemo::gui = new SLGLImGui((cbOnImGuiBuild)onImGuiBuild,
                                  (cbOnImGuiLoadConfig)onImGuiLoadConfig,
                                  (cbOnImGuiSaveConfig)onImGuiSaveConfig,
