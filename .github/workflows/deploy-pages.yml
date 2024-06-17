@@ -13,12 +13,12 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  build-docs:
     runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Doxygen
         run: sudo apt install -y doxygen
@@ -34,13 +34,22 @@ jobs:
         working-directory: ${{ github.workspace }}/docs
         run: doxygen
 
-      - name: Setup GitHub Pages
-        uses: actions/configure-pages@v5
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "${{ github.workspace }}/docs/html"
+          path: ${{ github.workspace }}/docs/html
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    needs: build-docs
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
 
       - name: Deploy to GitHub Pages
         id: deployment
