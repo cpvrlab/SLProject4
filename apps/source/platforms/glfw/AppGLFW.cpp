@@ -56,6 +56,7 @@ static void   onClose(GLFWwindow* myWindow);
 static SLKey  mapKeyToSLKey(int key);
 
 //-----------------------------------------------------------------------------
+//! App::run implementation from App.h for the GLFW platform
 int App::run(Config configuration)
 {
     App::config = configuration;
@@ -193,7 +194,6 @@ int App::run(Config configuration)
 
         // if no updated occurred wait for the next event (power saving)
         if (!doRepaint)
-            // todo ghm1: glfwWaitEvents is not working on my machine (maybe https://github.com/glfw/glfw/issues/685)
             glfwWaitEvents();
         else
             glfwPollEvents();
@@ -206,7 +206,7 @@ int App::run(Config configuration)
     return 0;
 }
 //-----------------------------------------------------------------------------
-// Paint event handler that passes the event to the slPaintAllViews function.
+//! Static paint function that gets called once every frame
 static SLbool onPaint()
 {
     PROFILE_SCOPE("AppGLFW::onPaint");
@@ -246,7 +246,7 @@ static void onGLFWError(int error, const char* description)
     fputs(description, stderr);
 }
 //-----------------------------------------------------------------------------
-/*!
+/*! 
 onResize: Event handler called on the resize event of the window. This event
 should called once before the onPaint event.
 */

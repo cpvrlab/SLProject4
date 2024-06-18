@@ -23,13 +23,10 @@
 class SLScene;
 class SLSceneView;
 class SLInputManager;
-
 //-----------------------------------------------------------------------------
 namespace App
 {
-typedef SLSceneView* (*OnNewSceneViewCallback)(SLScene*        scene,
-                                               int             curDPI,
-                                               SLInputManager& inputManager);
+typedef SLSceneView* (*OnNewSceneViewCallback)(SLScene* scene, int curDPI, SLInputManager& inputManager);
 typedef SLScene* (*OnNewSceneCallback)(SLSceneID sceneID);
 typedef void (*OnBeforeSceneDeleteCallback)(SLSceneView* sv, SLScene* s);
 typedef void (*OnBeforeSceneLoadCallback)(SLSceneView* sv, SLScene* s);

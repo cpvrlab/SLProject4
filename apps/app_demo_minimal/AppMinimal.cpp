@@ -18,6 +18,7 @@
 #include <AppDemo.h>
 
 //-----------------------------------------------------------------------------
+//! Scene class derived from SLScene
 class AppMinimalScene : public SLScene
 {
 public:
@@ -33,12 +34,14 @@ AppMinimalScene::AppMinimalScene() : SLScene("Minimal Demo Scene")
 {
 }
 //-----------------------------------------------------------------------------
+//! All assets the should be loaded in parallel must be registered in here.
 void AppMinimalScene::registerAssetsToLoad(SLAssetLoader& al)
 {
     al.addTextureToLoad(_woodTexture,
                         AppDemo::texturePath + "wood0_0512_C.jpg");
 }
 //-----------------------------------------------------------------------------
+//! After parallel loading of the assets the scene gets assembled in here.
 void AppMinimalScene::assemble(SLAssetManager* am, SLSceneView* sv)
 {
     SLCamera* camera = new SLCamera();
@@ -74,11 +77,13 @@ void AppMinimalScene::assemble(SLAssetManager* am, SLSceneView* sv)
     sv->doWaitOnIdle(true);
 }
 //-----------------------------------------------------------------------------
+//! A static function in which you can create the new scene
 static SLScene* createScene(SLSceneID sceneID)
 {
     return new AppMinimalScene();
 }
 //-----------------------------------------------------------------------------
+//! A static function that builds the UI with ImGui
 static void buildGui(SLScene* s, SLSceneView* sv)
 {
     if (ImGui::BeginMainMenuBar())

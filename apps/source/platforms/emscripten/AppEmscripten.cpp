@@ -49,49 +49,25 @@ static SLbool  coreAssetsLoaded = false;
 static SLbool            onPaint();
 static void              updateCanvas();
 static void              onLoadingCoreAssets();
-static EM_BOOL           onAnimationFrame(double time,
-                                          void*  userData);
-static EMSCRIPTEN_RESULT onMousePressed(int                         eventType,
-                                        const EmscriptenMouseEvent* mouseEvent,
-                                        void*                       userData);
-static EM_BOOL           onMouseReleased(int                         eventType,
-                                         const EmscriptenMouseEvent* mouseEvent,
-                                         void*                       userData);
-static EM_BOOL           onMouseDoubleClicked(int                         eventType,
-                                              const EmscriptenMouseEvent* mouseEvent,
-                                              void*                       userData);
-static EM_BOOL           onMouseMove(int                         eventType,
-                                     const EmscriptenMouseEvent* mouseEvent,
-                                     void*                       userData);
-static EM_BOOL           onMouseWheel(int                         eventType,
-                                      const EmscriptenWheelEvent* wheelEvent,
-                                      void*                       userData);
-static EM_BOOL           onKeyPressed(int                            eventType,
-                                      const EmscriptenKeyboardEvent* keyEvent,
-                                      void*                          userData);
-static EM_BOOL           onKeyReleased(int                            eventType,
-                                       const EmscriptenKeyboardEvent* keyEvent,
-                                       void*                          userData);
-static EM_BOOL           onTouchStart(int                         eventType,
-                                      const EmscriptenTouchEvent* touchEvent,
-                                      void*                       userData);
-static EM_BOOL           onTouchEnd(int                         eventType,
-                                    const EmscriptenTouchEvent* touchEvent,
-                                    void*                       userData);
-static EM_BOOL           onTouchMove(int                         eventType,
-                                     const EmscriptenTouchEvent* touchEvent,
-                                     void*                       userData);
-static const char*       onUnload(int         eventType,
-                                  const void* reserved,
-                                  void*       userData);
+static EM_BOOL           onAnimationFrame(double time, void* userData);
+static EMSCRIPTEN_RESULT onMousePressed(int eventType, const EmscriptenMouseEvent* mouseEvent, void* userData);
+static EM_BOOL           onMouseReleased(int eventType, const EmscriptenMouseEvent* mouseEvent, void* userData);
+static EM_BOOL           onMouseDoubleClicked(int eventType, const EmscriptenMouseEvent* mouseEvent, void* userData);
+static EM_BOOL           onMouseMove(int eventType, const EmscriptenMouseEvent* mouseEvent, void* userData);
+static EM_BOOL           onMouseWheel(int eventType, const EmscriptenWheelEvent* wheelEvent, void* userData);
+static EM_BOOL           onKeyPressed(int eventType, const EmscriptenKeyboardEvent* keyEvent, void* userData);
+static EM_BOOL           onKeyReleased(int eventType, const EmscriptenKeyboardEvent* keyEvent, void* userData);
+static EM_BOOL           onTouchStart(int eventType, const EmscriptenTouchEvent* touchEvent, void* userData);
+static EM_BOOL           onTouchEnd(int eventType, const EmscriptenTouchEvent* touchEvent, void* userData);
+static EM_BOOL           onTouchMove(int eventType, const EmscriptenTouchEvent* touchEvent, void* userData);
+static const char*       onUnload(int eventType, const void* reserved, void* userData);
 static SLKey             mapKeyToSLKey(unsigned long key);
-static SLKey             mapModifiersToSLModifiers(bool shiftDown,
-                                                   bool ctrlDown,
-                                                   bool altDown);
+static SLKey             mapModifiersToSLModifiers(bool shiftDown, bool ctrlDown, bool altDown);
 static SLKey             mapModifiersToSLModifiers(const EmscriptenMouseEvent* mouseEvent);
 static SLKey             mapModifiersToSLModifiers(const EmscriptenKeyboardEvent* keyEvent);
 
 //-----------------------------------------------------------------------------
+//! App::run implementation from App.h for the EMSCRIPTEN platform
 int App::run(Config config)
 {
     App::config = config;
@@ -160,7 +136,7 @@ int App::run(Config config)
     return 0;
 }
 //-----------------------------------------------------------------------------
-// Paint event handler that passes the event to the slPaintAllViews function.
+//! Paint event handler that passes the event to the slPaintAllViews function.
 static SLbool onPaint()
 {
     if (AppDemo::sceneViews.empty())
@@ -178,7 +154,9 @@ static SLbool onPaint()
         updateCanvas();
 
         if (!AppDemo::sceneViews.empty())
-            slResize(svIndex, canvasWidth, canvasHeight);
+            slResize(svIndex,
+                     canvasWidth,
+                     canvasHeight);
     }
 
     if (AppDemo::sceneToLoad)
@@ -190,12 +168,12 @@ static SLbool onPaint()
     if (AppDemo::assetLoader->isLoading())
         AppDemo::assetLoader->checkIfAsyncLoadingIsDone();
 
-    ////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
     SLbool appNeedsUpdate  = App::config.onUpdate && App::config.onUpdate(sv);
     SLbool jobIsRunning    = slUpdateParallelJob();
     SLbool isLoading       = AppDemo::assetLoader->isLoading();
     SLbool viewNeedsUpdate = slPaintAllViews();
-    ////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
 
     return appNeedsUpdate || viewNeedsUpdate || jobIsRunning || isLoading;
 }
