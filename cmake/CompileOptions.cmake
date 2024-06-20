@@ -17,7 +17,7 @@ set(CMAKE_BUILD_PARALLEL_LEVEL 16)
 set(DEFAULT_PROJECT_OPTIONS
     DEBUG_POSTFIX             "-debug"
     RELEASE_POSTFIX           "-release"
-    CXX_STANDARD              17
+    CXX_STANDARD              20
     LINKER_LANGUAGE           "CXX"
     POSITION_INDEPENDENT_CODE ON
     CXX_VISIBILITY_PRESET     "hidden"

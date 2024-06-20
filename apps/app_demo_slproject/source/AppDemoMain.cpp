@@ -278,9 +278,9 @@ int SL_MAIN_FUNCTION(int argc, char* argv[])
 {
     return App::run({.argc                  = argc,
                      .argv                  = argv,
-                     .windowTitle           = "SLProject Test Application",
                      .windowWidth           = 1280,
                      .windowHeight          = 720,
+                     .windowTitle           = "SLProject Test Application",
                      .numSamples            = 4,
                      .startSceneID          = SL_STARTSCENE,
                      .onNewSceneView        = createSceneView,

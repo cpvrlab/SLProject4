@@ -30,9 +30,9 @@ int SL_MAIN_FUNCTION(int argc, char* argv[])
 {
     return App::run({.argc           = argc,
                      .argv           = argv,
-                     .windowTitle    = "SLProject Node Demo",
                      .windowWidth    = 640,
                      .windowHeight   = 480,
+                     .windowTitle    = "SLProject Node Demo",
                      .onNewSceneView = createSceneView,
                      .onNewScene     = createScene,
                      .onGuiBuild     = AppNodeGui::build});

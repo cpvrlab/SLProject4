@@ -102,12 +102,13 @@ static void buildGui(SLScene* s, SLSceneView* sv)
 //-----------------------------------------------------------------------------
 int SL_MAIN_FUNCTION(int argc, char* argv[])
 {
-    return App::run({.argc         = argc,
-                     .argv         = argv,
-                     .windowTitle  = "SLProject Minimal App",
-                     .windowWidth  = 640,
-                     .windowHeight = 480,
-                     .onNewScene   = createScene,
-                     .onGuiBuild   = buildGui});
+    return App::run({.argc            = argc,
+                     .argv            = argv,
+                     .windowWidth     = 640,
+                     .windowHeight    = 480,
+                     .windowTitle     = "SLProject Minimal App",
+                     .onNewScene      = createScene,
+                     .onGuiBuild      = buildGui,
+                     .onGuiLoadConfig = loadGuiConfig});
 }
 //-----------------------------------------------------------------------------
