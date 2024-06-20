@@ -11,7 +11,7 @@
 #ifndef SLVEC3_H
 #define SLVEC3_H
 
-#include <math.h>
+#include <cmath>
 #include <SLMath.h>
 #include <SLVec2.h>
 #include <Utils.h>
@@ -221,7 +221,7 @@ class SLVec3
                 T a = clamp(hsv.x, 0.0f, 1.0f);
 
                 T c = v * s;
-                T x = c * (1.0f - fabs(fmod(h*3.0f / M_PI, 2.0f) - 1.0f));
+                T x = c * (1.0f - fabs(fmod(h*3.0f / Utils::PI, 2.0f) - 1.0f));
                 T m = v - c;
 
                 switch (SLint(floor(h*3.0f * Utils::ONEOVERPI)))
