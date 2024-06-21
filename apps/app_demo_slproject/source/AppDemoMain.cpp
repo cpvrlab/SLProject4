@@ -276,22 +276,25 @@ static SLbool onUpdate(SLSceneView* sv)
 // to set up the application configuration.
 int SL_MAIN_FUNCTION(int argc, char* argv[])
 {
-    return App::run({.argc                  = argc,
-                     .argv                  = argv,
-                     .windowWidth           = 1280,
-                     .windowHeight          = 720,
-                     .windowTitle           = "SLProject Test Application",
-                     .numSamples            = 4,
-                     .startSceneID          = SL_STARTSCENE,
-                     .onNewSceneView        = createSceneView,
-                     .onNewScene            = createScene,
-                     .onBeforeSceneDelete   = onBeforeSceneDelete,
-                     .onBeforeSceneLoad     = onBeforeSceneLoad,
-                     .onBeforeSceneAssembly = onBeforeSceneAssembly,
-                     .onAfterSceneAssembly  = onAfterSceneAssembly,
-                     .onUpdate              = onUpdate,
-                     .onGuiBuild            = AppDemoGui::build,
-                     .onGuiLoadConfig       = AppDemoGui::loadConfig,
-                     .onGuiSaveConfig       = AppDemoGui::saveConfig});
+    App::Config config;
+    config.argc                  = argc;
+    config.argv                  = argv;
+    config.windowWidth           = 1280;
+    config.windowHeight          = 720;
+    config.windowTitle           = "SLProject Test Application";
+    config.numSamples            = 4;
+    config.startSceneID          = SL_STARTSCENE;
+    config.onNewSceneView        = createSceneView;
+    config.onNewScene            = createScene;
+    config.onBeforeSceneDelete   = onBeforeSceneDelete;
+    config.onBeforeSceneLoad     = onBeforeSceneLoad;
+    config.onBeforeSceneAssembly = onBeforeSceneAssembly;
+    config.onAfterSceneAssembly  = onAfterSceneAssembly;
+    config.onUpdate              = onUpdate;
+    config.onGuiBuild            = AppDemoGui::build;
+    config.onGuiLoadConfig       = AppDemoGui::loadConfig;
+    config.onGuiSaveConfig       = AppDemoGui::saveConfig;
+
+    return App::run(config);
 }
 //-----------------------------------------------------------------------------

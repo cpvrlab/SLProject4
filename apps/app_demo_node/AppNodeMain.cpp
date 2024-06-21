@@ -28,13 +28,16 @@ static SLScene* createScene(SLSceneID sceneID)
 //-----------------------------------------------------------------------------
 int SL_MAIN_FUNCTION(int argc, char* argv[])
 {
-    return App::run({.argc           = argc,
-                     .argv           = argv,
-                     .windowWidth    = 640,
-                     .windowHeight   = 480,
-                     .windowTitle    = "SLProject Node Demo",
-                     .onNewSceneView = createSceneView,
-                     .onNewScene     = createScene,
-                     .onGuiBuild     = AppNodeGui::build});
+    App::Config config;
+    config.argc           = argc;
+    config.argv           = argv;
+    config.windowWidth    = 640;
+    config.windowHeight   = 480;
+    config.windowTitle    = "SLProject Node Demo";
+    config.onNewSceneView = createSceneView;
+    config.onNewScene     = createScene;
+    config.onGuiBuild     = AppNodeGui::build;
+    
+    return App::run(config);
 }
 //-----------------------------------------------------------------------------
