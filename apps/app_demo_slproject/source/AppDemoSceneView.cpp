@@ -28,22 +28,16 @@ SLbool AppDemoSceneView::onKeyPress(SLKey key, SLKey mod)
         if (key == '0' && sv)
         {
             AppDemo::sceneToLoad = SID_Empty;
-            SL_LOG("----------------------------------------------");
-            SL_LOG("Loading SceneID: %d", AppDemo::sceneID);
             return true;
         }
         else if (key == K_left && sv && AppDemo::sceneID > 0)
         {
             AppDemo::sceneToLoad = static_cast<SLSceneID>(AppDemo::sceneID - 1);
-            SL_LOG("----------------------------------------------");
-            SL_LOG("Loading SceneID: %d", AppDemo::sceneID);
             return true;
         }
         else if (key == K_right && sv && AppDemo::sceneID < SID_MaxNoBenchmarks - 1)
         {
             AppDemo::sceneToLoad = static_cast<SLSceneID>(AppDemo::sceneID + 1);
-            SL_LOG("----------------------------------------------");
-            SL_LOG("Loading SceneID: %d", AppDemo::sceneID);
             return true;
         }
     }

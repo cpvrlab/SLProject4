@@ -62,6 +62,9 @@ void AppLoad::switchScene(SLSceneView* sv, SLSceneID sceneID)
 
     AppDemo::sceneID = sceneID;
     SLScene* s       = App::config.onNewScene(sceneID);
+    SL_LOG("Scene name       : %s (SceneID: %d)", 
+           s->name().c_str(), 
+           AppDemo::sceneID);
 
     // Initialize all preloaded stuff from SLScene
     s->init(am);
