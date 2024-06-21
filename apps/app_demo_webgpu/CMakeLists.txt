@@ -1,3 +1,5 @@
+set(TARGET app-Demo-WebGPU)
+
 if (SYSTEM_NAME_UPPER MATCHES "WINDOWS")
     set(WGPU_OS "windows")
 elseif (SYSTEM_NAME_UPPER MATCHES "DARWIN")
@@ -60,11 +62,12 @@ if (SYSTEM_NAME_UPPER MATCHES "DARWIN")
     set(TARGET_SPECIFIC_SOURCES metal_layer.mm)
 endif ()
 
-add_executable(app-demo-webgpu AppDemoWebGPU.cpp ${TARGET_SPECIFIC_SOURCES})
-target_link_libraries(app-demo-webgpu PRIVATE wgpu sl_cv sl_math ${glfw_LIBS})
+add_executable(${TARGET} AppDemoWebGPU.cpp ${TARGET_SPECIFIC_SOURCES})
+set_property(TARGET ${TARGET} PROPERTY FOLDER "apps")
+target_link_libraries(${TARGET} PRIVATE wgpu sl_cv sl_math ${glfw_LIBS})
 
 if (SYSTEM_NAME_UPPER MATCHES "LINUX")
-    target_link_libraries(app-demo-webgpu PRIVATE "X11")
+    target_link_libraries(${TARGET} PRIVATE "X11")
 elseif (SYSTEM_NAME_UPPER MATCHES "DARWIN")
-    target_link_libraries(app-demo-webgpu PRIVATE "-framework Cocoa" "-framework IOKit")
+    target_link_libraries(${TARGET} PRIVATE "-framework Cocoa" "-framework IOKit")
 endif ()
