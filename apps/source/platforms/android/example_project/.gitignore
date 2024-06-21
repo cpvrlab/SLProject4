@@ -3,7 +3,6 @@ app-release.apk
 .gradle
 .idea
 /local.properties
-/app.properties
 .DS_Store
 build/
 /captures

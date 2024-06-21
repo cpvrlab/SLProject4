@@ -1,9 +1,6 @@
 apply plugin: 'com.android.application'
 
-def properties = new Properties()
-rootProject.file('app.properties').withInputStream { stream ->
-    properties.load(stream)
-}
+def libraryName = project.hasProperty("appLibraryName") ? appLibraryName : "app-Demo-SLProject"
 
 android {
     signingConfigs {
@@ -30,10 +27,10 @@ android {
         externalNativeBuild {
             cmake {
                 arguments "-DANDROID_STL=c++_shared", "-DSL_BUILD_WAI=ON", "-DSL_BUILD_WITH_MEDIAPIPE=ON"
-                targets "${properties['appLibraryName']}"
+                targets "${libraryName}"
             }
         }
-        buildConfigField("String", "APP_LIBRARY_NAME", "\"${properties['appLibraryName']}\"")
+        buildConfigField("String", "APP_LIBRARY_NAME", "\"${libraryName}\"")
     }
     externalNativeBuild {
         cmake {
