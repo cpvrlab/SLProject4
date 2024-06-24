@@ -28,7 +28,7 @@ There are 5 code sections in an SLProject application:
   <li><b>Utils</b>: Utilities used by SL and CV</li>
   <li><b>Externals</b>: External dependencies</li>
 </ul>
-<img src="https://pallas.ti.bfh.ch/slproject/images/SLProject-App-Structure.png" width="30%">
+<img src="/images/SLProject-App-Structure.png" width="30%">
 </p>
 <br><br>
 \section diagram Class Diagram
@@ -48,7 +48,7 @@ The following class diagram gives you an overview of the major classes with its 
     <li>The <b>white classes</b> are low level classes for the math. Some of them are within the namespace Utils.</li>
     <li>The <b>gray boxes</b> at the bottom are the external libraries that are used within the frame work.</li>
 </ul>
-<img src="https://pallas.ti.bfh.ch/slproject/images/SLProject_UML_min.svg" width="100%">
+<img src="/images/SLProject_UML_min.svg" width="100%">
 </p>
 <br><br>
 \section app Application Code

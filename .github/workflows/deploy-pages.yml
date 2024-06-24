@@ -34,6 +34,9 @@ jobs:
         working-directory: ${{ github.workspace }}/docs
         run: doxygen
 
+      - name: Copy Images
+        run: cp -r ${{ github.workspace }}/docs/images ${{ github.workspace }}/docs/html
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
