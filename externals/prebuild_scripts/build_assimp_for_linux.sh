@@ -65,6 +65,7 @@ cd "$BUILD_R"
 cmake \
     -DCMAKE_INSTALL_PREFIX=install \
     -DCMAKE_BUILD_TYPE=Release \
+    -DASSIMP_WARNINGS_AS_ERRORS=False \
     -DASSIMP_BUILD_TESTS=OFF \
     -DINJECT_DEBUG_POSTFIX=OFF \
     ..

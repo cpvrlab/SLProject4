@@ -5,37 +5,26 @@
 # ####################################################
 
 
-VERSION="1.1.1h"
-openssl_VERSION="OpenSSL_1_1_1h"
+VERSION="3.2.1"
 #if [ -n "$1" ]
 #then
-#    openssl_VERSION="$1"
+#    VERSION="$1"
 #fi
 
 ARCH=linux
 ZIPFILE=${ARCH}_openssl_${VERSION}
 
 clear
-echo "Building openssl Version: $openssl_VERSION"
+echo "Building openssl Version: $VERSION"
 
-if [ ! -d "openssl/.git" ]; then
-    git clone https://github.com/openssl/openssl.git
+if [ ! -d "openssl-${VERSION}" ]; then
+    wget https://www.openssl.org/source/openssl-${VERSION}.tar.gz
+    tar -zxf openssl-${VERSION}.tar.gz
 fi
 
-# Get all assimp tags and check if the requested exists
-cd openssl 
-git tag > openssl_tags.txt
+cd "openssl-${VERSION}"
 
-if grep -Fx "$openssl_VERSION" openssl_tags.txt > /dev/null; then
-    git checkout $openssl_VERSION
-    git pull origin $openssl_VERSION
-else
-    echo "No valid openssl tag passed as 1st parameter !!!!!"
-    exit
-fi
-
-
-export CC=clang
+#export CC=clang
 export PREFIX=$(pwd)/../$ZIPFILE
 
 if [ ! -d "$PREFIX" ]
@@ -43,7 +32,9 @@ then
     mkdir $PREFIX
 fi
 
-./config  --prefix=$PREFIX --openssldir=$PREFIX
+#./config  --prefix=$PREFIX --openssldir=$PREFIX
+
+./Configure ${x86_64}  --prefix=$PREFIX --openssldir=$PREFIX
 
 if [ $? -ne 0 ]
 then
