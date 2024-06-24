@@ -10,7 +10,7 @@ Not all scenes from app-Demo-SLProject can run in the browser because OpenGL 4.0
 The Emscripten toolchain is made from the [Clang compiler](https://clang.llvm.org/), some runtime libraries, an implementation of the C, C++ and POSIX APIs, and ports of some popular libraries such as SDL, GLFW, libpng or zlib. This allows us to take code written for desktop platforms and port it to the Web without much effort.
 
 <div style="width: 100%; justify-content: center; display: flex">
-    <img src="SLProject4/images/emscripten_apis.svg" width="40%">
+    <img src="images/emscripten_apis.svg" width="40%">
 </div>
 
 Emscripten uses standard browser APIs to implement its libraries. For example, a call to the C function ```printf``` probably uses ```console.log``` internally. Here is how a few commonly used libraries are implented behind the scenes:
