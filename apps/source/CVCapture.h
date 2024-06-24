@@ -149,9 +149,9 @@ private:
     WebCamera _webCamera; //!< Browser capture stream
 #endif
 
-    CVVideoType  _videoType;      //!< Flag for using the live video image
-    AvgFloat     _captureTimesMS; //!< Averaged time for video capturing in ms
-    HighResTimer _timer;          //!< High resolution timer
+    CVVideoType  _videoType = VT_NONE; //!< Flag for using the live video image
+    AvgFloat     _captureTimesMS;      //!< Averaged time for video capturing in ms
+    HighResTimer _timer;               //!< High resolution timer
 };
 //-----------------------------------------------------------------------------
 #endif // CVCapture_H
