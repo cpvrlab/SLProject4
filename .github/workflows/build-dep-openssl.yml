@@ -48,7 +48,23 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: prebuilt-openssl-linux
-        path: ${{ github.workspace }}/externals/prebuilt/linux_openssl_1.1.1h
+        path: ${{ github.workspace }}/externals/prebuilt/linux_openssl_3.2.1
+
+  build-android:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Run android build script
+      working-directory: ${{ github.workspace }}/externals/prebuild_scripts/
+      run: ./build_openssl_for_andV8.sh
+
+    - name: Archive prebuilt andV8
+      uses: actions/upload-artifact@v3
+      with:
+        name: prebuilt-openssl-andV8
+        path: ${{ github.workspace }}/externals/prebuilt/andV8_openssl_3.2.1
+
   build-macos:
     runs-on: macos-13
     steps:
@@ -61,10 +77,11 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: prebuilt-openssl-mac64
-        path: ${{ github.workspace }}/externals/prebuilt/mac64_openssl_1.1.1g
+        path: ${{ github.workspace }}/externals/prebuilt/mac64_openssl_3.2.1
 
     - name: Archive prebuilt openssl ios
       uses: actions/upload-artifact@v3
       with:
         name: prebuilt-openssl-ios
-        path: ${{ github.workspace }}/externals/prebuilt/iosV8_openssl_1.1.1g
+        path: ${{ github.workspace }}/externals/prebuilt/iosV8_openssl_3.2.1
+

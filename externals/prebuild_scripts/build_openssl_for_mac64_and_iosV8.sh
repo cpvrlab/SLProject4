@@ -10,7 +10,8 @@ echo "============================================================"
 
 git clone https://github.com/jasonacox/Build-OpenSSL-cURL.git
 
-OPENSSL_VER=1.1.1g
+#OPENSSL_VER=1.1.1g
+OPENSSL_VER=3.2.1
 OUTDIR_MAC=mac64_openssl_"$OPENSSL_VER"
 OUTDIR_IOS=iosV8_openssl_"$OPENSSL_VER"
 BUILDDIR=Build-OpenSSL-cURL
@@ -35,3 +36,4 @@ cp -R ../prebuild_scripts/$BUILDDIR/openssl/iOS/include $OUTDIR_IOS/include
 cp -R ../prebuild_scripts/$BUILDDIR/openssl/iOS/lib     $OUTDIR_IOS/release
 cp ../prebuild_scripts/$BUILDDIR/LICENSE $OUTDIR_MAC/
 cp ../prebuild_scripts/$BUILDDIR/LICENSE $OUTDIR_IOS/
+

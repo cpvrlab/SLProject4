@@ -5,7 +5,8 @@
 
 @echo off
 
-set OPENSSL_VERSION="OpenSSL_1_1_1h"
+set OPENSSL_VERSION="openssl-3.2.1"
+::set VERSION="3.2.1"
 
 if "%1" == "" (
     set OPENSSL_VERSION="%1"
@@ -21,7 +22,7 @@ echo Building OpenSSL Version: %OPENSSL_VERSION%
 echo Installation directory: %PREFIX%
 echo Using %MAX_NUM_CPU_CORES% cpu cores for build.
 
-::-----------------------------------------------------------------::
+-----------------------------------------------------------------::
 if not exist openssl (
     git clone https://github.com/openssl/openssl.git
 ) else (
