@@ -5,8 +5,8 @@ realized with a special fragment shader that performs a ray cast through the MRI
 
 \htmlonly
 Unfortunately, we can not embed externally hosted WebAssembly code on github.io.<br>
-<a href="https://pallas.ti.bfh.ch/slproject?scene=45" target="_blank">Please open example in new tab</a>
-<!--<iframe src="https://pallas.ti.bfh.ch/slproject?scene=45" width="100%" height="640" tabindex="0" style="border: 1px solid gray"></iframe>-->
+<a href="https://pallas.ti.bfh.ch/slproject?scene=46" target="_blank">Please open example in new tab</a>
+<!--<iframe src="https://pallas.ti.bfh.ch/slproject?scene=46" width="100%" height="640" tabindex="0" style="border: 1px solid gray"></iframe>-->
 \endhtmlonly
 
 General help:
