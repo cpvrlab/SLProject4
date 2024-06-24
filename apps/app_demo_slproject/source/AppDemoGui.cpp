@@ -615,7 +615,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                 SLint   gpuMBTexturePC = (SLint)(gpuMBTexture / gpuMBTotal * 100.0f);
                 SLint   gpuMBVboPC     = (SLint)(gpuMBVbo / gpuMBTotal * 100.0f);
 
-                snprintf(m + strlen(m), sizeof(m), "Name: %s\n", s->name().c_str());
+                snprintf(m + strlen(m), sizeof(m), "Name: %s (id: %d)\n", s->name().c_str(), AppDemo::sceneID);
                 snprintf(m + strlen(m), sizeof(m), "No. of Nodes  :%5d (100%%)\n", stats3D.numNodes);
                 snprintf(m + strlen(m), sizeof(m), "- Group Nodes :%5d (%3d%%)\n", stats3D.numNodesGroup, numGroupPC);
                 snprintf(m + strlen(m), sizeof(m), "- Leaf  Nodes :%5d (%3d%%)\n", stats3D.numNodesLeaf, numLeafPC);
