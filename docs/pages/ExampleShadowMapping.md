@@ -6,7 +6,9 @@ Double-click a light to see its shadow volume.
 *With RMB > Show Properties* you can see more properties under *Node Properties > Shadow mapping*.
 
 \htmlonly
-<iframe src="https://pallas.ti.bfh.ch/slproject?scene=22" width="100%" height="640" tabindex="0" style="border: 1px solid gray"></iframe>
+Unfortunately, we can not embed externally hosted WebAssembly code on github.io.<br>
+<a href="https://pallas.ti.bfh.ch/slproject?scene=22" target="_blank">Please open example in new tab</a>
+<!--<iframe src="https://pallas.ti.bfh.ch/slproject?scene=22" width="100%" height="640" tabindex="0" style="border: 1px solid gray"></iframe>-->
 \endhtmlonly
 
 General help:

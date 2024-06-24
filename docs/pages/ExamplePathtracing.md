@@ -8,7 +8,9 @@ The path tracer is multithreaded and uses a combination bounding boxes and regul
 The path tracer is implemented in the classes SLPathtracer and SLRay.
 
 \htmlonly
-<iframe src="https://pallas.ti.bfh.ch/slproject?scene=66" width="100%" height="640" tabindex="0" style="border: 1px solid gray"></iframe>
+Unfortunately, we can not embed externally hosted WebAssembly code on github.io.<br>
+<a href="https://pallas.ti.bfh.ch/slproject?scene=66" target="_blank">Please open example in new tab</a>
+<!--<iframe src="https://pallas.ti.bfh.ch/slproject?scene=66" width="100%" height="640" tabindex="0" style="border: 1px solid gray"></iframe>-->
 \endhtmlonly
 
 General help:

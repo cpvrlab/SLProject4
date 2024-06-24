@@ -3,7 +3,9 @@ Skinned skeleton animation are imported at the moment with the Collada file form
 Skinned skeleton animation are controlled by the SLAnimManager. Its interface is in the menu *Animation*.
 
 \htmlonly
-<iframe src="https://pallas.ti.bfh.ch/slproject?scene=48" width="100%" height="640" tabindex="0" style="border: 1px solid gray"></iframe>
+Unfortunately, we can not embed externally hosted WebAssembly code on github.io.<br>
+<a href="https://pallas.ti.bfh.ch/slproject?scene=48" target="_blank">Please open example in new tab</a>
+<!--<iframe src="https://pallas.ti.bfh.ch/slproject?scene=48" width="100%" height="640" tabindex="0" style="border: 1px solid gray"></iframe>-->
 \endhtmlonly
 
 General help:
