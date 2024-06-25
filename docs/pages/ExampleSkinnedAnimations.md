@@ -1,4 +1,8 @@
 \page example-skinned-animations Skinned Animations
+\htmlonly
+<style>html{--content-maxwidth:auto}</style>
+\endhtmlonly
+
 Skinned skeleton animation are imported at the moment with the Collada file format (DAE).
 Skinned skeleton animation are controlled by the SLAnimManager. Its interface is in the menu *Animation*.
 

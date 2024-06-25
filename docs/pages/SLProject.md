@@ -1,4 +1,7 @@
 \mainpage SLProject
+\htmlonly
+<style>html{--content-maxwidth:auto}</style>
+\endhtmlonly
 
 <p>
 Welcome to the SLProject. SL stands for Scene Library. It is developed at the 

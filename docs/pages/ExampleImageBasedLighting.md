@@ -1,5 +1,7 @@
 \page example-ibl Image Based Lighting
-
+\htmlonly
+<style>html{--content-maxwidth:auto}</style>
+\endhtmlonly
 The following scene shows 7 x 7 spheres with different metallic (vertical) and 
 roughness (horizontal) material parameters. 
 These parameters can be passed either by float values or as textures per pixel.

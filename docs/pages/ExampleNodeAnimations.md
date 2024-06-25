@@ -1,4 +1,7 @@
 \page example-node-animations Node Animations
+\htmlonly
+<style>html{--content-maxwidth:auto}</style>
+\endhtmlonly
 See the appDemoLoadScene function in AppDemoLoad.cpp for this scene (SID_AnimationNode) 
 on how to create node animations and how to assign them to an SLNode instance.
 SLAnimation instances are created and controlled by the SLAnimManager. 

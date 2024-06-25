@@ -1,5 +1,7 @@
 \page example-pathtracing Path Tracing
-
+\htmlonly
+<style>html{--content-maxwidth:auto}</style>
+\endhtmlonly
 Alternatively you can render a scene with path tracing using the menu *Renderer > Path Tracing*.
 The path tracer is optimized for the Blinn-Phong reflection model extended with reflection and refraction coefficient.
 By default, the resolution 0.5 times the window resolution. You can adjust the path tracing setting over the menu *PT*.

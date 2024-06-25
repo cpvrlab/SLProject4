@@ -1,5 +1,7 @@
 \page blender-to-sl Blender to SLProject Export
-
+\htmlonly
+<style>html{--content-maxwidth:auto}</style>
+\endhtmlonly
 \section intro Introduction
 <p>
 This page gives an overview of things to consider when preparing models created in the 3D software Blender for use in SLProject.

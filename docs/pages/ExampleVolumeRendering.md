@@ -1,4 +1,8 @@
 \page example-volume-rendering Volume Rendering
+
+\htmlonly
+<style>html{--content-maxwidth:auto}</style>
+\endhtmlonly
 Volume Rendering of an MRI angiography dataset. In the material properties you can adjust the transfer function for
 color and transparency points that transform the MRI intensities into color and transparency. Volume rendering is
 realized with a special fragment shader that performs a ray cast through the MRI volume.

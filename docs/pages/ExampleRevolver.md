@@ -1,5 +1,7 @@
 \page example-revolver Revolving Meshes
-
+\htmlonly
+<style>html{--content-maxwidth:auto}</style>
+\endhtmlonly
 Examples of revolving mesh objects constructed by rotating a 2D curve. 
 The classes SLArrow, SLCone, SLCylinder, SLDisk, SLLens and SLSpheric inherit the SLRevolver class that inherits from SLMesh.
 

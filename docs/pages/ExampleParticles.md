@@ -1,4 +1,7 @@
 \page example-particles Particle Systems
+\htmlonly
+<style>html{--content-maxwidth:auto}</style>
+\endhtmlonly
 The SLParticleSystem is the most complex derivative of the SLMesh class and allows the creation of highly
 configurable particle systems (PS). All its parameters can be modified in the _Properties_ tab (see menu Info > Properties).
 The implementation uses for rendering geometry shaders on systems that have OpenGL >= 4.1 or OpenGLES >= 3.2. All other

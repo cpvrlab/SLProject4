@@ -1,5 +1,7 @@
 \page example-lod Level of Detail
-
+\htmlonly
+<style>html{--content-maxwidth:auto}</style>
+\endhtmlonly
 The following scene shows 2500 corinthian columns with each 83k triangles in their highest resolution. 
 With 3 levels of detail the amount of geometry is reduced depending on the size of the bounding rectangle in screen space. 
 In addition, we do automatically a view frustum culling to optimize rendering performance.
