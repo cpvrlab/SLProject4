@@ -14265,7 +14265,7 @@
 											"top": 1437,
 											"width": 151,
 											"height": 13,
-											"text": "_nodeAnimations",
+											"text": "_animationNamesMap",
 											"horizontalAlignment": 0
 										},
 										{
@@ -14284,7 +14284,7 @@
 											"top": 1452,
 											"width": 151,
 											"height": 13,
-											"text": "_nodeAnimPlaybacks",
+											"text": "_animPlaybackNamesMap",
 											"horizontalAlignment": 0
 										}
 									],
@@ -38125,7 +38125,7 @@
 							"_parent": {
 								"$ref": "AAAAAAFKd3TPLg5UGSU="
 							},
-							"name": "_nodeAnimations",
+							"name": "_animationNamesMap",
 							"type": ""
 						},
 						{
@@ -38134,7 +38134,7 @@
 							"_parent": {
 								"$ref": "AAAAAAFKd3TPLg5UGSU="
 							},
-							"name": "_nodeAnimPlaybacks",
+							"name": "_animPlaybackNamesMap",
 							"type": ""
 						}
 					],

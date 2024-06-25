@@ -82,33 +82,34 @@ void AppDemoSceneAnimSkinned::assemble(SLAssetManager* am, SLSceneView* sv)
 
     // Astro boy character
     _char1->translate(-1, 0, 0);
-    SLAnimPlayback* char1Anim = animManager().lastAnimPlayback();
+    SLAnimPlayback* char1Anim = animManager().animPlaybackByName("unnamed_anim_0");
     char1Anim->playForward();
     scene->addChild(_char1);
 
     // Sintel character
     _char2->translate(1, 0, 0);
-    SLAnimPlayback* char2Anim = animManager().lastAnimPlayback();
+    SLAnimPlayback* char2Anim = animManager().animPlaybackByName("Wave");
     char2Anim->playForward();
+    char2Anim->playbackRate(30);
     scene->addChild(_char2);
 
     // Skinned cube 1
     _cube1->translate(3, 0, 0);
-    SLAnimPlayback* cube1Anim = animManager().lastAnimPlayback();
+    SLAnimPlayback* cube1Anim = animManager().animPlaybackByName("unnamed_anim_2");
     cube1Anim->easing(EC_inOutSine);
     cube1Anim->playForward();
     scene->addChild(_cube1);
 
     // Skinned cube 2
     _cube2->translate(-3, 0, 0);
-    SLAnimPlayback* cube2Anim = animManager().lastAnimPlayback();
+    SLAnimPlayback* cube2Anim = animManager().animPlaybackByName("unnamed_anim_3");
     cube2Anim->easing(EC_inOutSine);
     cube2Anim->playForward();
     scene->addChild(_cube2);
 
     // Skinned cube 3
     _cube3->translate(0, 3, 0);
-    SLAnimPlayback* cube3Anim = animManager().lastAnimPlayback();
+    SLAnimPlayback* cube3Anim = animManager().animPlaybackByName("unnamed_anim_4");
     cube3Anim->loop(AL_pingPongLoop);
     cube3Anim->easing(EC_inOutCubic);
     cube3Anim->playForward();

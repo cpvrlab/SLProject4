@@ -97,7 +97,7 @@ void AppDemoSceneAnimSkinnedMass2::assemble(SLAssetManager* am,
 
         for (SLint iX = 0; iX < _size; ++iX)
         {
-            SLAnimPlayback* anim = animManager().allAnimPlayback(iA);
+            SLAnimPlayback* anim = animManager().animPlaybackByIndex(iA);
             anim->playForward();
             anim->playbackRate(Utils::random(0.5f, 1.5f));
             _astroboy[iA]->translate(x, 0, z, TS_object);

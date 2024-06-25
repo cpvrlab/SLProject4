@@ -66,7 +66,7 @@ void AppDemoSceneAnimSkinnedMass::assemble(SLAssetManager* am, SLSceneView* sv)
                                               m1));
     rect->rotate(90, -1, 0, 0);
 
-    animManager().lastAnimPlayback()->playForward();
+    animManager().animPlaybacksBack()->playForward();
 
     // Assemble scene
     SLNode* scene = new SLNode("scene group");

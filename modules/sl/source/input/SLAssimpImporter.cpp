@@ -1253,7 +1253,7 @@ SLAssimpImporter::loadAnimation loads the scene graph node tree recursively.
 SLAnimation* SLAssimpImporter::loadAnimation(SLAnimManager& animManager, aiAnimation* anim)
 {
     ostringstream oss;
-    oss << "unnamed_anim_" << animManager.allAnimNames().size();
+    oss << "unnamed_anim_" << animManager.animationNames().size();
     SLstring animName        = oss.str();
     SLfloat  animTicksPerSec = (anim->mTicksPerSecond < 0.0001f)
                                  ? 30.0f
@@ -1281,7 +1281,7 @@ SLAnimation* SLAssimpImporter::loadAnimation(SLAnimManager& animManager, aiAnima
     else
     {
         result = animManager.createNodeAnimation(animName, animDuration);
-        _nodeAnimations.push_back(result);
+        _animationNamesMap.push_back(result);
     }
 
     SLbool isSkeletonAnim = false;

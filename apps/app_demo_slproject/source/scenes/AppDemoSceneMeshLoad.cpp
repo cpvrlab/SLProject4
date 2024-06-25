@@ -69,7 +69,7 @@ void AppDemoSceneMeshLoad::assemble(SLAssetManager* am, SLSceneView* sv)
     anim->createNodeAnimTrackForTranslation(light2, SLVec3f(0.0f, 5.0f, 0.0f));
 
     // Start animation
-    SLAnimPlayback* charAnim = this->animManager().lastAnimPlayback();
+    SLAnimPlayback* charAnim = this->animManager().animPlaybacksBack();
     charAnim->playForward();
     charAnim->playbackRate(0.8f);
 

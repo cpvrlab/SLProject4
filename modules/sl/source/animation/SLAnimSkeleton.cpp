@@ -108,8 +108,8 @@ SLAnimation* SLAnimSkeleton::createAnimation(SLAnimManager& aniMan, const SLstri
     _animPlaybacks[name] = play;
 
     // Add node animation to the combined vector
-    aniMan.allAnimNames().push_back(name);
-    aniMan.allAnimPlaybacks().push_back(play);
+    aniMan.animationNames().push_back(name);
+    aniMan.animPlaybacks().push_back(play);
 
     return anim;
 }

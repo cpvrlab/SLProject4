@@ -473,7 +473,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                     SLfloat updateDODTimePC = Utils::clamp(updateDODTime / ft * 100.0f, 0.0f, 100.0f);
                     snprintf(m + strlen(m), sizeof(m), "  EntityWM : %5.1f ms (%3d%%)\n", updateDODTime, (SLint)updateDODTimePC);
 #endif
-                    if (!s->animManager().allAnimNames().empty())
+                    if (!s->animManager().animationNames().empty())
                     {
                         snprintf(m + strlen(m), sizeof(m), "  Anim.    : %5.1f ms (%3d%%)\n", updateAnimTime, (SLint)updateAnimTimePC);
                         snprintf(m + strlen(m), sizeof(m), "  AABB     : %5.1f ms (%3d%%)\n", updateAABBTime, (SLint)updateAABBTimePC);
@@ -1482,7 +1482,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
     SLGLState*   stateGL       = SLGLState::instance();
     CVCapture*   capture       = CVCapture::instance();
     SLRenderType rType         = sv->renderType();
-    SLbool       hasAnimations = (!s->animManager().allAnimNames().empty());
+    SLbool       hasAnimations = (!s->animManager().animationNames().empty());
     static SLint curAnimIx     = -1;
     if (!hasAnimations) curAnimIx = -1;
 
@@ -1790,6 +1790,9 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                     ImGui::EndMenu();
                 }
 
+                // Download content from pallas/home/private/projects/2020.Erleb-AR/erleb-AR-data/productive/models_for_SLProject
+                // and copy it into AppDemo::dataPath + "erleb-AR/models/
+                // This data is copyright protected and can only be accessed with user and password
                 SLstring erlebarPath = AppDemo::dataPath + "erleb-AR/models/";
                 SLstring modelBR2    = erlebarPath + "bern/bern-christoffel.gltf";
                 SLstring modelBFH    = erlebarPath + "biel/Biel-BFH-Rolex.gltf";
@@ -2820,13 +2823,13 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
 
             ImGui::Separator();
 
-            SLVstring animations = s->animManager().allAnimNames();
+            SLVstring animations = s->animManager().animationNames();
             if (curAnimIx == -1) curAnimIx = 0;
-            SLAnimPlayback* anim = s->animManager().allAnimPlayback((SLuint)curAnimIx);
+            SLAnimPlayback* anim = s->animManager().animPlaybackByIndex((SLuint)curAnimIx);
 
             ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.8f);
             if (myComboBox("##", &curAnimIx, animations))
-                anim = s->animManager().allAnimPlayback((SLuint)curAnimIx);
+                anim = s->animManager().animPlaybackByIndex((SLuint)curAnimIx);
             ImGui::PopItemWidth();
 
             if (ImGui::MenuItem("Play forward", nullptr, anim->isPlayingForward()))
