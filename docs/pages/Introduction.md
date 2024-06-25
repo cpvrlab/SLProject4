@@ -1,5 +1,7 @@
 \page introduction Introduction
-
+\htmlonly
+<style>html{--content-maxwidth:auto}</style>
+\endhtmlonly
 \tableofcontents
 \section overview Overview
 <style>html{--content-maxwidth:auto}</style>
