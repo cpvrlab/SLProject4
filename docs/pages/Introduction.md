@@ -2,6 +2,7 @@
 
 \tableofcontents
 \section overview Overview
+<style>html{--content-maxwidth:auto}</style>
 <p>
 There are 5 code sections in an SLProject application:
 <ul>
