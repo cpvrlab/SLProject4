@@ -204,7 +204,7 @@ static void onLoadingCoreAssets()
                       AppDemo::scene,
                       canvasWidth,
                       canvasHeight,
-                      142,
+                      (int)(142.0 * EM_ASM_DOUBLE(return window.devicePixelRatio)),
                       App::config.startSceneID,
                       reinterpret_cast<void*>(onPaint),
                       nullptr,
