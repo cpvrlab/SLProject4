@@ -260,6 +260,13 @@ endif ()
 #
 
 if ("${SYSTEM_NAME_UPPER}" MATCHES "EMSCRIPTEN")
+	add_compile_definitions(
+		# Force `igl::parallel_for` to run in a single thread because the function would
+		# otherwise spawn multiple threads and join them, which is not allowed on
+		# the main browser thread.
+		"IGL_PARALLEL_FOR_FORCE_SERIAL"
+	)
+
 	add_compile_options(
 			"-pthread"
 	)
