@@ -25,24 +25,23 @@
 
 //-----------------------------------------------------------------------------
 // Global variables
-App::Config    App::config; //!< The configuration set in App::run
-static SLint   svIndex;     //!< Scene view index
-static SLint   dpi = 142;   //!< Dot per inch resolution of screen
-static SLint   startX;      //!< start position x in pixels
-static SLint   startY;      //!< start position y in pixels
-static SLint   mouseX;      //!< Last mouse position x in pixels
-static SLint   mouseY;      //!< Last mouse position y in pixels
-static SLVec2i touch2;      //!< Last finger touch 2 position in pixels
-static SLVec2i touchDelta;  //!< Delta between two fingers in x
-static SLint   lastWidth;   //!< Last window width in pixels
-static SLint   lastHeight;  //!< Last window height in pixels
-static int     canvasWidth;
-static int     canvasHeight;
-static int     lastTouchDownX;
-static int     lastTouchDownY;
-static double  lastTouchDownTimeMS;
-static long    animationFrameID = 0;
-static SLbool  coreAssetsLoaded = false;
+App::Config    App::config;              //!< The configuration set in App::run
+static SLint   svIndex;                  //!< Scene view index
+static SLint   startX;                   //!< start position x in pixels
+static SLint   startY;                   //!< start position y in pixels
+static SLint   mouseX;                   //!< Last mouse position x in pixels
+static SLint   mouseY;                   //!< Last mouse position y in pixels
+static SLVec2i touch2;                   //!< Last finger touch 2 position in pixels
+static SLVec2i touchDelta;               //!< Delta between two fingers in x
+static SLint   lastWidth;                //!< Last window width in pixels
+static SLint   lastHeight;               //!< Last window height in pixels
+static int     canvasWidth;              //!< Width of the HTML canvas
+static int     canvasHeight;             //!< Height of the HTML canvas
+static int     lastTouchDownX;           //!< X coordinate of last touch down
+static int     lastTouchDownY;           //!< Y coordinate of last touch down
+static double  lastTouchDownTimeMS;      //!< Time of last touch down in milliseconds
+static long    animationFrameID = 0;     //!< ID of the current JavaScript animation frame
+static SLbool  coreAssetsLoaded = false; //!< Indicates whether core assets can be used
 
 //-----------------------------------------------------------------------------
 // Function forward declarations
@@ -67,13 +66,13 @@ static SLKey             mapModifiersToSLModifiers(const EmscriptenMouseEvent* m
 static SLKey             mapModifiersToSLModifiers(const EmscriptenKeyboardEvent* keyEvent);
 
 //-----------------------------------------------------------------------------
-//! App::run implementation from App.h for the EMSCRIPTEN platform
+//! App::run implementation from App.h for the Emscripten platform
 int App::run(Config config)
 {
     App::config = config;
 
-    canvasWidth  = EM_ASM_INT(return window.innerWidth);
-    canvasHeight = EM_ASM_INT(return window.innerHeight);
+    canvasWidth  = EM_ASM_INT(return window.devicePixelRatio * window.innerWidth);
+    canvasHeight = EM_ASM_INT(return window.devicePixelRatio * window.innerHeight);
     updateCanvas();
 
     EmscriptenWebGLContextAttributes attributes;
@@ -144,8 +143,8 @@ static SLbool onPaint()
 
     SLSceneView* sv = AppDemo::sceneViews[svIndex];
 
-    int newCanvasWidth  = EM_ASM_INT(return window.innerWidth;);
-    int newCanvasHeight = EM_ASM_INT(return window.innerHeight;);
+    int newCanvasWidth  = EM_ASM_INT(return window.devicePixelRatio * window.innerWidth);
+    int newCanvasHeight = EM_ASM_INT(return window.devicePixelRatio * window.innerHeight);
 
     if (newCanvasWidth != canvasWidth || newCanvasHeight != canvasHeight)
     {
@@ -203,7 +202,7 @@ static void onLoadingCoreAssets()
                       AppDemo::scene,
                       canvasWidth,
                       canvasHeight,
-                      dpi,
+                      142,
                       App::config.startSceneID,
                       reinterpret_cast<void*>(onPaint),
                       nullptr,
