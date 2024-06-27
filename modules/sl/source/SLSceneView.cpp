@@ -16,7 +16,7 @@
 #include <GlobalTimer.h>
 #include <SLInputManager.h>
 #include <Profiler.h>
-
+#include <SLImGui.h>
 #include <utility>
 
 #ifdef SL_EMSCRIPTEN
@@ -47,8 +47,8 @@ SLSceneView::SLSceneView(SLScene* s, int dpi, SLInputManager& inputManager)
 //-----------------------------------------------------------------------------
 SLSceneView::~SLSceneView()
 {
-    if (_gui)
-        _gui->onClose();
+    if (_gui) _gui->onClose();
+    //if (_imgui) _imgui->shutdown();
 
     SL_LOG("Destructor       : ~SLSceneView");
 }
@@ -71,6 +71,7 @@ void SLSceneView::init(SLstring       name,
                        const string&  configPath)
 {
     _gui        = gui;
+    _imgui      = nullptr;
     _name       = std::move(name);
     _scrW       = screenWidth;
     _scrH       = screenHeight;
@@ -1137,7 +1138,7 @@ void SLSceneView::draw2DGLNodes()
     PROFILE_FUNCTION();
 
     SLfloat    depth   = 1.0f;                           // Render depth between -1 & 1
-    SLfloat    cs      = std::min(_scrW, _scrH) * 0.01f; // center size
+    SLfloat    cs      = std::min((float)_scrW, (float)_scrH) * 0.01f; // center size
     SLGLState* stateGL = SLGLState::instance();
 
     SLMat4f prevViewMat(stateGL->viewMatrix);
@@ -1211,7 +1212,7 @@ void SLSceneView::draw2DGLNodes()
             for (SLint i = 0; i < circlePoints; ++i)
             {
                 SLVec2f c;
-                c.fromPolar(r, i * deltaPhi);
+                c.fromPolar(r, (float)i * deltaPhi);
                 rombusAndCirclePoints.push_back(SLVec3f(c.x, c.y, 0));
             }
             _vaoTouch.clearAttribs();
@@ -1812,7 +1813,7 @@ SLstring SLSceneView::windowTitle()
     {
         if (_renderType == RT_rt)
         {
-            int numThreads = _raytracer.doDistributed() ? _raytracer.numThreads() : 1;
+            SLuint numThreads = _raytracer.doDistributed() ? _raytracer.numThreads() : 1;
 
             if (_raytracer.doContinuous())
             {

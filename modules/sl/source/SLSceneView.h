@@ -30,6 +30,7 @@ class SLCamera;
 class SLLight;
 class SLScene;
 class SLInputManager;
+class SLImGui;
 
 //-----------------------------------------------------------------------------
 /*
@@ -220,6 +221,7 @@ protected:
     SLCamera*      _camera;                              //!< Pointer to the _active camera
     SLCamera       _sceneViewCamera;                     //!< Default camera for this SceneView (default cam not in scenegraph)
     SLUiInterface* _gui = nullptr;                       //!< ImGui instance
+    SLImGui*       _imgui = nullptr;                     //!< new tighter imgui wrapper
     SLNodeStats    _stats2D;                             //!< Statistic numbers for 2D nodes
     SLNodeStats    _stats3D;                             //!< Statistic numbers for 3D nodes
     SLbool         _gotPainted;                          //!< flag if this sceneview got painted

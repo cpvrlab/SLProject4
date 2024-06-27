@@ -56,14 +56,16 @@ file(GLOB cuda
 file(GLOB sources
         cuda/SLOptixHelper.h
         cuda/SLOptixVectorMath.h
+        externals/imgui/backends/imgui_impl_opengl3.h
+        externals/imgui/backends/imgui_impl_opengl3.cpp
         source/SL.h
         source/SLBackground.cpp
         source/SLBackground.h
         source/SLDrawBits.h
         source/SLEnums.h
         source/SLEventHandler.h
-        source/math/SLFrustum.h
-        source/math/SLFrustum.cpp
+        source/SLImgui.h
+        source/SLImgui.cpp
         source/SLMaterial.cpp
         source/SLMaterial.h
         source/SLObject.h
@@ -172,6 +174,8 @@ file(GLOB sources
         source/mesh/SLCylinder.h
         source/mesh/SLDisk.cpp
         source/mesh/SLDisk.h
+        source/math/SLFrustum.h
+        source/math/SLFrustum.cpp
         source/mesh/SLGrid.cpp
         source/mesh/SLGrid.h
         source/mesh/SLLens.cpp
@@ -356,6 +360,7 @@ target_include_directories(${target}
         ${SL_PROJECT_ROOT}/modules/sl/cuda
         ${SL_PROJECT_ROOT}/modules/math/source
         ${SL_PROJECT_ROOT}/modules/sl/externals/stb/
+        ${SL_PROJECT_ROOT}/modules/sl/externals/imgui/backends/
         ${OptiX_INCLUDE}
         ${CUDA_INCLUDE_DIRS}
         ${SL_PROJECT_ROOT}/apps/source
