@@ -911,9 +911,9 @@ INPUT                  = ../modules/sl/source \
                          ../modules/wai/source \
                          ../modules/utils/source \
                          ../modules/math/source \
-                         ../apps/app_demo_slproject/include \
-                         ../apps/app_demo_slproject/glfw \
-                         ../apps/app_demo_slproject/source \
+                         ../apps/app_demo_slproject \
+                         ../apps/app_demo_node \
+                         ../apps/source \
                          ../apps/app_demo_webgpu \
                          pages/Introduction.md \
                          pages/ExampleScenes.md \
@@ -930,6 +930,7 @@ INPUT                  = ../modules/sl/source \
                          pages/ExampleSkinnedAnimations.md \
                          pages/ExampleVolumeRendering.md \
                          pages/OnPaint.md \
+                         pages/AppFramework.md \
                          pages/Emscripten.md \
                          pages/BlenderToSL.md \
                          pages/SLProject.md
@@ -963,6 +964,7 @@ INPUT_ENCODING         = UTF-8
 
 FILE_PATTERNS          = *.cpp \
                          *.h \
+                         *.mm \
                          *.frag \
                          *.vert
 
@@ -1101,7 +1103,7 @@ USE_MDFILE_AS_MAINPAGE =
 # also VERBATIM_HEADERS is set to NO.
 # The default value is: NO.
 
-SOURCE_BROWSER         = NO
+SOURCE_BROWSER         = YES
 
 # Setting the INLINE_SOURCES tag to YES will include the body of functions,
 # classes and enums directly into the documentation.

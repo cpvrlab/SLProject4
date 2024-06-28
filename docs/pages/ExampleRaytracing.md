@@ -1,7 +1,4 @@
 \page example-raytracing Ray Tracing
-\htmlonly
-<style>html{--content-maxwidth:auto}</style>
-\endhtmlonly
 Alternatively you can render a scene with ray tracing using the menu *Renderer > Ray Tracing*.
 The ray tracer is optimized for the Blinn-Phong reflection model. 
 By default, the resolution 0.5 times the window resolution. You can adjust the ray tracing setting over the menu *RT*.

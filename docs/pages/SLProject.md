@@ -1,7 +1,4 @@
 \mainpage SLProject
-\htmlonly
-<style>html{--content-maxwidth:auto}</style>
-\endhtmlonly
 
 <p>
 Welcome to the SLProject. SL stands for Scene Library. It is developed at the 
@@ -48,6 +45,7 @@ The code is provided without any warranties whether expressed or implied.
 <p>
 Read the \subpage introduction for an overview of the framework.<br>
 Read \subpage on-paint for an overview of how on frame gets rendered.<br>
+Read \subpage app-framework for an overview of the app framework.<br>
 Read \subpage emscripten for an overview of how SLProject runs in the browser.
 </p>
 

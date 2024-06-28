@@ -1,7 +1,4 @@
 \page data-protection-declaration SLProject Data Protection Declaration
-\htmlonly
-<style>html{--content-maxwidth:auto}</style>
-\endhtmlonly
 The SLProject uses the following permissions:
 
 * **Internet access**: If available the app downloads predefined camera calibration parameters.
