@@ -20,29 +20,29 @@
 #include <SLAssetLoader.h>
 
 #include <emscripten.h>
+#include <emscripten/em_asm.h>
 #include <emscripten/html5.h>
 #include <emscripten/val.h>
 
 //-----------------------------------------------------------------------------
 // Global variables
-App::Config    App::config; //!< The configuration set in App::run
-static SLint   svIndex;     //!< Scene view index
-static SLint   dpi = 142;   //!< Dot per inch resolution of screen
-static SLint   startX;      //!< start position x in pixels
-static SLint   startY;      //!< start position y in pixels
-static SLint   mouseX;      //!< Last mouse position x in pixels
-static SLint   mouseY;      //!< Last mouse position y in pixels
-static SLVec2i touch2;      //!< Last finger touch 2 position in pixels
-static SLVec2i touchDelta;  //!< Delta between two fingers in x
-static SLint   lastWidth;   //!< Last window width in pixels
-static SLint   lastHeight;  //!< Last window height in pixels
-static int     canvasWidth;
-static int     canvasHeight;
-static int     lastTouchDownX;
-static int     lastTouchDownY;
-static double  lastTouchDownTimeMS;
-static long    animationFrameID = 0;
-static SLbool  coreAssetsLoaded = false;
+App::Config    App::config;              //!< The configuration set in App::run
+static SLint   svIndex;                  //!< Scene view index
+static SLint   startX;                   //!< start position x in pixels
+static SLint   startY;                   //!< start position y in pixels
+static SLint   mouseX;                   //!< Last mouse position x in pixels
+static SLint   mouseY;                   //!< Last mouse position y in pixels
+static SLVec2i touch2;                   //!< Last finger touch 2 position in pixels
+static SLVec2i touchDelta;               //!< Delta between two fingers in x
+static SLint   lastWidth;                //!< Last window width in pixels
+static SLint   lastHeight;               //!< Last window height in pixels
+static int     canvasWidth;              //!< Width of the HTML canvas
+static int     canvasHeight;             //!< Height of the HTML canvas
+static int     lastTouchDownX;           //!< X coordinate of last touch down
+static int     lastTouchDownY;           //!< Y coordinate of last touch down
+static double  lastTouchDownTimeMS;      //!< Time of last touch down in milliseconds
+static long    animationFrameID = 0;     //!< ID of the current JavaScript animation frame
+static SLbool  coreAssetsLoaded = false; //!< Indicates whether core assets can be used
 
 //-----------------------------------------------------------------------------
 // Function forward declarations
@@ -61,19 +61,20 @@ static EM_BOOL           onTouchStart(int eventType, const EmscriptenTouchEvent*
 static EM_BOOL           onTouchEnd(int eventType, const EmscriptenTouchEvent* touchEvent, void* userData);
 static EM_BOOL           onTouchMove(int eventType, const EmscriptenTouchEvent* touchEvent, void* userData);
 static const char*       onUnload(int eventType, const void* reserved, void* userData);
+static SLint             convertToCanvasCoordinate(SLint coordinate);
 static SLKey             mapKeyToSLKey(unsigned long key);
 static SLKey             mapModifiersToSLModifiers(bool shiftDown, bool ctrlDown, bool altDown);
 static SLKey             mapModifiersToSLModifiers(const EmscriptenMouseEvent* mouseEvent);
 static SLKey             mapModifiersToSLModifiers(const EmscriptenKeyboardEvent* keyEvent);
 
 //-----------------------------------------------------------------------------
-//! App::run implementation from App.h for the EMSCRIPTEN platform
+//! App::run implementation from App.h for the Emscripten platform
 int App::run(Config config)
 {
     App::config = config;
 
-    canvasWidth  = EM_ASM_INT(return window.innerWidth);
-    canvasHeight = EM_ASM_INT(return window.innerHeight);
+    canvasWidth  = EM_ASM_INT(return window.devicePixelRatio * window.innerWidth);
+    canvasHeight = EM_ASM_INT(return window.devicePixelRatio * window.innerHeight);
     updateCanvas();
 
     EmscriptenWebGLContextAttributes attributes;
@@ -144,8 +145,8 @@ static SLbool onPaint()
 
     SLSceneView* sv = AppDemo::sceneViews[svIndex];
 
-    int newCanvasWidth  = EM_ASM_INT(return window.innerWidth;);
-    int newCanvasHeight = EM_ASM_INT(return window.innerHeight;);
+    int newCanvasWidth  = EM_ASM_INT(return window.devicePixelRatio * window.innerWidth);
+    int newCanvasHeight = EM_ASM_INT(return window.devicePixelRatio * window.innerHeight);
 
     if (newCanvasWidth != canvasWidth || newCanvasHeight != canvasHeight)
     {
@@ -203,7 +204,7 @@ static void onLoadingCoreAssets()
                       AppDemo::scene,
                       canvasWidth,
                       canvasHeight,
-                      dpi,
+                      (int)(142.0 * EM_ASM_DOUBLE(return window.devicePixelRatio)),
                       App::config.startSceneID,
                       reinterpret_cast<void*>(onPaint),
                       nullptr,
@@ -232,8 +233,8 @@ static EMSCRIPTEN_RESULT onMousePressed(int                         eventType,
                                         const EmscriptenMouseEvent* mouseEvent,
                                         void*                       userData)
 {
-    SLint x         = mouseX;
-    SLint y         = mouseY;
+    SLint x         = convertToCanvasCoordinate(mouseEvent->targetX);
+    SLint y         = convertToCanvasCoordinate(mouseEvent->targetY);
     SLKey modifiers = mapModifiersToSLModifiers(mouseEvent);
 
     startX = x;
@@ -275,8 +276,8 @@ static EM_BOOL onMouseReleased(int                         eventType,
                                const EmscriptenMouseEvent* mouseEvent,
                                void*                       userData)
 {
-    SLint x         = mouseX;
-    SLint y         = mouseY;
+    SLint x         = convertToCanvasCoordinate(mouseEvent->targetX);
+    SLint y         = convertToCanvasCoordinate(mouseEvent->targetY);
     SLKey modifiers = mapModifiersToSLModifiers(mouseEvent);
 
     startX = -1;
@@ -315,8 +316,8 @@ static EM_BOOL onMouseDoubleClicked(int                         eventType,
                                     const EmscriptenMouseEvent* mouseEvent,
                                     void*                       userData)
 {
-    SLint x         = mouseX;
-    SLint y         = mouseY;
+    SLint x         = convertToCanvasCoordinate(mouseEvent->targetX);
+    SLint y         = convertToCanvasCoordinate(mouseEvent->targetY);
     SLKey modifiers = mapModifiersToSLModifiers(mouseEvent);
 
     switch (mouseEvent->button)
@@ -352,8 +353,8 @@ static EM_BOOL onMouseMove(int                         eventType,
                            const EmscriptenMouseEvent* mouseEvent,
                            void*                       userData)
 {
-    mouseX = (int)mouseEvent->targetX;
-    mouseY = (int)mouseEvent->targetY;
+    mouseX = convertToCanvasCoordinate(mouseEvent->targetX);
+    mouseY = convertToCanvasCoordinate(mouseEvent->targetY);
 
     if (mouseEvent->altKey && mouseEvent->ctrlKey)
         slTouch2Move(svIndex,
@@ -416,8 +417,8 @@ static EM_BOOL onTouchStart(int                         eventType,
 {
     if (touchEvent->numTouches == 1)
     {
-        mouseX = (int)touchEvent->touches[0].clientX;
-        mouseY = (int)touchEvent->touches[0].clientY;
+        mouseX = convertToCanvasCoordinate(touchEvent->touches[0].clientX);
+        mouseY = convertToCanvasCoordinate(touchEvent->touches[0].clientY);
         slMouseDown(svIndex,
                     MB_left,
                     mouseX,
@@ -427,10 +428,10 @@ static EM_BOOL onTouchStart(int                         eventType,
     }
     else if (touchEvent->numTouches == 2)
     {
-        int x0 = (int)touchEvent->touches[0].clientX;
-        int y0 = (int)touchEvent->touches[0].clientY;
-        int x1 = (int)touchEvent->touches[1].clientX;
-        int y1 = (int)touchEvent->touches[1].clientY;
+        int x0 = convertToCanvasCoordinate(touchEvent->touches[0].clientX);
+        int y0 = convertToCanvasCoordinate(touchEvent->touches[0].clientY);
+        int x1 = convertToCanvasCoordinate(touchEvent->touches[1].clientX);
+        int y1 = convertToCanvasCoordinate(touchEvent->touches[1].clientY);
         slTouch2Down(svIndex, x0, y0, x1, y1);
     }
 
@@ -446,8 +447,8 @@ static EM_BOOL onTouchEnd(int                         eventType,
 {
     if (touchEvent->numTouches == 1)
     {
-        mouseX = (int)touchEvent->touches[0].clientX;
-        mouseY = (int)touchEvent->touches[0].clientY;
+        mouseX = convertToCanvasCoordinate(touchEvent->touches[0].clientX);
+        mouseY = convertToCanvasCoordinate(touchEvent->touches[0].clientY);
         slMouseUp(svIndex,
                   MB_left,
                   mouseX,
@@ -474,10 +475,10 @@ static EM_BOOL onTouchEnd(int                         eventType,
     }
     else if (touchEvent->numTouches == 2)
     {
-        int x0 = (int)touchEvent->touches[0].clientX;
-        int y0 = (int)touchEvent->touches[0].clientY;
-        int x1 = (int)touchEvent->touches[1].clientX;
-        int y1 = (int)touchEvent->touches[1].clientY;
+        int x0 = convertToCanvasCoordinate(touchEvent->touches[0].clientX);
+        int y0 = convertToCanvasCoordinate(touchEvent->touches[0].clientY);
+        int x1 = convertToCanvasCoordinate(touchEvent->touches[1].clientX);
+        int y1 = convertToCanvasCoordinate(touchEvent->touches[1].clientY);
         slTouch2Up(svIndex, x0, y0, x1, y1);
     }
 
@@ -490,16 +491,16 @@ static EM_BOOL onTouchMove(int                         eventType,
 {
     if (touchEvent->numTouches == 1)
     {
-        mouseX = (int)touchEvent->touches[0].clientX;
-        mouseY = (int)touchEvent->touches[0].clientY;
+        mouseX = convertToCanvasCoordinate(touchEvent->touches[0].clientX);
+        mouseY = convertToCanvasCoordinate(touchEvent->touches[0].clientY);
         slMouseMove(svIndex, mouseX, mouseY);
     }
     else if (touchEvent->numTouches == 2)
     {
-        int x0 = (int)touchEvent->touches[0].clientX;
-        int y0 = (int)touchEvent->touches[0].clientY;
-        int x1 = (int)touchEvent->touches[1].clientX;
-        int y1 = (int)touchEvent->touches[1].clientY;
+        int x0 = convertToCanvasCoordinate(touchEvent->touches[0].clientX);
+        int y0 = convertToCanvasCoordinate(touchEvent->touches[0].clientY);
+        int x1 = convertToCanvasCoordinate(touchEvent->touches[1].clientX);
+        int y1 = convertToCanvasCoordinate(touchEvent->touches[1].clientY);
         slTouch2Move(svIndex, x0, y0, x1, y1);
     }
 
@@ -517,6 +518,11 @@ static const char* onUnload(int         eventType,
     emscripten_cancel_animation_frame(animationFrameID);
 
     return nullptr;
+}
+//-----------------------------------------------------------------------------
+static SLint convertToCanvasCoordinate(SLint coordinate)
+{
+    return (SLint)((double)coordinate * EM_ASM_DOUBLE(return window.devicePixelRatio));
 }
 //-----------------------------------------------------------------------------
 static SLKey mapKeyToSLKey(unsigned long key)
