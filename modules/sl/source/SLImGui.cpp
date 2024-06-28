@@ -33,20 +33,6 @@ SLImGui::SLImGui(cbOnImGuiBuild      buildCB,
 {
     _build      = buildCB;
     _saveConfig = saveConfigCB;
-    /*
-    _fontTexture       = 0;
-    _progHandle        = 0;
-    _vertHandle        = 0;
-    _fragHandle        = 0;
-    _attribLocTex      = 0;
-    _attribLocProjMtx  = 0;
-    _attribLocPosition = 0;
-    _attribLocUV       = 0;
-    _attribLocColor    = 0;
-    _vboHandle         = 0;
-    _vaoHandle         = 0;
-    _elementsHandle    = 0;
-    */
     _fontPropDots    = 13.0f;
     _fontFixedDots   = 16.0f;
     _mouseWheel      = 0.0f;

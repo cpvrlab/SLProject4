@@ -225,12 +225,21 @@ static SLbool onPaint()
     if (AppDemo::assetLoader->isLoading())
         AppDemo::assetLoader->checkIfAsyncLoadingIsDone();
 
-    ////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
     SLbool appNeedsUpdate  = App::config.onUpdate && App::config.onUpdate(sv);
     SLbool jobIsRunning    = slUpdateParallelJob();
     SLbool isLoading       = AppDemo::assetLoader->isLoading();
     SLbool viewNeedsUpdate = slPaintAllViews();
-    ////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+
+    // Update and Render additional Multiviewport Platform Windows
+    if (AppDemo::gui && ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        GLFWwindow* backup_current_context = glfwGetCurrentContext();
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+        glfwMakeContextCurrent(backup_current_context);
+    }
 
     // Fast copy the back buffer to the front buffer. This is OS dependent.
     glfwSwapBuffers(window);
@@ -246,7 +255,7 @@ static void onGLFWError(int error, const char* description)
     fputs(description, stderr);
 }
 //-----------------------------------------------------------------------------
-/*! 
+/*!
 onResize: Event handler called on the resize event of the window. This event
 should called once before the onPaint event.
 */
