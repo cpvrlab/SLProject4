@@ -1,7 +1,4 @@
 \page on-paint How one Frame gets painted
-\htmlonly
-<style>html{--content-maxwidth:auto}</style>
-\endhtmlonly
 
 As an example we start here at the outer shell of a desktop app using GLFW.
 The most outer onPaint routine gets called in the main event loop

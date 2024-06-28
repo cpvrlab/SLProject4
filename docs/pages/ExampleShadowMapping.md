@@ -1,7 +1,4 @@
 \page example-shadow-mapping Shadow Mapping
-\htmlonly
-<style>html{--content-maxwidth:auto}</style>
-\endhtmlonly
 
 In this scene you can see all light types: Directional, rectangular, spot and point light. 
 All light types (SLLightDirect, SLLightRect, SLLightSpot) are derived from SLLight and can have a SLShadowMap. 

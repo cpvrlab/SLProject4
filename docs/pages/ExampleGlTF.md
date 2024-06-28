@@ -1,7 +1,4 @@
 \page example-gltf glTF File Format
-\htmlonly
-<style>html{--content-maxwidth:auto}</style>
-\endhtmlonly
 SLProject supports loading the [glTF model format](https://en.wikipedia.org/wiki/GlTF). This scene
 showcases loading and rendering the damaged helmet sample by Khronos. Notice how the environment is
 reflected onto the helmet. Note that it may take some time to load this scene since there is a lot of

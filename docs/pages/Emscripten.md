@@ -1,7 +1,4 @@
 \page emscripten Emscripten
-\htmlonly
-<style>html{--content-maxwidth:auto}</style>
-\endhtmlonly
 SLProject can be built to run in a web browser. We use the [Emscripten](https://emscripten.org/) toolchain, which compiles C/C++ code to a binary instruction format called [WebAssembly](https://webassembly.org/). The generated Wasm module can be loaded by ordinary JavaScript at runtime. The browser then compiles the instructions to native machine code and runs it, making it possible to run high-performance code in the browser. To access OpenGL functions, browsers expose the [WebGL API](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API), which Emscripten wraps in standard OpenGL headers. SLProject uses WebGL 2, which is based on OpenGL 3.0 ES. 
 Not all scenes from app-Demo-SLProject can run in the browser because OpenGL 4.0 functions are not available or because some OpenCV modules can't be compiled for WebAssembly.
 
