@@ -51,14 +51,14 @@ class AppDemo
 public:
     // Major owned instances of the app
     static SLInputManager      inputManager; //!< Input events manager
-    static SLAssetManager*     assetManager; //!< asset manager
-    static SLAssetLoader*      assetLoader;
-    static SLScene*            scene;      //!< scene pointer
-    static SLVSceneView        sceneViews; //!< vector of sceneview pointers
-    static SLUiInterface*      gui;        //!< gui pointer
-    static SLDeviceRotation    devRot;     //!< Mobile device rotation from IMU
-    static SLDeviceLocation    devLoc;     //!< Mobile device location from GPS
-    static optional<SLSceneID> sceneToLoad;
+    static SLAssetManager*     assetManager; //!< asset manager is the owner of all assets
+    static SLAssetLoader*      assetLoader;  //!< responsible for async asset loading
+    static SLScene*            scene;        //!< scene pointer
+    static SLVSceneView        sceneViews;   //!< vector of sceneview pointers
+    static SLUiInterface*      gui;          //!< gui pointer
+    static SLDeviceRotation    devRot;       //!< Mobile device rotation from IMU
+    static SLDeviceLocation    devLoc;       //!< Mobile device location from GPS
+    static optional<SLSceneID> sceneToLoad;  //!< scene id to load at start up
 
     static void createApp(SLstring appName);
     static void registerCoreAssetsLoad();
