@@ -69,14 +69,17 @@ option(SL_BUILD_WITH_OPTIX "Specifies if Optix renderer should be built" OFF)
 option(SL_BUILD_WITH_KTX "Specifies if Kronos Texture library (ktx) should be used" ON)
 option(SL_BUILD_WITH_OPENSSL "Specifies if OpenSSL should be used" ON)
 option(SL_BUILD_WITH_ASSIMP "Specifies if Assimp should be used" ON)
-
-if ("${SYSTEM_NAME_UPPER}" MATCHES "IOS" OR "${SYSTEM_NAME_UPPER}" MATCHES "EMSCRIPTEN")
-    option(SL_BUILD_WITH_MEDIAPIPE "Specifies if MediaPipe should be used" OFF)
-else ()
-    option(SL_BUILD_WITH_MEDIAPIPE "Specifies if MediaPipe should be used" ON)
-endif ()
+option(SL_BUILD_WITH_MEDIAPIPE "Specifies if MediaPipe should be used" ON)
 
 option(LIBIGL_USE_STATIC_LIBRARY "Specifies if LibIGL should be built statically" ON)
+
+if(SYSTEM_NAME_UPPER STREQUAL "IOS")
+    set(SL_BUILD_WITH_MEDIAPIPE OFF)
+elseif(SYSTEM_NAME_UPPER STREQUAL "EMSCRIPTEN")
+    set(SL_BUILD_WAI OFF)
+    set(SL_BUILD_WITH_OPENSSL OFF)
+    set(SL_BUILD_WITH_MEDIAPIPE OFF)
+endif()
 
 message(STATUS "----------------------------------------------------------------")
 message(STATUS "System: ${SYSTEM_NAME_UPPER}")
