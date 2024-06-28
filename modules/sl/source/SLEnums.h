@@ -359,8 +359,7 @@ enum SLLogVerbosity
 enum SLViewportAlign
 {
     VA_center = 0,
-    VA_leftOrTop,
-    VA_rightOrBottom
+    VA_leftOrBottom
 };
 //-----------------------------------------------------------------------------
 //! Corresponds to the old fog modes in OpenGL 2.1

@@ -1,8 +1,8 @@
 //#############################################################################
-//  File:      gl/SLImGui.cpp
+//  File:      SLImGui.h
 //  Purpose:   Wrapper Class around the external ImGui GUI-framework
 //             See also: https://github.com/ocornut/imgui
-//  Date:      October 2015
+//  Date:      October 2015, refresh in 2024
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
 //  Authors:   Marcus Hudritsch
 //  License:   This software is provided under the GNU General Public License
@@ -54,12 +54,9 @@ The full call stack for rendering one frame is:\n
     - SLSceneView::onPaint: Main onPaint function of a sceneview
       - SLImGui::onInitNewFrame: Initializes a new GUI frame
         - ImGui::NewFrame()
-        - SLImGui::build: The UI build function
       - ... normal scene rendering of SLProject
       - SLSceneView::draw2DGL:
-        - ImGui::render
-          - SLImGui::onPaint(ImGui::GetDrawData())
-          - AppDemoGui::buildDemoGui: Builds the full UI
+        - SLImGui::onPaint: Draws the UI with ImGUI
 */
 
 class SLImGui : public SLUiInterface
@@ -75,7 +72,7 @@ public:
     void init(const string& configPath) override;
 
     void onInitNewFrame(SLScene* s, SLSceneView* sv) override;
-    void onResize(const SLRecti& viewportRect) override;
+    void onResize(const SLRecti& viewport) override;
     void onPaint(const SLRecti& viewport) override;
     void onMouseDown(SLMouseButton button, SLint x, SLint y) override;
     void onMouseUp(SLMouseButton button, SLint x, SLint y) override;
