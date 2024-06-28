@@ -19,7 +19,7 @@ public:
     //! initialization (called by SLSceneView init)
     virtual void init(const string& configPath) {}
     //! inform the ui about scene view size change
-    virtual void onResize(SLint scrW, SLint scrH) {}
+    virtual void onResize(const SLRecti& viewportRect) {}
     //! shutdown ui
     virtual void onClose() {}
 

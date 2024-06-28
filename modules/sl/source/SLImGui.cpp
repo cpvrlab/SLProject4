@@ -9,6 +9,9 @@
 //             Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
 
+#include "SLGLState.h"
+#include "imgui.h"
+#include "imgui_internal.h"
 #include <SLSceneView.h>
 #include <SLImGui.h>
 #include <SLScene.h>
@@ -21,15 +24,16 @@
 SLfloat SLImGui::fontPropDots  = 16.0f;
 SLfloat SLImGui::fontFixedDots = 13.0f;
 //-----------------------------------------------------------------------------
-SLImGui::SLImGui(cbImGuiBuild      buildCB,
-                 cbImGuiLoadConfig loadConfigCB,
-                 cbImGuiSaveConfig saveConfigCB,
-                 int               dpi,
-                 SLIOBuffer        fontDataProp,
-                 SLIOBuffer        fontDataFixed)
+SLImGui::SLImGui(cbOnImGuiBuild      buildCB,
+                 cbOnImGuiLoadConfig loadConfigCB,
+                 cbOnImGuiSaveConfig saveConfigCB,
+                 int                 dpi,
+                 SLIOBuffer          fontDataProp,
+                 SLIOBuffer          fontDataFixed)
 {
-    _build             = buildCB;
-    _saveConfig        = saveConfigCB;
+    _build      = buildCB;
+    _saveConfig = saveConfigCB;
+    /*
     _fontTexture       = 0;
     _progHandle        = 0;
     _vertHandle        = 0;
@@ -42,14 +46,15 @@ SLImGui::SLImGui(cbImGuiBuild      buildCB,
     _vboHandle         = 0;
     _vaoHandle         = 0;
     _elementsHandle    = 0;
-    _fontPropDots      = 13.0f;
-    _fontFixedDots     = 16.0f;
-    _mouseWheel        = 0.0f;
-    _mousePressed[0]   = false;
-    _mousePressed[1]   = false;
-    _mousePressed[2]   = false;
-    _fontDataProp      = fontDataProp;
-    _fontDataFixed     = fontDataFixed;
+    */
+    _fontPropDots    = 13.0f;
+    _fontFixedDots   = 16.0f;
+    _mouseWheel      = 0.0f;
+    _mousePressed[0] = false;
+    _mousePressed[1] = false;
+    _mousePressed[2] = false;
+    _fontDataProp    = fontDataProp;
+    _fontDataFixed   = fontDataFixed;
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -91,31 +96,19 @@ SLImGui::SLImGui(cbImGuiBuild      buildCB,
 //-----------------------------------------------------------------------------
 SLImGui::~SLImGui()
 {
-    shutdown();
+    onClose();
 }
 //-----------------------------------------------------------------------------
 //! Initializes OpenGL handles to zero and sets the ImGui key map
 void SLImGui::init(const string& configPath)
 {
-    _fontTexture       = 0;
-    _progHandle        = 0;
-    _vertHandle        = 0;
-    _fragHandle        = 0;
-    _attribLocTex      = 0;
-    _attribLocProjMtx  = 0;
-    _attribLocPosition = 0;
-    _attribLocUV       = 0;
-    _attribLocColor    = 0;
-    _vboHandle         = 0;
-    _vaoHandle         = 0;
-    _elementsHandle    = 0;
-    _fontPropDots      = 13.0f;
-    _fontFixedDots     = 16.0f;
-    _mouseWheel        = 0.0f;
-    _mousePressed[0]   = false;
-    _mousePressed[1]   = false;
-    _mousePressed[2]   = false;
-    _configPath        = configPath;
+    _fontPropDots    = 13.0f;
+    _fontFixedDots   = 16.0f;
+    _mouseWheel      = 0.0f;
+    _mousePressed[0] = false;
+    _mousePressed[1] = false;
+    _mousePressed[2] = false;
+    _configPath      = configPath;
 
     ImGuiIO& io                    = ImGui::GetIO();
     io.IniSavingRate               = 1.0f;
@@ -166,8 +159,9 @@ void SLImGui::init(const string& configPath)
 }
 //-----------------------------------------------------------------------------
 //! Callback on closing the application
-void SLImGui::shutdown()
+void SLImGui::onClose()
 {
+    ImGui::SetCurrentContext(ImGui::GetCurrentContext());
     if (_saveConfig)
         _saveConfig();
     ImGui_ImplOpenGL3_Shutdown();
@@ -197,8 +191,8 @@ void SLImGui::loadFonts(SLfloat fontPropDotsToLoad,
     io.Fonts->AddFontFromMemoryTTF(fontDataFixed.data,
                                    static_cast<int>(fontDataFixed.size),
                                    fontFixedDotsToLoad);
-    //deleteOpenGLObjects();
-    //createOpenGLObjects();
+    ImGui_ImplOpenGL3_DestroyDeviceObjects();
+    ImGui_ImplOpenGL3_CreateDeviceObjects();
 }
 //-----------------------------------------------------------------------------
 //! Prints the compile errors in case of a GLSL compile failure
@@ -207,11 +201,8 @@ void SLImGui::printCompileErrors(SLint shaderHandle, const SLchar* src)
 }
 //-----------------------------------------------------------------------------
 //! Inits a new frame for the ImGui system
-void SLImGui::newFrame(SLScene* s, SLSceneView* sv)
+void SLImGui::onInitNewFrame(SLScene* s, SLSceneView* sv)
 {
-    // If no _build function is provided there is no ImGui
-    // if (!_build) return;
-
     if ((SLint)SLImGui::fontPropDots != (SLint)_fontPropDots ||
         (SLint)SLImGui::fontFixedDots != (SLint)_fontFixedDots)
         loadFonts(SLImGui::fontPropDots, SLImGui::fontFixedDots);
@@ -252,15 +243,33 @@ void SLImGui::newFrame(SLScene* s, SLSceneView* sv)
 }
 //-----------------------------------------------------------------------------
 //! Callback if window got resized
-void SLImGui::onResize(SLint scrW, SLint scrH)
+void SLImGui::onResize(const SLRecti& viewportRect)
 {
-    ImGuiIO& io                = ImGui::GetIO();
-    io.DisplaySize             = ImVec2((SLfloat)scrW, (SLfloat)scrH);
+    SLGLState* stateGL         = SLGLState::instance();
+    ImGuiIO&   io              = ImGui::GetIO();
+    io.DisplaySize             = ImVec2((SLfloat)viewportRect.width, (SLfloat)viewportRect.height);
     io.DisplayFramebufferScale = ImVec2(1, 1);
+
+    // Setup viewport
+    if (viewportRect.isEmpty())
+    {
+        // (screen coordinates != framebuffer coordinates)
+        int fb_width  = (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x);
+        int fb_height = (int)(io.DisplaySize.y * io.DisplayFramebufferScale.y);
+        stateGL->viewport(0, 0, fb_width, fb_height);
+    }
+    else
+    {
+        GLsizei x = (GLsizei)((float)viewportRect.x * io.DisplayFramebufferScale.x);
+        GLsizei y = (GLsizei)((float)viewportRect.y * io.DisplayFramebufferScale.y);
+        GLsizei w = (GLsizei)((float)viewportRect.width * io.DisplayFramebufferScale.x);
+        GLsizei h = (GLsizei)((float)viewportRect.height * io.DisplayFramebufferScale.y);
+        stateGL->viewport(x,y,w,h);
+    }
 }
 //-----------------------------------------------------------------------------
 //! Callback for main rendering for the ImGui GUI system
-void SLImGui::render(const SLRecti& viewportRect)
+void SLImGui::onPaint(const SLRecti& viewportRect)
 {
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -340,8 +349,8 @@ void SLImGui::renderExtraFrame(SLScene*     s,
     if (_build)
     {
         ImGui::GetIO().MousePos = ImVec2((SLfloat)mouseX, (SLfloat)mouseY);
-        newFrame(s, sv);
-        render(sv->viewportRect());
+        onInitNewFrame(s, sv);
+        onPaint(sv->viewportRect());
     }
 }
 //-----------------------------------------------------------------------------

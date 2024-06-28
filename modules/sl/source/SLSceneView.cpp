@@ -17,6 +17,7 @@
 #include <SLInputManager.h>
 #include <Profiler.h>
 #include <SLImGui.h>
+#include <SLUiInterface.h>
 #include <utility>
 
 #ifdef SL_EMSCRIPTEN
@@ -47,8 +48,8 @@ SLSceneView::SLSceneView(SLScene* s, int dpi, SLInputManager& inputManager)
 //-----------------------------------------------------------------------------
 SLSceneView::~SLSceneView()
 {
-    if (_gui) _gui->onClose();
-    //if (_imgui) _imgui->shutdown();
+    if (_gui)
+        _gui->onClose();
 
     SL_LOG("Destructor       : ~SLSceneView");
 }
@@ -71,7 +72,6 @@ void SLSceneView::init(SLstring       name,
                        const string&  configPath)
 {
     _gui        = gui;
-    _imgui      = nullptr;
     _name       = std::move(name);
     _scrW       = screenWidth;
     _scrH       = screenHeight;
@@ -318,8 +318,7 @@ void SLSceneView::setViewportFromRatio(const SLVec2i&  vpRatio,
         _viewportRect.set(0, 0, _scrW, _scrH);
         _viewportAlign = VA_center;
         if (_gui)
-            _gui->onResize(_viewportRect.width,
-                           _viewportRect.height);
+            _gui->onResize(_viewportRect);
         return;
     }
 
@@ -363,7 +362,7 @@ void SLSceneView::setViewportFromRatio(const SLVec2i&  vpRatio,
     {
         _viewportRect = vpRect;
         if (_gui)
-            _gui->onResize(_viewportRect.width, _viewportRect.height);
+            _gui->onResize(_viewportRect);
     }
     else
         SL_EXIT_MSG("SLSceneView::viewport: Viewport is bigger than the screen!");
@@ -448,7 +447,7 @@ void SLSceneView::onInitialize()
     initSceneViewCamera();
 
     if (_gui)
-        _gui->onResize(_viewportRect.width, _viewportRect.height);
+        _gui->onResize(_viewportRect);
 }
 //-----------------------------------------------------------------------------
 /*!
@@ -1137,7 +1136,7 @@ void SLSceneView::draw2DGLNodes()
 {
     PROFILE_FUNCTION();
 
-    SLfloat    depth   = 1.0f;                           // Render depth between -1 & 1
+    SLfloat    depth   = 1.0f;                                         // Render depth between -1 & 1
     SLfloat    cs      = std::min((float)_scrW, (float)_scrH) * 0.01f; // center size
     SLGLState* stateGL = SLGLState::instance();
 
@@ -2072,14 +2071,14 @@ void SLSceneView::saveFrameBufferAsImage(SLstring pathFilename,
         CVMat rgbImg = CVMat(fbH, fbW, CV_8UC3, (void*)buffer.data(), stride);
         cv::cvtColor(rgbImg, rgbImg, cv::COLOR_BGR2RGB);
 #else
-        CVMat rgbImg = CVMat(fbH,
+        CVMat   rgbImg     = CVMat(fbH,
                              fbW,
                              CV_8UC4,
                              (void*)buffer.data(),
                              stride);
         cv::cvtColor(rgbImg, rgbImg, cv::COLOR_RGBA2RGB);
-        nrChannels = 3;
-        stride     = nrChannels * fbW;
+        nrChannels  = 3;
+        stride      = nrChannels * fbW;
 #endif
 
         cv::flip(rgbImg, rgbImg, 0);

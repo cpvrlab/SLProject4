@@ -234,13 +234,13 @@ The full call stack for rendering one frame is:\n
 - The top-level onPaint of the app (Win, Linux, MacOS, Android or iOS)
   - slUpdateAndPaint: C-Interface function of SLProject
     - SLSceneView::onPaint: Main onPaint function of a sceneview
-      - SLGLImGui::onInitNewFrame: Initializes a new GUI frame
+      - SLImGui::newFrame: Initializes a new GUI frame
         - ImGui::NewFrame()
-        - SLGLImGui::build: The UI build function
+        - SLImGui::build: The UI build function
       - ... normal scene rendering of SLProject
       - SLSceneView::draw2DGL:
         - ImGui::Render
-          - SLGLImGui::onPaint(ImGui::GetDrawData())
+          - SLImGui::render(ImGui::GetDrawData())
           - SLDemoGui::buildDemoGui: Builds the full UI
 */
 

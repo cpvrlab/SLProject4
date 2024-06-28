@@ -13,7 +13,7 @@
 #include <SLLightDirect.h>
 #include <SLSceneView.h>
 #include <SLAssetLoader.h>
-#include <SLGLImGui.h>
+#include <SLImGui.h>
 #include <SLInterface.h>
 #include <AppDemo.h>
 

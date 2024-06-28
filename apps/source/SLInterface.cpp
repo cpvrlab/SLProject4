@@ -15,7 +15,7 @@
 #include <SLInputManager.h>
 #include <SLScene.h>
 #include <SLSceneView.h>
-#include <SLGLImGui.h>
+#include <SLImGui.h>
 #include <SLAssetManager.h>
 #include <SLAssetLoader.h>
 #include <Profiler.h>
@@ -151,15 +151,16 @@ SLint slCreateSceneView(SLAssetManager* am,
     SLfloat dpiScaleFixed = (float)dotsPerInch / 142.0f;
 
     // Default settings for the first time
-    SLGLImGui::fontPropDots  = std::max(16.0f * dpiScaleProp, 16.0f);
-    SLGLImGui::fontFixedDots = std::max(13.0f * dpiScaleFixed, 13.0f);
+    SLImGui::fontPropDots  = std::max(16.0f * dpiScaleProp, 16.0f);
+    SLImGui::fontFixedDots = std::max(13.0f * dpiScaleFixed, 13.0f);
 
-    AppDemo::gui = new SLGLImGui((cbOnImGuiBuild)onImGuiBuild,
-                                 (cbOnImGuiLoadConfig)onImGuiLoadConfig,
-                                 (cbOnImGuiSaveConfig)onImGuiSaveConfig,
-                                 dotsPerInch,
-                                 AppDemo::fontDataProp,
-                                 AppDemo::fontDataFixed);
+    // Create gui renderer
+    AppDemo::gui = new SLImGui((cbOnImGuiBuild)onImGuiBuild,
+                               (cbOnImGuiLoadConfig)onImGuiLoadConfig,
+                               (cbOnImGuiSaveConfig)onImGuiSaveConfig,
+                               dotsPerInch,
+                               AppDemo::fontDataProp,
+                               AppDemo::fontDataFixed);
 
     sv->init("SceneView",
              screenWidth,
@@ -198,7 +199,7 @@ void slLoadCoreAssetsAsync()
 //-----------------------------------------------------------------------------
 void slSwitchScene(SLSceneView* sv, SLSceneID sceneID)
 {
-    AppLoad::switchScene(sv, *AppDemo::sceneToLoad);
+    AppLoad::switchScene(sv, sceneID);
 }
 //-----------------------------------------------------------------------------
 /*! Global sceneview construction function returning the index of the created

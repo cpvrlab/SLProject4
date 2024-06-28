@@ -442,10 +442,10 @@ void SLGLImGui::onInitNewFrame(SLScene* s, SLSceneView* sv)
 }
 //-----------------------------------------------------------------------------
 //! Callback if window got resized
-void SLGLImGui::onResize(SLint scrW, SLint scrH)
+void SLGLImGui::onResize(const SLRecti& viewportRect)
 {
     ImGuiIO& io                = ImGui::GetIO();
-    io.DisplaySize             = ImVec2((SLfloat)scrW, (SLfloat)scrH);
+    io.DisplaySize             = ImVec2((SLfloat)viewportRect.width, (SLfloat)viewportRect.height);
     io.DisplayFramebufferScale = ImVec2(1, 1);
 }
 //-----------------------------------------------------------------------------

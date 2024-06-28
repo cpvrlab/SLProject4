@@ -25765,7 +25765,7 @@
 											"width": 207,
 											"height": 13,
 											"underline": true,
-											"text": "gui: SLGLImGui*",
+											"text": "gui: SLImGui*",
 											"horizontalAlignment": 0
 										},
 										{
@@ -40150,7 +40150,7 @@
 							},
 							"name": "gui",
 							"isStatic": true,
-							"type": "SLGLImGui*"
+							"type": "SLImGui*"
 						},
 						{
 							"_type": "UMLAttribute",

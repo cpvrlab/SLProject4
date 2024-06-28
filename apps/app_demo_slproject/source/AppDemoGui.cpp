@@ -37,7 +37,7 @@
 #include <SLSceneView.h>
 #include <SLSkybox.h>
 #include <SLTexColorLUT.h>
-#include <SLGLImGui.h>
+#include <SLImGui.h>
 #include <SLHorizonNode.h>
 #include <SLFileStorage.h>
 #include <AverageTiming.h>
@@ -224,7 +224,7 @@ void AppDemoGui::clear()
 /*! Is is passed to the AppDemoGui::build function in main of the app-Demo-SLProject
  app. This function will be called once per frame roughly at the end of
  SLSceneView::onPaint in SLSceneView::draw2DGL by calling ImGui::Render.\n
- See also the comments on SLGLImGui.
+ See also the comments on SLImGui.
  */
 void AppDemoGui::build(SLScene* s, SLSceneView* sv)
 {
@@ -851,7 +851,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                                                   nullptr,
                                                   true,
                                                   w);
-                SLfloat  h    = size.y + SLGLImGui::fontPropDots * 2.0f;
+                SLfloat  h    = size.y + SLImGui::fontPropDots * 2.0f;
                 SLstring info = "Scene Info: " + s->info();
 
                 ImGui::SetNextWindowPos(ImVec2(0, (float)sv->scrH() - h));
@@ -1105,11 +1105,13 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                 ImGui::Begin("User Interface Preferences", &showUIPrefs, window_flags);
                 ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.66f);
 
-                ImGui::SliderFloat("Prop. Font Size", &SLGLImGui::fontPropDots, 16.f, 70.f, "%0.0f");
-                ImGui::SliderFloat("Fixed Font Size", &SLGLImGui::fontFixedDots, 13.f, 50.f, "%0.0f");
+                ImGui::SliderFloat("Prop. Font Size", &SLImGui::fontPropDots, 16.f, 70.f, "%0.0f");
+                ImGui::SliderFloat("Fixed Font Size", &SLImGui::fontFixedDots, 13.f, 50.f, "%0.0f");
                 ImGuiStyle& style = ImGui::GetStyle();
+                
                 if (ImGui::SliderFloat("Item Spacing X", &style.ItemSpacing.x, 0.0f, 20.0f, "%0.0f"))
                     style.WindowPadding.x = style.FramePadding.x = style.ItemInnerSpacing.x = style.ItemSpacing.x;
+               
                 if (ImGui::SliderFloat("Item Spacing Y", &style.ItemSpacing.y, 0.0f, 20.0f, "%0.0f"))
                 {
                     style.FramePadding.y = style.ItemInnerSpacing.y = style.ItemSpacing.y;
@@ -4596,8 +4598,8 @@ void AppDemoGui::loadConfig(SLint dotsPerInch)
         SLfloat dpiScaleFixed = (float)dotsPerInch / 142.0f;
 
         // Default settings for the first time
-        SLGLImGui::fontPropDots  = std::max(16.0f * dpiScaleProp, 16.0f);
-        SLGLImGui::fontFixedDots = std::max(13.0f * dpiScaleFixed, 13.0f);
+        SLImGui::fontPropDots  = std::max(16.0f * dpiScaleProp, 16.0f);
+        SLImGui::fontFixedDots = std::max(13.0f * dpiScaleFixed, 13.0f);
 
         // Store dialog show states
         AppDemoGui::showAbout        = true;
@@ -4637,8 +4639,8 @@ void AppDemoGui::loadConfig(SLint dotsPerInch)
             SLint i = 0;
             SLbool b = false;
             fs["configTime"] >> AppDemoGui::configTime;
-            fs["fontPropDots"] >> i;        SLGLImGui::fontPropDots = (SLfloat) i;
-            fs["fontFixedDots"] >> i;       SLGLImGui::fontFixedDots = (SLfloat) i;
+            fs["fontPropDots"] >> i;        SLImGui::fontPropDots = (SLfloat) i;
+            fs["fontFixedDots"] >> i;       SLImGui::fontFixedDots = (SLfloat) i;
             fs["ItemSpacingX"] >> i;        style.ItemSpacing.x = (SLfloat) i;
             fs["ItemSpacingY"] >> i;        style.ItemSpacing.y = (SLfloat) i;
                                             style.WindowPadding.x = style.FramePadding.x = style.ItemInnerSpacing.x = style.ItemSpacing.x;
@@ -4670,8 +4672,8 @@ void AppDemoGui::loadConfig(SLint dotsPerInch)
                 fs.release();
                 SL_LOG("Config. loaded   : %s", fullPathAndFilename.c_str());
                 SL_LOG("Config. date     : %s", AppDemoGui::configTime.c_str());
-                SL_LOG("fontPropDots     : %f", SLGLImGui::fontPropDots);
-                SL_LOG("fontFixedDots    : %f", SLGLImGui::fontFixedDots);
+                SL_LOG("fontPropDots     : %f", SLImGui::fontPropDots);
+                SL_LOG("fontFixedDots    : %f", SLImGui::fontFixedDots);
             }
             else
             {
@@ -4686,16 +4688,16 @@ void AppDemoGui::loadConfig(SLint dotsPerInch)
         // check font sizes for HDPI displays
         if (dotsPerInch > 300)
         {
-            if (SLGLImGui::fontPropDots < 16.1f &&
-                SLGLImGui::fontFixedDots < 13.1)
+            if (SLImGui::fontPropDots < 16.1f &&
+                SLImGui::fontFixedDots < 13.1)
             {
                 // Scale for proportional and fixed size fonts
                 SLfloat dpiScaleProp  = (float)dotsPerInch / 120.0f;
                 SLfloat dpiScaleFixed = (float)dotsPerInch / 142.0f;
 
                 // Default settings for the first time
-                SLGLImGui::fontPropDots  = std::max(16.0f * dpiScaleProp, 16.0f);
-                SLGLImGui::fontFixedDots = std::max(13.0f * dpiScaleFixed, 13.0f);
+                SLImGui::fontPropDots  = std::max(16.0f * dpiScaleProp, 16.0f);
+                SLImGui::fontFixedDots = std::max(13.0f * dpiScaleFixed, 13.0f);
             }
         }
     }
@@ -4736,8 +4738,8 @@ void AppDemoGui::saveConfig()
     }
 
     fs << "configTime" << Utils::getLocalTimeString();
-    fs << "fontPropDots" << (SLint)SLGLImGui::fontPropDots;
-    fs << "fontFixedDots" << (SLint)SLGLImGui::fontFixedDots;
+    fs << "fontPropDots" << (SLint)SLImGui::fontPropDots;
+    fs << "fontFixedDots" << (SLint)SLImGui::fontFixedDots;
     if (AppDemo::sceneID == SID_VolumeRayCastLighted ||
         AppDemo::sceneID == SID_VolumeRayCast)
         fs << "sceneID" << (SLint)SID_Minimal;

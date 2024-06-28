@@ -25,7 +25,7 @@
 
 class SLScene;
 class SLAssetLoader;
-class SLGLImGui;
+class SLImGui;
 class CVCalibrationEstimator;
 
 using std::optional;
@@ -54,7 +54,7 @@ public:
     static SLAssetLoader*      assetLoader;
     static SLScene*            scene;      //!< scene pointer
     static SLVSceneView        sceneViews; //!< vector of sceneview pointers
-    static SLGLImGui*          gui;        //!< gui pointer
+    static SLImGui*            gui;        //!< gui pointer
     static SLDeviceRotation    devRot;     //!< Mobile device rotation from IMU
     static SLDeviceLocation    devLoc;     //!< Mobile device location from GPS
     static optional<SLSceneID> sceneToLoad;
