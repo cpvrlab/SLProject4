@@ -43,7 +43,7 @@ The following class diagram gives you an overview of the major classes with its 
 - The **white classes** are low level classes for the math. Some of them are within the namespace Utils.
 - The **gray boxes** at the bottom are the external libraries that are used within the frame work.
 
-<img src="../images/SLProject_UML_min.svg" style="min-width: 64vw; position: relative; left: calc(-32vw + 50%)">
+<img src="images/SLProject_UML_min.svg" style="min-width: 64vw; position: relative; left: calc(-32vw + 50%)">
 
 \section app Application Code
 
