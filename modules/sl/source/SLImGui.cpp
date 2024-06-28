@@ -31,8 +31,8 @@ SLImGui::SLImGui(cbOnImGuiBuild      buildCB,
                  SLIOBuffer          fontDataProp,
                  SLIOBuffer          fontDataFixed)
 {
-    _build      = buildCB;
-    _saveConfig = saveConfigCB;
+    _build           = buildCB;
+    _saveConfig      = saveConfigCB;
     _fontPropDots    = 13.0f;
     _fontFixedDots   = 16.0f;
     _mouseWheel      = 0.0f;
@@ -229,34 +229,18 @@ void SLImGui::onInitNewFrame(SLScene* s, SLSceneView* sv)
 }
 //-----------------------------------------------------------------------------
 //! Callback if window got resized
-void SLImGui::onResize(const SLRecti& viewportRect)
+void SLImGui::onResize(const SLRecti& viewport)
 {
     SLGLState* stateGL         = SLGLState::instance();
     ImGuiIO&   io              = ImGui::GetIO();
-    io.DisplaySize             = ImVec2((SLfloat)viewportRect.width, (SLfloat)viewportRect.height);
+    io.DisplaySize             = ImVec2((SLfloat)viewport.width, (SLfloat)viewport.height);
     io.DisplayFramebufferScale = ImVec2(1, 1);
-
-    // Setup viewport
-    if (viewportRect.isEmpty())
-    {
-        // (screen coordinates != framebuffer coordinates)
-        int fb_width  = (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x);
-        int fb_height = (int)(io.DisplaySize.y * io.DisplayFramebufferScale.y);
-        stateGL->viewport(0, 0, fb_width, fb_height);
-    }
-    else
-    {
-        GLsizei x = (GLsizei)((float)viewportRect.x * io.DisplayFramebufferScale.x);
-        GLsizei y = (GLsizei)((float)viewportRect.y * io.DisplayFramebufferScale.y);
-        GLsizei w = (GLsizei)((float)viewportRect.width * io.DisplayFramebufferScale.x);
-        GLsizei h = (GLsizei)((float)viewportRect.height * io.DisplayFramebufferScale.y);
-        stateGL->viewport(x,y,w,h);
-    }
 }
 //-----------------------------------------------------------------------------
 //! Callback for main rendering for the ImGui GUI system
-void SLImGui::onPaint(const SLRecti& viewportRect)
+void SLImGui::onPaint(const SLRecti& viewport)
 {
+    ImGuiIO& io = ImGui::GetIO();
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }

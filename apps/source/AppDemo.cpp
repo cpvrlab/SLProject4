@@ -12,6 +12,7 @@
 #include <SLAssetManager.h>
 #include <SLScene.h>
 #include <SLSceneView.h>
+#include <SLUiInterface.h>
 #include <SLImGui.h>
 #include <utility>
 #include <GlobalTimer.h>
@@ -26,7 +27,7 @@ SLAssetManager*          AppDemo::assetManager = nullptr;
 SLAssetLoader*           AppDemo::assetLoader  = nullptr;
 SLScene*                 AppDemo::scene        = nullptr;
 vector<SLSceneView*>     AppDemo::sceneViews;
-SLImGui*                 AppDemo::gui = nullptr;
+SLUiInterface*           AppDemo::gui = nullptr;
 SLDeviceRotation         AppDemo::devRot;
 SLDeviceLocation         AppDemo::devLoc;
 std::optional<SLSceneID> AppDemo::sceneToLoad;

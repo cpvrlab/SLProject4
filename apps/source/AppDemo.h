@@ -20,13 +20,14 @@
 #include <SLDeviceRotation.h>
 #include <SLInputManager.h>
 #include <SLSceneView.h>
-#include "SLEnums.h"
-#include "SLFileStorage.h"
+#include <SLEnums.h>
+#include <SLFileStorage.h>
 
 class SLScene;
 class SLAssetLoader;
 class SLImGui;
 class CVCalibrationEstimator;
+class SLUiInterface;
 
 using std::optional;
 
@@ -54,7 +55,7 @@ public:
     static SLAssetLoader*      assetLoader;
     static SLScene*            scene;      //!< scene pointer
     static SLVSceneView        sceneViews; //!< vector of sceneview pointers
-    static SLImGui*            gui;        //!< gui pointer
+    static SLUiInterface*      gui;        //!< gui pointer
     static SLDeviceRotation    devRot;     //!< Mobile device rotation from IMU
     static SLDeviceLocation    devLoc;     //!< Mobile device location from GPS
     static optional<SLSceneID> sceneToLoad;

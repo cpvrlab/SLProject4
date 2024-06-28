@@ -7,6 +7,7 @@
 //              Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
 
+#include "SLEnums.h"
 #include <SLAnimManager.h>
 #include <SLCamera.h>
 #include <SLLight.h>
@@ -108,11 +109,17 @@ void SLSceneView::init(SLstring       name,
 
     _screenCaptureIsRequested = false;
 
+#if defined(SL_OS_ANDROID) || defined(SL_OS_MACIOS) || defined(SL_EMSCRIPTEN)
+    _viewportAlign = VA_center;
+#else
+    _viewportAlign = VA_leftOrBottom;
+#endif
+
     if (_gui)
         _gui->init(configPath);
 
     // Set default viewport ratio to the same as the screen
-    setViewportFromRatio(SLVec2i(0, 0), VA_center, false);
+    setViewportFromRatio(SLVec2i(0, 0), _viewportAlign, false);
 
     onStartup();
 }
@@ -312,7 +319,7 @@ void SLSceneView::setViewportFromRatio(const SLVec2i&  vpRatio,
     if (vpRatio == SLVec2i::ZERO)
     {
         _viewportRect.set(0, 0, _scrW, _scrH);
-        _viewportAlign = VA_center;
+        _viewportAlign = VA_leftOrBottom;
         if (_gui)
             _gui->onResize(_viewportRect);
         return;
@@ -332,8 +339,7 @@ void SLSceneView::setViewportFromRatio(const SLVec2i&  vpRatio,
         switch (vpAlign)
         {
             // viewport coordinates are bottom-left
-            case VA_leftOrTop: vpRect.x = 0; break;
-            case VA_rightOrBottom: vpRect.x = _scrW - vpRect.width; break;
+            case VA_leftOrBottom: vpRect.x = 0; break;
             case VA_center:
             default: vpRect.x = (_scrW - vpRect.width) / 2; break;
         }
@@ -347,8 +353,7 @@ void SLSceneView::setViewportFromRatio(const SLVec2i&  vpRatio,
         switch (vpAlign)
         {
             // viewport coordinates are bottom-left
-            case VA_leftOrTop: vpRect.y = _scrH - vpRect.height; break;
-            case VA_rightOrBottom: vpRect.y = 0; break;
+            case VA_leftOrBottom: vpRect.y = 0; break;
             case VA_center:
             default: vpRect.y = (_scrH - vpRect.height) / 2; break;
         }

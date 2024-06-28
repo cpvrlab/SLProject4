@@ -8,12 +8,11 @@
 //             Please visit: http://opensource.org/licenses/GPL-3.0
 //#############################################################################
 
-#include "AppDemoGui.h"
-
-#include "Utils.h"
+#include <AppDemoGui.h>
 #include <AppDemo.h>
+#include <SLEnums.h>
+#include <Utils.h>
 #include <SL.h>
-
 #include <CVCapture.h>
 #include <CVImage.h>
 #include <CVTrackedFeatures.h>
@@ -2080,10 +2079,8 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 {
                     if (ImGui::MenuItem("Center", nullptr, sv->viewportAlign() == VA_center))
                         sv->setViewportFromRatio(sv->viewportRatio(), VA_center, sv->viewportSameAsVideo());
-                    if (ImGui::MenuItem("Left or top", nullptr, sv->viewportAlign() == VA_leftOrTop))
-                        sv->setViewportFromRatio(sv->viewportRatio(), VA_leftOrTop, sv->viewportSameAsVideo());
-                    if (ImGui::MenuItem("Right or bottom", nullptr, sv->viewportAlign() == VA_rightOrBottom))
-                        sv->setViewportFromRatio(sv->viewportRatio(), VA_rightOrBottom, sv->viewportSameAsVideo());
+                    if (ImGui::MenuItem("Left or bottom", nullptr, sv->viewportAlign() == VA_leftOrBottom))
+                        sv->setViewportFromRatio(sv->viewportRatio(), VA_leftOrBottom, sv->viewportSameAsVideo());
 
                     ImGui::EndMenu();
                 }

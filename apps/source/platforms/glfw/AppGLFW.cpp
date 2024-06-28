@@ -153,7 +153,6 @@ int App::run(Config configuration)
     CVCapture::instance()->loadCalibrations(Utils::ComputerInfos::get(),
                                             AppDemo::calibFilePath);
 
-    /////////////////////////////////////////////////////////
     slCreateApp(cmdLineArgs,
                 projectRoot + "/data/",
                 projectRoot + "/data/shaders/",
@@ -163,11 +162,9 @@ int App::run(Config configuration)
                 projectRoot + "/data/videos/",
                 configDir,
                 "AppDemoGLFW");
-    /////////////////////////////////////////////////////////
 
     slLoadCoreAssetsSync();
 
-    /////////////////////////////////////////////////////////
     slCreateSceneView(AppDemo::assetManager,
                       AppDemo::scene,
                       scrWidth,
@@ -180,7 +177,6 @@ int App::run(Config configuration)
                       reinterpret_cast<void*>(config.onGuiBuild),
                       reinterpret_cast<void*>(config.onGuiLoadConfig),
                       reinterpret_cast<void*>(config.onGuiSaveConfig));
-    /////////////////////////////////////////////////////////
 
     // Event loop
     while (!slShouldClose())
@@ -231,15 +227,6 @@ static SLbool onPaint()
     SLbool isLoading       = AppDemo::assetLoader->isLoading();
     SLbool viewNeedsUpdate = slPaintAllViews();
     //////////////////////////////////////////////////////////////////////////
-
-    // Update and Render additional Multiviewport Platform Windows
-    if (AppDemo::gui && ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    {
-        GLFWwindow* backup_current_context = glfwGetCurrentContext();
-        ImGui::UpdatePlatformWindows();
-        ImGui::RenderPlatformWindowsDefault();
-        glfwMakeContextCurrent(backup_current_context);
-    }
 
     // Fast copy the back buffer to the front buffer. This is OS dependent.
     glfwSwapBuffers(window);

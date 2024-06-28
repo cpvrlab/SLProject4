@@ -359,8 +359,8 @@ target_include_directories(${target}
         ${SL_PROJECT_ROOT}/modules/sl/source
         ${SL_PROJECT_ROOT}/modules/sl/cuda
         ${SL_PROJECT_ROOT}/modules/math/source
-        ${SL_PROJECT_ROOT}/modules/sl/externals/stb/
-        ${SL_PROJECT_ROOT}/modules/sl/externals/imgui/backends/
+        ${SL_PROJECT_ROOT}/modules/sl/externals/stb
+        ${SL_PROJECT_ROOT}/modules/sl/externals/imgui/backends
         ${OptiX_INCLUDE}
         ${CUDA_INCLUDE_DIRS}
         ${SL_PROJECT_ROOT}/apps/source

@@ -75,7 +75,7 @@ public:
     void init(const string& configPath) override;
 
     void onInitNewFrame(SLScene* s, SLSceneView* sv) override;
-    void onResize(const SLRecti& viewportRect) override;
+    void onResize(const SLRecti& viewport) override;
     void onPaint(const SLRecti& viewport) override;
     void onMouseDown(SLMouseButton button, SLint x, SLint y) override;
     void onMouseUp(SLMouseButton button, SLint x, SLint y) override;
