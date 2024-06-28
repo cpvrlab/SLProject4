@@ -1,4 +1,4 @@
-\page app-framework The App Framework
+\page app-framework The %App Framework
 
 \section overview Overview
 
