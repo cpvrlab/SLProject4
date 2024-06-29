@@ -1,12 +1,11 @@
-//#############################################################################
-//  File:      Utils.h
-//  Authors:   Marcus Hudritsch
-//  Date:      May 2019
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      Utils.h
+ * \authors   Marcus Hudritsch
+ * \date      May 2019
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef CPLVRLAB_UTILS_H
 #define CPLVRLAB_UTILS_H

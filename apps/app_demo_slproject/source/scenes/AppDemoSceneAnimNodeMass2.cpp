@@ -1,11 +1,14 @@
-//#############################################################################
-//  File:      AppDemoSceneAnimNodeMass2.cpp
-//  Date:      May 2024
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marino von Wattenwyl
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      AppDemoSceneAnimNodeMass2.cpp
+ * \brief     Implementation for an SLScene inherited class
+ * \details   For more info about App framework and the scene assembly see: 
+ *            https://cpvrlab.github.io/SLProject4/app-framework.html
+ * \date      May 2024
+ * \authors   Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <AppDemoSceneAnimNodeMass2.h>
 #include <AppDemo.h>
@@ -94,16 +97,16 @@ void AppDemoSceneAnimNodeMass2::assemble(SLAssetManager* am,
  * This performance benchmark is expensive in terms of world matrix updates
  * because all sphere groups rotate. Therefore all children need to update
  * their wm every frame.
- * @param am Pointer to the asset manager
- * @param s Pointer to project scene aka asset manager
- * @param depth Max. allowed recursion depth
- * @param x Position in x direction
- * @param y Position in y direction
- * @param z Position in z direction
- * @param scale Scale factor > 0 and < 1 for the children spheres
- * @param resolution NO. of stack and slices of the spheres
- * @param mat Reference to an vector of materials
- * @return Group node of spheres
+ * \param am Pointer to the asset manager
+ * \param s Pointer to project scene aka asset manager
+ * \param depth Max. allowed recursion depth
+ * \param x Position in x direction
+ * \param y Position in y direction
+ * \param z Position in z direction
+ * \param scale Scale factor > 0 and < 1 for the children spheres
+ * \param resolution NO. of stack and slices of the spheres
+ * \param mat Reference to an vector of materials
+ * \return Group node of spheres
  */
 SLNode* AppDemoSceneAnimNodeMass2::RotatingSpheres(SLAssetManager* am,
                                                         SLScene*        s,

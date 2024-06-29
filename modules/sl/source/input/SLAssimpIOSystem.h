@@ -1,6 +1,11 @@
-//
-// Created by vwm1 on 05/10/2022.
-//
+/**
+ * \file      SLAssimpIOStream.h
+ * \date      May 2024
+ * \authors   Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLPROJECT_SLASSIMPIOSYSTEM_H
 #define SLPROJECT_SLASSIMPIOSYSTEM_H

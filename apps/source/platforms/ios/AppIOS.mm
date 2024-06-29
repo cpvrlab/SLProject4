@@ -1,8 +1,16 @@
-//
-//  AppIOS.m
-//  Created by Marcus Hudritsch on 30.11.11.
-//  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
-//
+/**
+ * \file      AppIOS.cpp
+ * \brief     App::run implementation from App.h for the iOS platform
+ * \details   For more info about App framework see: 
+ *            https://cpvrlab.github.io/SLProject4/app-framework.html
+ *            For more info on how to build for the iOS platform see:
+ *            https://github.com/cpvrlab/SLProject4/wiki/Build-on-MacOS-with-XCode-for-iOS
+ * \date      June 2024
+ * \authors   Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <App.h>
 

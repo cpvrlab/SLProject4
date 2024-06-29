@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      SLVec2f.java
-//  Purpose:   2 Component vector class
-//  Date:      September 2012 (HS12)
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLVec2f.java
+ * \brief     2 Component vector class
+ * \date      September 2012 (HS12)
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 package ch.bfh.cpvrlab.TextureMapping;
 

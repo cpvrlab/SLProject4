@@ -1,10 +1,9 @@
-//#############################################################################
-//  Purpose:   3 x 3 Matrix for linear 3D transformations
-//  Date:      September 2012 (HS12)
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/*
+ * \brief     3 x 3 Matrix for linear 3D transformations
+ * \date      September 2012 (HS12)
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 /**
  * Implements a 3 by 3 matrix class for linear 3D transformations. 
  * 9 floats were used instead of the normal 

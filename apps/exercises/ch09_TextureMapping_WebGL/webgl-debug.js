@@ -27,7 +27,7 @@ WebGLDebugUtils = function () {
 
     /**
      * Wrapped logging function.
-     * @param {string} msg Message to log.
+     * \param {string} msg Message to log.
      */
     var log = function (msg) {
         if (window.console && window.console.log) {
@@ -37,7 +37,7 @@ WebGLDebugUtils = function () {
 
     /**
      * Wrapped error logging function.
-     * @param {string} msg Message to log.
+     * \param {string} msg Message to log.
      */
     var error = function (msg) {
         if (window.console && window.console.error) {
@@ -49,7 +49,7 @@ WebGLDebugUtils = function () {
 
     /**
      * Which arguements are enums.
-     * @type {!Object.<number, string>}
+     * \type {!Object.<number, string>}
      */
     var glValidEnumContexts = {
 
@@ -130,13 +130,13 @@ WebGLDebugUtils = function () {
 
     /**
      * Map of numbers to names.
-     * @type {Object}
+     * \type {Object}
      */
     var glEnums = null;
 
     /**
      * Initializes this module. Safe to call more than once.
-     * @param {!WebGLRenderingContext} ctx A WebGL context. If
+     * \param {!WebGLRenderingContext} ctx A WebGL context. If
      *    you have more than one context it doesn't matter which one
      *    you pass in, it is only used to pull out constants.
      */
@@ -162,8 +162,8 @@ WebGLDebugUtils = function () {
 
     /**
      * Returns true or false if value matches any WebGL enum
-     * @param {*} value Value to check if it might be an enum.
-     * @return {boolean} True if value matches one of the WebGL defined enums
+     * \param {*} value Value to check if it might be an enum.
+     * \return {boolean} True if value matches one of the WebGL defined enums
      */
     function mightBeEnum(value) {
         checkInit();
@@ -176,8 +176,8 @@ WebGLDebugUtils = function () {
      * Example:
      *   var str = WebGLDebugUtil.glEnumToString(ctx.getError());
      *
-     * @param {number} value Value to return an enum for
-     * @return {string} The string version of the enum.
+     * \param {number} value Value to return an enum for
+     * \return {string} The string version of the enum.
      */
     function glEnumToString(value) {
         checkInit();
@@ -189,10 +189,10 @@ WebGLDebugUtils = function () {
     /**
      * Returns the string version of a WebGL argument.
      * Attempts to convert enum arguments to strings.
-     * @param {string} functionName the name of the WebGL function.
-     * @param {number} argumentIndx the index of the argument.
-     * @param {*} value The value of the argument.
-     * @return {string} The value as a string.
+     * \param {string} functionName the name of the WebGL function.
+     * \param {number} argumentIndx the index of the argument.
+     * \param {*} value The value of the argument.
+     * \return {string} The value as a string.
      */
     function glFunctionArgToString(functionName, argumentIndex, value) {
         var funcInfo = glValidEnumContexts[functionName];
@@ -214,9 +214,9 @@ WebGLDebugUtils = function () {
      * Converts the arguments of a WebGL function to a string.
      * Attempts to convert enum arguments to strings.
      *
-     * @param {string} functionName the name of the WebGL function.
-     * @param {number} args The arguments.
-     * @return {string} The arguments as a string.
+     * \param {string} functionName the name of the WebGL function.
+     * \param {number} args The arguments.
+     * \return {string} The arguments as a string.
      */
     function glFunctionArgsToString(functionName, args) {
         // apparently we can't do args.join(",");
@@ -258,13 +258,13 @@ WebGLDebugUtils = function () {
      * gl.getError after every command and calls a function if the
      * result is not gl.NO_ERROR.
      *
-     * @param {!WebGLRenderingContext} ctx The webgl context to
+     * \param {!WebGLRenderingContext} ctx The webgl context to
      *        wrap.
-     * @param {!function(err, funcName, args): void} opt_onErrorFunc
+     * \param {!function(err, funcName, args): void} opt_onErrorFunc
      *        The function to call when gl.getError returns an
      *        error. If not specified the default function calls
      *        console.log with a message.
-     * @param {!function(funcName, args): void} opt_onFunc The
+     * \param {!function(funcName, args): void} opt_onFunc The
      *        function to call when each webgl function is called.
      *        You can use this to log all calls for example.
      */
@@ -759,7 +759,7 @@ WebGLDebugUtils = function () {
     return {
         /**
          * Initializes this module. Safe to call more than once.
-         * @param {!WebGLRenderingContext} ctx A WebGL context. If
+         * \param {!WebGLRenderingContext} ctx A WebGL context. If
          }
          *    you have more than one context it doesn't matter which one
          *    you pass in, it is only used to pull out constants.
@@ -768,8 +768,8 @@ WebGLDebugUtils = function () {
 
         /**
          * Returns true or false if value matches any WebGL enum
-         * @param {*} value Value to check if it might be an enum.
-         * @return {boolean} True if value matches one of the WebGL defined enums
+         * \param {*} value Value to check if it might be an enum.
+         * \return {boolean} True if value matches one of the WebGL defined enums
          */
         'mightBeEnum': mightBeEnum,
 
@@ -780,8 +780,8 @@ WebGLDebugUtils = function () {
          *   WebGLDebugUtil.init(ctx);
          *   var str = WebGLDebugUtil.glEnumToString(ctx.getError());
          *
-         * @param {number} value Value to return an enum for
-         * @return {string} The string version of the enum.
+         * \param {number} value Value to return an enum for
+         * \return {string} The string version of the enum.
          */
         'glEnumToString': glEnumToString,
 
@@ -795,10 +795,10 @@ WebGLDebugUtils = function () {
          *
          * would return 'TEXTURE_2D'
          *
-         * @param {string} functionName the name of the WebGL function.
-         * @param {number} argumentIndx the index of the argument.
-         * @param {*} value The value of the argument.
-         * @return {string} The value as a string.
+         * \param {string} functionName the name of the WebGL function.
+         * \param {number} argumentIndx the index of the argument.
+         * \param {*} value The value of the argument.
+         * \return {string} The value as a string.
          */
         'glFunctionArgToString': glFunctionArgToString,
 
@@ -806,9 +806,9 @@ WebGLDebugUtils = function () {
          * Converts the arguments of a WebGL function to a string.
          * Attempts to convert enum arguments to strings.
          *
-         * @param {string} functionName the name of the WebGL function.
-         * @param {number} args The arguments.
-         * @return {string} The arguments as a string.
+         * \param {string} functionName the name of the WebGL function.
+         * \param {number} args The arguments.
+         * \return {string} The arguments as a string.
          */
         'glFunctionArgsToString': glFunctionArgsToString,
 
@@ -828,11 +828,11 @@ WebGLDebugUtils = function () {
          *    ctx = WebGLDebugUtils.makeDebugContext(
          *        canvas.getContext("webgl"), throwOnGLError);
          *
-         * @param {!WebGLRenderingContext} ctx The webgl context to wrap.
-         * @param {!function(err, funcName, args): void} opt_onErrorFunc The function
+         * \param {!WebGLRenderingContext} ctx The webgl context to wrap.
+         * \param {!function(err, funcName, args): void} opt_onErrorFunc The function
          *     to call when gl.getError returns an error. If not specified the default
          *     function calls console.log with a message.
-         * @param {!function(funcName, args): void} opt_onFunc The
+         * \param {!function(funcName, args): void} opt_onFunc The
          *     function to call when each webgl function is called. You
          *     can use this to log all calls for example.
          */
@@ -859,13 +859,13 @@ WebGLDebugUtils = function () {
          *   after it has been lost. Defaults to 0. Pass -1 to prevent
          *   automatic restoring.
          *
-         * @param {!Canvas} canvas The canvas element to wrap.
+         * \param {!Canvas} canvas The canvas element to wrap.
          */
         'makeLostContextSimulatingCanvas': makeLostContextSimulatingCanvas,
 
         /**
          * Resets a context to the initial state.
-         * @param {!WebGLRenderingContext} ctx The webgl context to
+         * \param {!WebGLRenderingContext} ctx The webgl context to
          *     reset.
          */
         'resetToInitialState': resetToInitialState

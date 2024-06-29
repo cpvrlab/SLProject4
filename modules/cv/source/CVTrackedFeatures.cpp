@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      CVTrackedFeatures.cpp
-//  Date:      Spring 2017
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Pascal Zingg, Timon Tschanz, Marcus Hudritsch, Michael Goettlicher
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      CVTrackedFeatures.cpp
+ * \date      Spring 2017
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Pascal Zingg, Timon Tschanz, Marcus Hudritsch, Michael Goettlicher
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 /*
 The OpenCV library version 3.4 or above with extra module must be present.

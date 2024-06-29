@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      sl/SLTexFont.cpp
-//  Authors:   Marcus Hudritsch, original author is Philippe Decaudin
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      sl/SLTexFont.cpp
+ * \date      July 2014
+ * \authors   Marcus Hudritsch, original author is Philippe Decaudin
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLScene.h>
 #include <SLTexFont.h>

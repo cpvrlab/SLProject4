@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      PerPixTmBackground.frag
-//  Purpose:   GLSL fragment shader for background texture mapping
-//  Date:      September 2020
-//  Authors:   Marcus Hudritsch, Michael Goettlicher
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      PerPixTmBackground.frag
+ * \brief     GLSL fragment shader for background texture mapping
+ * \date      September 2020
+ * \authors   Marcus Hudritsch, Michael Goettlicher
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #extension GL_OES_EGL_image_external_essl3 : enable
 

@@ -1,12 +1,11 @@
-//#############################################################################
-//  File:      WAIFrame.cpp
-//  Authors:   Raúl Mur-Artal, Michael Goettlicher
-//  Date:      Dez 2017
+/**
+ * \file      WAIFrame.cpp
+ * \authors   Raúl Mur-Artal, Michael Goettlicher
+ * \date      Dez 2017
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  Authors:   Marcus Hudritsch, Michael Goettlicher
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+ * \authors   Marcus Hudritsch, Michael Goettlicher
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 /**
  * This file is part of ORB-SLAM2.
  *

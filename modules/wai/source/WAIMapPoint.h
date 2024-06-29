@@ -1,12 +1,11 @@
-//#############################################################################
-//  File:      WAIMapPoint.h
-//  Authors:   Michael Goettlicher
-//  Date:      October 2017
+/**
+ * \file      WAIMapPoint.h
+ * \authors   Michael Goettlicher
+ * \date      October 2017
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #ifndef WAIMAPPOINT_H
 #define WAIMAPPOINT_H

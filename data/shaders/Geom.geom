@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      Geom.geom
-//  Purpose:   GLSL geom program for geom exercise
-//  Date:      November 2021
-//  Authors:   Marc Affolter
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      Geom.geom
+ * \brief     GLSL geom program for geom exercise
+ * \date      November 2021
+ * \authors   Marc Affolter
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

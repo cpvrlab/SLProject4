@@ -1,12 +1,11 @@
-//#############################################################################
-//  File:      PhongLighting.cpp
-//  Purpose:   Core profile OpenGL application with Phong lighted cube with
-//             GLFW as the OS GUI interface (http://www.glfw.org/).
-//  Date:      September 2012 (HS12)
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      PhongLighting.cpp
+ * \details   Core profile OpenGL application with Phong lighted cube with
+ *            GLFW as the OS GUI interface (http://www.glfw.org/).
+ * \date      September 2012 (HS12)
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <GL/gl3w.h>    // OpenGL headers
 #include <GLFW/glfw3.h> // GLFW GUI library

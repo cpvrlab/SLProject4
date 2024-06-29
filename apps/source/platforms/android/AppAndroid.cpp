@@ -1,11 +1,16 @@
-//#############################################################################
-//  File:      AppAndroid.cpp
-//  Date:      June 2024
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marino von Wattenwyl
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      AppAndroid.cpp
+ * \brief     App::run implementation from App.h for the Android platform
+ * \details   The functions implement mostly the callbacks for the platform
+ *            Android over the JNI interface into SLInterface.h.
+ *            For more info about App framework see: 
+ *            https://cpvrlab.github.io/SLProject4/app-framework.html
+ * \date      June 2024
+ * \authors   Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <App.h>
 #include <SLGLState.h>

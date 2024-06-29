@@ -1,12 +1,11 @@
-//#############################################################################
-//  File:      DiffuseSphere.cpp
-//  Purpose:   Core profile OpenGL application with diffuse lighted sphere with
-//             GLFW as the OS GUI interface (http://www.glfw.org/).
-//  Date:      December 2015 (HS15)
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      DiffuseSphere.cpp
+ * \details   Core profile OpenGL application with diffuse lighted sphere with
+ *            GLFW as the OS GUI interface (http://www.glfw.org/).
+ * \date      December 2015 (HS15)
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <GL/gl3w.h>    // OpenGL headers
 #include <GLFW/glfw3.h> // GLFW GUI library

@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      Depth.vert
-//  Purpose:   Simple depth shader
-//  Date:      March 2020
-//  Authors:   Marcus Hudritsch, Michael Schertenleib
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      Depth.vert
+ * \brief     Simple depth shader
+ * \date      March 2020
+ * \authors   Marcus Hudritsch, Michael Schertenleib
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

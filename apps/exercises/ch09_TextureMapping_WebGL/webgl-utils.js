@@ -31,7 +31,7 @@
 
 
 /**
- * @fileoverview This file contains functions every webgl program will need
+ * \fileoverview This file contains functions every webgl program will need
  * a version of one way or another.
  *
  * Instead of setting up a context manually it is recommended to
@@ -61,9 +61,9 @@ WebGLUtils = function () {
 
     /**
      * Creates the HTLM for a failure message
-     * @param {string} canvasContainerId id of container of th
+     * \param {string} canvasContainerId id of container of th
      *        canvas.
-     * @return {string} The html.
+     * \return {string} The html.
      */
     var makeFailHTML = function (msg) {
         return '' +
@@ -77,7 +77,7 @@ WebGLUtils = function () {
 
     /**
      * Mesasge for getting a webgl browser
-     * @type {string}
+     * \type {string}
      */
     var GET_A_WEBGL_BROWSER = '' +
         'This page requires a browser that supports WebGL.<br/>' +
@@ -85,7 +85,7 @@ WebGLUtils = function () {
 
     /**
      * Mesasge for need better hardware
-     * @type {string}
+     * \type {string}
      */
     var OTHER_PROBLEM = '' +
         "It doesn't appear your computer can support WebGL.<br/>" +
@@ -95,11 +95,11 @@ WebGLUtils = function () {
      * Creates a webgl context. If creation fails it will
      * change the contents of the container of the <canvas>
      * tag to an error message with the correct links for WebGL.
-     * @param {Element} canvas. The canvas element to create a
+     * \param {Element} canvas. The canvas element to create a
      *     context from.
-     * @param {WebGLContextCreationAttirbutes} opt_attribs Any
+     * \param {WebGLContextCreationAttirbutes} opt_attribs Any
      *     creation attributes you want to pass in.
-     * @return {WebGLRenderingContext} The created context.
+     * \return {WebGLRenderingContext} The created context.
      */
     var setupWebGL = function (canvas, opt_attribs) {
         function showLink(str) {
@@ -123,9 +123,9 @@ WebGLUtils = function () {
 
     /**
      * Creates a webgl context.
-     * @param {!Canvas} canvas The canvas tag to get context
+     * \param {!Canvas} canvas The canvas tag to get context
      *     from. If one is not passed in one will be created.
-     * @return {!WebGLContext} The created context.
+     * \return {!WebGLContext} The created context.
      */
     var create3DContext = function (canvas, opt_attribs) {
         var names = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];

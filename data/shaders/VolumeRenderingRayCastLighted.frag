@@ -1,13 +1,12 @@
-//#############################################################################
-//  File:      VolumeRenderingRayCastLighted.frag
-//  Purpose:   GLSL fragment shader performing volume rendering using a simple
-//             sampling method along the view ray. The resulting color is
-//             calculated using a transfer function (via a lookup table).
-//  Date:      March 2015
-//  Authors:   Manuel Frischknecht, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      VolumeRenderingRayCastLighted.frag
+ * \details   GLSL fragment shader performing volume rendering using a simple
+ *            sampling method along the view ray. The resulting color is
+ *            calculated using a transfer function (via a lookup table).
+ * \date      March 2015
+ * \authors   Manuel Frischknecht, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 precision highp sampler2D;

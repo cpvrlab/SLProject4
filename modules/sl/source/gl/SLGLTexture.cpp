@@ -1,11 +1,11 @@
-//#############################################################################
-//   File:      SLGLTexture.cpp
-//   Date:      July 2014
-//   Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//   Authors:   Marcus Hudritsch
-//   License:   This software is provided under the GNU General Public License
-//              Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLGLTexture.cpp
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLGLState.h>
 #include <SLGLTexture.h>
@@ -113,18 +113,18 @@ SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
  * Textures can be used in multiple materials. Textures can belong therefore
  * to the global assets such as meshes (SLMesh), materials (SLMaterial),
  * textures (SLGLTexture) and shader programs (SLGLProgram).
- * @param assetMgr Pointer to a global asset manager. If passed the asset
+ * \param assetMgr Pointer to a global asset manager. If passed the asset
  * manager is the owner of the instance and will do the deallocation. If a
  * nullptr is passed the creator is responsible for the deallocation.
- * @param data Data pointer to the first top-left pixel
- * @param width Width of the image in pixels
- * @param height Height of the image in pixels
- * @param cvtype OpenCV image type
- * @param min_filter Minification filter constant from OpenGL
- * @param mag_filter Magnification filter constant from OpenGL
- * @param type Type of the texture
- * @param wrapS Texture wrapping in S direction (OpenGL constant)
- * @param wrapT Texture wrapping in T direction (OpenGL constant)
+ * \param data Data pointer to the first top-left pixel
+ * \param width Width of the image in pixels
+ * \param height Height of the image in pixels
+ * \param cvtype OpenCV image type
+ * \param min_filter Minification filter constant from OpenGL
+ * \param mag_filter Magnification filter constant from OpenGL
+ * \param type Type of the texture
+ * \param wrapS Texture wrapping in S direction (OpenGL constant)
+ * \param wrapT Texture wrapping in T direction (OpenGL constant)
  */
 SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
                          unsigned char*  data,
@@ -172,16 +172,16 @@ SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
  * Textures can be used in multiple materials. Textures can belong therefore
  * to the global assets such as meshes (SLMesh), materials (SLMaterial),
  * textures (SLGLTexture) and shader programs (SLGLProgram).
- * @param assetMgr Pointer to a global asset manager. If passed the asset
+ * \param assetMgr Pointer to a global asset manager. If passed the asset
  * manager is the owner of the instance and will do the deallocation. If a
  * nullptr is passed the creator is responsible for the deallocation.
- * @param filename Name of the texture image file. If only a filename is
+ * \param filename Name of the texture image file. If only a filename is
  * passed it will be search on the SLGLTexture::defaultPath.
- * @param min_filter Minification filter constant from OpenGL
- * @param mag_filter Magnification filter constant from OpenGL
- * @param type Type of the texture
- * @param wrapS Texture wrapping in S direction (OpenGL constant)
- * @param wrapT Texture wrapping in T direction (OpenGL constant)
+ * \param min_filter Minification filter constant from OpenGL
+ * \param mag_filter Magnification filter constant from OpenGL
+ * \param type Type of the texture
+ * \param wrapS Texture wrapping in S direction (OpenGL constant)
+ * \param wrapT Texture wrapping in T direction (OpenGL constant)
  */
 SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
                          const SLstring& filename,
@@ -246,17 +246,17 @@ SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
  * Textures can be used in multiple materials. Textures can belong therefore
  * to the global assets such as meshes (SLMesh), materials (SLMaterial),
  * textures (SLGLTexture) and shader programs (SLGLProgram).
- * @param assetMgr Pointer to a global asset manager. If passed the asset
+ * \param assetMgr Pointer to a global asset manager. If passed the asset
  * manager is the owner of the instance and will do the deallocation. If a
  * nullptr is passed the creator is responsible for the deallocation.
- * @param files Vector of texture image files. If only filenames are
+ * \param files Vector of texture image files. If only filenames are
  * passed they will be searched on the SLGLTexture::defaultPath.
- * @param min_filter Minification filter constant from OpenGL
- * @param mag_filter Magnification filter constant from OpenGL
- * @param wrapS Texture wrapping in S direction (OpenGL constant)
- * @param wrapT Texture wrapping in T direction (OpenGL constant)
- * @param name Name of the 3D texture
- * @param loadGrayscaleIntoAlpha Flag if grayscale image should be loaded into
+ * \param min_filter Minification filter constant from OpenGL
+ * \param mag_filter Magnification filter constant from OpenGL
+ * \param wrapS Texture wrapping in S direction (OpenGL constant)
+ * \param wrapT Texture wrapping in T direction (OpenGL constant)
+ * \param name Name of the 3D texture
+ * \param loadGrayscaleIntoAlpha Flag if grayscale image should be loaded into
  * alpha channel.
  */
 SLGLTexture::SLGLTexture(SLAssetManager*  assetMgr,
@@ -312,18 +312,18 @@ SLGLTexture::SLGLTexture(SLAssetManager*  assetMgr,
  * Textures can be used in multiple materials. Textures can belong therefore
  * to the global assets such as meshes (SLMesh), materials (SLMaterial),
  * textures (SLGLTexture) and shader programs (SLGLProgram).
- * @param assetMgr Pointer to a global asset manager. If passed the asset
+ * \param assetMgr Pointer to a global asset manager. If passed the asset
  * manager is the owner of the instance and will do the deallocation. If a
  * nullptr is passed the creator is responsible for the deallocation.
- * @param depth Depth of 3D texture.
- * @param filename texture image file. If only filenames are
+ * \param depth Depth of 3D texture.
+ * \param filename texture image file. If only filenames are
  * passed they will be searched on the SLGLTexture::defaultPath.
- * @param min_filter Minification filter constant from OpenGL
- * @param mag_filter Magnification filter constant from OpenGL
- * @param wrapS Texture wrapping in S direction (OpenGL constant)
- * @param wrapT Texture wrapping in T direction (OpenGL constant)
- * @param name Name of the 3D texture
- * @param loadGrayscaleIntoAlpha Flag if grayscale image should be loaded into
+ * \param min_filter Minification filter constant from OpenGL
+ * \param mag_filter Magnification filter constant from OpenGL
+ * \param wrapS Texture wrapping in S direction (OpenGL constant)
+ * \param wrapT Texture wrapping in T direction (OpenGL constant)
+ * \param name Name of the 3D texture
+ * \param loadGrayscaleIntoAlpha Flag if grayscale image should be loaded into
  * alpha channel.
  */
 SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
@@ -380,14 +380,14 @@ SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
  * Textures can be used in multiple materials. Textures can belong therefore
  * to the global assets such as meshes (SLMesh), materials (SLMaterial),
  * textures (SLGLTexture) and shader programs (SLGLProgram).
- * @param assetMgr Pointer to a global asset manager. If passed the asset
+ * \param assetMgr Pointer to a global asset manager. If passed the asset
  * manager is the owner of the instance and will do the deallocation. If a
  * nullptr is passed the creator is responsible for the deallocation.
- * @param colors Vector of colors
- * @param min_filter Minification filter constant from OpenGL
- * @param mag_filter Magnification filter constant from OpenGL
- * @param wrapS Texture wrapping in S direction (OpenGL constant)
- * @param name Name of the 1D texture
+ * \param colors Vector of colors
+ * \param min_filter Minification filter constant from OpenGL
+ * \param mag_filter Magnification filter constant from OpenGL
+ * \param wrapS Texture wrapping in S direction (OpenGL constant)
+ * \param name Name of the 1D texture
  */
 SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
                          const SLVCol4f& colors,
@@ -442,18 +442,18 @@ SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
  * Textures can be used in multiple materials. Textures can belong therefore
  * to the global assets such as meshes (SLMesh), materials (SLMaterial),
  * textures (SLGLTexture) and shader programs (SLGLProgram).
- * @param assetMgr Pointer to a global asset manager. If passed the asset
+ * \param assetMgr Pointer to a global asset manager. If passed the asset
  * manager is the owner of the instance and will do the deallocation. If a
  * nullptr is passed the creator is responsible for the deallocation.
- * @param filenameXPos Filename of the cubemap image in the pos. X direction.
- * @param filenameXNeg Filename of the cubemap image in the neg. X direction.
- * @param filenameYPos Filename of the cubemap image in the pos. Y direction.
- * @param filenameYNeg Filename of the cubemap image in the neg. Y direction.
- * @param filenameZPos Filename of the cubemap image in the pos. Z direction.
- * @param filenameZNeg Filename of the cubemap image in the neg. Z direction.
- * @param min_filter Minification filter constant from OpenGL
- * @param mag_filter Magnification filter constant from OpenGL
- * @param type Texture Type
+ * \param filenameXPos Filename of the cubemap image in the pos. X direction.
+ * \param filenameXNeg Filename of the cubemap image in the neg. X direction.
+ * \param filenameYPos Filename of the cubemap image in the pos. Y direction.
+ * \param filenameYNeg Filename of the cubemap image in the neg. Y direction.
+ * \param filenameZPos Filename of the cubemap image in the pos. Z direction.
+ * \param filenameZNeg Filename of the cubemap image in the neg. Z direction.
+ * \param min_filter Minification filter constant from OpenGL
+ * \param mag_filter Magnification filter constant from OpenGL
+ * \param type Texture Type
  */
 SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
                          const SLstring& filenameXPos,

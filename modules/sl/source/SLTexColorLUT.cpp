@@ -1,11 +1,12 @@
-//#############################################################################
-//  File:      SLTexColorLUT.cpp
-//  Purpose:   Implements a transfer function functionality
-//  Date:      July 2017
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLTexColorLUT.cpp
+ * \brief     Implements a transfer function functionality
+ * \date      July 2017
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLTexColorLUT.h>
 #include <SLAssetManager.h>

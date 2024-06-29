@@ -1,12 +1,12 @@
-//#############################################################################
-//  File:      sl/SLInterface.h
-//  Purpose:   Declaration of the main Scene Library C-Interface.
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      sl/SLInterface.h
+ * \brief   Declaration of the main Scene Library C-Interface.
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLINTERFACE_H
 #define SLINTERFACE_H

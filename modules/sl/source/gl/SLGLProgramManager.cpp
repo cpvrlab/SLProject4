@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLGLProgramManager.cpp
-//  Date:      March 2020
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Michael Goettlicher, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLGLProgramManager.cpp
+ * \date      March 2020
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Michael Goettlicher, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <SLGLProgramManager.h>
 #include <SLGLProgramGeneric.h>
@@ -18,8 +18,8 @@ string                                         SLGLProgramManager::configPath;
 std::map<SLStdShaderProg, SLGLProgramGeneric*> SLGLProgramManager::_programs;
 //-----------------------------------------------------------------------------
 /*!
- * @param shdrPath Path to the shader files
- * @param confPath Path to the writable config directory
+ * \param shdrPath Path to the shader files
+ * \param confPath Path to the writable config directory
  */
 void SLGLProgramManager::init(string shaderPath, string configPath)
 {

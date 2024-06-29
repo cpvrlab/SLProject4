@@ -1,11 +1,14 @@
-//#############################################################################
-//  File:      AppDemoSceneParticleRingOfFire.h
-//  Date:      May 2024
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch, Particle System from Marc Affolter
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      AppDemoSceneParticleRingOfFire.h
+ * \brief     Class declaration for an SLScene inherited class
+ * \details   For more info about App framework and the scene assembly see: 
+ *            https://cpvrlab.github.io/SLProject4/app-framework.html
+ * \date      May 2024
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Marcus Hudritsch, Particle System from Marc Affolter
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #ifndef APPDEMOSCENEPARTICLERING_H
 #define APPDEMOSCENEPARTICLERING_H

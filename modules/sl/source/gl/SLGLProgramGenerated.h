@@ -1,13 +1,13 @@
-//#############################################################################
-//  File:      SLGLProgramGenerated.h
-//  Authors:   Marcus Hudritsch
-//  Purpose:   Defines a generated shader program that just starts and stops the
-//             shaders that are hold in the base class SLGLProgram.
-//  Date:      December 2020
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLGLProgramGenerated.h
+ * \authors   Marcus Hudritsch
+ * \details   Defines a generated shader program that just starts and stops the
+ *            shaders that are hold in the base class SLGLProgram.
+ * \date      December 2020
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLGLPROGRAMMGENERATED_H
 #define SLGLPROGRAMMGENERATED_H

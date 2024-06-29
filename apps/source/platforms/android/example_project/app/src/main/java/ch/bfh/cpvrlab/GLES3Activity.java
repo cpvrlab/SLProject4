@@ -1,12 +1,11 @@
-//#############################################################################
-//  File:      GLES3Activity.java
-//  Date:      Spring 2017
-//  Purpose:   Android Java toplevel activity class
+/**
+ * \file      GLES3Activity.java
+ * \date      Spring 2017
+ * \brief   Android Java toplevel activity class
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  Authors:   Marcus Hudritsch, Zingg Pascal
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+ * \authors   Marcus Hudritsch, Zingg Pascal
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 // Please do not change the name space. The SLProject app is identified in the app-store with it.
 package ch.bfh.cpvrlab;
@@ -468,8 +467,8 @@ public class GLES3Activity extends Activity implements View.OnTouchListener, Sen
      * It is called from the GL view renderer thread.
      * While the service is starting no other calls to startService are allowed.
      *
-     * @param requestedVideoType (0 = GLES3Lib.VIDEO_TYPE_NONE, 1 = *_MAIN, 2 = *_SCND)
-     * @param requestedVideoSizeIndex (0 = 640x480, -1 = the next smaller, +1 = the next bigger)
+     * \param requestedVideoType (0 = GLES3Lib.VIDEO_TYPE_NONE, 1 = *_MAIN, 2 = *_SCND)
+     * \param requestedVideoSizeIndex (0 = 640x480, -1 = the next smaller, +1 = the next bigger)
      */
     public void cameraStart(int requestedVideoType, int requestedVideoSizeIndex) {
         if (!_permissionCameraGranted) return;
@@ -632,7 +631,7 @@ public class GLES3Activity extends Activity implements View.OnTouchListener, Sen
      * This method in turn updates notification, writes to file, reobtains
      * preferences, notifies main service client and resets location managers.
      *
-     * @param loc Location object
+     * \param loc Location object
      */
     public void onLocationChanged(Location loc) {
         //long currentTimeStamp = System.currentTimeMillis();

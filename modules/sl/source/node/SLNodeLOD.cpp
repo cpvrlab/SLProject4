@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLNodeLOD.cpp
-//  Date:      July 2021
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Jan Dellsperger, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLNodeLOD.cpp
+ * \date      July 2021
+ * \authors   Jan Dellsperger, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLSceneView.h>
 #include <SLNodeLOD.h>
@@ -19,10 +19,10 @@
  * child node has e.g. a minLodCoverage of 0.1 it means that it will be visible
  * if its bounding rectangle covers more then 10% of the viewport. The first
  * child node in the group must be the one with the highest resolution.
- * @param childToAdd LOD child node pointer to add
- * @param minLodCoverage A value > 0 and < 1 and < than the minLodCoverage
+ * \param childToAdd LOD child node pointer to add
+ * \param minLodCoverage A value > 0 and < 1 and < than the minLodCoverage
  * of the last node in the LOD group
- * @param levelForSM Level to use for shadow mapping (0 uses the active level)
+ * \param levelForSM Level to use for shadow mapping (0 uses the active level)
  */
 void SLNodeLOD::addChildLOD(SLNode* childToAdd,
                             SLfloat minLodCoverage,

@@ -1,11 +1,16 @@
-//#############################################################################
-//  File:      AppGLFW.cpp
-//  Date:      June 2024
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marino von Wattenwyl
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      AppGLFW.cpp
+ * \brief     App::run implementation from App.h for the GLFW platform
+ * \details   The functions implement mostly the callbacks for the platform
+ *            independent OpenGL window framework for desktop OS.
+ *            For more info about App framework see: 
+ *            https://cpvrlab.github.io/SLProject4/app-framework.html
+ * \date      June 2024
+ * \authors   Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <App.h>
 #include <SLGLState.h>
@@ -153,6 +158,7 @@ int App::run(Config configuration)
     CVCapture::instance()->loadCalibrations(Utils::ComputerInfos::get(),
                                             AppDemo::calibFilePath);
 
+    /////////////////////////////////////////////////////////
     slCreateApp(cmdLineArgs,
                 projectRoot + "/data/",
                 projectRoot + "/data/shaders/",
@@ -162,9 +168,11 @@ int App::run(Config configuration)
                 projectRoot + "/data/videos/",
                 configDir,
                 "AppDemoGLFW");
+    /////////////////////////////////////////////////////////
 
     slLoadCoreAssetsSync();
 
+    /////////////////////////////////////////////////////////
     slCreateSceneView(AppDemo::assetManager,
                       AppDemo::scene,
                       scrWidth,
@@ -177,6 +185,7 @@ int App::run(Config configuration)
                       reinterpret_cast<void*>(config.onGuiBuild),
                       reinterpret_cast<void*>(config.onGuiLoadConfig),
                       reinterpret_cast<void*>(config.onGuiSaveConfig));
+    /////////////////////////////////////////////////////////
 
     // Event loop
     while (!slShouldClose())
@@ -221,12 +230,12 @@ static SLbool onPaint()
     if (AppDemo::assetLoader->isLoading())
         AppDemo::assetLoader->checkIfAsyncLoadingIsDone();
 
-    //////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
     SLbool appNeedsUpdate  = App::config.onUpdate && App::config.onUpdate(sv);
     SLbool jobIsRunning    = slUpdateParallelJob();
     SLbool isLoading       = AppDemo::assetLoader->isLoading();
     SLbool viewNeedsUpdate = slPaintAllViews();
-    //////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
 
     // Fast copy the back buffer to the front buffer. This is OS dependent.
     glfwSwapBuffers(window);
@@ -242,7 +251,7 @@ static void onGLFWError(int error, const char* description)
     fputs(description, stderr);
 }
 //-----------------------------------------------------------------------------
-/*!
+/*! 
 onResize: Event handler called on the resize event of the window. This event
 should called once before the onPaint event.
 */

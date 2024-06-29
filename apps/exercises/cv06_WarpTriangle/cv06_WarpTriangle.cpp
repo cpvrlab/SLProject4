@@ -1,10 +1,9 @@
-//#############################################################################
-//  File:      cv06_WarpTriangle.cpp
-//  Purpose:   Minimal OpenCV application that warps a triangle into another
-//  Copyright: Based on Satya Mallick's Tutorial:
-//  https://www.learnopencv.com/warp-one-triangle-to-another-using-opencv-c-python
-//  Date:      Spring 2018
-//#############################################################################
+/**
+ * \file      cv06_WarpTriangle.cpp
+ * \brief     Minimal OpenCV application that warps a triangle into another
+ * \copyright Based on Satya Mallick's Tutorial at https://www.learnopencv.com
+ * \date      Spring 2018
+*/
 
 #include <opencv2/opencv.hpp>
 #include <stdlib.h>

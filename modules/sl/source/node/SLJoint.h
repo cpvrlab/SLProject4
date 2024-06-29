@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLJoint.h
-//  Date:      Autumn 2014
-//  Codestyle: https://code.google.com/p/slproject/wiki/CodingStyleGuidelines
-//  Authors:   Marc Wacker, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLJoint.h
+ * \date      Autumn 2014
+ * \authors   Marc Wacker, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLBONE_H
 #define SLBONE_H

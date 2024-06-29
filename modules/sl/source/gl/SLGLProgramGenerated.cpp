@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLGLProgramGenerated.cpp
-//  Date:      December 2020
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLGLProgramGenerated.cpp
+ * \date      December 2020
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLAssetManager.h>
 #include <SLGLProgramManager.h>
@@ -1856,8 +1856,8 @@ void SLGLProgramGenerated::buildProgramNamePS(SLMaterial* mat,
 /*! Builds the GLSL program code for the vertex and fragment shaders. The code
  * is only assembled but not compiled and linked. This happens within the
  * before the first draw call from within SLMesh::draw.
- * @param mat Parent material pointer
- * @param lights Pointer of vector of lights
+ * \param mat Parent material pointer
+ * \param lights Pointer of vector of lights
  */
 void SLGLProgramGenerated::buildProgramCode(SLMaterial* mat,
                                             SLVLight*   lights,
@@ -1902,8 +1902,8 @@ void SLGLProgramGenerated::buildProgramCode(SLMaterial* mat,
 /*! Builds the GLSL program code for the vertex, geometry and fragment shaders
  * (for particle system drawing). The code is only assembled but not compiled and linked.
  * This happens within the before the first draw call from within SLMesh::draw.
- * @param mat Parent material pointer
- * @param isDrawProg Flag if program is for drawing instead of update
+ * \param mat Parent material pointer
+ * \param isDrawProg Flag if program is for drawing instead of update
  */
 void SLGLProgramGenerated::buildProgramCodePS(SLMaterial* mat,
                                               bool        isDrawProg,

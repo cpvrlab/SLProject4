@@ -1,9 +1,9 @@
-//#############################################################################
-//  File:      cv13_Snapchat2D.cpp
-//  Purpose:   Minimal OpenCV app for a 2D Snapchatfilter
+/**
+ * \file      cv13_Snapchat2D.cpp
+ * \brief   Minimal OpenCV app for a 2D Snapchatfilter
 //  Taken from Satya Mallic on: http://www.learnopencv.com
-//  Date:      Authumn 2017
-//#############################################################################
+ * \date      Authumn 2017
+*/
 
 #include <opencv2/face.hpp>
 #include <opencv2/opencv.hpp>

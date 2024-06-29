@@ -1,13 +1,12 @@
-//#############################################################################
-//  File:      PerPixCook.vert
-//  Purpose:   GLSL vertex shader for Cook-Torrance physical based rendering.
+/**
+ * \file      PerPixCook.vert
+ * \brief     GLSL vertex shader for Cook-Torrance physical based rendering.
 //             Based on the physically based rendering (PBR) tutorial with GLSL
 //             from Joey de Vries on https://learnopengl.com/#!PBR/Theory
-//  Date:      July 2014
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

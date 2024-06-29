@@ -1,14 +1,13 @@
-//#############################################################################
-//  File:      VolumeRenderingRayCast.vert
-//  Purpose:   Base vertex shader that allows for raycast volume rendering through
-//             a proxy geometry (usually a cube). The position of each vertex is
-//             copied into a output, that provides the entry position of the
-//             view ray to the according fragment shader for further calculations.
-//  Date:      March 2015
-//  Authors:   Manuel Frischknecht, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      VolumeRenderingRayCast.vert
+ * \details   Base vertex shader that allows for raycast volume rendering through
+ *            a proxy geometry (usually a cube). The position of each vertex is
+ *            copied into a output, that provides the entry position of the
+ *            view ray to the according fragment shader for further calculations.
+ * \date      March 2015
+ * \authors   Manuel Frischknecht, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 //-----------------------------------------------------------------------------
 layout (location = 0) in vec4  a_position;     // Vertex position attribute

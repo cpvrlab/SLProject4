@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      TextureOnly.vert
-//  Purpose:   GLSL vertex program for texture mapping only
-//  Date:      July 2014
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      TextureOnly.vert
+ * \brief     GLSL vertex program for texture mapping only
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

@@ -1,13 +1,12 @@
-//#############################################################################
-//  File:      PBR_PrefilterRoughness.frag
-//  Purpose:   GLSL fragment program to generate a prefiltered environment map
+/**
+ * \file      PBR_PrefilterRoughness.frag
+ * \brief     GLSL fragment program to generate a prefiltered environment map
 //             using convolution, similar to the irradiance convolution map but
 //             taking a roughness value into account.
-//  Date:      April 2018
-//  Authors:   Carlos Arauz. Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+ * \date      April 2018
+ * \authors   Carlos Arauz. Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

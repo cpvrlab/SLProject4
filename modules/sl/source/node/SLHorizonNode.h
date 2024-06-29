@@ -1,12 +1,12 @@
-//#############################################################################
-//  File:      SLHorizonNode.h
-//  Authors:   Michael Göttlicher
-//  Date:      November 2020
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Michael Göttlicher, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLHorizonNode.h
+ * \authors   Michael Göttlicher
+ * \date      November 2020
+ * \authors   Michael Göttlicher, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SL_HORIZON_NODE_H
 #define SL_HORIZON_NODE_H

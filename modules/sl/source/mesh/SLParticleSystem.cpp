@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLParticleSystem.cpp
-//  Date:      February 2022
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Affolter Marc in his bachelor thesis in spring 2022
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLParticleSystem.cpp
+ * \date      February 2022
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Affolter Marc in his bachelor thesis in spring 2022
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <climits>
 #include <SLParticleSystem.h>

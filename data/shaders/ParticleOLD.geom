@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      Particle.geom
-//  Purpose:   GLSL geom program for particle system
-//  Date:      October 2021
-//  Authors:   Marc Affolter
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      Particle.geom
+ * \brief     GLSL geom program for particle system
+ * \date      October 2021
+ * \authors   Marc Affolter
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 precision highp float;
 
 //-----------------------------------------------------------------------------

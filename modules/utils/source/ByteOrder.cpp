@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      ByteOrder.cpp
-//  Authors:   Marino von Wattenwyl
-//  Date:      January 2021
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      ByteOrder.cpp
+ * \date      January 2021
+ * \authors   Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <ByteOrder.h>
 #include <cstring>
@@ -16,8 +16,8 @@ namespace ByteOrder
 //-----------------------------------------------------------------------------
 /*! Converts a 16-bit number from little-endian to big-endian regardless of the host byte order.
  * See toBigEndian32() for an explanation of the algorithm.
- * @param src the 16-bit number that should be converted
- * @param dest the pointer where the big-endian result will be written to
+ * \param src the 16-bit number that should be converted
+ * \param dest the pointer where the big-endian result will be written to
  */
 void toBigEndian16(uint16_t src, char* dest)
 {
@@ -68,8 +68,8 @@ void toBigEndian16(uint16_t src, char* dest)
  *
  * std::memcpy(dest, &res, 4);
  *
- * @param src the 32-bit number that should be converted
- * @param dest the pointer where the big-endian result will be written to
+ * \param src the 32-bit number that should be converted
+ * \param dest the pointer where the big-endian result will be written to
  */
 void toBigEndian32(uint32_t src, char* dest)
 {
@@ -83,8 +83,8 @@ void toBigEndian32(uint32_t src, char* dest)
 //-----------------------------------------------------------------------------
 /*! Converts a 64-bit number from little-endian to big-endian regardless of the host byte order.
  * See toBigEndian32() for an explanation of the algorithm.
- * @param src the 64-bit number that should be converted
- * @param dest the pointer where the big-endian result will be written to
+ * \param src the 64-bit number that should be converted
+ * \param dest the pointer where the big-endian result will be written to
  */
 void toBigEndian64(uint64_t src, char* dest)
 {
@@ -101,8 +101,8 @@ void toBigEndian64(uint64_t src, char* dest)
 }
 //-----------------------------------------------------------------------------
 /*! Converts a 16-bit number to big-endian and writes it to a stream
- * @param number the number to be converted and written
- * @param stream the destination stream
+ * \param number the number to be converted and written
+ * \param stream the destination stream
  */
 void writeBigEndian16(uint16_t number, std::ostream& stream)
 {
@@ -112,8 +112,8 @@ void writeBigEndian16(uint16_t number, std::ostream& stream)
 }
 //-----------------------------------------------------------------------------
 /*! Converts a 32-bit number to big-endian and writes it to a stream
- * @param number the number to be converted and written
- * @param stream the destination stream
+ * \param number the number to be converted and written
+ * \param stream the destination stream
  */
 void writeBigEndian32(uint32_t number, std::ostream& stream)
 {
@@ -123,8 +123,8 @@ void writeBigEndian32(uint32_t number, std::ostream& stream)
 }
 //-----------------------------------------------------------------------------
 /*! Converts a 64-bit number to big-endian and writes it to a stream
- * @param number the number to be converted and written
- * @param stream the destination stream
+ * \param number the number to be converted and written
+ * \param stream the destination stream
  */
 void writeBigEndian64(uint64_t number, std::ostream& stream)
 {

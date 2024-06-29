@@ -1,5 +1,15 @@
+/**
+ * \file      SLCircle.h
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
+
 #include <SLCircle.h>
 
+//-----------------------------------------------------------------------------
 SLCircle::SLCircle(SLAssetManager* assetMgr, SLstring name, SLMaterial* material)
   : SLPolyline(assetMgr, name)
 {
@@ -16,3 +26,4 @@ SLCircle::SLCircle(SLAssetManager* assetMgr, SLstring name, SLMaterial* material
 
     buildMesh(points, true, material);
 }
+//-----------------------------------------------------------------------------

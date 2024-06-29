@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      AppDemoGui.h
-//  Date:      Summer 2017
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      AppDemoGui.h
+ * \brief     C++ Header file for the class AppDemoGui.h
+ * \date      July 2014
+ * \note      https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
+ * \authors   Marcus Hudritsch, Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #ifndef SLGUIDEMO_H
 #define SLGUIDEMO_H

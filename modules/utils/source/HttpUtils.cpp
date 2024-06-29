@@ -1,11 +1,12 @@
-//#############################################################################
-//  File:      HttpUtils.cpp
-//  Authors:   Luc Girod
-//  Date:      2020
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      HttpUtils.cpp
+ * \authors   Luc Girod
+ * \date      2020
+ * \authors   Luc Girod
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifdef SL_BUILD_WITH_OPENSSL
 #    include <HttpUtils.h>
@@ -31,9 +32,9 @@ void Socket::reset()
 //-----------------------------------------------------------------------------
 /*!
  *
- * @param host (ip or hostname)
- * @param port
- * @return
+ * \param host (ip or hostname)
+ * \param port
+ * \return
  */
 int Socket::connectTo(string ip,
                       int    port)
@@ -95,9 +96,9 @@ int Socket::connectTo(string ip,
 //-----------------------------------------------------------------------------
 /*!
  *
- * @param data
- * @param size
- * @return
+ * \param data
+ * \param size
+ * \return
  */
 int Socket::sendData(const char* data,
                      size_t      size)
@@ -111,9 +112,9 @@ int Socket::sendData(const char* data,
 //-----------------------------------------------------------------------------
 /*!
  *
- * @param data
- * @param size
- * @return
+ * \param data
+ * \param size
+ * \return
  */
 void Socket::disconnect()
 {
@@ -182,9 +183,9 @@ int Socket::receive(function<int(char* data, int size)> dataCB, int max)
 //-----------------------------------------------------------------------------
 /*!
  *
- * @param ip
- * @param port
- * @return
+ * \param ip
+ * \param port
+ * \return
  */
 int SecureSocket::connectTo(string ip, int port)
 {
@@ -212,9 +213,9 @@ int SecureSocket::connectTo(string ip, int port)
 //-----------------------------------------------------------------------------
 /*!
  *
- * @param data
- * @param size
- * @return
+ * \param data
+ * \param size
+ * \return
  */
 int SecureSocket::sendData(const char* data, size_t size)
 {
@@ -240,8 +241,8 @@ int SecureSocket::sendData(const char* data, size_t size)
 //-----------------------------------------------------------------------------
 /*!
  *
- * @param dataCB
- * @param max
+ * \param dataCB
+ * \param max
  */
 int SecureSocket::receive(function<int(char* data, int size)> dataCB,
                           int                                 max)
@@ -292,8 +293,8 @@ int SecureSocket::receive(function<int(char* data, int size)> dataCB,
 //-----------------------------------------------------------------------------
 /*!
  *
- * @param dataCB
- * @param max
+ * \param dataCB
+ * \param max
  */
 void SecureSocket::disconnect()
 {
@@ -304,7 +305,7 @@ void SecureSocket::disconnect()
 //-----------------------------------------------------------------------------
 /*!
  *
- * @param host
+ * \param host
  */
 DNSRequest::DNSRequest(string host)
 {
@@ -360,7 +361,7 @@ DNSRequest::DNSRequest(string host)
 //-----------------------------------------------------------------------------
 /*!
  *
- * @return
+ * \return
  */
 string DNSRequest::getAddr()
 {
@@ -369,7 +370,7 @@ string DNSRequest::getAddr()
 //-----------------------------------------------------------------------------
 /*!
  *
- * @return
+ * \return
  */
 string DNSRequest::getHostname()
 {
@@ -378,8 +379,8 @@ string DNSRequest::getHostname()
 //-----------------------------------------------------------------------------
 /*!
  *
- * @param data
- * @return
+ * \param data
+ * \return
  */
 static string base64(const string data)
 {
@@ -483,10 +484,10 @@ static string base64(const string data)
 //-----------------------------------------------------------------------------
 /*!
  *
- * @param url
- * @param host
- * @param path
- * @param useTLS
+ * \param url
+ * \param host
+ * \param path
+ * \param useTLS
  */
 static void parseURL(string  url,
                      string& host,
@@ -525,9 +526,9 @@ static void parseURL(string  url,
 //-----------------------------------------------------------------------------
 /*!
  *
- * @param url
- * @param user
- * @param pwd
+ * \param url
+ * \param user
+ * \param pwd
  */
 HttpUtils::GetRequest::GetRequest(string url,
                                   string user,
@@ -566,8 +567,8 @@ HttpUtils::GetRequest::GetRequest(string url,
 //-----------------------------------------------------------------------------
 /*!
  *
- * @param data
- * @return
+ * \param data
+ * \return
  */
 int HttpUtils::GetRequest::processHttpHeaders(std::vector<char>& data)
 {
@@ -626,7 +627,7 @@ int HttpUtils::GetRequest::processHttpHeaders(std::vector<char>& data)
 //-----------------------------------------------------------------------------
 /*!
  *
- * @return
+ * \return
  */
 int HttpUtils::GetRequest::send()
 {
@@ -656,7 +657,7 @@ int HttpUtils::GetRequest::send()
 //-----------------------------------------------------------------------------
 /*!
  *
- * @param contentCB
+ * \param contentCB
  */
 int HttpUtils::GetRequest::getContent(function<int(char* buf, int size)> contentCB)
 {
@@ -683,7 +684,7 @@ int HttpUtils::GetRequest::getContent(function<int(char* buf, int size)> content
 //-----------------------------------------------------------------------------
 /*!
  *
- * @return
+ * \return
  */
 std::vector<string> HttpUtils::GetRequest::getListing()
 {
@@ -735,13 +736,13 @@ std::vector<string> HttpUtils::GetRequest::getListing()
 //-----------------------------------------------------------------------------
 /*!
  *
- * @param url
- * @param processFile
- * @param writeChunk
- * @param processDir
- * @param user
- * @param pwd
- * @param base
+ * \param url
+ * \param processFile
+ * \param writeChunk
+ * \param processDir
+ * \param user
+ * \param pwd
+ * \param base
  */
 int HttpUtils::download(string                                               url,
                         function<int(string path, string file, size_t size)> processFile,
@@ -801,11 +802,11 @@ int HttpUtils::download(string                                               url
 //-----------------------------------------------------------------------------
 /*!
  *
- * @param url
- * @param dst
- * @param user
- * @param pwd
- * @param progress
+ * \param url
+ * \param dst
+ * \param user
+ * \param pwd
+ * \param progress
  */
 int HttpUtils::download(string                                      url,
                         string                                      dst,
@@ -888,9 +889,9 @@ int HttpUtils::download(string                                      url,
 /*!
  * HttpUtils::download return 0 on success otherwise an error code if the
  * download of the file at url to the destination at dst was successful.
- * @param url A uniform resource locator file address of the file to download
- * @param dst A uniform resource locator folder address as destination folder
- * @param progress A function object that is called during the progress
+ * \param url A uniform resource locator file address of the file to download
+ * \param dst A uniform resource locator folder address as destination folder
+ * \param progress A function object that is called during the progress
  */
 int HttpUtils::download(string                                      url,
                         string                                      dst,

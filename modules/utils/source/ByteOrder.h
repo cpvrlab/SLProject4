@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      ByteOrder.h
-//  Authors:   Marino von Wattenwyl
-//  Date:      January 2021
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      ByteOrder.h
+ * \date      January 2021
+ * \authors   Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLPROJECT_BYTEORDER_H
 #define SLPROJECT_BYTEORDER_H

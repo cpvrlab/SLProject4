@@ -1,13 +1,12 @@
-//#############################################################################
-//  File:      AppNodeSceneView.h
-//  Purpose:   Node transform test application that demonstrates all transform
-//             possibilities of SLNode
-//  Date:      July 2015
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marc Wacker, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      AppNodeSceneView.h
+ * \brief     Node transform test app to demonstrates all transforms of SLNode
+ * \date      July 2015
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Marc Wacker, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <SLSceneView.h>
 #include <SLScene.h>

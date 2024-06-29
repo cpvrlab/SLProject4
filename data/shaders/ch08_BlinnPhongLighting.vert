@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      ch08_BlinnPhongLighting.vert
-//  Purpose:   GLSL vertex program for per fragment Blinn-Phong lighting
-//  Date:      July 2014
-//  Authors:   Carlos Arauz, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      ch08_BlinnPhongLighting.vert
+ * \brief     GLSL vertex program for per fragment Blinn-Phong lighting
+ * \date      July 2014
+ * \authors   Carlos Arauz, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

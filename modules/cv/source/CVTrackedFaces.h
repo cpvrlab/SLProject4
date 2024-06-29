@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      CVTrackedFaces.h
-//  Date:      Spring 2018
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch, Michael Goettlicher
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      CVTrackedFaces.h
+ * \date      Spring 2018
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Marcus Hudritsch, Michael Goettlicher
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #ifndef CVTrackedFaces_H
 #define CVTrackedFaces_H

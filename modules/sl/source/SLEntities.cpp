@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLEntities.cpp
-//  Date:      June 2022
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLEntities.cpp
+ * \date      June 2022
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLEntities.h>
 #include <SLNode.h>
@@ -15,8 +15,8 @@
  * addChild adds a child node by inserting an SLEntities into a vector in
  * Depth First Search order. The root node gets the parent ID -1.
  * The child is inserted right after the parent node.
- * @param myParentID Index of the parent node
- * @param entity The entity to add as child of the parent
+ * \param myParentID Index of the parent node
+ * \param entity The entity to add as child of the parent
  */
 void SLEntities::addChildEntity(SLint    myParentID,
                                 SLEntity entity)
@@ -127,9 +127,9 @@ SLint SLEntities::getParentID(SLNode* node)
 }
 //-----------------------------------------------------------------------------
 /*! Updates the world matrix recursively
- * @param id Index of the current node to update
- * @param parentWM World transform matrix of the parent
- * @return The no. of nodes updated
+ * \param id Index of the current node to update
+ * \param parentWM World transform matrix of the parent
+ * \return The no. of nodes updated
  */
 SLint SLEntities::updateWMRec(SLint id, SLMat4f& parentWM)
 {
@@ -272,7 +272,7 @@ void SLEntities::deleteEntity(SLint id)
 //-----------------------------------------------------------------------------
 /*! Deletes all children of an entity with the index id. Also sub-children of
  * those children get deleted.
- * @param id Index of the parent entity
+ * \param id Index of the parent entity
  */
 void SLEntities::deleteChildren(SLint id)
 {

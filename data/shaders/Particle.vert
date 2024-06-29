@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      Particle.vert
-//  Purpose:   GLSL vertex program for particles drawing
-//  Date:      October 2021
-//  Authors:   Affolter Marc
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      Particle.vert
+ * \brief     GLSL vertex program for particles drawing
+ * \date      October 2021
+ * \authors   Affolter Marc
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 precision highp float;
 
 //-----------------------------------------------------------------------------

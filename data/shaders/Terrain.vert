@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      Terrain.vert
-//  Purpose:   GLSL vertex program for simple diffuse lighting with texture
-//  Authors:   Marcus Hudritsch
-//  Date:      September 2012 (HS12)
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      Terrain.vert
+ * \brief     GLSL vertex program for simple diffuse lighting with texture
+ * \authors   Marcus Hudritsch
+ * \date      September 2012 (HS12)
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

@@ -1,13 +1,13 @@
-//#############################################################################
-//  File:      CVCapture.cpp
-//  Purpose:   OpenCV Capture Device
-//  Authors:   Michael Goettlicher, Marcus Hudritsch, Jan Dellsperger
-//  Date:      Winter 2016
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      CVCapture.cpp
+ * \brief   OpenCV Capture Device
+ * \authors   Michael Goettlicher, Marcus Hudritsch, Jan Dellsperger
+ * \date      Winter 2016
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 /*
 The OpenCV library version 3.4 with extra module must be present.

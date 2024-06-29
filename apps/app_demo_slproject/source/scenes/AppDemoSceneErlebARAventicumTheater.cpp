@@ -1,11 +1,14 @@
-//#############################################################################
-//  File:      AppDemoSceneErlebARAventicumTheater.cpp
-//  Date:      May 2024
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marino von Wattenwyl
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      AppDemoSceneErlebARAventicumTheater.cpp
+ * \brief     Implementation for an SLScene inherited class
+ * \details   For more info about App framework and the scene assembly see: 
+ *            https://cpvrlab.github.io/SLProject4/app-framework.html
+ * \date      May 2024
+ * \authors   Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <AppDemoSceneErlebARAventicumTheater.h>
 #include <CVCapture.h>

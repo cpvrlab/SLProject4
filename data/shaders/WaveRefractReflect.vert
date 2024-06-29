@@ -1,12 +1,11 @@
-//#############################################################################
-//  File:      WaveReflectRefract.vert
-//  Purpose:   GLSL vertex program that builds a sine waved water plane with
-//             it correct wave normals for cube mapping in the fragment prog.
-//  Date:      July 2014
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      WaveReflectRefract.vert
+ * \details   GLSL vertex program that builds a sine waved water plane with
+ *            it correct wave normals for cube mapping in the fragment prog.
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLShadowMap.cpp
-//  Date:      May 2020
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Michael Schertenleib, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLShadowMap.cpp
+ * \date      May 2020
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Michael Schertenleib, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <algorithm>
 
@@ -29,11 +29,11 @@
 SLuint SLShadowMap::drawCalls = 0; //!< NO. of draw calls for shadow mapping
 //-----------------------------------------------------------------------------
 /*! Ctor for standard fixed size shadow map for any type of light
- * @param light Pointer to the light for which the shadow is created
- * @param lightClipNear The light frustums near clipping distance
- * @param lightClipFar The light frustums near clipping distance
- * @param size Ignored for rectangular lights
- * @param texSize Shadow texture map size
+ * \param light Pointer to the light for which the shadow is created
+ * \param lightClipNear The light frustums near clipping distance
+ * \param lightClipFar The light frustums near clipping distance
+ * \param size Ignored for rectangular lights
+ * \param texSize Shadow texture map size
  */
 SLShadowMap::SLShadowMap(SLLight*       light,
                          float          lightClipNear,
@@ -73,10 +73,10 @@ SLShadowMap::SLShadowMap(SLLight*       light,
 }
 //-----------------------------------------------------------------------------
 /*! Ctor for auto sized cascaded shadow mapping
- * @param light Pointer to the light for which the shadow is created
- * @param camera Pointer to the camera for witch the shadow map gets sized
- * @param texSize Shadow texture map size (equal for all cascades)
- * @param numCascades NO. of cascades for cascaded shadow mapping
+ * \param light Pointer to the light for which the shadow is created
+ * \param camera Pointer to the camera for witch the shadow map gets sized
+ * \param texSize Shadow texture map size (equal for all cascades)
+ * \param numCascades NO. of cascades for cascaded shadow mapping
  */
 SLShadowMap::SLShadowMap(SLLight*       light,
                          SLCamera*      camera,
@@ -301,11 +301,11 @@ void SLShadowMap::updateLightSpaces()
  * Check if the passed node is inside the light frustum and add if so to the
  * visibleNodes vector. The goal is to exit this function as fast as possible
  * if the node is not visible from the light hence gets not lighted.
- * @param node Node to cull or add to to visibleNodes vector
- * @param lightProj The cascades light projection matrix that gets adapted
- * @param lightView The cascades light view matrix
- * @param lightFrustumPlanes The six light frustum planes
- * @param visibleNodes Vector to push the lighted nodes
+ * \param node Node to cull or add to to visibleNodes vector
+ * \param lightProj The cascades light projection matrix that gets adapted
+ * \param lightView The cascades light view matrix
+ * \param lightFrustumPlanes The six light frustum planes
+ * \param visibleNodes Vector to push the lighted nodes
  */
 void SLShadowMap::lightCullingAdaptiveRec(SLNode*  node,
                                           SLMat4f& lightProj,
@@ -390,9 +390,9 @@ void SLShadowMap::lightCullingAdaptiveRec(SLNode*  node,
 //-----------------------------------------------------------------------------
 /*! SLShadowMap::drawNodesDirectionalCulling draw all nodes in the vector
  * visibleNodes.
- * @param visibleNodes Vector of visible nodes
- * @param sv Pointer to the sceneview
- * @param lightView The light view matrix
+ * \param visibleNodes Vector of visible nodes
+ * \param sv Pointer to the sceneview
+ * \param lightView The light view matrix
  */
 void SLShadowMap::drawNodesDirectionalCulling(SLVNode      visibleNodes,
                                               SLSceneView* sv,
@@ -415,9 +415,9 @@ void SLShadowMap::drawNodesDirectionalCulling(SLVNode      visibleNodes,
 }
 //-----------------------------------------------------------------------------
 /*! Recursive node drawing function for standard shadow map drawing.
- * @param node The node do draw
- * @param sv Pointer to the sceneview
- * @param lightView The light view matrix
+ * \param node The node do draw
+ * \param sv Pointer to the sceneview
+ * \param lightView The light view matrix
  */
 void SLShadowMap::drawNodesIntoDepthBufferRec(SLNode*      node,
                                               SLSceneView* sv,
@@ -444,8 +444,8 @@ void SLShadowMap::drawNodesIntoDepthBufferRec(SLNode*      node,
 }
 //-----------------------------------------------------------------------------
 /*! SLShadowMap::render Toplevel entry function for shadow map rendering.
- * @param sv Pointer of the sceneview
- * @param root Pointer to the root node of the scene
+ * \param sv Pointer of the sceneview
+ * \param root Pointer to the root node of the scene
  */
 void SLShadowMap::renderShadows(SLSceneView* sv, SLNode* root)
 {
@@ -528,10 +528,10 @@ void SLShadowMap::renderShadows(SLSceneView* sv, SLNode* root)
 //-----------------------------------------------------------------------------
 /*! Returns a vector of near and far clip distances for all shadow cascades
  * along the cameras view direction.
- * @param numCascades NO. of cascades
- * @param camClipNear The cameras near clipping distance
- * @param camClipFar The cameras far clipping distance
- * @return A SLVVec2f vector with the near and far clip distances
+ * \param numCascades NO. of cascades
+ * \param camClipNear The cameras near clipping distance
+ * \param camClipFar The cameras far clipping distance
+ * \return A SLVVec2f vector with the near and far clip distances
  */
 SLVVec2f SLShadowMap::getShadowMapCascades(int   numCascades,
                                            float camClipNear,
@@ -555,8 +555,8 @@ SLVVec2f SLShadowMap::getShadowMapCascades(int   numCascades,
 }
 //-----------------------------------------------------------------------------
 /*! Renders the nodes into cascaded shadow maps for directional lights
- * @param sv Pointer of the sceneview
- * @param root Pointer to the root node of the scene
+ * \param sv Pointer of the sceneview
+ * \param root Pointer to the root node of the scene
  */
 void SLShadowMap::renderDirectionalLightCascaded(SLSceneView* sv,
                                                  SLNode*      root)

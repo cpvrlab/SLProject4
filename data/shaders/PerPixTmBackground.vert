@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      PerPixTmBackground.vert
-//  Purpose:   GLSL vertex program for background texture mapping
-//  Date:      September 2020
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      PerPixTmBackground.vert
+ * \brief     GLSL vertex program for background texture mapping
+ * \date      September 2020
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

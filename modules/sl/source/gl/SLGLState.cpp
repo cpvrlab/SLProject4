@@ -1,12 +1,12 @@
-//#############################################################################
-//   File:      SLGLState.cpp
-//   Purpose:   Singleton class implementation for global OpenGL replacement
-//   Date:      July 2014
-//   Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//   Authors:   Marcus Hudritsch
-//   License:   This software is provided under the GNU General Public License
-//              Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLGLState.cpp
+ * \brief     Singleton class implementation for global OpenGL replacement
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLGLState.h>
 #include <SLMaterial.h>
@@ -614,7 +614,7 @@ SLbool SLGLState::pixelFormatIsSupported(SLint pixelFormat)
 //-----------------------------------------------------------------------------
 //! Reads the front framebuffer pixels into the passed buffer
 /*!
- * @param buffer Pointer to a 4 byte aligned buffer with the correct size.
+ * \param buffer Pointer to a 4 byte aligned buffer with the correct size.
  */
 void SLGLState::readPixels(void* buffer)
 {

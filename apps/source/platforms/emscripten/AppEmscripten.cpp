@@ -1,11 +1,20 @@
-//#############################################################################
-//  File:      AppEmscripten.cpp
-//  Date:      June 2024
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marino von Wattenwyl
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      AppEmscripten.cpp
+ * \date      June 2024
+ * \brief     App::run implementation from App.h for the Emscripten platform
+ * \details   The functions implement mostly the callbacks for the platform
+ *            that are forwarded to the C interface in SLInterface.
+ *            For more info about App framework see: 
+ *            https://cpvrlab.github.io/SLProject4/app-framework.html
+ *            For more info about the Emscripten platform see:
+ *            https://cpvrlab.github.io/SLProject4/emscripten.html
+ *            For more info on how to set up the Emscripten platform see:
+ *            https://github.com/cpvrlab/SLProject4/wiki/Build-for-the-web-with-Emscripten
+ * \authors   Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <App.h>
 #include <SLGLState.h>

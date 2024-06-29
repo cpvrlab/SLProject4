@@ -1,11 +1,11 @@
-//#############################################################################
-//   File:      SLAnimation.cpp
-//   Date:      Autumn 2014
-//   Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//   Authors:   Marc Wacker, Marcus Hudritsch
-//   License:   This software is provided under the GNU General Public License
-//              Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLAnimation.cpp
+ * \date      Autumn 2014
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Marc Wacker, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <math/SLCurveBezier.h>
 #include <SLScene.h>

@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      SLAnimSkeleton.h
-//  Date:      Autumn 2014
+/**
+ * \file      SLAnimSkeleton.h
+ * \date      Autumn 2014
 //  Codestyle: https://code.google.com/p/slproject/wiki/CodingStyleGuidelines
-//  Authors:   Marc Wacker, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+ * \authors   Marc Wacker, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #ifndef SLSKELETON_H
 #define SLSKELETON_H

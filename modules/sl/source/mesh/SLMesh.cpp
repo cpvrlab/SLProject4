@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLMesh.cpp
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLMesh.cpp
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLCompactGrid.h>
 #include <SLNode.h>
@@ -38,10 +38,10 @@ using std::set;
  * Meshes can be used in multiple nodes (SLNode). Meshes can belong
  * therefore to the global assets such as meshes (SLMesh), materials
  * (SLMaterial), textures (SLGLTexture) and shader programs (SLGLProgram).
- * @param assetMgr Pointer to a global asset manager. If passed the asset
+ * \param assetMgr Pointer to a global asset manager. If passed the asset
  * manager is the owner of the instance and will do the deallocation. If a
  * nullptr is passed the creator is responsible for the deallocation.
- * @param name Name of the mesh
+ * \param name Name of the mesh
  */
 SLMesh::SLMesh(SLAssetManager* assetMgr, const SLstring& name) : SLObject(name)
 {

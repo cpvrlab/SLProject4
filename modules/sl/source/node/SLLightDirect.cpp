@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLLightDirect.cpp
-//  Date:      July 2016
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLLightDirect.cpp
+ * \date      July 2016
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLArrow.h>
 #include <SLLightDirect.h>
@@ -172,10 +172,10 @@ void SLLightDirect::drawMesh(SLSceneView* sv)
 }
 //-----------------------------------------------------------------------------
 /*! Creates an fixed sized standard shadow map for a directional light.
- * @param clipNear The light frustums near clipping distance
- * @param clipFar The light frustums near clipping distance
- * @param size Width and height of the orthographic light frustum
- * @param texSize Shadow texture map size
+ * \param clipNear The light frustums near clipping distance
+ * \param clipFar The light frustums near clipping distance
+ * \param size Width and height of the orthographic light frustum
+ * \param texSize Shadow texture map size
  */
 void SLLightDirect::createShadowMap(float   clipNear,
                                     float   clipFar,
@@ -193,9 +193,9 @@ void SLLightDirect::createShadowMap(float   clipNear,
 }
 //-----------------------------------------------------------------------------
 /*! Creates an automatic sized and cascaded shadow map for the directional light.
- * @param camera Pointer to the camera for witch the shadow map gets sized
- * @param texSize Shadow texture map size (equal for all cascades)
- * @param numCascades NO. of cascades shadow maps
+ * \param camera Pointer to the camera for witch the shadow map gets sized
+ * \param texSize Shadow texture map size (equal for all cascades)
+ * \param numCascades NO. of cascades shadow maps
  */
 void SLLightDirect::createShadowMapAutoSize(SLCamera* camera,
                                             SLVec2i   texSize,

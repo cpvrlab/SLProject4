@@ -1,16 +1,16 @@
-//#############################################################################
-//  File:      ViewController.m
-//  Purpose:   Top level iOS view controller code that interfaces SLProject
-//             The demo application demonstrates most features of the SLProject
-//             framework. Implementation of the GUI with the GLFW3 framework
-//             that can create a window and receive system event on desktop OS
-//             such as Windows, MacOS and Linux.
-//  Date:      November 2017
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      ViewController.m
+ * \details   Top level iOS view controller code that interfaces SLProject
+ *            The demo application demonstrates most features of the SLProject
+ *            framework. Implementation of the GUI with the GLFW3 framework
+ *            that can create a window and receive system event on desktop OS
+ *            such as Windows, MacOS and Linux.
+ * \date      November 2017
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 // Objective C imports
 #import <ViewController.h>

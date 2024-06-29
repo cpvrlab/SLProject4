@@ -1,13 +1,17 @@
-//#############################################################################
-//  File:      AppDemoMain.cpp
-//  Purpose:   The demo application demonstrates most features of the SLProject
-//             framework.
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      AppDemoMain.cpp
+ * \brief     This file has the main function of the demo app of SLProject
+ * \details   An App::Config is set and then passed to the run function defined
+ *            App.h. Beside this is contains the callback functions for the
+ *            scene creation. See App.h for their typedef.
+ *            For more info about App framework see: 
+ *            https://cpvrlab.github.io/SLProject4/app-framework.html
+ * \authors   Marcus Hudritsch, Marino von Wattenwyl
+ * \date      July 2024
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ */
 
 #include <SLGLState.h>
 #include <SLEnums.h>

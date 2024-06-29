@@ -1,12 +1,11 @@
-//#############################################################################
-//  File:      GLES3View.java
-//  Date:      Spring 2017
-//  Purpose:   Android Java toplevel windows interface into the SLProject demo
+/**
+ * \file      GLES3View.java
+ * \date      Spring 2017
+ * \brief   Android Java toplevel windows interface into the SLProject demo
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  Authors:   Marcus Hudritsch, Zingg Pascal
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+ * \authors   Marcus Hudritsch, Zingg Pascal
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 // Please do not change the name space. The SLProject app is identified in the app-store with it.
 package ch.bfh.cpvrlab;

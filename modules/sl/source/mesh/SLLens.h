@@ -1,10 +1,9 @@
-//#############################################################################
-//  File:      SLLens.h
-//  Date:      October 2014
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLLens.h
+ * \date      October 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #ifndef SLLENS_H
 #define SLLENS_H

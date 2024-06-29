@@ -1,12 +1,11 @@
-//#############################################################################
-//  File:      GLES3lib.java
-//  Date:      Spring 2017
-//  Purpose:   Android Java native interface into the SLProject C++ library
+/**
+ * \file      GLES3lib.java
+ * \date      Spring 2017
+ * \brief   Android Java native interface into the SLProject C++ library
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  Authors:   Marcus Hudritsch, Zingg Pascal
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+ * \authors   Marcus Hudritsch, Zingg Pascal
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 // Please do not change the name space. The SLProject app is identified in the app-store with it.
 package ch.bfh.cpvrlab;

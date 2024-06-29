@@ -1,3 +1,12 @@
+/**
+ * \file      SLInputEventInterface.cpp
+ * \date      January 2015
+ * \authors   Marc Wacker, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
+
 #include <SLInputEventInterface.h>
 #include <SLInputManager.h>
 

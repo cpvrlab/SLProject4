@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      AppDemoSceneView.cpp
-//  Date:      August 2019
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch, Michael Göttlicher
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      AppDemoSceneView.cpp
+ * \date      August 2019
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Marcus Hudritsch, Michael Göttlicher
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <AppDemoSceneView.h>
 #include <AppDemo.h>

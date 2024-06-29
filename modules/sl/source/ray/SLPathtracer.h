@@ -1,10 +1,11 @@
-//#############################################################################
-//  File:      SLPathtracer.h
-//  Date:      February 2014
-//  Authors:   Thomas Schneiter, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLPathtracer.h
+ * \date      February 2014
+ * \authors   Thomas Schneiter, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLPATHTRACER_H
 #define SLPATHTRACER_H

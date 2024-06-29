@@ -1,11 +1,4 @@
-//#############################################################################
-//  File:      SLInputManager.h
-//  Date:      January 2015
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marc Wacker, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+
 
 #ifndef SLINPUTMANAGER_H
 #define SLINPUTMANAGER_H

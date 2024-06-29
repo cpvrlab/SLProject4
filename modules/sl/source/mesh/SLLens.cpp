@@ -1,10 +1,9 @@
-//#############################################################################
-//  File:      SLLens.cpp
-//  Date:      October 2014
-//  Authors:   Marcus Hudritsch, Philipp Jueni
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLLens.cpp
+ * \date      October 2014
+ * \authors   Marcus Hudritsch, Philipp Jueni
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <SLLens.h>
 #include <SLMaterial.h>

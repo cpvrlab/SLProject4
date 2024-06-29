@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      BumpParallax.frag
-//  Purpose:   OGLSL parallax bump mapping
-//  Date:      18-SEP-09 (HS09)
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      BumpParallax.frag
+ * \brief     OGLSL parallax bump mapping
+ * \date      18-SEP-09 (HS09)
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

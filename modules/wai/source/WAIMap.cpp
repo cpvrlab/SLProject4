@@ -1,12 +1,11 @@
-//#############################################################################
-//  File:      WAIMap.cpp
-//  Authors:   Michael Goettlicher
-//  Date:      October 2017
+/**
+ * \file      WAIMap.cpp
+ * \authors   Michael Goettlicher
+ * \date      October 2017
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 /**
  * This file is part of ORB-SLAM2.

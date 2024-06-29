@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      Globals/GL/glUtils.cs
-//  Purpose:   General OpenGL utility functions for simple OpenGL demo apps
-//  Date:      February 2014
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      Globals/GL/glUtils.cs
+ * \brief     General OpenGL utility functions for simple OpenGL demo apps
+ * \date      February 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 using System;
 using System.IO;

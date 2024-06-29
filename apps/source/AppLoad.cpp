@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      AppLoad.cpp
-//  Date:      June 2024
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marino von Wattenwyl
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      AppLoad.cpp
+ * \date      June 2024
+ * \authors   Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <AppLoad.h>
 #include <SLEnums.h>
@@ -22,8 +22,8 @@
  * All assets get registered for async loading while Imgui shows a progress
  * spinner in the UI. After the parallel loading the scene gets assembled back
  * in the main thread.
- * @param sv Pointer to the sceneview
- * @param sceneID Scene identifier defined in SLEnum
+ * \param sv Pointer to the sceneview
+ * \param sceneID Scene identifier defined in SLEnum
  */
 void AppLoad::switchScene(SLSceneView* sv, SLSceneID sceneID)
 {

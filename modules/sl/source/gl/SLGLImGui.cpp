@@ -1,13 +1,13 @@
-//#############################################################################
-//  File:      gl/SLGLImGui.cpp
-//  Purpose:   Wrapper Class around the external ImGui GUI-framework
-//             See also: https://github.com/ocornut/imgui
-//  Date:      October 2015
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      gl/SLGLImGui.cpp
+ * \details   Wrapper Class around the external ImGui GUI-framework
+ *            See also: https://github.com/ocornut/imgui
+ * \date      October 2015
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLGLState.h>
 #include <SLSceneView.h>

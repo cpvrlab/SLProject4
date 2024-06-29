@@ -1,10 +1,9 @@
-//#############################################################################
-//  File:      SLOptixHelper.h
-//  Date:      October 2019
-//  Authors:   Nic Dorner, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLOptixHelper.h
+ * \date      October 2019
+ * \authors   Nic Dorner, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #ifdef SL_HAS_OPTIX
 #    include <cuda_runtime.h>

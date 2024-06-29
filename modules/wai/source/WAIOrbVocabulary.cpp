@@ -1,12 +1,11 @@
-//#############################################################################
-//  File:      WAIOrbVocabulary.cpp
-//  Authors:   Michael Goettlicher
-//  Date:      April 2018
+/**
+ * \file      WAIOrbVocabulary.cpp
+ * \authors   Michael Goettlicher
+ * \date      April 2018
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <orb_slam/Converter.h>
 #include <WAIOrbVocabulary.h>

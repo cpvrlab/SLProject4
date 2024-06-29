@@ -1,13 +1,13 @@
-//#############################################################################
-//  File:      SLGLProgramGeneric.h
-//  Authors:   Marcus Hudritsch
-//  Purpose:   Defines a minimal shader program that just starts and stops the
-//             shaders that are hold in the base class SLGLProgram.
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLGLProgramGeneric.h
+ * \authors   Marcus Hudritsch
+ * \details   Defines a minimal shader program that just starts and stops the
+ *            shaders that are hold in the base class SLGLProgram.
+ * \date      July 2014
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLGLPROGRAMMGENERIC_H
 #define SLGLPROGRAMMGENERIC_H

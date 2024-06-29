@@ -1,13 +1,12 @@
-//#############################################################################
-//  File:      SLImGui.h
-//  Purpose:   Wrapper Class around the external ImGui GUI-framework
-//             See also: https://github.com/ocornut/imgui
-//  Date:      October 2015, refresh in 2024
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLImGui.h
+ * \brief     Wrapper Class around the external ImGui GUI-framework
+ * \date      October 2015, refresh in 2024
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLIMGUI_H
 #define SLIMGUI_H

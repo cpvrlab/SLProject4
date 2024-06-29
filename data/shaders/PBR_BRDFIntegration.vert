@@ -1,12 +1,11 @@
-//#############################################################################
-//  File:      PBR_BRDFIntegration.vert
-//  Purpose:   GLSL vertex program for generating a BRDF integration map, which
+/**
+ * \file      PBR_BRDFIntegration.vert
+ * \brief     GLSL vertex program for generating a BRDF integration map, which
 //             is the second part of the specular integral.
-//  Date:      April 2018
-//  Authors:   Carlos Arauz, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+ * \date      April 2018
+ * \authors   Carlos Arauz, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

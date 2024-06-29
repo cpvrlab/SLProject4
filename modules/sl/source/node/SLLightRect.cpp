@@ -1,12 +1,12 @@
-//#############################################################################
-//  File:      SLLightRect.cpp
-//  Authors:   Marcus Hudritsch
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLLightRect.cpp
+ * \authors   Marcus Hudritsch
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLLightRect.h>
 #include <SLPolygon.h>
@@ -268,10 +268,10 @@ SLfloat SLLightRect::shadowTestMC(SLRay*         ray,       // ray of hit point
 }
 //-----------------------------------------------------------------------------
 /*! Creates an fixed sized standard shadow map for a rectangular light.
- * @param lightClipNear The light frustums near clipping distance
- * @param lightClipFar The light frustums near clipping distance
- * @param size Ignored for rectangular lights
- * @param texSize Shadow texture map size
+ * \param lightClipNear The light frustums near clipping distance
+ * \param lightClipFar The light frustums near clipping distance
+ * \param size Ignored for rectangular lights
+ * \param texSize Shadow texture map size
  */
 void SLLightRect::createShadowMap(float   lightClipNear,
                                   float   lightClipFar,
@@ -289,9 +289,9 @@ void SLLightRect::createShadowMap(float   lightClipNear,
 }
 //-----------------------------------------------------------------------------
 /*! Creates an automatic sized shadow map for the rectangular light.
- * @param camera Pointer to the camera for witch the shadow map gets sized
- * @param texSize Shadow texture map size (equal for all cascades)
- * @param numCascades This value is ignored (default 0)
+ * \param camera Pointer to the camera for witch the shadow map gets sized
+ * \param texSize Shadow texture map size (equal for all cascades)
+ * \param numCascades This value is ignored (default 0)
  */
 void SLLightRect::createShadowMapAutoSize(SLCamera* camera,
                                           SLVec2i   texSize,

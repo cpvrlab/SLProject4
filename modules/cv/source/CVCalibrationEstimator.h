@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      CVCalibrationEstimator.h
-//  Date:      Winter 2019
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Michael Goettlicher, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      CVCalibrationEstimator.h
+ * \date      Winter 2019
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Michael Goettlicher, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #ifndef CVCALIBRATIONESTIMATOR_H
 #define CVCALIBRATIONESTIMATOR_H

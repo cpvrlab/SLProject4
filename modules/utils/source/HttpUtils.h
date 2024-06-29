@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      HttpUtils.h
-//  Date:      2020
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  Authors:   Luc Girod
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      HttpUtils.h
+ * \date      2020
+ * \authors   Luc Girod
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef HTTP_UTILS_H
 #define HTTP_UTILS_H
@@ -170,14 +170,14 @@ public:
 // Download a file chunk by chunk of 1kB.
 // download is interrupt if any of the callback return non-zero value.
 /*!
- * @param url            url to the file / listing to download
- * @param processFile    A callback which is called when a new file will be downloaded.
- * @param writeChunk     A callback which is called for every new chunk of the current
+ * \param url            url to the file / listing to download
+ * \param processFile    A callback which is called when a new file will be downloaded.
+ * \param writeChunk     A callback which is called for every new chunk of the current
  *                       file being downloaded.
- * @param processDir     A callback which is called when a new directory is being downloaded.
- * @param user           Username (optional) when site require http auth.
- * @param pwd            Password (optional) when site require http auth.
- * @param base           Path where the files should be saved.
+ * \param processDir     A callback which is called when a new directory is being downloaded.
+ * \param user           Username (optional) when site require http auth.
+ * \param pwd            Password (optional) when site require http auth.
+ * \param base           Path where the files should be saved.
  */
 int download(string                                               url,
              function<int(string path, string file, size_t size)> processFile,
@@ -190,11 +190,11 @@ int download(string                                               url,
 //! HTTP download function with login credentials
 // download is interrupt if progress callback return non zero value.
 /*!
- * @param url            url to the file / listing to download
- * @param dst            Path where the files should be saved.
- * @param user           Username (optional) when site require http auth.
- * @param pwd            Password (optional) when site require http auth.
- * @param progress       A callback which is called each 1kB downloaded for the current file.
+ * \param url            url to the file / listing to download
+ * \param dst            Path where the files should be saved.
+ * \param user           Username (optional) when site require http auth.
+ * \param pwd            Password (optional) when site require http auth.
+ * \param progress       A callback which is called each 1kB downloaded for the current file.
  *                       The download stop if the returned value is not zero.
  */
 int download(string                                      url,

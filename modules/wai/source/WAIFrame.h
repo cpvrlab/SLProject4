@@ -1,11 +1,12 @@
-//#############################################################################
-//  File:      WAIFrame.h
-//  Date:      Dez 2017
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  Authors:   Raúl Mur-Artal, Marcus Hudritsch, Michael Goettlicher
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      WAIFrame.h
+ * \date      Dez 2017
+ * \authors   Raúl Mur-Artal, Marcus Hudritsch, Michael Goettlicher
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ 
+*/
 /**
  * This file is part of ORB-SLAM2.
  *

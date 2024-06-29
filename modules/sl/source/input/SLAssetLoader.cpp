@@ -1,3 +1,12 @@
+/**
+ * \file      SLAssetLoader.cpp
+ * \date      May 2024
+ * \authors   Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
+
 #include "SLAssetLoader.h"
 
 #include <mutex>
@@ -178,15 +187,15 @@ void SLAssetLoader::addTextureToLoad(SLGLTexture*&   texture,
 //-----------------------------------------------------------------------------
 /*! Method for adding a 3D texture from a vector of images to load in parallel
  * thread.
- * @param texture Pointer to SLGLTexture to return
- * @param imageFilenames Vector of texture image files. If only filenames are
+ * \param texture Pointer to SLGLTexture to return
+ * \param imageFilenames Vector of texture image files. If only filenames are
  * passed they will be searched on the SLGLTexture::defaultPath.
- * @param min_filter Minification filter constant from OpenGL
- * @param mag_filter Magnification filter constant from OpenGL
- * @param wrapS Texture wrapping in S direction (OpenGL constant)
- * @param wrapT Texture wrapping in T direction (OpenGL constant)
- * @param name Name of the 3D texture
- * @param loadGrayscaleIntoAlpha Flag if grayscale image should be loaded into
+ * \param min_filter Minification filter constant from OpenGL
+ * \param mag_filter Magnification filter constant from OpenGL
+ * \param wrapS Texture wrapping in S direction (OpenGL constant)
+ * \param wrapT Texture wrapping in T direction (OpenGL constant)
+ * \param name Name of the 3D texture
+ * \param loadGrayscaleIntoAlpha Flag if grayscale image should be loaded into
  * alpha channel.
  */
 void SLAssetLoader::addTextureToLoad(SLGLTexture*&    texture,

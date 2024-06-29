@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLNodeLOD.h
-//  Date:      July 2021
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Jan Dellsperger, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLNodeLOD.h
+ * \date      July 2021
+ * \authors   Jan Dellsperger, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLNODELOD_H
 #define SLNODELOD_H

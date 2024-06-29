@@ -1,12 +1,11 @@
-//#############################################################################
-//  File:      ParticleGenerator.cpp
-//  Purpose:   Core profile OpenGL application of particle system
-//             GLFW as the OS GUI interface (http://www.glfw.org/).
-//  Date:      October 2021
-//  Authors:   Affolter Marc
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      ParticleGenerator.cpp
+ * \details   Core profile OpenGL application of particle system
+ *            GLFW as the OS GUI interface (http://www.glfw.org/).
+ * \date      October 2021
+ * \authors   Affolter Marc
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <GL/gl3w.h>    // OpenGL headers
 #include <GLFW/glfw3.h> // GLFW GUI library

@@ -1,9 +1,10 @@
-//#############################################################################
-//  File:      cv07_MeshWarping.cpp
-//  Purpose:   Minimal OpenCV application that warps a triangular mesh
-//  Copyright: Based on Satya Mallick's Tutorials: https://www.learnopencv.com
-//  Date:      Spring 2018
-//#############################################################################
+/**
+ * \file      cv07_MeshWarping.cpp
+ * \brief     Minimal OpenCV application that warps a triangular mesh
+ * \copyright Based on Satya Mallick's Tutorial:
+ *            https://www.learnopencv.com/warp-one-triangle-to-another-using-opencv-c-python
+ * \date      Spring 2018
+*/
 
 #include <iostream>
 #include <opencv2/highgui/highgui.hpp>

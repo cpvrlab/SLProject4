@@ -19,10 +19,10 @@ public:
 
     /*!
      * Called by the state machine to execute a state action.
-     * @param sm A state machine instance
-     * @param data The event data
-     * @param stateEntry
-     * @param stateExit
+     * \param sm A state machine instance
+     * \param data The event data
+     * \param stateEntry
+     * \param stateExit
      */
     virtual void invokeStateAction(StateMachine* sm, const EventData* data, const bool stateEntry, const bool stateExit) const {};
 };
@@ -31,9 +31,9 @@ public:
  * StateAction takes three template arguments: A state machine class,
  * a state function event data type (derived from EventData) and a state machine
  * member function pointer.
- * @tparam SM
- * @tparam Data
- * @tparam Func
+ * \tparam SM
+ * \tparam Data
+ * \tparam Func
  */
 template<class SM, class Data, void (SM::*Func)(const Data*, const bool, const bool)>
 class StateAction : public StateBase

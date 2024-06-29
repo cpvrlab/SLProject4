@@ -1,12 +1,12 @@
-//#############################################################################
-//  File:      math/SLAlgo.cpp
-//  Purpose:   Container for general algorithm functions
-//  Date:      November
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Michael Goettlicher, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      math/SLAlgo.cpp
+ * \brief     Container for general algorithm functions
+ * \date      November
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Michael Goettlicher, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <SLAlgo.h>
 #include <cassert>

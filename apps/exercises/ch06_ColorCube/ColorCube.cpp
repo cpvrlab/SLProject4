@@ -1,12 +1,11 @@
-//#############################################################################
-//  File:      ColorCube.cpp
-//  Purpose:   Core profile OpenGL application with a colored cube with
-//             GLFW as the OS GUI interface (http://www.glfw.org/).
-//  Date:      April 2016 (FS16)
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      ColorCube.cpp
+ * \details   Core profile OpenGL application with a colored cube with
+ *            GLFW as the OS GUI interface (http://www.glfw.org/).
+ * \date      April 2016 (FS16)
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <GL/gl3w.h>    // OpenGL headers
 #include <GLFW/glfw3.h> // GLFW GUI library

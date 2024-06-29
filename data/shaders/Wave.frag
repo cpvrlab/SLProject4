@@ -1,12 +1,11 @@
-//#############################################################################
-//  File:      WaveShader.frag
-//  Purpose:   GLSL fragment program that illuminates the wave from the vertex
-//             program with 50% from a cube texture and 50% from a pointlight.
-//  Date:      July 2014
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      WaveShader.frag
+ * \details   GLSL fragment program that illuminates the wave from the vertex
+ *            program with 50% from a cube texture and 50% from a pointlight.
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

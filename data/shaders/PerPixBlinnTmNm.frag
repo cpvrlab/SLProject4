@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      PerPixBlinnTmNm.frag
-//  Purpose:   GLSL normal map bump mapping
-//  Date:      July 2014
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      PerPixBlinnTmNm.frag
+ * \brief     GLSL normal map bump mapping
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

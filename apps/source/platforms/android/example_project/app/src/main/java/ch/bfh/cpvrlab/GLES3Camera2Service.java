@@ -1,12 +1,11 @@
-//#############################################################################
-//  File:      GLES3Camera2Service.java
-//  Date:      Spring 2017
-//  Purpose:   Android camera2 service implementation
+/**
+ * \file      GLES3Camera2Service.java
+ * \date      Spring 2017
+ * \brief   Android camera2 service implementation
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 // Please do not change the name space. The SLProject app is identified in the app-store with it.
 package ch.bfh.cpvrlab;
@@ -81,8 +80,8 @@ public class GLES3Camera2Service extends Service {
 
     /**
      * Returns the Camera Id which matches the field lensFacing
-     * @param manager The manager got by getSystemService(CAMERA_SERVICE)
-     * @param lensFacing LENS_FACING_BACK or LENS_FACING_FRONT
+     * \param manager The manager got by getSystemService(CAMERA_SERVICE)
+     * \param lensFacing LENS_FACING_BACK or LENS_FACING_FRONT
      */
     public String getCamera(CameraManager manager, int lensFacing) {
         try {
@@ -121,9 +120,9 @@ public class GLES3Camera2Service extends Service {
 
     /**
      * Returns the requested video size in pixel
-     * @param manager The manager got by getSystemService(CAMERA_SERVICE)
-     * @param lensFacing LENS_FACING_BACK or LENS_FACING_FRONT
-     * @param requestedSizeIndex An index of -1 returns the default size of 640x480
+     * \param manager The manager got by getSystemService(CAMERA_SERVICE)
+     * \param lensFacing LENS_FACING_BACK or LENS_FACING_FRONT
+     * \param requestedSizeIndex An index of -1 returns the default size of 640x480
      */
     private Size getRequestedSize(CameraManager manager,
                                   int lensFacing,
@@ -166,8 +165,8 @@ public class GLES3Camera2Service extends Service {
 
     /**
      * Returns an array of output sizes for the requested camera (front or back)
-     * @param manager The manager got by getSystemService(CAMERA_SERVICE)
-     * @param lensFacing LENS_FACING_BACK or LENS_FACING_FRONT
+     * \param manager The manager got by getSystemService(CAMERA_SERVICE)
+     * \param lensFacing LENS_FACING_BACK or LENS_FACING_FRONT
      */
     private Size[] getOutputSizes(CameraManager manager, int lensFacing) {
         try {

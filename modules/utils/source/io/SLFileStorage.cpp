@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLFileStorage.cpp
-//  Date:      October 2022
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marino von Wattenwyl
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLFileStorage.cpp
+ * \date      October 2022
+ * \authors   Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLFileStorage.h>
 
@@ -42,10 +42,10 @@ void SLIOBuffer::deallocate()
  * uses the kind and the mode  to determine which kind of stream it should
  * create. For example, in a web browser, configuration files are written to
  * local storage.
- * @param path Path to file
- * @param kind Kind of file
- * @param mode Mode to open the stream in
- * @return Opened stream ready for I/O
+ * \param path Path to file
+ * \param kind Kind of file
+ * \param mode Mode to open the stream in
+ * \return Opened stream ready for I/O
  */
 SLIOStream* SLFileStorage::open(std::string    path,
                                 SLIOStreamKind kind,
@@ -101,7 +101,7 @@ SLIOStream* SLFileStorage::open(std::string    path,
  * First flushes the stream to make sure that all data is written and
  * then deletes it. Implementations of SLIOStream will then close their
  * backing streams in the destructor.
- * @param stream Stream to close
+ * \param stream Stream to close
  */
 void SLFileStorage::close(SLIOStream* stream)
 {
@@ -114,9 +114,9 @@ void SLFileStorage::close(SLIOStream* stream)
  * Checks whether a file exists at the given path and if it is of the given
  * kind. When running in a web browser, the function may need to communicate
  * with a server to check whether the file exists, which is quite slow.
- * @param path Path to file
- * @param kind Kind of file
- * @return True if the file exists
+ * \param path Path to file
+ * \param kind Kind of file
+ * \return True if the file exists
  */
 bool SLFileStorage::exists(std::string path, SLIOStreamKind kind)
 {
@@ -141,9 +141,9 @@ bool SLFileStorage::exists(std::string path, SLIOStreamKind kind)
  * for its content, reads the content into the buffer and closes the stream.
  * The buffer is owned by the caller and must be deallocated with a call to
  * SLFileStorage::deleteBuffer after usage.
- * @param path Path to the file to read
- * @param kind Kind of the file to read
- * @return Buffer holding the file contents and size
+ * \param path Path to the file to read
+ * \param kind Kind of the file to read
+ * \return Buffer holding the file contents and size
  */
 SLIOBuffer SLFileStorage::readIntoBuffer(std::string path, SLIOStreamKind kind)
 {
@@ -162,9 +162,9 @@ SLIOBuffer SLFileStorage::readIntoBuffer(std::string path, SLIOStreamKind kind)
  * for its content, reads the content into the string and closes the stream.
  * Line endings are NOT converted to LF, which means that on Windows, the
  * string may contain CRLF line endings.
- * @param path Path to the file to read
- * @param kind Kind of the file to read
- * @return String containing the contents of the file
+ * \param path Path to the file to read
+ * \param kind Kind of the file to read
+ * \return String containing the contents of the file
  */
 std::string SLFileStorage::readIntoString(std::string path, SLIOStreamKind kind)
 {
@@ -184,9 +184,9 @@ std::string SLFileStorage::readIntoString(std::string path, SLIOStreamKind kind)
  * the file and closes the stream. Line endings are NOT converted to LF,
  * which means that on Windows, the file may contain LF line endings after
  * writing instead of CRLF line endings.
- * @param path The path to the file to write to
- * @param kind The kind of the file to write to
- * @param string The string to write to the file
+ * \param path The path to the file to write to
+ * \param kind The kind of the file to write to
+ * \param string The string to write to the file
  */
 void SLFileStorage::writeString(std::string        path,
                                 SLIOStreamKind     kind,

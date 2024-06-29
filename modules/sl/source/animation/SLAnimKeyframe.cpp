@@ -1,12 +1,11 @@
-//#############################################################################
-//  File:      SLAnimation.cpp
-//  Authors:   Marcus Hudritsch
-//  Date:      July 2014
+/**
+ * \file      SLAnimation.cpp
+ * \authors   Marcus Hudritsch
+ * \date      July 2014
 //  Codestyle: https://code.google.com/p/slproject/wiki/CodingStyleGuidelines
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <SLAnimKeyframe.h>
 

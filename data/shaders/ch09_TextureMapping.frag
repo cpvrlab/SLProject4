@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      ch09_TextureMapping.frag
-//  Purpose:   GLSL fragment shader for per pixel Blinn-Phong lighting w. tex.
-//  Date:      July 2014
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      ch09_TextureMapping.frag
+ * \brief     GLSL fragment shader for per pixel Blinn-Phong lighting w. tex.
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

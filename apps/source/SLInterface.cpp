@@ -1,12 +1,12 @@
-//#############################################################################
-//  File:      sl/SLInterface.cpp
-//  Purpose:   Implementation of the main Scene Library C-Interface.
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      sl/SLInterface.cpp
+ * \brief   Implementation of the main Scene Library C-Interface.
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLInterface.h>
 #include <AppDemo.h>
@@ -289,7 +289,7 @@ void slTerminate()
 //-----------------------------------------------------------------------------
 /*!
  * Updates the parallel running job an allowes the update of a progress bar.
- * @return Returns true if parallel jobs are still running.
+ * \return Returns true if parallel jobs are still running.
  */
 bool slUpdateParallelJob()
 {
@@ -299,7 +299,7 @@ bool slUpdateParallelJob()
 //-----------------------------------------------------------------------------
 /*!
  * Draws all scene views
- * @return return true if another repaint is needed.
+ * \return return true if another repaint is needed.
  */
 bool slPaintAllViews()
 {

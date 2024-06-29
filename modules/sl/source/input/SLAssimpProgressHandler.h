@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLAssimpProgressHandler.h
-//  Authors:   Marcus Hudritsch
-//  Date:      December 2020
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLAssimpProgressHandler.h
+ * \authors   Marcus Hudritsch
+ * \date      December 2020
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLASSIMPPROGRESSHANDLER_H
 #define SLASSIMPPROGRESSHANDLER_H

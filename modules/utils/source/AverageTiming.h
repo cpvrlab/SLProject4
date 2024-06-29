@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      AverageTiming.h
-//  Date:      March 2018
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Michael Goettlicher, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      AverageTiming.h
+ * \date      March 2018
+ * \authors   Michael Goettlicher, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef AVERAGE_TIMING
 #define AVERAGE_TIMING

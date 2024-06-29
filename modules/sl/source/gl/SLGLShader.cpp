@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLGLShader.cpp
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLGLShader.cpp
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <Utils.h>
 #include <SLGLState.h>
@@ -34,8 +34,8 @@ SLGLShader::SLGLShader()
 //! Ctor with shader filename & shader type
 /*! If the shader filename does not belong to an existing file the shader code
  * will be generated at a later stage by SLGLProgramGenerated.
- * @param filename Path and filename of the shader to be loaded or generated.
- * @param shaderType Shader type: ST_vertex, ST_fragment and ST_geometry.
+ * \param filename Path and filename of the shader to be loaded or generated.
+ * \param shaderType Shader type: ST_vertex, ST_fragment and ST_geometry.
  */
 SLGLShader::SLGLShader(const SLstring& filename, SLShaderType shaderType)
   : SLObject(Utils::getFileName(filename), filename)

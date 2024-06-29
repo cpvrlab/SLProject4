@@ -1,9 +1,9 @@
-//#############################################################################
-//  File:      cv13_FacialLandmarkDetection.cpp
-//  Purpose:   Minimal OpenCV app for facial landmark detection without dlib
-//  Taken from Satya Mallic on: http://www.learnopencv.com
-//  Date:      Authumn 2017
-//#############################################################################
+/**
+ * \file      cv13_FacialLandmarkDetection.cpp
+ * \brief     Minimal OpenCV app for facial landmark detection without dlib
+ * \copyright Based on Satya Mallick's Tutorial at https://www.learnopencv.com
+ * \date      Authumn 2017
+*/
 
 #include <opencv2/face.hpp>
 #include <opencv2/opencv.hpp>

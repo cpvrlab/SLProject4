@@ -1,12 +1,12 @@
-//#############################################################################
-//  File:      math/SLMat3.h
-//  Purpose:   3 x 3 Matrix for linear 3D transformations
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      math/SLMat3.h
+ * \brief     3 x 3 Matrix for linear 3D transformations
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLMAT3_H
 #define SLMAT3_H

@@ -1,14 +1,14 @@
-//#############################################################################
-//  File:      CVRaulMurExtNode.h
-//  Purpose:   Declares the Raul Mur ORB feature detector and descriptor
-//  Source:    This File is based on the ORB Implementation of ORB_SLAM
-//             https://github.com/raulmur/ORB_SLAM2
-//  Date:      Spring 2017
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch, Michael Goettlicher, Pascal Zingg, Timon Tschanz
-//             This softwareis provide under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      CVRaulMurExtNode.h
+ * \brief     Declares the Raul Mur ORB feature detector and descriptor
+ * \details   This File is based on the ORB Implementation of ORB_SLAM
+ *            https://github.com/raulmur/ORB_SLAM2
+ * \date      Spring 2017
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Marcus Hudritsch, Michael Goettlicher, Pascal Zingg, Timon Tschanz
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <CVTypedefs.h>
 #include <CVRaulMurExtNode.h>
