@@ -1,5 +1,10 @@
 /**
  * \file      AppNodeGui.h
+ * \details   The AppDemoGui class provides only the UI build function
+ *            For more info on how to create a new app with SLProject see:
+ *            https://github.com/cpvrlab/SLProject4/wiki/Creating-a-New-App
+ *            For more info about App framework see: 
+ *            https://cpvrlab.github.io/SLProject4/app-framework.html
  * \date      Summer 2017
  * \authors   Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0

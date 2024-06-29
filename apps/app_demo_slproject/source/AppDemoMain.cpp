@@ -4,6 +4,8 @@
  * \details   An App::Config is set and then passed to the run function defined
  *            App.h. Beside this is contains the callback functions for the
  *            scene creation. See App.h for their typedef.
+ *            For more info on how to create a new app with SLProject see:
+ *            https://github.com/cpvrlab/SLProject4/wiki/Creating-a-New-App
  *            For more info about App framework see: 
  *            https://cpvrlab.github.io/SLProject4/app-framework.html
  * \authors   Marcus Hudritsch, Marino von Wattenwyl

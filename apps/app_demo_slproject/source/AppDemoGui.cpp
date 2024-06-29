@@ -1,6 +1,6 @@
 /**
  * \file      AppDemoGui.cpp
- * \brief   UI with the ImGUI framework fully rendered in OpenGL 3+
+ * \brief     UI with the ImGUI framework fully rendered in OpenGL 3+
  * \date      Summer 2017
  * \authors   Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0

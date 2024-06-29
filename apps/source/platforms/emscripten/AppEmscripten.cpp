@@ -4,6 +4,8 @@
  * \brief     App::run implementation from App.h for the Emscripten platform
  * \details   The functions implement mostly the callbacks for the platform
  *            that are forwarded to the C interface in SLInterface.
+ *            For more info on how to create a new app with SLProject see:
+ *            https://github.com/cpvrlab/SLProject4/wiki/Creating-a-New-App
  *            For more info about App framework see: 
  *            https://cpvrlab.github.io/SLProject4/app-framework.html
  *            For more info about the Emscripten platform see:

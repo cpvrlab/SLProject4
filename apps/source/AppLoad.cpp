@@ -1,5 +1,6 @@
 /**
  * \file      AppLoad.cpp
+ * \brief     The AppLoad class is responsible for the async loading of scenes
  * \date      June 2024
  * \authors   Marino von Wattenwyl
  * \copyright http://opensource.org/licenses/GPL-3.0

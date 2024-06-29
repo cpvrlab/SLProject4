@@ -1,5 +1,6 @@
 /**
  * \file      AppNodeScene.cpp
+ * \brief     Scene creation callback for the the node demo app
  * \date      June 2024
  * \authors   Marino von Wattenwyl
  * \copyright http://opensource.org/licenses/GPL-3.0

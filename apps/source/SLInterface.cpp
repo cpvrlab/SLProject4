@@ -1,6 +1,15 @@
 /**
- * \file      sl/SLInterface.cpp
- * \brief   Implementation of the main Scene Library C-Interface.
+ * \file      SLInterface.cpp
+ * \brief     Implementation of the main Scene Library C-Interface.
+ * \details   The SLInterface.cpp has all implementations of the SLProject 
+ *            C-Interface. Only these functions should called by the 
+ *            OS-dependent GUI applications. These functions can be called from 
+ *            any C, C++ or ObjectiveC GUI framework or by a native API such 
+ *            as Java Native Interface (JNI).
+ *            For more info on how to create a new app with SLProject see:
+ *            https://github.com/cpvrlab/SLProject4/wiki/Creating-a-New-App
+ *            For more info about App framework see: 
+ *            https://cpvrlab.github.io/SLProject4/app-framework.html
  * \date      July 2014
  * \authors   Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0
@@ -21,20 +30,12 @@
 #include <Profiler.h>
 #include <ZipUtils.h>
 
-//! \file SLInterface.cpp SLProject C-functions interface implementation.
-/*! \file SLInterface.cpp
-The SLInterface.cpp has all implementations of the SLProject C-Interface.
-Only these functions should called by the OS-dependent GUI applications.
-These functions can be called from any C, C++ or ObjectiveC GUI framework or
-by a native API such as Java Native Interface (JNI).
-*/
-
 //-----------------------------------------------------------------------------
 //! global flag that determines if the application should be closed
 bool gShouldClose = false;
 
 //-----------------------------------------------------------------------------
-/*! Global creation function for a SLScene instance. This function should be
+/*! Global creation function for a app instance. This function should be
 called only once per application. The SLScene constructor call is delayed until
 the first SLSceneView is created to guarantee, that the OpenGL context is
 present.<br>
@@ -253,30 +254,7 @@ void slTerminate()
     Profiler::instance().endSession();
 
     if (Utils::fileExists(filePathName))
-    {
         SL_LOG("Profile written : %s", filePathName.c_str());
-        /*
-        //ZipUtils::zip("/Users/hudrima1/Library/Application Support/SLProject/DEVELOPMENT-map_20200529-154142_avenches_aamphitheater_FAST_ORBS_2000.json");
-
-        SLstring errorMsg;
-        SLstring path = Utils::getPath(filePathName);
-        SLstring file = Utils::getFileName(filePathName);
-
-        SL_LOG("Profile Uploading ...");
-
-        if (FtpUtils::uploadFile(path,
-                                 file,
-                                 AppDemo::CALIB_FTP_HOST,
-                                 AppDemo::CALIB_FTP_USER,
-                                 AppDemo::CALIB_FTP_PWD,
-                                 AppDemo::PROFILE_FTP_DIR,
-                                 errorMsg))
-        {
-            SL_LOG("Uploaded Profile: %s", filePathName.c_str());
-        } else
-            SL_LOG(errorMsg.c_str());
-        */
-    }
     else
         SL_LOG("No Profile written: %s", filePathName.c_str());
 #else

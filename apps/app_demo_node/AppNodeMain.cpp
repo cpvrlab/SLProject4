@@ -1,5 +1,6 @@
 /**
  * \file      AppNodeMain.cpp
+ * \brief     File with the main function and two callbacks for the node demo app
  * \date      July 2014
  * \authors   Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0

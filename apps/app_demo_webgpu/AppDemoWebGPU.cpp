@@ -1,5 +1,11 @@
 /**
  * \file      AppDemoWebGPU.cpp
+ * \brief     Small WebGPU test application
+ * \details   WebGPU is an API provided by a web browser that enables 
+ *            webpage scripts to efficiently utilize a device's graphics 
+ *            processing unit (GPU). This is achieved with the underlying 
+ *            Vulkan, Metal, or Direct3D 12 system APIs. On relevant devices, 
+ *            WebGPU is intended to supersede the older WebGL standard.
  * \date      Summer 2023
  * \authors   Marino von Wattenwyl
  * \copyright http://opensource.org/licenses/GPL-3.0

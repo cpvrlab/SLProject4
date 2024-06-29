@@ -1,5 +1,6 @@
 /**
  * \file      AppLoad.h
+ * \brief     The AppLoad class is responsible for the async loading of scenes
  * \date      June 2024
  * \authors   Marino von Wattenwyl
  * \copyright http://opensource.org/licenses/GPL-3.0
@@ -14,6 +15,7 @@
 #include <SLEnums.h>
 
 //----------------------------------------------------------------------------
+//! The AppLoad class is responsible for the async loading of scenes
 class AppLoad
 {
 public:

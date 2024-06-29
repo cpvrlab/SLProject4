@@ -1,5 +1,10 @@
 /**
  * \file      AppMinimal.cpp
+ * \brief     Single file minimal full app with SLProject
+ * \details   For more info on how to create a new app with SLProject see:
+ *            https://github.com/cpvrlab/SLProject4/wiki/Creating-a-New-App
+ *            For more info about App framework see: 
+ *            https://cpvrlab.github.io/SLProject4/app-framework.html
  * \date      June 2024
  * \authors   Marino von Wattenwyl
  * \copyright http://opensource.org/licenses/GPL-3.0
