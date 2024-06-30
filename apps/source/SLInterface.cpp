@@ -19,7 +19,6 @@
 
 #include <SLInterface.h>
 #include <AppCommon.h>
-#include <AppLoad.h>
 #include <SLAssimpImporter.h>
 #include <SLAssetManager.h>
 #include <SLAssetLoader.h>
@@ -200,7 +199,7 @@ void slLoadCoreAssetsAsync()
 //-----------------------------------------------------------------------------
 void slSwitchScene(SLSceneView* sv, SLSceneID sceneID)
 {
-    AppLoad::switchScene(sv, sceneID);
+    AppCommon::switchScene(sv, sceneID);
 }
 //-----------------------------------------------------------------------------
 /*! Global sceneview construction function returning the index of the created

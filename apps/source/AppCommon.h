@@ -12,8 +12,8 @@
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
 */
 
-#ifndef SLAPPLICATION_H
-#define SLAPPLICATION_H
+#ifndef SLAPPCOMMON_H
+#define SLAPPCOMMON_H
 
 #include <atomic>
 #include <mutex>
@@ -67,6 +67,7 @@ public:
 
     static void createApp(SLstring appName);
     static void registerCoreAssetsLoad();
+    static void switchScene(SLSceneView* sv, SLSceneID sceneID);
     static void deleteApp();
 
     static SLstring name;          //!< Application name
@@ -118,6 +119,9 @@ public:
     static const string PROFILE_FTP_DIR; //!< ftp directory for profiles upload
 
 private:
+    static void onDoneLoading(SLSceneView* sv, SLScene* s, SLfloat startLoadMS);
+    static void onDoneAssembling(SLSceneView* sv, SLScene* s, SLfloat startLoadMS);
+
     static string      _jobProgressMsg; //!< Text message to show during progress
     static atomic<int> _jobProgressNum; //!< Integer value to show progress
     static atomic<int> _jobProgressMax; //!< Max. integer progress value

@@ -1,17 +1,28 @@
-#include "AsyncWorker.h"
+/**
+ * \file      AsyncWorker.cpp
+ * \brief     Implementation of an async worker thread
+ * \date      May 2024
+ * \authors   Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
+
+#include <AsyncWorker.h>
 #include <Utils.h>
 
+//-----------------------------------------------------------------------------
 AsyncWorker::~AsyncWorker()
 {
     stop();
 }
-
+//-----------------------------------------------------------------------------
 void AsyncWorker::start()
 {
     _ready  = false;
     _thread = std::thread(&AsyncWorker::run, this);
 }
-
+//-----------------------------------------------------------------------------
 void AsyncWorker::stop()
 {
     _stop = true;
@@ -20,24 +31,24 @@ void AsyncWorker::stop()
     _stop  = false;
     _ready = false;
 }
-
+//-----------------------------------------------------------------------------
 //! if returns true, results are valid to be retrieved
 bool AsyncWorker::isReady()
 {
     return _ready;
 }
-
+//-----------------------------------------------------------------------------
 bool AsyncWorker::stopRequested()
 {
     return _stop;
 }
-
+//-----------------------------------------------------------------------------
 // call set ready when custom run finished
 void AsyncWorker::setReady()
 {
     _ready = true;
 }
-
+//-----------------------------------------------------------------------------
 void AsyncWorker::run()
 {
     int n = 120;
@@ -63,3 +74,4 @@ void AsyncWorker::run()
     Utils::log("AsyncWorker", "run ready");
     setReady();
 }
+//-----------------------------------------------------------------------------
