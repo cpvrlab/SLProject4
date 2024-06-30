@@ -954,8 +954,9 @@ INPUT                  = ../modules/sl/source \
                          ../modules/wai/source \
                          ../modules/utils/source \
                          ../modules/math/source \
-                         ../apps/app_demo_slproject \
-                         ../apps/app_demo_node \
+                         ../apps/app_demo \
+                         ../apps/app_node \
+                         ../apps/app_minimal \
                          ../apps/source \
                          ../apps/app_demo_webgpu \
                          pages/SLProject.md \
