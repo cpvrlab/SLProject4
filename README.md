@@ -29,4 +29,4 @@ git checkout develop
 ```
 
 For detailed build instructions see the [SLProject4 wiki](https://github.com/cpvrlab/SLProject4/wiki).
-For detailed framework information see the [HTML documentation](https://pallas.ti.bfh.ch/slproject/docs/index.html).
+For detailed framework information see the [HTML documentation](https://cpvrlab.github.io/SLProject4/).
