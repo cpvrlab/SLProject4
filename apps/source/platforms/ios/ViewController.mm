@@ -23,7 +23,7 @@
 #include <SLInterface.h>
 #include <SLAssetLoader.h>
 #include <CVCapture.h>
-#include <AppDemo.h>
+#include <AppCommon.h>
 #include <App.h>
 
 #include <mach/mach_time.h>
@@ -135,9 +135,9 @@ float GetSeconds()
         dpi = 160 * screenScale;
 
     SLVstring cmdLineArgs;
-    AppDemo::exePath      = Utils_iOS::getCurrentWorkingDir();
-    AppDemo::configPath   = Utils_iOS::getAppsWritableDir();
-    AppDemo::externalPath = getAppsDocumentsDir();
+    AppCommon::exePath      = Utils_iOS::getCurrentWorkingDir();
+    AppCommon::configPath   = Utils_iOS::getAppsWritableDir();
+    AppCommon::externalPath = getAppsDocumentsDir();
 
     // Some some computer informations
     struct utsname systemInfo;
@@ -151,26 +151,26 @@ float GetSeconds()
     Utils::ComputerInfos::osVer = std::string([osver UTF8String]);
     Utils::ComputerInfos::arch  = std::string([arch UTF8String]);
 
-    AppDemo::calibIniPath = AppDemo::exePath + "data/calibrations/";     // for calibInitPath
+    AppCommon::calibIniPath = AppCommon::exePath + "data/calibrations/";     // for calibInitPath
     CVCapture::instance()->loadCalibrations(Utils::ComputerInfos::get(), // deviceInfo string
-                                            AppDemo::configPath);        // for stored calibrations
+                                            AppCommon::configPath);        // for stored calibrations
 
     /////////////////////////////////////////////
     slCreateApp(cmdLineArgs,
-                AppDemo::exePath + "data/",
-                AppDemo::exePath + "data/shaders/",
-                AppDemo::exePath + "data/models/",
-                AppDemo::exePath + "data/images/textures/",
-                AppDemo::exePath + "data/images/fonts/",
-                AppDemo::exePath + "data/videos/",
-                AppDemo::configPath,
+                AppCommon::exePath + "data/",
+                AppCommon::exePath + "data/shaders/",
+                AppCommon::exePath + "data/models/",
+                AppCommon::exePath + "data/images/textures/",
+                AppCommon::exePath + "data/images/fonts/",
+                AppCommon::exePath + "data/videos/",
+                AppCommon::configPath,
                 "AppDemo_iOS");
 
     slLoadCoreAssetsSync();
 
     ///////////////////////////////////////////////////////////////////////
-    svIndex = slCreateSceneView(AppDemo::assetManager,
-                                AppDemo::scene,
+    svIndex = slCreateSceneView(AppCommon::assetManager,
+                                AppCommon::scene,
                                 self.view.bounds.size.width * screenScale,
                                 self.view.bounds.size.height * screenScale,
                                 dpi,
@@ -217,10 +217,10 @@ float GetSeconds()
 //-----------------------------------------------------------------------------
 - (void)glkView:(GLKView*)view drawInRect:(CGRect)rect
 {
-    if (AppDemo::sceneViews.empty())
+    if (AppCommon::sceneViews.empty())
         return;
 
-    SLSceneView* sv = AppDemo::sceneViews[svIndex];
+    SLSceneView* sv = AppCommon::sceneViews[svIndex];
 
     [self setVideoType:CVCapture::instance()->videoType()
         videoSizeIndex:CVCapture::instance()->activeCamera->camSizeIndex()];
@@ -230,19 +230,19 @@ float GetSeconds()
     else
         [self stopLocationManager];
 
-    if (AppDemo::sceneToLoad)
+    if (AppCommon::sceneToLoad)
     {
-        slSwitchScene(sv, *AppDemo::sceneToLoad);
-        AppDemo::sceneToLoad = {}; // sets optional to empty
+        slSwitchScene(sv, *AppCommon::sceneToLoad);
+        AppCommon::sceneToLoad = {}; // sets optional to empty
     }
 
-    if (AppDemo::assetLoader->isLoading())
-        AppDemo::assetLoader->checkIfAsyncLoadingIsDone();
+    if (AppCommon::assetLoader->isLoading())
+        AppCommon::assetLoader->checkIfAsyncLoadingIsDone();
 
     ////////////////////////////////////////////////
     SLbool appNeedsUpdate  = App::config.onUpdate && App::config.onUpdate(sv);
     SLbool jobIsRunning    = slUpdateParallelJob();
-    SLbool isLoading       = AppDemo::assetLoader->isLoading();
+    SLbool isLoading       = AppCommon::assetLoader->isLoading();
     SLbool viewNeedsUpdate = slPaintAllViews();
     ////////////////////////////////////////////////
 
@@ -420,7 +420,7 @@ float GetSeconds()
         return;
     }
 
-    SLSceneView* sv            = AppDemo::sceneViews[0];
+    SLSceneView* sv            = AppCommon::sceneViews[0];
     CVCapture*   capture       = CVCapture::instance();
     float        videoImgWdivH = (float)imgWidth / (float)imgHeight;
 
@@ -575,7 +575,7 @@ float GetSeconds()
             [m_avSession stopRunning];
         }
 
-        SLSceneView* sv      = AppDemo::sceneViews[0];
+        SLSceneView* sv      = AppCommon::sceneViews[0];
         CVCapture*   capture = CVCapture::instance();
 
         // Get the current capture size of the videofile

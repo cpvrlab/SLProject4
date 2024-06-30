@@ -18,7 +18,7 @@
 #include <SLGLState.h>
 #include <SLEnums.h>
 #include <SLInterface.h>
-#include <AppDemo.h>
+#include <AppCommon.h>
 #include <SLAssetManager.h>
 #include <SLScene.h>
 #include <SLSceneView.h>
@@ -124,10 +124,10 @@ extern "C" JNIEXPORT void JNICALL Java_ch_bfh_cpvrlab_AppAndroidJNI_onInit(JNIEn
     string device_path_msg = "Device path:" + devicePath;
     SL_LOG(device_path_msg.c_str(), 0);
 
-    AppDemo::calibFilePath = devicePath + "/data/config/"; //that's where calibrations are stored an loaded from
-    AppDemo::calibIniPath  = devicePath + "/data/calibrations/";
+    AppCommon::calibFilePath = devicePath + "/data/config/"; //that's where calibrations are stored an loaded from
+    AppCommon::calibIniPath  = devicePath + "/data/calibrations/";
     CVCapture::instance()->loadCalibrations(Utils::ComputerInfos::get(), // deviceInfo string
-                                            AppDemo::calibFilePath);     // for calibrations made
+                                            AppCommon::calibFilePath);     // for calibrations made
 
     ////////////////////////////////////////////////////
     slCreateApp(*cmdLineArgs,
@@ -143,8 +143,8 @@ extern "C" JNIEXPORT void JNICALL Java_ch_bfh_cpvrlab_AppAndroidJNI_onInit(JNIEn
     slLoadCoreAssetsSync();
 
     ////////////////////////////////////////////////////////////////////
-    svIndex = slCreateSceneView(AppDemo::assetManager,
-                                AppDemo::scene,
+    svIndex = slCreateSceneView(AppCommon::assetManager,
+                                AppCommon::scene,
                                 static_cast<int>(width),
                                 static_cast<int>(height),
                                 static_cast<int>(dpi),
@@ -172,24 +172,24 @@ extern "C" JNIEXPORT bool JNICALL Java_ch_bfh_cpvrlab_AppAndroidJNI_onPaintAllVi
 //-----------------------------------------------------------------------------
 extern "C" JNIEXPORT bool JNICALL Java_ch_bfh_cpvrlab_AppAndroidJNI_onUpdate(JNIEnv* env, jclass obj)
 {
-    if (AppDemo::sceneViews.empty())
+    if (AppCommon::sceneViews.empty())
         return false;
 
-    SLSceneView* sv = AppDemo::sceneViews[svIndex];
+    SLSceneView* sv = AppCommon::sceneViews[svIndex];
 
-    if (AppDemo::sceneToLoad)
+    if (AppCommon::sceneToLoad)
     {
-        slSwitchScene(sv, *AppDemo::sceneToLoad);
-        AppDemo::sceneToLoad = {}; // sets optional to empty
+        slSwitchScene(sv, *AppCommon::sceneToLoad);
+        AppCommon::sceneToLoad = {}; // sets optional to empty
     }
 
-    if (AppDemo::assetLoader->isLoading())
-        AppDemo::assetLoader->checkIfAsyncLoadingIsDone();
+    if (AppCommon::assetLoader->isLoading())
+        AppCommon::assetLoader->checkIfAsyncLoadingIsDone();
 
     ////////////////////////////////////////////////////////////////
     SLbool appNeedsUpdate  = App::config.onUpdate && App::config.onUpdate(sv);
     SLbool jobIsRunning    = slUpdateParallelJob();
-    SLbool isLoading       = AppDemo::assetLoader->isLoading();
+    SLbool isLoading       = AppCommon::assetLoader->isLoading();
     SLbool viewNeedsUpdate = slPaintAllViews();
     ////////////////////////////////////////////////////////////////
 
@@ -269,7 +269,7 @@ extern "C" JNIEXPORT
 //! Grabs a frame from a video file using OpenCV
 extern "C" JNIEXPORT void JNICALL Java_ch_bfh_cpvrlab_AppAndroidJNI_grabVideoFileFrame(JNIEnv* env, jclass obj)
 {
-    SLSceneView* sv      = AppDemo::sceneViews[0];
+    SLSceneView* sv      = AppCommon::sceneViews[0];
     CVCapture*   capture = CVCapture::instance();
 
     // Get the current capture size of the videofile
@@ -300,7 +300,7 @@ extern "C" JNIEXPORT void JNICALL Java_ch_bfh_cpvrlab_AppAndroidJNI_copyVideoIma
     if (srcLumaPtr == nullptr)
         SL_EXIT_MSG("copyVideoImage: No image data pointer passed!");
 
-    SLSceneView* sv            = AppDemo::sceneViews[0];
+    SLSceneView* sv            = AppCommon::sceneViews[0];
     CVCapture*   capture       = CVCapture::instance();
     float        videoImgWdivH = (float)imgWidth / (float)imgHeight;
 
@@ -328,8 +328,8 @@ extern "C" JNIEXPORT void JNICALL Java_ch_bfh_cpvrlab_AppAndroidJNI_copyVideoYUV
 
     // If viewportWdivH is negative the viewport aspect will be adapted to the video
     // aspect ratio. No cropping will be applied.
-    float viewportWdivH = AppDemo::sceneViews[0]->viewportWdivH();
-    if (AppDemo::sceneViews[0]->viewportSameAsVideo())
+    float viewportWdivH = AppCommon::sceneViews[0]->viewportWdivH();
+    if (AppCommon::sceneViews[0]->viewportSameAsVideo())
         viewportWdivH = -1;
 
     CVCapture::instance()->copyYUVPlanes(viewportWdivH, srcW, srcH, y, ySize, yPixStride, yLineStride, u, uSize, uPixStride, uLineStride, v, vSize, vPixStride, vLineStride);

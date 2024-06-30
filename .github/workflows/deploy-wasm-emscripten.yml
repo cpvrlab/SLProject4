@@ -29,15 +29,15 @@ jobs:
           -DCMAKE_BUILD_TYPE=Release
 
     - name: Build
-      run: cmake --build ${{ github.workspace }}/build --target app-Demo-SLProject -j $(nproc)
+      run: cmake --build ${{ github.workspace }}/build --target app-demo -j $(nproc)
 
     - name: Upload
       working-directory: ${{ github.workspace }}/build
       run: |
         sshpass -p "${{ secrets.EMSCRIPTEN_DEPLOY_PASSWORD }}" sftp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${{ secrets.EMSCRIPTEN_DEPLOY_REMOTE }}" << EOF
-          put app-Demo-SLProject.html public/www/app-Demo-SLProject.html
-          put app-Demo-SLProject.js public/www/app-Demo-SLProject.js
-          put app-Demo-SLProject.wasm public/www/app-Demo-SLProject.wasm
-          put app-Demo-SLProject.worker.js public/www/app-Demo-SLProject.worker.js
-          put app-Demo-SLProject.ww.js public/www/app-Demo-SLProject.ww.js
+          put app-demo.html public/www/app-demo.html
+          put app-demo.js public/www/app-demo.js
+          put app-demo.wasm public/www/app-demo.wasm
+          put app-demo.worker.js public/www/app-demo.worker.js
+          put app-demo.ww.js public/www/app-demo.ww.js
         EOF

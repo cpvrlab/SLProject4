@@ -45,7 +45,7 @@ by the ImGui framework.\n
 There is no UI drawn with this class. It must be defined in another class
 that provides the build function. For the Demo apps this is done in the file
 AppDemoGui and the build function is passed e.g. in glfwMain function of the
-app-Demo-SLProject project.\n
+app-demo project.\n
 \n
 The full call stack for rendering one frame is:\n
 - The top-level onPaint of the app (Win, Linux, MacOS, Android or iOS)

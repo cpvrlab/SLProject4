@@ -12,7 +12,7 @@
 
 #ifdef SL_BUILD_WITH_ASSIMP
 #    include <assimp/ProgressHandler.hpp>
-#    include <AppDemo.h>
+#    include <AppCommon.h>
 
 //-----------------------------------------------------------------------------
 //!
@@ -31,7 +31,7 @@ public:
     {
         if (percentage >= 0.0f && percentage <= 100.0f)
         {
-            AppDemo::jobProgressNum((SLint)percentage);
+            AppCommon::jobProgressNum((SLint)percentage);
             return true;
         }
         else

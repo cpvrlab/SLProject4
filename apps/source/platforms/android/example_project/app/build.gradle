@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 
-def libraryName = project.hasProperty("appLibraryName") ? appLibraryName : "app-Demo-SLProject"
+def libraryName = project.hasProperty("appLibraryName") ? appLibraryName : "app-demo"
 
 android {
     signingConfigs {

@@ -62,7 +62,7 @@ struct InstrumentationSession
  the profileResults will be stored in memory instead of being written into the
  file stream which is pretty slow. Of course the in memory storage can quickly
  use a lot of memory depending how fine grained your profiling is.
- In app-Demo-SLProject this is done in slCreateApp.
+ In app-demo this is done in slCreateApp.
 
  In between you can add either PROFILE_FUNCTION(); at the beginning of any routine
  or PROFILE_SCOPE(scopeName) at the beginning of any scope you want to measure.
@@ -72,7 +72,7 @@ struct InstrumentationSession
 
  After the endSession you can drag the Profiling-Results.json file into the
  chrome://tracing page of the Google Chrome browser.
- In app-Demo-SLProject this is done in SLInterface::slTerminate.
+ In app-demo this is done in SLInterface::slTerminate.
 */
 class Instrumentor
 {

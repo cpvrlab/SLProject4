@@ -10,7 +10,7 @@
 class SLSceneView;
 //-----------------------------------------------------------------------------
 //! SLInputManager. manages system input and custom input devices.
-/*!  One static instance of SLInputManager is used in AppDemo. Every user
+/*!  One static instance of SLInputManager is used in AppCommon. Every user
  input has to go through the SLInputManager. System event's like touch, mouse,
  character input will be encapsulated in SLInputEvent subclasses and will be
  queued up before being sent to the relevant SLSceneView.

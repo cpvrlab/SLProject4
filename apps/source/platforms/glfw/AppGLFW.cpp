@@ -18,7 +18,7 @@
 #include <SLGLState.h>
 #include <SLEnums.h>
 #include <SLInterface.h>
-#include <AppDemo.h>
+#include <AppCommon.h>
 #include <SLAssetManager.h>
 #include <SLScene.h>
 #include <SLSceneView.h>
@@ -140,7 +140,7 @@ int App::run(Config configuration)
 
     // Set your own physical screen dpi
     SL_LOG("------------------------------------------------------------------");
-    SL_LOG("%s", AppDemo::asciiLabel.c_str());
+    SL_LOG("%s", AppCommon::asciiLabel.c_str());
     SL_LOG("Platform         : GLFW (Version: %d.%d.%d)",
            GLFW_VERSION_MAJOR,
            GLFW_VERSION_MINOR,
@@ -155,10 +155,10 @@ int App::run(Config configuration)
     // Utils::dumpFileSystemRec("SLProject",  projectRoot + "/data");
 
     // setup platform dependent data path
-    AppDemo::calibFilePath = configDir;
-    AppDemo::calibIniPath  = projectRoot + "/data/calibrations/";
+    AppCommon::calibFilePath = configDir;
+    AppCommon::calibIniPath  = projectRoot + "/data/calibrations/";
     CVCapture::instance()->loadCalibrations(Utils::ComputerInfos::get(),
-                                            AppDemo::calibFilePath);
+                                            AppCommon::calibFilePath);
 
     /////////////////////////////////////////////////////////
     slCreateApp(cmdLineArgs,
@@ -175,8 +175,8 @@ int App::run(Config configuration)
     slLoadCoreAssetsSync();
 
     /////////////////////////////////////////////////////////
-    slCreateSceneView(AppDemo::assetManager,
-                      AppDemo::scene,
+    slCreateSceneView(AppCommon::assetManager,
+                      AppCommon::scene,
                       scrWidth,
                       scrHeight,
                       dpi,
@@ -218,24 +218,24 @@ static SLbool onPaint()
 {
     PROFILE_SCOPE("AppGLFW::onPaint");
 
-    if (AppDemo::sceneViews.empty())
+    if (AppCommon::sceneViews.empty())
         return false;
 
-    SLSceneView* sv = AppDemo::sceneViews[svIndex];
+    SLSceneView* sv = AppCommon::sceneViews[svIndex];
 
-    if (AppDemo::sceneToLoad)
+    if (AppCommon::sceneToLoad)
     {
-        slSwitchScene(sv, *AppDemo::sceneToLoad);
-        AppDemo::sceneToLoad = {}; // sets optional to empty
+        slSwitchScene(sv, *AppCommon::sceneToLoad);
+        AppCommon::sceneToLoad = {}; // sets optional to empty
     }
 
-    if (AppDemo::assetLoader->isLoading())
-        AppDemo::assetLoader->checkIfAsyncLoadingIsDone();
+    if (AppCommon::assetLoader->isLoading())
+        AppCommon::assetLoader->checkIfAsyncLoadingIsDone();
 
     ////////////////////////////////////////////////////////////////
     SLbool appNeedsUpdate  = App::config.onUpdate && App::config.onUpdate(sv);
     SLbool jobIsRunning    = slUpdateParallelJob();
-    SLbool isLoading       = AppDemo::assetLoader->isLoading();
+    SLbool isLoading       = AppCommon::assetLoader->isLoading();
     SLbool viewNeedsUpdate = slPaintAllViews();
     ////////////////////////////////////////////////////////////////
 
@@ -259,8 +259,8 @@ should called once before the onPaint event.
 */
 static void onResize(GLFWwindow* myWindow, int width, int height)
 {
-    if (AppDemo::sceneViews.empty()) return;
-    SLSceneView* sv = AppDemo::sceneViews[svIndex];
+    if (AppCommon::sceneViews.empty()) return;
+    SLSceneView* sv = AppCommon::sceneViews[svIndex];
 
     if (fixAspectRatio)
     {

@@ -65,7 +65,7 @@ The following systems are supported and applications are provided for demonstrat
   and run inside the browser.
 
 For all demo apps (desktop and mobile) we use the [Dear ImGui](https://github.com/ocornut/imgui) library for the UI. 
-The UI for `app-Demo-SLProject` is implemented in AppDemoGui. Dear ImGui is also included in the repository.
+The UI for `app-demo` is implemented in AppDemoGui. Dear ImGui is also included in the repository.
 You could in fact use any GUI library on any OS that can render using OpenGL.
 Other alternatives could be e.g. [Qt](https://www.qt.io/), [freeglut](http://freeglut.sourceforge.net/),
 [FLTK](http://www.fltk.org/index.php), [wxWidgets](http://www.wxwidgets.org/),

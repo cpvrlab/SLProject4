@@ -27,7 +27,7 @@ class SLAnimManager;
  * SLMaterial. Shared assets are meshes (SLMesh), materials (SLMaterial),
  * textures (SLGLTexture) and shader programs (SLGLProgram).
  * One instance of SLAssetManager must be owned and destroyed by the app
- * (see e.g. AppDemo.h).
+ * (see e.g. AppCommon.h).
  */
 class SLAssetManager
 {

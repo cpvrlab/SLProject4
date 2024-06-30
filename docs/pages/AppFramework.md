@@ -97,15 +97,15 @@ system. The possible platforms are:
 
 \section scene-loading Scene Loading
 
-A scene is loaded by setting the value of `AppDemo::sceneToLoad` to the ID of the new scene.
+A scene is loaded by setting the value of `AppCommon::sceneToLoad` to the ID of the new scene.
 Inside the event loop of every platform, we check whether this variable has a value and switch
 to the new scene if so:
 
 ```cpp
-if (AppDemo::sceneToLoad)
+if (AppCommon::sceneToLoad)
 {
-    slSwitchScene(sv, *AppDemo::sceneToLoad);
-    AppDemo::sceneToLoad = {};
+    slSwitchScene(sv, *AppCommon::sceneToLoad);
+    AppCommon::sceneToLoad = {};
 }
 ```
 
@@ -122,5 +122,5 @@ After creating the new scene instance, we switch to it in two stages:
    Note: All I/O operations have to be registered here because they cannot be executed synchronously on
    the main thread on the Emscripten platform.
 2. Assemble the scene. When the asset loader is done, we call the overloaded `SLScene::assemble`
-   function that uses the loaded assets to assemble the scene. After assembly, `AppDemo::scene`
+   function that uses the loaded assets to assemble the scene. After assembly, `AppCommon::scene`
    is set to the new scene and the scene switch is completed.

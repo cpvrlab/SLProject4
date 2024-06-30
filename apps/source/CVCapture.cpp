@@ -24,7 +24,7 @@ for a good top down information.
 #include <CVImage.h>
 #include <Utils.h>
 #include <FtpUtils.h>
-#include <AppDemo.h>
+#include <AppCommon.h>
 #include <Profiler.h>
 
 //-----------------------------------------------------------------------------
@@ -920,12 +920,12 @@ void CVCapture::loadCalibrations(const string& computerInfo,
         /*
         //todo: move this download call out of cvcaputure (during refactoring of this class)
         string errorMsg;
-        if (!FtpUtils::downloadFileLatestVersion(AppDemo::calibFilePath,
+        if (!FtpUtils::downloadFileLatestVersion(AppCommon::calibFilePath,
                                               mainCalibFilename,
-                                              AppDemo::CALIB_FTP_HOST,
-                                              AppDemo::CALIB_FTP_USER,
-                                              AppDemo::CALIB_FTP_PWD,
-                                              AppDemo::CALIB_FTP_DIR,
+                                              AppCommon::CALIB_FTP_HOST,
+                                              AppCommon::CALIB_FTP_USER,
+                                              AppCommon::CALIB_FTP_PWD,
+                                              AppCommon::CALIB_FTP_DIR,
                                               errorMsg))
         {
          Utils::log("SLProject", errorMsg.c_str());
@@ -939,23 +939,23 @@ void CVCapture::loadCalibrations(const string& computerInfo,
     /*
     //todo: move this download call out of cvcaputure (during refactoring of this class)
     string errorMsg;
-    if (!FtpUtils::downloadFile(AppDemo::calibFilePath,
+    if (!FtpUtils::downloadFile(AppCommon::calibFilePath,
                                 mainCalibFilename,
-                                AppDemo::CALIB_FTP_HOST,
-                                AppDemo::CALIB_FTP_USER,
-                                AppDemo::CALIB_FTP_PWD,
-                                AppDemo::CALIB_FTP_DIR,
+                                AppCommon::CALIB_FTP_HOST,
+                                AppCommon::CALIB_FTP_USER,
+                                AppCommon::CALIB_FTP_PWD,
+                                AppCommon::CALIB_FTP_DIR,
                                 errorMsg))
     {
         Utils::log("SLProject", errorMsg.c_str());
     }
     //todo: move this download call out of cvcaputure (during refactoring of this class)
-    if (!FtpUtils::downloadFile(AppDemo::calibFilePath,
+    if (!FtpUtils::downloadFile(AppCommon::calibFilePath,
                                 scndCalibFilename,
-                                AppDemo::CALIB_FTP_HOST,
-                                AppDemo::CALIB_FTP_USER,
-                                AppDemo::CALIB_FTP_PWD,
-                                AppDemo::CALIB_FTP_DIR,
+                                AppCommon::CALIB_FTP_HOST,
+                                AppCommon::CALIB_FTP_USER,
+                                AppCommon::CALIB_FTP_PWD,
+                                AppCommon::CALIB_FTP_DIR,
                                 errorMsg))
     {
         Utils::log("SLProject", errorMsg.c_str());

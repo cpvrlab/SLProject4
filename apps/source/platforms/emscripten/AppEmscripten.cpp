@@ -22,7 +22,7 @@
 #include <SLGLState.h>
 #include <SLEnums.h>
 #include <SLInterface.h>
-#include <AppDemo.h>
+#include <AppCommon.h>
 #include <SLAssetManager.h>
 #include <SLScene.h>
 #include <SLSceneView.h>
@@ -126,7 +126,7 @@ int App::run(Config config)
     SL_LOG("------------------------------------------------------------------");
     SL_LOG("Platform         : Emscripten");
 
-    AppDemo::calibIniPath = "data/calibrations/";
+    AppCommon::calibIniPath = "data/calibrations/";
 
     SLVstring args;
     slCreateApp(args,
@@ -151,10 +151,10 @@ int App::run(Config config)
 //! Paint event handler that passes the event to the slPaintAllViews function.
 static SLbool onPaint()
 {
-    if (AppDemo::sceneViews.empty())
+    if (AppCommon::sceneViews.empty())
         return false;
 
-    SLSceneView* sv = AppDemo::sceneViews[svIndex];
+    SLSceneView* sv = AppCommon::sceneViews[svIndex];
 
     int newCanvasWidth  = EM_ASM_INT(return window.devicePixelRatio * window.innerWidth);
     int newCanvasHeight = EM_ASM_INT(return window.devicePixelRatio * window.innerHeight);
@@ -165,25 +165,25 @@ static SLbool onPaint()
         canvasHeight = newCanvasHeight;
         updateCanvas();
 
-        if (!AppDemo::sceneViews.empty())
+        if (!AppCommon::sceneViews.empty())
             slResize(svIndex,
                      canvasWidth,
                      canvasHeight);
     }
 
-    if (AppDemo::sceneToLoad)
+    if (AppCommon::sceneToLoad)
     {
-        slSwitchScene(sv, *AppDemo::sceneToLoad);
-        AppDemo::sceneToLoad = {}; // sets optional to empty
+        slSwitchScene(sv, *AppCommon::sceneToLoad);
+        AppCommon::sceneToLoad = {}; // sets optional to empty
     }
 
-    if (AppDemo::assetLoader->isLoading())
-        AppDemo::assetLoader->checkIfAsyncLoadingIsDone();
+    if (AppCommon::assetLoader->isLoading())
+        AppCommon::assetLoader->checkIfAsyncLoadingIsDone();
 
     //////////////////////////////////////////////////////////////////////////
     SLbool appNeedsUpdate  = App::config.onUpdate && App::config.onUpdate(sv);
     SLbool jobIsRunning    = slUpdateParallelJob();
-    SLbool isLoading       = AppDemo::assetLoader->isLoading();
+    SLbool isLoading       = AppCommon::assetLoader->isLoading();
     SLbool viewNeedsUpdate = slPaintAllViews();
     //////////////////////////////////////////////////////////////////////////
 
@@ -203,16 +203,16 @@ static void updateCanvas()
 //-----------------------------------------------------------------------------
 static void onLoadingCoreAssets()
 {
-    if (AppDemo::assetLoader->isLoading())
+    if (AppCommon::assetLoader->isLoading())
     {
-        AppDemo::assetLoader->checkIfAsyncLoadingIsDone();
+        AppCommon::assetLoader->checkIfAsyncLoadingIsDone();
         return;
     }
 
     coreAssetsLoaded = true;
 
-    slCreateSceneView(AppDemo::assetManager,
-                      AppDemo::scene,
+    slCreateSceneView(AppCommon::assetManager,
+                      AppCommon::scene,
                       canvasWidth,
                       canvasHeight,
                       (int)(142.0 * EM_ASM_DOUBLE(return window.devicePixelRatio)),

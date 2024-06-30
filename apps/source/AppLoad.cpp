@@ -14,7 +14,7 @@
 #include <SLScene.h>
 #include <SLAssetManager.h>
 #include <SLAssetLoader.h>
-#include <AppDemo.h>
+#include <AppCommon.h>
 #include <App.h>
 
 //-----------------------------------------------------------------------------
@@ -28,8 +28,8 @@
  */
 void AppLoad::switchScene(SLSceneView* sv, SLSceneID sceneID)
 {
-    SLAssetManager*& am = AppDemo::assetManager;
-    SLAssetLoader*&  al = AppDemo::assetLoader;
+    SLAssetManager*& am = AppCommon::assetManager;
+    SLAssetLoader*&  al = AppCommon::assetLoader;
 
     SLfloat startLoadMS = GlobalTimer::timeMS();
 
@@ -38,20 +38,20 @@ void AppLoad::switchScene(SLSceneView* sv, SLSceneID sceneID)
     //////////////////////
 
     if (App::config.onBeforeSceneDelete)
-        App::config.onBeforeSceneDelete(sv, AppDemo::scene);
+        App::config.onBeforeSceneDelete(sv, AppCommon::scene);
 
-    if (AppDemo::scene)
+    if (AppCommon::scene)
     {
-        delete AppDemo::scene;
-        AppDemo::scene = nullptr;
+        delete AppCommon::scene;
+        AppCommon::scene = nullptr;
     }
 
     // Deactivate in general the device sensors
-    AppDemo::devRot.init();
-    AppDemo::devLoc.init();
+    AppCommon::devRot.init();
+    AppCommon::devLoc.init();
 
     // reset existing sceneviews
-    for (auto* sceneView : AppDemo::sceneViews)
+    for (auto* sceneView : AppCommon::sceneViews)
         sceneView->unInit();
 
     // Clear all data in the asset manager
@@ -61,17 +61,17 @@ void AppLoad::switchScene(SLSceneView* sv, SLSceneID sceneID)
     // Init new scene //
     ////////////////////
 
-    AppDemo::sceneID = sceneID;
+    AppCommon::sceneID = sceneID;
     SLScene* s       = App::config.onNewScene(sceneID);
     SL_LOG("Scene name       : %s (SceneID: %d)", 
            s->name().c_str(), 
-           AppDemo::sceneID);
+           AppCommon::sceneID);
 
     // Initialize all preloaded stuff from SLScene
     s->init(am);
 
 #ifndef SL_EMSCRIPTEN
-    s->initOculus(AppDemo::dataPath + "shaders/");
+    s->initOculus(AppCommon::dataPath + "shaders/");
 #endif
 
     // Reset the global SLGLState state
@@ -98,8 +98,8 @@ void AppLoad::switchScene(SLSceneView* sv, SLSceneID sceneID)
 //-----------------------------------------------------------------------------
 void AppLoad::onDoneLoading(SLSceneView* sv, SLScene* s, SLfloat startLoadMS)
 {
-    SLAssetManager* am = AppDemo::assetManager;
-    SLAssetLoader*  al = AppDemo::assetLoader;
+    SLAssetManager* am = AppCommon::assetManager;
+    SLAssetLoader*  al = AppCommon::assetLoader;
 
     // Register a task to assemble the scene.
     al->addLoadTask(std::bind(&SLScene::assemble, s, am, sv));
@@ -128,11 +128,11 @@ void AppLoad::onDoneAssembling(SLSceneView* sv, SLScene* s, SLfloat startLoadMS)
         sv->camera(sv->sceneViewCamera());
 
     // call onInitialize on all scene views to init the scenegraph and stats
-    for (auto* sceneView : AppDemo::sceneViews)
+    for (auto* sceneView : AppCommon::sceneViews)
         if (sceneView != nullptr)
             sceneView->onInitialize();
 
-    AppDemo::scene = s;
+    AppCommon::scene = s;
 
     if (App::config.onAfterSceneAssembly)
         App::config.onAfterSceneAssembly(sv, s);

@@ -43,7 +43,7 @@ function(sl_add_app)
     file(GLOB COMMON_HEADERS
         ${SL_PROJECT_ROOT}/apps/source/App.h
         ${SL_PROJECT_ROOT}/apps/source/CVCapture.h
-        ${SL_PROJECT_ROOT}/apps/source/AppDemo.h
+        ${SL_PROJECT_ROOT}/apps/source/AppCommon.h
         ${SL_PROJECT_ROOT}/apps/source/AppLoad.h
         ${SL_PROJECT_ROOT}/apps/source/SLScene.h
         ${SL_PROJECT_ROOT}/apps/source/SLInterface.h
@@ -53,7 +53,7 @@ function(sl_add_app)
 
     file(GLOB COMMON_SOURCES
         ${SL_PROJECT_ROOT}/apps/source/CVCapture.cpp
-        ${SL_PROJECT_ROOT}/apps/source/AppDemo.cpp
+        ${SL_PROJECT_ROOT}/apps/source/AppCommon.cpp
         ${SL_PROJECT_ROOT}/apps/source/AppLoad.cpp
         ${SL_PROJECT_ROOT}/apps/source/SLInterface.cpp
         ${SL_PROJECT_ROOT}/apps/source/SLProjectScene.cpp
@@ -363,18 +363,18 @@ function(sl_add_app)
     )
 endfunction()
 
-add_subdirectory(app_demo_slproject)
-add_subdirectory(app_demo_node)
-add_subdirectory(app_demo_minimal)
+add_subdirectory(app_demo)
+add_subdirectory(app_node)
+add_subdirectory(app_minimal)
 
 if(NOT SYSTEM_NAME_UPPER MATCHES "^(ANDROID|IOS)$")
     if (SL_BUILD_EXERCISES)
         add_subdirectory(exercises)
     endif()
 
-    add_subdirectory(app_demo_imgui)
+    add_subdirectory(app_imgui)
 
     if (SL_BUILD_WEBGPU_DEMO AND NOT ("${SYSTEM_NAME_UPPER}" MATCHES "EMSCRIPTEN"))
-        add_subdirectory(app_demo_webgpu)
+        add_subdirectory(app_webgpu)
     endif ()
 endif()

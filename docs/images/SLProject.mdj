@@ -25612,7 +25612,7 @@
 											"top": 31,
 											"width": 207,
 											"height": 13,
-											"text": "AppDemo"
+											"text": "AppCommon"
 										},
 										{
 											"_type": "LabelView",
@@ -33331,11 +33331,11 @@
 							"lineColor": "#002133",
 							"fontColor": "#ff2b2b",
 							"font": "Arial;13;0",
-							"left": 896,
+							"left": 856,
 							"top": 160,
-							"width": 89,
+							"width": 129,
 							"height": 38,
-							"text": "Core data for demo apps"
+							"text": "Owns top-level instances for apps"
 						},
 						{
 							"_type": "UMLAssociationView",
@@ -40068,7 +40068,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
 					},
-					"name": "AppDemo",
+					"name": "AppCommon",
 					"ownedElements": [
 						{
 							"_type": "UMLAssociation",
