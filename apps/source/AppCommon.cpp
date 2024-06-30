@@ -234,6 +234,9 @@ void AppCommon::switchScene(SLSceneView* sv, SLSceneID sceneID)
         App::config.onBeforeSceneLoad(sv, s);
 }
 //-----------------------------------------------------------------------------
+/*! OnDoneLoading is called when the asyn asset loading is finished and the 
+async scene assembly can be started.
+*/
 void AppCommon::onDoneLoading(SLSceneView* sv, SLScene* s, SLfloat startLoadMS)
 {
     SLAssetManager* am = AppCommon::assetManager;

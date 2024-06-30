@@ -164,9 +164,9 @@ SLTransformNode::~SLTransformNode()
 {
     // delete gizmos
     _gizmosNode->deleteChildren();
-    // delete _gizmosNode;
     this->deleteChild(_gizmosNode);
     this->deleteChildren();
+    
     // delete all materials and meshes
     delete _matR;
     delete _matG;

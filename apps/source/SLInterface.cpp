@@ -185,18 +185,26 @@ SLint slCreateSceneView(SLAssetManager* am,
     return (SLint)AppCommon::sceneViews.size() - 1;
 }
 //-----------------------------------------------------------------------------
+/*! Global C function for synchronous asset loading used by all platforms 
+except on emscripten where slLoadCoreAssetsAsync is used.
+*/
 void slLoadCoreAssetsSync()
 {
     AppCommon::registerCoreAssetsLoad();
     AppCommon::assetLoader->loadAssetsSync();
 }
 //-----------------------------------------------------------------------------
+/*! Global C function for asynchronous asset loading used on emscripten 
+platform.
+*/
 void slLoadCoreAssetsAsync()
 {
     AppCommon::registerCoreAssetsLoad();
     AppCommon::assetLoader->loadAssetsAsync([] {});
 }
 //-----------------------------------------------------------------------------
+/*! Global C function for scene switching with a sceneID
+*/
 void slSwitchScene(SLSceneView* sv, SLSceneID sceneID)
 {
     AppCommon::switchScene(sv, sceneID);

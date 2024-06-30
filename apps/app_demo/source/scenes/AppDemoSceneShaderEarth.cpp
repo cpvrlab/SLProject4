@@ -6,7 +6,7 @@
  * \date      May 2024
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
- * \authors   Marino von Wattenwyl, Earth Shader from Markus Knecht
+ * \authors   Marcus Hudritsch, Earth Shader from Markus Knecht
  * \copyright http://opensource.org/licenses/GPL-3.0
 */
 

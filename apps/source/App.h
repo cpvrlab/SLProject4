@@ -31,6 +31,14 @@ class SLScene;
 class SLSceneView;
 class SLInputManager;
 //-----------------------------------------------------------------------------
+//! The App namespace declares the App::Config struct and the App::run function
+/*! An App::Config can be passed to the run function defined. 
+ Beside this is contains the callback functions typedefs.
+ For more info on how to create a new app with SLProject see:
+ https://github.com/cpvrlab/SLProject4/wiki/Creating-a-New-App
+ For more info about App framework see: 
+ https://cpvrlab.github.io/SLProject4/app-framework.html
+ */
 namespace App
 {
 typedef SLSceneView* (*OnNewSceneViewCallback)(SLScene* scene, int curDPI, SLInputManager& inputManager);

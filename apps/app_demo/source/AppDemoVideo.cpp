@@ -1,5 +1,6 @@
 /**
  * \file      AppDemoVideo.cpp
+ * \brief     All video capturing and video tracking functions are in here.
  * \date      August 2019
  * \authors   Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0

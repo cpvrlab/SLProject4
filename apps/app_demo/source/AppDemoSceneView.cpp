@@ -19,6 +19,7 @@ AppDemoSceneView::AppDemoSceneView(SLScene*        s,
 {
 }
 //-----------------------------------------------------------------------------
+// ???
 SLbool AppDemoSceneView::onKeyPress(SLKey key, SLKey mod)
 {
     // Keyboard shortcuts for next or previous sceneID loading
@@ -45,6 +46,7 @@ SLbool AppDemoSceneView::onKeyPress(SLKey key, SLKey mod)
     return SLSceneView::onKeyPress(key, mod);
 }
 //-----------------------------------------------------------------------------
+// ???
 SLbool AppDemoSceneView::onKeyRelease(SLKey key, SLKey mod)
 {
     if (AppDemoGui::hideUI)

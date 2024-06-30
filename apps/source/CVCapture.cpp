@@ -330,11 +330,6 @@ void CVCapture::loadIntoLastFrame(const float           viewportWdivH,
                 break;
             }
             case PF_bgr:
-            {
-                cvType = CV_8UC3;
-                bpp    = 3;
-                break;
-            }
             case PF_rgb:
             {
                 cvType = CV_8UC3;
@@ -342,11 +337,6 @@ void CVCapture::loadIntoLastFrame(const float           viewportWdivH,
                 break;
             }
             case PF_bgra:
-            {
-                cvType = CV_8UC4;
-                bpp    = 4;
-                break;
-            }
             case PF_rgba:
             {
                 cvType = CV_8UC4;

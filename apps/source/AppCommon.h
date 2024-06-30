@@ -43,9 +43,9 @@ using std::optional;
  manager, the scene pointer, the vector of all sceneviews, the gui pointer,
  the camera calibration objects and the device rotation and location
  information.<br>
- The static function createApp is called by the C-interface
- functions slCreateApp and the function deleteApp by slTerminate.
- At the moment only one scene can be open at the time.
+ The static function createApp is called by the C-interface functions 
+ slCreateApp and the function deleteApp by slTerminate. At the moment only 
+ one scene can be open at the time.
  <br>
  AppCommon holds two static video camera calibrations, one for a main camera
  (mainCam) and one for the selfie camera on mobile devices (scndCam).
