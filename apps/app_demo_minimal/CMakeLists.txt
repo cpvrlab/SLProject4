@@ -7,7 +7,7 @@ sl_add_app(
     "ANDROID"
     "IOS"
     
-    SOURCES "AppMinimal.cpp"
+    SOURCES "AppMinimalMain.cpp"
 
     # On Android, set the path to the `app` directory
     ANDROID_APP_DIR "${SL_PROJECT_ROOT}/apps/source/platforms/android/example_project/app"

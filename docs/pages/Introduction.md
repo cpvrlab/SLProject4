@@ -47,7 +47,9 @@ The following class diagram gives you an overview of the major classes with its 
 
 \section app Application Code
 
-The application's code (grey boxes at the top of the diagram) contains the code for the operating system, the scene definition with SLProject library (SL), the video processing using CV-classes and the UI with ImGUI. In all cases we have the most outer shell of the application that handles the window and the OpenGL context creation and passes the events to a thin C-function interface before it is handled by the C++-framework in the library lib-SLProject. The following systems are supported and applications are provided for demonstration:
+The application's code (grey boxes at the top of the diagram) contains the code for the operating system, the scene definition with SLProject library (SL), the video processing using CV-classes and the UI with ImGUI. In all cases we have the most outer shell of the application that handles the window and the OpenGL context creation and passes the events to a thin C-function interface before it is handled by the C++-framework in the library lib-SLProject.
+For more information about application code please read the page about the [App Framework](https://cpvrlab.github.io/SLProject4/app-framework.html).
+The following systems are supported and applications are provided for demonstration:
 
 - **Windows, Linux and macOS** applications use the [GLFW](http://www.glfw.org/)
   C-library for the platform independent window and context creation.
@@ -58,7 +60,7 @@ The application's code (grey boxes at the top of the diagram) contains the code 
 - **Apple iOS** applications start in Objective-C before it passes the events to the C-interface.
   See the [wiki for build instructions](https://github.com/cpvrlab/SLProject4/wiki/Build-on-MacOS-with-XCode-for-iOS)
   and `apps/source/platforms/ios/example_project` for the project used in demos. 
-- **Web** applications use [Emscripten](https://emscripten.org/) to compile C++ code to
+- **Web** applications use [Emscripten](https://cpvrlab.github.io/SLProject4/emscripten.html) to compile C++ code to
   [WebAssembly](https://webassembly.org/). This allows applications to be served by a web server
   and run inside the browser.
 
