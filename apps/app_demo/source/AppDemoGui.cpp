@@ -4343,7 +4343,7 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
                     }
 
                     // Shaders
-                    SLuint numShaders = m->program() ? m->program()->shaders().size() : 0;
+                    size_t numShaders = m->program() ? m->program()->shaders().size() : 0;
                     numShaders += m->programTF() ? m->programTF()->shaders().size() : 0;
 
                     if (numShaders > 0 && ImGui::TreeNode("Shd", "Shaders (%d)", (int)numShaders))
