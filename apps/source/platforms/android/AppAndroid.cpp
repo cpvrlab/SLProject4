@@ -149,7 +149,7 @@ extern "C" JNIEXPORT void JNICALL Java_ch_bfh_cpvrlab_AppAndroidJNI_onInit(JNIEn
                                 static_cast<int>(height),
                                 static_cast<int>(dpi),
                                 config.startSceneID,
-                                reinterpret_cast<void*>(Java_renderRaytracingCallback),
+                                nullptr,
                                 nullptr,
                                 reinterpret_cast<void*>(config.onNewSceneView),
                                 reinterpret_cast<void*>(config.onGuiBuild),

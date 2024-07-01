@@ -969,6 +969,7 @@ string getAppsWritableDir(string appName)
 #else
 #    error "No port to this OS"
 #endif
+    return "";
 }
 //-----------------------------------------------------------------------------
 // Returns the working directory with forward slashes inbetween and at the end
@@ -1374,11 +1375,11 @@ std::string ComputerInfos::get()
 
     char hostC[PROP_VALUE_MAX];
     len  = __system_property_get("ro.build.host", hostC);
-    name = hostC ? string(hostC) : "NAME?";
+    name = !string(hostC).empty() ? string(hostC) : "NAME?";
 
     char userC[PROP_VALUE_MAX];
     len  = __system_property_get("ro.build.user", userC);
-    user = userC ? string(userC) : "USER?";
+    user = !string(userC).empty() ? string(userC) : "USER?";
 
     char brandC[PROP_VALUE_MAX];
     len   = __system_property_get("ro.product.brand", brandC);

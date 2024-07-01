@@ -66,7 +66,7 @@ SLImporter::~SLImporter()
 void SLImporter::logMessage(SLLogVerbosity verbosity, const char* msg, ...)
 {
 #if defined(SL_OS_ANDROID)
-#    define SL_LOG(msg) ;
+    SL_LOG(msg) ;
 #else
     // write message to a buffer
     char         buffer[4096];

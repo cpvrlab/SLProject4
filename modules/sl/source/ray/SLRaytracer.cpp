@@ -276,7 +276,7 @@ void SLRaytracer::renderSlices(const bool isMainThread, SLuint threadNum)
             }
 
             // Update image after 500 ms
-            if (isMainThread && !_doContinuous)
+            if (_sv->onWndUpdate && isMainThread && !_doContinuous)
             {
                 if (GlobalTimer::timeS() - t1 > 0.5)
                 {
@@ -379,7 +379,7 @@ void SLRaytracer::renderSlicesMS(const bool isMainThread, SLuint threadNum)
                 SLRay::maxDepthReached = std::max(SLRay::depthReached, SLRay::maxDepthReached);
             }
 
-            if (isMainThread && !_doContinuous)
+            if (_sv->onWndUpdate && isMainThread && !_doContinuous)
             {
                 if (GlobalTimer::timeS() - t1 > 0.5)
                 {
@@ -745,7 +745,7 @@ void SLRaytracer::sampleAAPixels(const bool isMainThread, SLuint threadNum)
             //_mutex.unlock();
         }
 
-        if (isMainThread && !_doContinuous)
+        if (_sv->onWndUpdate && isMainThread && !_doContinuous)
         {
             t2 = GlobalTimer::timeS();
             if (t2 - t1 > 0.5)
