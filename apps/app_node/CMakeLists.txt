@@ -16,7 +16,7 @@ sl_add_app(
 
     # On iOS, set the path to the Info.plist template as well as some other properties.
     IOS_INFO_PLIST "${SL_PROJECT_ROOT}/apps/source/platforms/ios/example_project/plist.in"
-    IOS_DISPLAY_NAME "SL Demo"
+    IOS_DISPLAY_NAME "app-demo"
     IOS_COPYRIGHT "Copyright Berner Fachhochschule (Marcus Hudritsch)"
     IOS_ICON_NAME "AppIcon"
 
