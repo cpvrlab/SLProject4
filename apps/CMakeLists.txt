@@ -231,7 +231,7 @@ function(sl_add_app)
             ${RESOURCES}
         )
 
-        set(BUNDLE_IDENTIFIER "ch.bfh.ti.${APP_TARGET}")
+        set(BUNDLE_IDENTIFIER "ch.bfh.ti.cpvrlab.${APP_TARGET}")
         set(XCODE_CODESIGNIDENTITY "iPhone Developer")
         set(XCODE_DEVELOPMENTTEAM ${XCODE_DEVELOPMENTTEAM})
 
