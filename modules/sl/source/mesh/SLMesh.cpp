@@ -33,15 +33,20 @@ using std::set;
 #endif
 
 //-----------------------------------------------------------------------------
-/*!
- * Constructor for mesh objects.
- * Meshes can be used in multiple nodes (SLNode). Meshes can belong
+/**
+ * @brief Construct a new SLMesh::SLMesh object
+ * @details Meshes can be used in multiple nodes (SLNode). Meshes can belong
  * therefore to the global assets such as meshes (SLMesh), materials
- * (SLMaterial), textures (SLGLTexture) and shader programs (SLGLProgram).
- * \param assetMgr Pointer to a global asset manager. If passed the asset
+ * (SLMaterial), textures (SLGLTexture) and shader programs (SLGLProgram).\n
+ * It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * @param assetMgr Pointer to a global asset manager. If passed the asset
  * manager is the owner of the instance and will do the deallocation. If a
  * nullptr is passed the creator is responsible for the deallocation.
- * \param name Name of the mesh
+ * @param name Name of the mesh
  */
 SLMesh::SLMesh(SLAssetManager* assetMgr, const SLstring& name) : SLObject(name)
 {

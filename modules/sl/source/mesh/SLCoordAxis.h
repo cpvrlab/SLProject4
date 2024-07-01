@@ -14,12 +14,19 @@
 #include <SLMesh.h>
 
 //-----------------------------------------------------------------------------
-//! Axis aligned coordinate axis mesh
-/*!
-The SLAxis mesh draws axis aligned arrows to indicate the coordinate system.
-All arrows have unit lenght. The arrow along x,y & z axis have the colors
-red, green & blue.
-*/
+/**
+ * @brief Axis aligned coordinate axis mesh
+ * @details The SLAxis mesh draws axis aligned arrows to indicate the 
+ * coordinate system. All arrows have unit lenght. The arrow along x,y & z 
+ * axis have the colors red, green & blue.
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * For this mesh it means that the objects for OpenGL drawing (_vao, _vaoP,
+ * _vaoN, _vaoT and _vaoS) remain unused until the first frame is rendered.
+ */
 class SLCoordAxis : public SLMesh
 {
 public:

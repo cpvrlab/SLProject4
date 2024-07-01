@@ -28,9 +28,15 @@ unsigned int SLNode::instanceIndex = 0;
 // Static updateRec counter
 SLuint SLNode::numWMUpdates = 0;
 //-----------------------------------------------------------------------------
-/*!
-Default constructor just setting the name.
-*/
+/**
+ * @brief Construct a new SLNode::SLNode object
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * @param name Name of the node
+ */
 SLNode::SLNode(const SLstring& name) : SLObject(name)
 {
     _parent   = nullptr;
@@ -53,6 +59,11 @@ SLNode::SLNode(const SLstring& name) : SLObject(name)
 //-----------------------------------------------------------------------------
 /*!
 Constructor with a mesh pointer and name.
+It is important that during instantiation NO OpenGL functions (gl*) get called
+because this constructor will be most probably called in a parallel thread from
+within a SLScene::assemble function. All objects that get rendered have to do 
+their OpenGL initialization when they are used the first time during rendering 
+in the main thread.
 */
 SLNode::SLNode(SLMesh* mesh, const SLstring& name) : SLObject(name)
 {
@@ -80,6 +91,11 @@ SLNode::SLNode(SLMesh* mesh, const SLstring& name) : SLObject(name)
 //-----------------------------------------------------------------------------
 /*!
 Constructor with a mesh pointer, translation vector and name.
+It is important that during instantiation NO OpenGL functions (gl*) get called
+because this constructor will be most probably called in a parallel thread from
+within a SLScene::assemble function. All objects that get rendered have to do 
+their OpenGL initialization when they are used the first time during rendering 
+in the main thread.
 */
 SLNode::SLNode(SLMesh*         mesh,
                const SLVec3f&  translation,

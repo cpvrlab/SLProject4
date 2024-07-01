@@ -23,9 +23,8 @@ class SLAssetManager;
 
 //-----------------------------------------------------------------------------
 //! Defines a standard CG material with textures and a shader program
-/*!
- The SLMaterial class defines a material with either the Blinn-Phong (default)
- or the Cook-Torrance reflection) model.<br>
+/** @details The SLMaterial class defines a material with either the 
+ Blinn-Phong (default) or the Cook-Torrance reflection) model.<br>
  <br>
  In the Blinn-Phong reflection model the following parameters get used:<br>
  The ambient, diffuse, specular and emissive color as well as the shininess
@@ -44,6 +43,14 @@ class SLAssetManager;
  shaders (a vertex and fragment shader) gets automatically generated
  according to the reflection model and the material parameters. See
  SLGLProgramGenerated for more details.
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * For this material it means, that OpenGL shader programs in _programs 
+ * and the textures in _textures do not get built until the first frame is
+ * rendered.
 */
 class SLMaterial : public SLObject
 {

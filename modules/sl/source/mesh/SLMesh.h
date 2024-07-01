@@ -29,95 +29,103 @@ class SLGLProgram;
 class SLAssetManager;
 
 //-----------------------------------------------------------------------------
-//! An SLMesh object is a triangulated mesh that is drawn with one draw call.
-/*!
-The SLMesh class represents a single mesh object. The mesh object is drawn
-with one draw call using the vertex indices in I16 or I32. A mesh can be drawn
-with triangles, lines or points.
-The vertex attributes are stored in vectors with equal number of elements:
-\n P (vertex position, mandatory)
-\n N (vertex normals)
-\n C (vertex color)
-\n UV[0] (1st. vertex texture coordinates) optional
-\n UV[1] (2nd. vertex texture coordinates) optional
-\n T (vertex tangents) optional
-\n Ji (vertex joint index) optional 2D vector
-\n Jw (vertex joint weights) optional 2D vector
-\n I16 holds the unsigned short vertex indices.
-\n I32 holds the unsigned int vertex indices.
-\n
-The normals of a vertex are automatically calculated in the method calcNormals()
-by averaging the face normals of the adjacent triangles. A vertex has always
-only <b>one</b> normal and is used for the lighting calculation in the shader
-programs. With such averaged normals you can created a interpolated shading on
-smooth surfaces such as a sphere.
-\n
-For objects with sharp edges such as a box you need 4 vertices per box face.
-All normals of a face point to the same direction. This means, that you have
-three times the same vertex position but with different normals for one corner
-of the box.
-\n
-The following image shows a box with sharp edges and a sphere with mostly
-smooth but also 4 sharp edges. The smooth red normal as the top vertex got
-averaged because its position is only once in the vector P. On the other hand
-are the vertices of the hard edges in the front of the sphere doubled.
-\n
-@image html images/sharpAndSmoothEdges.png
-\n
-\n The following the example creates the box with 24 vertices:
-\n The vertex positions and normals in P and N:
-\n P.size = 24
-\n P[0] = [1,1,1]   N[0] = [1,0,0]
-\n P[1] = [1,0,1]   N[1] = [1,0,0]
-\n P[2] = [1,0,0]   N[2] = [1,0,0]
-\n P[3] = [1,1,0]   N[3] = [1,0,0]
-\n
-\n P[4] = [1,1,0]   N[4] = [0,0,-1]
-\n P[5] = [1,0,0]   N[5] = [0,0,-1]
-\n P[6] = [0,0,0]   N[6] = [0,0,-1]
-\n P[7] = [0,1,0]   N[7] = [0,0,-1]
-\n
-\n P[8] = [0,0,1]   N[8] = [-1,0,0]
-\n P[9] = [0,1,1]   N[9] = [-1,0,0]
-\n P[10]= [0,1,0]   N[10]= [-1,0,0]
-\n P[11]= [0,0,0]   N[11]= [-1,0,0]
-\n
-\n P[12]= [1,1,1]   N[12]= [0,0,1]
-\n P[13]= [0,1,1]   N[13]= [0,0,1]
-\n P[14]= [0,0,1]   N[14]= [0,0,1]
-\n P[15]= [1,0,1]   N[15]= [0,0,1]
-\n
-\n P[16]= [1,1,1]   N[16]= [0,1,0]
-\n P[17]= [1,1,0]   N[17]= [0,1,0]
-\n P[18]= [0,1,0]   N[18]= [0,1,0]
-\n P[19]= [0,1,1]   N[19]= [0,1,0]
-\n
-\n P[20]= [0,0,0]   N[20]= [0,-1,0]
-\n P[21]= [1,0,0]   N[21]= [0,-1,0]
-\n P[22]= [1,0,1]   N[22]= [0,-1,0]
-\n P[23]= [0,0,1]   N[23]= [0,-1,0]
-\n
-\n The vertex indices in I16:
-\n I16[] = {0,1,2, 0,2,3,
-\n          4,5,6, 4,6,7,
-\n          8,9,10, 8,10,11,
-\n          12,13,14, 12,14,15,
-\n          16,17,18, 16,18,19,
-\n          20,21,22, 20,22,23}
-\n
-@image html images/boxVertices.png
-\n
-All vertex attributes are added to the vertex array object _vao (SLVertexArray).<br>
-All arrays remain in the main memory for ray tracing.
-A mesh uses only one material referenced by the SLMesh::mat pointer.
-\n
-If a mesh is associated with a skeleton all its vertices and normals are
-transformed every frame by the joint weights. Every vertex of a mesh has
-weights for 1-n joints by which it can be influenced. This transform is
-called skinning and is done in CPU in the method transformSkin. The final
-transformed vertices and normals are stored in _finalP and _finalN.
-*/
-
+/**
+ * @brief An SLMesh object is a triangulated mesh, drawn with one draw call.
+ * @details The SLMesh class represents a single mesh object. The mesh object 
+ * is drawn with one draw call using the vertex indices in I16 or I32. A mesh 
+ * can be drawn with triangles, lines or points.
+ * The vertex attributes are stored in vectors with equal number of elements:
+ * \n P (vertex position, mandatory)
+ * \n N (vertex normals)
+ * \n C (vertex color)
+ * \n UV[0] (1st. vertex texture coordinates) optional
+ * \n UV[1] (2nd. vertex texture coordinates) optional
+ * \n T (vertex tangents) optional
+ * \n Ji (vertex joint index) optional 2D vector
+ * \n Jw (vertex joint weights) optional 2D vector
+ * \n I16 holds the unsigned short vertex indices.
+ * \n I32 holds the unsigned int vertex indices.
+ * \n
+ * The normals of a vertex are automatically calculated in the method calcNormals()
+ * by averaging the face normals of the adjacent triangles. A vertex has always
+ * only <b>one</b> normal and is used for the lighting calculation in the shader
+ * programs. With such averaged normals you can created a interpolated shading on
+ * smooth surfaces such as a sphere.
+ * \n
+ * For objects with sharp edges such as a box you need 4 vertices per box face.
+ * All normals of a face point to the same direction. This means, that you have
+ * three times the same vertex position but with different normals for one corner
+ * of the box.
+ * \n
+ * The following image shows a box with sharp edges and a sphere with mostly
+ * smooth but also 4 sharp edges. The smooth red normal as the top vertex got
+ * averaged because its position is only once in the vector P. On the other hand
+ * are the vertices of the hard edges in the front of the sphere doubled.
+ * \n
+ * @image html images/sharpAndSmoothEdges.png
+ * \n
+ * \n The following the example creates the box with 24 vertices:
+ * \n The vertex positions and normals in P and N:
+ * \n P.size = 24
+ * \n P[0] = [1,1,1]   N[0] = [1,0,0]
+ * \n P[1] = [1,0,1]   N[1] = [1,0,0]
+ * \n P[2] = [1,0,0]   N[2] = [1,0,0]
+ * \n P[3] = [1,1,0]   N[3] = [1,0,0]
+ * \n
+ * \n P[4] = [1,1,0]   N[4] = [0,0,-1]
+ * \n P[5] = [1,0,0]   N[5] = [0,0,-1]
+ * \n P[6] = [0,0,0]   N[6] = [0,0,-1]
+ * \n P[7] = [0,1,0]   N[7] = [0,0,-1]
+ * \n
+ * \n P[8] = [0,0,1]   N[8] = [-1,0,0]
+ * \n P[9] = [0,1,1]   N[9] = [-1,0,0]
+ * \n P[10]= [0,1,0]   N[10]= [-1,0,0]
+ * \n P[11]= [0,0,0]   N[11]= [-1,0,0]
+ * \n
+ * \n P[12]= [1,1,1]   N[12]= [0,0,1]
+ * \n P[13]= [0,1,1]   N[13]= [0,0,1]
+ * \n P[14]= [0,0,1]   N[14]= [0,0,1]
+ * \n P[15]= [1,0,1]   N[15]= [0,0,1]
+ * \n
+ * \n P[16]= [1,1,1]   N[16]= [0,1,0]
+ * \n P[17]= [1,1,0]   N[17]= [0,1,0]
+ * \n P[18]= [0,1,0]   N[18]= [0,1,0]
+ * \n P[19]= [0,1,1]   N[19]= [0,1,0]
+ * \n
+ * \n P[20]= [0,0,0]   N[20]= [0,-1,0]
+ * \n P[21]= [1,0,0]   N[21]= [0,-1,0]
+ * \n P[22]= [1,0,1]   N[22]= [0,-1,0]
+ * \n P[23]= [0,0,1]   N[23]= [0,-1,0]
+ * \n
+ * \n The vertex indices in I16:
+ * \n I16[] = {0,1,2, 0,2,3,
+ * \n          4,5,6, 4,6,7,
+ * \n          8,9,10, 8,10,11,
+ * \n          12,13,14, 12,14,15,
+ * \n          16,17,18, 16,18,19,
+ * \n          20,21,22, 20,22,23}
+ * \n
+ * @image html images/boxVertices.png
+ * \n
+ * All vertex attributes are added to the vertex array object _vao (SLVertexArray).
+ * \n
+ * All arrays remain in the main memory for ray tracing.
+ * A mesh uses only one material referenced by the SLMesh::mat pointer.
+ * \n\n
+ * If a mesh is associated with a skeleton all its vertices and normals are
+ * transformed every frame by the joint weights. Every vertex of a mesh has
+ * weights for 1-n joints by which it can be influenced. This transform is
+ * called skinning and is done in CPU in the method transformSkin. The final
+ * transformed vertices and normals are stored in _finalP and _finalN.
+ * \n
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * For this mesh it means that the objects for OpenGL drawing (_vao, _vaoP,
+ * _vaoN, _vaoT and _vaoS) remain unused until the first frame is rendered.
+ */
 class SLMesh : public SLObject
 #ifdef SL_HAS_OPTIX
   , public SLOptixAccelStruct

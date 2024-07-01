@@ -15,6 +15,18 @@ SLCol4f SLLight::globalAmbient    = SLCol4f(0.1f, 0.1f, 0.1f, 1.0f);
 SLfloat SLLight::gamma            = 1.0f;
 SLbool  SLLight::doColoredShadows = false;
 //-----------------------------------------------------------------------------
+/**
+ * @brief Construct a new SLLight::SLLight object
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * @param ambiPower Ambient light power
+ * @param diffPower Diffuse light power
+ * @param specPower Specular light power
+ * @param id Light ID
+ */
 SLLight::SLLight(SLfloat ambiPower,
                  SLfloat diffPower,
                  SLfloat specPower,

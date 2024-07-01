@@ -12,9 +12,19 @@
 #include <SLText.h>
 
 //-----------------------------------------------------------------------------
-/*!
-The ctor sets all members and translates to the min. position.
-*/
+/**
+ * @brief Construct a new SLText::SLText object
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * @param text Text to be rendered
+ * @param font SLTexTont to be used
+ * @param color Color for font
+ * @param maxWidth Max. line width in pixels
+ * @param lineHeightFactor Line hight factor >= 1.0
+ */
 SLText::SLText(SLstring   text,
                SLTexFont* font,
                SLCol4f    color,

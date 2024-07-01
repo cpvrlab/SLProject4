@@ -18,6 +18,19 @@
 extern SLfloat rnd01();
 
 //-----------------------------------------------------------------------------
+/**
+ * @brief Construct a new SLLightRect::SLLightRect object
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * @param assetMgr AssetManager that will own the light mesh
+ * @param s SLScene pointer
+ * @param w Width of the light rectangle
+ * @param h Height if the light rectangle
+ * @param hasMesh Boolean if a mesh should be created and shown
+ */
 SLLightRect::SLLightRect(SLAssetManager* assetMgr,
                          SLScene*        s,
                          SLfloat         w,

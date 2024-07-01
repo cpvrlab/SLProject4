@@ -13,6 +13,16 @@
 #include <SLPolyline.h>
 
 //-----------------------------------------------------------------------------
+/**
+ * @brief Circle line mesh derived from SLPolyline
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * For this mesh it means that the objects for OpenGL drawing (_vao, _vaoP,
+ * _vaoN, _vaoT and _vaoS) remain unused until the first frame is rendered.
+ */
 class SLCircle : public SLPolyline
 {
 public:

@@ -18,7 +18,12 @@
  * < than the minLodCoverage of the last node in the LOD group. If the first
  * child node has e.g. a minLodCoverage of 0.1 it means that it will be visible
  * if its bounding rectangle covers more then 10% of the viewport. The first
- * child node in the group must be the one with the highest resolution.
+ * child node in the group must be the one with the highest resolution.\n
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
  * \param childToAdd LOD child node pointer to add
  * \param minLodCoverage A value > 0 and < 1 and < than the minLodCoverage
  * of the last node in the LOD group

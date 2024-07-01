@@ -21,6 +21,17 @@ SLProjType SLCamera::currentProjection  = P_monoPerspective;
 SLfloat    SLCamera::currentFOV         = 45.0f;
 SLint      SLCamera::currentDevRotation = 0;
 //-----------------------------------------------------------------------------
+/**
+ * @brief Construct a new SLCamera::SLCamera object
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within a SLScene::assemble function. All objects that get rendered 
+ * have to do their OpenGL initialization when they are used the first time 
+ * during rendering in the main thread.
+ * @param name Name of the camera
+ * @param textureOnlyProgramId Shader program ID for the textureOnly shader used for background rendering
+ * @param colorAttributeProgramId Shader program ID for the color attribute shader used for background rendering
+ */
 SLCamera::SLCamera(const SLstring& name,
                    SLStdShaderProg textureOnlyProgramId,
                    SLStdShaderProg colorAttributeProgramId)

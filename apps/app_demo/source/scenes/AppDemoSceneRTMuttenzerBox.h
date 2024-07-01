@@ -21,7 +21,24 @@ class AppDemoSceneRTMuttenzerBox : public SLScene
 {
 public:
     AppDemoSceneRTMuttenzerBox();
+    
+    //! All scene specific assets have to be registered for async loading in here.
+    /*! @remark All scene sspecific assets have to be loaded async by overriding 
+    SLScene::registerAssetsToLoad and SLScene::assemble. Async loading and 
+    assembling means that it happens in a parallel thread and that in there are 
+    no OpenGL calls allowed. OpenGL calls are only allowed in the main thread.*/
     void registerAssetsToLoad(SLAssetLoader& al) override;
+
+    //! After parallel loading of the assets the scene gets assembled in here.
+    /*! @remark All scene-specific assets have to be loaded async by overriding 
+    SLScene::registerAssetsToLoad and SLScene::assemble. Async loading and 
+    assembling means that it happens in a parallel thread and that in there 
+    are no OpenGL calls allowed. OpenGL calls are only allowed in the main 
+    thread. It is important that all object instantiations within 
+    SLScene::assemble do NOT call any OpenGL functions (gl*) because they happen 
+    in a parallel thread. All objects that get rendered have to do their 
+    initialization when they are used the first time during rendering in the 
+    main thread.*/
     void assemble(SLAssetManager* am, SLSceneView* sv) override;
 
 private:

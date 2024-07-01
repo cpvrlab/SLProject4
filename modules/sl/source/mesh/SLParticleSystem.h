@@ -17,8 +17,9 @@
 #include <SLTexColorLUT.h>
 
 //-----------------------------------------------------------------------------
-//! SLParticleSystem creates a particle meshes from a point primitive buffer.
-/*! The SLParticleSystem mesh object of which the vertices are drawn as points.
+/**
+ * @brief SLParticleSystem creates a particle meshes from a point primitive buffer.
+ * @details The SLParticleSystem mesh object of which the vertices are drawn as points.
  * An OpenGL transform feedback buffer is used to update the particle positions
  * on the GPU and a geometry shader is used the create two triangles per
  * particle vertex and orient them as a billboard to the viewer. Geometry
@@ -31,6 +32,13 @@
  * do* methods. All options can also be modified in the UI when the mesh is
  * selected. See the different demo scenes in the app_demo_slproject under the
  * demo scene group Particle Systems.
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * For this mesh it means that the objects for OpenGL drawing (_vao, _vaoP,
+ * _vaoN, _vaoT and _vaoS) remain unused until the first frame is rendered.
  */
 class SLParticleSystem : public SLMesh
 {

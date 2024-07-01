@@ -17,10 +17,23 @@
 #include <SLSkybox.h>
 
 //-----------------------------------------------------------------------------
-//! Cubemap constructor with cubemap images
-/*! All resources allocated are stored in the SLScene vectors for textures,
-materials, programs and meshes and get deleted at scene destruction.
-*/
+/**
+ * @brief Construct a new SLSkybox::SLSkybox object with 6 images for all sides
+ * @details It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within a SLScene::assemble function. All objects that get rendered 
+ * have to do their OpenGL initialization when they are used the first time 
+ * during rendering in the main thread.
+ * @param assetMgr Asset manager that will own the skybox mesh
+ * @param shaderPath Path to the shader files
+ * @param cubeMapXPos Texture image file for the positive X side
+ * @param cubeMapXNeg Texture image file for the negative X side
+ * @param cubeMapYPos Texture image file for the positive Y side
+ * @param cubeMapYNeg Texture image file for the negative Y side
+ * @param cubeMapZPos Texture image file for the positive Z side 
+ * @param cubeMapZNeg Texture image file for the negative Z side
+ * @param name Name of the skybox
+ */
 SLSkybox::SLSkybox(SLAssetManager* assetMgr,
                    SLstring        shaderPath,
                    SLstring        cubeMapXPos,
@@ -80,6 +93,23 @@ SLSkybox::SLSkybox(SLAssetManager* assetMgr,
 all the textures needed for image based lighting and store them in the textures
 of the material of this sky box.
 */
+
+/**
+ * @brief Construct a new SLSkybox::SLSkybox object with an HDR image
+ * @details This constructor generates a cube map skybox from a HDR Image and also
+ * all the textures needed for image based lighting and store them in the textures
+ * of the material of this sky box.\n
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * @param assetMgr Asset manager that will own the skybox mesh
+ * @param shaderPath Path to the shader files
+ * @param hdrImage HDR texture image file
+ * @param resolution Resolution of the texture objects for image based lighting
+ * @param name Name of the skybox
+ */
 SLSkybox::SLSkybox(SLAssetManager* am,
                    SLstring        shaderPath,
                    SLstring        hdrImage,

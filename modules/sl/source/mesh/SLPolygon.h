@@ -13,11 +13,18 @@
 #include <SLMesh.h>
 
 //-----------------------------------------------------------------------------
-//! SLPolygon creates a convex polyon mesh
-/*!
-The SLPolygon node draws a convex polygon with. The normale vector is
-calculated from the first 3 vertices.
-*/
+/**
+ * @brief SLPolygon creates a convex polyon mesh
+ * @details The SLPolygon node draws a convex polygon with. The normale vector 
+ * is calculated from the first 3 vertices.
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * For this mesh it means that the objects for OpenGL drawing (_vao, _vaoP,
+ * _vaoN, _vaoT and _vaoS) remain unused until the first frame is rendered.
+ */
 class SLPolygon : public SLMesh
 {
 public:

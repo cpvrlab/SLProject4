@@ -14,12 +14,19 @@
 #include <SLMesh.h>
 
 //-----------------------------------------------------------------------------
-//! Axis aligned box mesh
-/*!
-The SLBox node draws an axis aligned box from a minimal corner to a maximal
-corner. If the minimal and maximal corner are swapped the normals will point
-inside.
-*/
+/**
+ * @brief Axis aligned box mesh
+ * @details The SLBox node draws an axis aligned box from a minimal corner to 
+ * a maximal corner. If the minimal and maximal corner are swapped the normals 
+ * will point inside.
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * For this SLMesh it means that the objects for OpenGL drawing (_vao, _vaoP,
+ * _vaoN, _vaoT and _vaoS) remain unused until the first frame is rendered.
+ */
 class SLBox : public SLMesh
 {
 public:

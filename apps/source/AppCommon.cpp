@@ -1,6 +1,6 @@
 /**
  * \file      AppCommon.cpp
- * \brief     The AppCommon class holds the top-level instances of the app-demo
+ * \brief     The AppCommon class holds the top-level instances for SLProject apps
  * \details   For more info on how to create a new app with SLProject see:
  *            https://github.com/cpvrlab/SLProject4/wiki/Creating-a-New-App
  *            For more info about App framework see: 
@@ -93,18 +93,19 @@ const string AppCommon::CALIB_FTP_DIR   = "calibrations";
 const string AppCommon::PROFILE_FTP_DIR = "profiles";
 
 //-----------------------------------------------------------------------------
-//! Application and Scene creation function
+//! Application creation function
 /*! Writes and inits the static application information and create the single
-instance of the scene. Gets called by the C-interface function slCreateApp.
+instances of SLGLState, SLAssetManager and SLAssetLoader. Gets called by the 
+C-interface function slCreateApp.
 <br>
 <br>
 See examples usages in:
-  - app_demo_slproject/glfw:    AppDemoMainGLFW.cpp   in function main()
-  - app_demo_slproject/android: AppDemoAndroidJNI.cpp in Java_ch_fhnw_comgr_GLES3Lib_onInit()
-  - app_demo_slproject/ios:     ViewController.m      in viewDidLoad()
+  - platforms/android/AppAndroid.cpp in the App::run function
+  - platforms/emscripten/AppEmscripten.cpp in the App::run function
+  - platforms/glfw/AppGLFW.cpp in the App::run function
+  - platforms/ios/ViewController.mm in the viewDidLoad function
 <br>
 /param applicationName The apps name
-/param onSceneLoadCallback C Callback function as void* pointer for the scene creation.
 */
 void AppCommon::createApp(SLstring appName)
 {
@@ -132,6 +133,12 @@ void AppCommon::createApp(SLstring appName)
 #endif
 }
 //-----------------------------------------------------------------------------
+/*! Registers core assets to load async by all apps. Scene specific assets have
+to be loaded async by overriding SLScene::registerAssetsToLoad and 
+SLScene::assemble. Async loading and assembling means that it happens in a 
+parallel thread and that inthere are no OpenGL calls allowed. OpenGL calls are
+only allowed in the main thread.
+*/
 void AppCommon::registerCoreAssetsLoad()
 {
     SLAssetLoader&  al = *AppCommon::assetLoader;

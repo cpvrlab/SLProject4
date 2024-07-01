@@ -17,6 +17,19 @@
 #include <SLSpheric.h>
 
 //-----------------------------------------------------------------------------
+/**
+ * @brief Construct a new SLLightDirect::SLLightDirect object
+ * @details It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within a SLScene::assemble function. All objects that get rendered 
+ * have to do their OpenGL initialization when they are used the first time 
+ * during rendering in the main thread.
+ * @param assetMgr AssetManager that will own the light mesh
+ * @param s SLScene pointer
+ * @param arrowLength Length of the arrow visualization mesh
+ * @param hasMesh Boolean if a mesh should be created and shown
+ * @param doCascadedShadows Boolean for doing cascaded shadow mapping
+ */
 SLLightDirect::SLLightDirect(SLAssetManager* assetMgr,
                              SLScene*        s,
                              SLfloat         arrowLength,
@@ -51,6 +64,25 @@ SLLightDirect::SLLightDirect(SLAssetManager* assetMgr,
     init(s);
 }
 //-----------------------------------------------------------------------------
+/**
+ * @brief Construct a new SLLightDirect::SLLightDirect object
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * @param assetMgr AssetManager that will own the light mesh
+ * @param s SLScene pointer
+ * @param posx Light position x
+ * @param posy Light position y
+ * @param posz Light position z
+ * @param arrowLength Length of the arrow visualization mesh
+ * @param ambiPower Ambient light power
+ * @param diffPower Diffuse light power
+ * @param specPower Specular light power
+ * @param hasMesh Boolean if a mesh should be created and shown
+ * @param doCascadedShadows Boolean for doing cascaded shadow mapping
+ */
 SLLightDirect::SLLightDirect(SLAssetManager* assetMgr,
                              SLScene*        s,
                              SLfloat         posx,

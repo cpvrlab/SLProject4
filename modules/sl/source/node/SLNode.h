@@ -93,21 +93,21 @@ struct SLNodeStats
 };
 //-----------------------------------------------------------------------------
 //! SLNode represents a node in a hierarchical scene graph.
-/*!
- * SLNode is the most important building block of the scene graph.
+/** 
+ * @details This is the most important building block of the scene graph.
  * A node can have 0-N children nodes in the vector _children. With child
  * nodes you can build hierarchical structures. A node without a mesh can act
  * as parent node to group its children. A node without children only makes
  * sense to hold a mesh for visualization. The pointer _parent points to the
- * parent of a child node. \n\n
- *
+ * parent of a child node.
+ * \n\n
  * A node can point to a single SLMesh object for the rendering of triangles
  * lines or points meshes. Meshes are stored in the SLAssetManager::_meshes
  * vector. Multiple nodes can point to the same mesh object. The node is
  * therefore not the owner of the meshes and does not delete them. The mesh
  * is drawn by the methods SLNode::drawMesh and alternatively by
- * SLNode::drawRec.\n\n
- *
+ * SLNode::drawRec.
+ * \n\n
  * A node can be transformed and has therefore a object matrix (_om) for its
  * local transform. All other matrices such as the world matrix (_wm), the
  * inverse world matrix (_wmI) are derived from the object matrix and
@@ -132,6 +132,11 @@ struct SLNodeStats
  * and SLLightRect are derived from SLNode and represent light sources in the
  * scene. Cameras and lights can be placed in the scene because of their
  * inheritance of SLNode.\n
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
  */
 class SLNode
   : public SLObject
