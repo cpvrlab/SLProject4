@@ -174,7 +174,7 @@ int App::run(Config configuration)
 
     slLoadCoreAssetsSync();
 
-    /////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////
     slCreateSceneView(AppCommon::assetManager,
                       AppCommon::scene,
                       scrWidth,
@@ -187,7 +187,7 @@ int App::run(Config configuration)
                       reinterpret_cast<void*>(config.onGuiBuild),
                       reinterpret_cast<void*>(config.onGuiLoadConfig),
                       reinterpret_cast<void*>(config.onGuiSaveConfig));
-    /////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////
 
     // Event loop
     while (!slShouldClose())

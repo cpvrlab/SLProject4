@@ -174,7 +174,7 @@ void SLPathtracer::renderSlices(const bool isMainThread,
             }
 
             // update image after 500 ms
-            if (isMainThread)
+            if ( _sv->onWndUpdate && isMainThread)
             {
                 if (GlobalTimer::timeS() - t1 > 0.5f)
                 {
