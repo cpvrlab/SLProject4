@@ -64,8 +64,8 @@ file(GLOB sources
         source/SLDrawBits.h
         source/SLEnums.h
         source/SLEventHandler.h
-        source/SLImgui.h
-        source/SLImgui.cpp
+        source/SLImGui.h
+        source/SLImGui.cpp
         source/SLMaterial.cpp
         source/SLMaterial.h
         source/SLObject.h

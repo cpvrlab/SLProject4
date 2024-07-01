@@ -49,9 +49,10 @@ present.<br>
 /param onSceneLoadCallback C Callback function as void* pointer for the scene creation.
 <br>
 See examples usages in:
-  - app_demo_slproject/glfw:    AppDemoMainGLFW.cpp in function main()
-  - app-demo/android: native-lib.cpp      in Java_ch_fhnw_comgr_GLES3Lib_onInit()
-  - app_demo_slproject/ios:     ViewController.m    in viewDidLoad()
+  - apps/source/platforms/android   /AppAndroid.cpp > Java_ch_bfh_cpvrlab_AppAndroidJNI_onInit
+  - apps/source/platforms/emscripten/AppEmscripten.cpp > App::run
+  - apps/source/platforms/glfw      /AppGLFW > App::run
+  - apps/source/platforms/ios       /ViewController.mm > viewDidLoad
 */
 void slCreateApp(SLVstring&      cmdLineArgs,
                  const SLstring& dataPath,
