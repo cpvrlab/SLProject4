@@ -49,6 +49,75 @@ void AppDemoSceneErlebARChristoffel::registerAssetsToLoad(SLAssetLoader& al)
                         AppCommon::shaderPath + "Reflect.vert",
                         AppCommon::shaderPath + "Reflect.frag");
 
+    // initialize sensor stuff before loading the geotiff
+    AppCommon::devLoc.originLatLonAlt(46.94763, 7.44074, 542.2);        // Loeb Ecken
+    AppCommon::devLoc.defaultLatLonAlt(46.94841, 7.43970, 542.2 + 1.7); // Bahnhof Ausgang in Augenhöhe
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Loeb Ecken, Origin",
+                                                         46,
+                                                         56,
+                                                         51.451,
+                                                         7,
+                                                         26,
+                                                         26.676,
+                                                         542.2));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Milchgässli, Velomarkierung, (N)",
+                                                         46,
+                                                         56,
+                                                         54.197,
+                                                         7,
+                                                         26,
+                                                         23.366,
+                                                         541.2 + 1.7));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Spitalgasse (E)",
+                                                         46,
+                                                         56,
+                                                         51.703,
+                                                         7,
+                                                         26,
+                                                         27.565,
+                                                         542.1 + 1.7));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Tramhaltestelle UBS, eckiger Schachtd. (S)",
+                                                         46,
+                                                         56,
+                                                         50.366,
+                                                         7,
+                                                         26,
+                                                         24.544,
+                                                         542.3 + 1.7));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Ecke Schauplatz-Christoffelgasse (S)",
+                                                         46,
+                                                         56,
+                                                         50.139,
+                                                         7,
+                                                         26,
+                                                         27.225,
+                                                         542.1 + 1.7));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Bubenbergplatz (S)",
+                                                         46,
+                                                         56,
+                                                         50.304,
+                                                         7,
+                                                         26,
+                                                         22.113,
+                                                         542.4 + 1.7));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Heiliggeistkirche (Dole, N-W)",
+                                                         46,
+                                                         56,
+                                                         53.500,
+                                                         7,
+                                                         26,
+                                                         25.499,
+                                                         541.6 + 1.7));
+    AppCommon::devLoc.originLatLonAlt(AppCommon::devLoc.nameLocations()[0].posWGS84LatLonAlt);
+    AppCommon::devLoc.activeNamedLocation(1);   // This sets the location 1 as defaultENU
+    AppCommon::devLoc.locMaxDistanceM(1000.0f); // Max. Distanz. zum Loeb Ecken
+    AppCommon::devLoc.improveOrigin(false);     // Keine autom. Verbesserung vom Origin
+    AppCommon::devLoc.useOriginAltitude(true);
+    AppCommon::devLoc.hasOrigin(true);
+    AppCommon::devLoc.offsetMode(LOM_twoFingerY);
+    AppCommon::devRot.zeroYawAtStart(false);
+    AppCommon::devRot.offsetMode(ROM_oneFingerX);
+
     // This loads the DEM file and overwrites the altitude of originLatLonAlt and defaultLatLonAlt
     al.addGeoTiffToLoad(AppCommon::devLoc,
                         AppCommon::dataPath +
@@ -168,76 +237,6 @@ void AppDemoSceneErlebARChristoffel::assemble(SLAssetManager* am, SLSceneView* s
     scene->addChild(axis);
     scene->addChild(_bern);
     scene->addChild(cam1);
-
-    // initialize sensor stuff
-    AppCommon::devLoc.originLatLonAlt(46.94763, 7.44074, 542.2);        // Loeb Ecken
-    AppCommon::devLoc.defaultLatLonAlt(46.94841, 7.43970, 542.2 + 1.7); // Bahnhof Ausgang in Augenhöhe
-
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Loeb Ecken, Origin",
-                                                         46,
-                                                         56,
-                                                         51.451,
-                                                         7,
-                                                         26,
-                                                         26.676,
-                                                         542.2));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Milchgässli, Velomarkierung, (N)",
-                                                         46,
-                                                         56,
-                                                         54.197,
-                                                         7,
-                                                         26,
-                                                         23.366,
-                                                         541.2 + 1.7));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Spitalgasse (E)",
-                                                         46,
-                                                         56,
-                                                         51.703,
-                                                         7,
-                                                         26,
-                                                         27.565,
-                                                         542.1 + 1.7));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Tramhaltestelle UBS, eckiger Schachtd. (S)",
-                                                         46,
-                                                         56,
-                                                         50.366,
-                                                         7,
-                                                         26,
-                                                         24.544,
-                                                         542.3 + 1.7));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Ecke Schauplatz-Christoffelgasse (S)",
-                                                         46,
-                                                         56,
-                                                         50.139,
-                                                         7,
-                                                         26,
-                                                         27.225,
-                                                         542.1 + 1.7));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Bubenbergplatz (S)",
-                                                         46,
-                                                         56,
-                                                         50.304,
-                                                         7,
-                                                         26,
-                                                         22.113,
-                                                         542.4 + 1.7));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Heiliggeistkirche (Dole, N-W)",
-                                                         46,
-                                                         56,
-                                                         53.500,
-                                                         7,
-                                                         26,
-                                                         25.499,
-                                                         541.6 + 1.7));
-    AppCommon::devLoc.originLatLonAlt(AppCommon::devLoc.nameLocations()[0].posWGS84LatLonAlt);
-    AppCommon::devLoc.activeNamedLocation(1);   // This sets the location 1 as defaultENU
-    AppCommon::devLoc.locMaxDistanceM(1000.0f); // Max. Distanz. zum Loeb Ecken
-    AppCommon::devLoc.improveOrigin(false);     // Keine autom. Verbesserung vom Origin
-    AppCommon::devLoc.useOriginAltitude(true);
-    AppCommon::devLoc.hasOrigin(true);
-    AppCommon::devLoc.offsetMode(LOM_twoFingerY);
-    AppCommon::devRot.zeroYawAtStart(false);
-    AppCommon::devRot.offsetMode(ROM_oneFingerX);
 
 #if defined(SL_OS_MACIOS) || defined(SL_OS_ANDROID)
     AppCommon::devLoc.isUsed(true);

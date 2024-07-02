@@ -40,6 +40,23 @@ void AppDemoSceneErlebARAventicumTheater::registerAssetsToLoad(SLAssetLoader& al
                      AppCommon::dataPath +
                        "erleb-AR/models/avenches/avenches-theater.gltf");
 
+    // initialize sensor stuff before loading the geotiff
+    // https://map.geo.admin.ch/?lang=de&topic=ech&bgLayer=ch.swisstopo.swissimage&layers=ch.swisstopo.zeitreihen,ch.bfs.gebaeude_wohnungs_register,ch.bav.haltestellen-oev,ch.swisstopo.swisstlm3d-wanderwege&layers_opacity=1,1,1,0.8&layers_visibility=false,false,false,false&layers_timestamp=18641231,,,&E=2570281&N=1192204&zoom=13&crosshair=marker
+    AppCommon::devLoc.useOriginAltitude(false);
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Center of theatre, Origin", 46, 52, 49.041, 7, 2, 55.543, 454.9));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("On the stage", 46, 52, 49.221, 7, 2, 55.206, 455.5 + 1.7));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("At the tree (N-E)", 46, 52, 50.791, 7, 2, 55.960, 455.5 + 1.7));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Over the entrance (S)", 46, 52, 48.162, 7, 2, 56.097, 464.0 + 1.7));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("At the 3rd tree (S-W)", 46, 52, 48.140, 7, 2, 51.506, 455.0 + 1.7));
+    AppCommon::devLoc.originLatLonAlt(AppCommon::devLoc.nameLocations()[0].posWGS84LatLonAlt);
+    AppCommon::devLoc.activeNamedLocation(1);   // This sets the location 1 as defaultENU
+    AppCommon::devLoc.locMaxDistanceM(1000.0f); // Max. Distanz. zum Nullpunkt
+    AppCommon::devLoc.improveOrigin(false);     // Keine autom. Verbesserung vom Origin
+    AppCommon::devLoc.hasOrigin(true);
+    AppCommon::devLoc.offsetMode(LOM_twoFingerY);
+    AppCommon::devRot.zeroYawAtStart(false);
+    AppCommon::devRot.offsetMode(ROM_oneFingerX);
+
     // This loads the DEM file and overwrites the altitude of originLatLonAlt and defaultLatLonAlt
     al.addGeoTiffToLoad(AppCommon::devLoc,
                         AppCommon::dataPath +
@@ -116,23 +133,6 @@ void AppDemoSceneErlebARAventicumTheater::assemble(SLAssetManager* am,
     scene->addChild(axis);
     scene->addChild(_theater);
     scene->addChild(cam1);
-
-    // initialize sensor stuff
-    // https://map.geo.admin.ch/?lang=de&topic=ech&bgLayer=ch.swisstopo.swissimage&layers=ch.swisstopo.zeitreihen,ch.bfs.gebaeude_wohnungs_register,ch.bav.haltestellen-oev,ch.swisstopo.swisstlm3d-wanderwege&layers_opacity=1,1,1,0.8&layers_visibility=false,false,false,false&layers_timestamp=18641231,,,&E=2570281&N=1192204&zoom=13&crosshair=marker
-    AppCommon::devLoc.useOriginAltitude(false);
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Center of theatre, Origin", 46, 52, 49.041, 7, 2, 55.543, 454.9));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("On the stage", 46, 52, 49.221, 7, 2, 55.206, 455.5 + 1.7));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("At the tree (N-E)", 46, 52, 50.791, 7, 2, 55.960, 455.5 + 1.7));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Over the entrance (S)", 46, 52, 48.162, 7, 2, 56.097, 464.0 + 1.7));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("At the 3rd tree (S-W)", 46, 52, 48.140, 7, 2, 51.506, 455.0 + 1.7));
-    AppCommon::devLoc.originLatLonAlt(AppCommon::devLoc.nameLocations()[0].posWGS84LatLonAlt);
-    AppCommon::devLoc.activeNamedLocation(1);   // This sets the location 1 as defaultENU
-    AppCommon::devLoc.locMaxDistanceM(1000.0f); // Max. Distanz. zum Nullpunkt
-    AppCommon::devLoc.improveOrigin(false);     // Keine autom. Verbesserung vom Origin
-    AppCommon::devLoc.hasOrigin(true);
-    AppCommon::devLoc.offsetMode(LOM_twoFingerY);
-    AppCommon::devRot.zeroYawAtStart(false);
-    AppCommon::devRot.offsetMode(ROM_oneFingerX);
 
 #if defined(SL_OS_MACIOS) || defined(SL_OS_ANDROID)
     AppCommon::devLoc.isUsed(true);

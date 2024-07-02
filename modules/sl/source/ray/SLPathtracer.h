@@ -38,6 +38,8 @@ public:
     SLbool calcIndirect() const { return _calcIndirect; }
 
 private:
+    function<void(bool, int, SLuint)> renderSlicesPTAsync;
+
     SLbool _calcDirect;   //!< flag to calculate direct illumination
     SLbool _calcIndirect; //!< flag to calculate indirect illumination
 };

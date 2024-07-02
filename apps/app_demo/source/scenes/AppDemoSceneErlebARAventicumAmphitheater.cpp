@@ -40,6 +40,23 @@ void AppDemoSceneErlebARAventicumAmphitheater::registerAssetsToLoad(SLAssetLoade
                      AppCommon::dataPath +
                        "erleb-AR/models/avenches/avenches-amphitheater.gltf");
 
+    // initialize sensor stuff before loading the geotiff
+    AppCommon::devLoc.useOriginAltitude(false);
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Arena Centre, Origin", 46, 52, 51.685, 7, 2, 33.458, 461.4));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Entrance East, Manhole Cover", 46, 52, 52.344, 7, 2, 37.600, 461.4 + 1.7));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Arena, Sewer Cover West", 46, 52, 51.484, 7, 2, 32.307, 461.3 + 1.7));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Arena, Sewer Cover East", 46, 52, 51.870, 7, 2, 34.595, 461.1 + 1.7));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Stand South, Sewer Cover", 46, 52, 50.635, 7, 2, 34.099, 471.7 + 1.7));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Stand West, Sewer Cover", 46, 52, 51.889, 7, 2, 31.567, 471.7 + 1.7));
+    AppCommon::devLoc.originLatLonAlt(AppCommon::devLoc.nameLocations()[0].posWGS84LatLonAlt);
+    AppCommon::devLoc.activeNamedLocation(1);   // This sets the location 1 as defaultENU
+    AppCommon::devLoc.locMaxDistanceM(1000.0f); // Max. Distanz. zum Nullpunkt
+    AppCommon::devLoc.improveOrigin(false);     // Keine autom. Verbesserung vom Origin
+    AppCommon::devLoc.hasOrigin(true);
+    AppCommon::devLoc.offsetMode(LOM_twoFingerY);
+    AppCommon::devRot.zeroYawAtStart(false);
+    AppCommon::devRot.offsetMode(ROM_oneFingerX);
+    
     // This loads the DEM file and overwrites the altitude of originLatLonAlt and defaultLatLonAlt
     al.addGeoTiffToLoad(AppCommon::devLoc,
                         AppCommon::dataPath +

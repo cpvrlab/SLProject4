@@ -40,6 +40,21 @@ void AppDemoSceneErlebARAventicumCigognier::registerAssetsToLoad(SLAssetLoader& 
                      AppCommon::dataPath +
                        "erleb-AR/models/avenches/avenches-cigognier.gltf");
 
+    // initialize sensor stuff before loading the geotiff
+    AppCommon::devLoc.useOriginAltitude(false);
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Center of place, Origin", 46, 52, 53.245, 7, 2, 47.198, 450.9));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("At the altar", 46, 52, 53.107, 7, 2, 47.498, 450.9 + 1.7));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Old AR viewer", 46, 52, 53.666, 7, 2, 48.316, 451.0 + 1.7));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Temple Entrance in hall", 46, 52, 54.007, 7, 2, 45.702, 453.0 + 1.7));
+    AppCommon::devLoc.originLatLonAlt(AppCommon::devLoc.nameLocations()[0].posWGS84LatLonAlt);
+    AppCommon::devLoc.activeNamedLocation(1);   // This sets the location 1 as defaultENU
+    AppCommon::devLoc.locMaxDistanceM(1000.0f); // Max. allowed distance from origin
+    AppCommon::devLoc.improveOrigin(false);     // No auto improvement from
+    AppCommon::devLoc.hasOrigin(true);
+    AppCommon::devLoc.offsetMode(LOM_twoFingerY);
+    AppCommon::devRot.zeroYawAtStart(false);
+    AppCommon::devRot.offsetMode(ROM_oneFingerX);
+
     // This loads the DEM file and overwrites the altitude of originLatLonAlt and defaultLatLonAlt
     al.addGeoTiffToLoad(AppCommon::devLoc,
                         AppCommon::dataPath +
@@ -114,21 +129,6 @@ void AppDemoSceneErlebARAventicumCigognier::assemble(SLAssetManager* am,
     scene->addChild(axis);
     scene->addChild(_cigognier);
     scene->addChild(cam1);
-
-    // initialize sensor stuff
-    AppCommon::devLoc.useOriginAltitude(false);
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Center of place, Origin", 46, 52, 53.245, 7, 2, 47.198, 450.9));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("At the altar", 46, 52, 53.107, 7, 2, 47.498, 450.9 + 1.7));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Old AR viewer", 46, 52, 53.666, 7, 2, 48.316, 451.0 + 1.7));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Temple Entrance in hall", 46, 52, 54.007, 7, 2, 45.702, 453.0 + 1.7));
-    AppCommon::devLoc.originLatLonAlt(AppCommon::devLoc.nameLocations()[0].posWGS84LatLonAlt);
-    AppCommon::devLoc.activeNamedLocation(1);   // This sets the location 1 as defaultENU
-    AppCommon::devLoc.locMaxDistanceM(1000.0f); // Max. allowed distance from origin
-    AppCommon::devLoc.improveOrigin(false);     // No auto improvement from
-    AppCommon::devLoc.hasOrigin(true);
-    AppCommon::devLoc.offsetMode(LOM_twoFingerY);
-    AppCommon::devRot.zeroYawAtStart(false);
-    AppCommon::devRot.offsetMode(ROM_oneFingerX);
 
 #if defined(SL_OS_MACIOS) || defined(SL_OS_ANDROID)
     AppCommon::devLoc.isUsed(true);

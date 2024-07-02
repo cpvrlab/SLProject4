@@ -132,6 +132,9 @@ public:
     virtual void saveImage();
 
 protected:
+    function<void(bool, SLuint)> renderSlicesAsync;
+    function<void(bool, SLuint)> sampleAAPixelsAsync; 
+
     SLSceneView* _sv;               //!< Parent sceneview
     SLRTState    _state;            //!< RT state;
     SLCamera*    _cam;              //!< shortcut to the camera
@@ -145,9 +148,9 @@ protected:
     AvgFloat     _raysPerMS;        //!< Averaged rays per ms
 
     SLfloat  _pxSize;               //!< Pixel size
-    SLVec3f  _EYE;                  //!< Camera position
-    SLVec3f  _LA, _LU, _LR;         //!< Camera lookat, lookup, lookright
-    SLVec3f  _BL;                   //!< Bottom left vector
+    SLVec3f  _eye;                  //!< Camera position
+    SLVec3f  _la, _lu, _lr;         //!< Camera lookat, lookup, lookright
+    SLVec3f  _bl;                   //!< Bottom left vector
     SLint    _nextLine;             //!< next line index to render RT in a thread
     SLVPixel _aaPixels;             //!< Vector for antialiasing pixels
     SLfloat  _gamma;                //!< gamma correction value

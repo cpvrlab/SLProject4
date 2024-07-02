@@ -44,6 +44,17 @@ void AppDemoSceneErlebARBielBFH::registerAssetsToLoad(SLAssetLoader& al)
                         AppCommon::shaderPath + "PerPixTmBackground.vert",
                         AppCommon::shaderPath + "PerPixTmBackground.frag");
 
+    // initialize sensor stuff before loading the geotiff
+    AppCommon::devLoc.originLatLonAlt(47.14271, 7.24337, 488.2);        // Ecke Giosa
+    AppCommon::devLoc.defaultLatLonAlt(47.14260, 7.24310, 488.7 + 1.7); // auf Parkplatz
+    AppCommon::devLoc.locMaxDistanceM(1000.0f);
+    AppCommon::devLoc.improveOrigin(false);
+    AppCommon::devLoc.useOriginAltitude(true);
+    AppCommon::devLoc.hasOrigin(true);
+    AppCommon::devLoc.offsetMode(LOM_twoFingerY);
+    AppCommon::devRot.zeroYawAtStart(false);
+    AppCommon::devRot.offsetMode(ROM_oneFingerX);
+
     // This loads the DEM file and overwrites the altitude of originLatLonAlt and defaultLatLonAlt
     al.addGeoTiffToLoad(AppCommon::devLoc,
                         AppCommon::dataPath +
@@ -116,17 +127,6 @@ void AppDemoSceneErlebARBielBFH::assemble(SLAssetManager* am, SLSceneView* sv)
     scene->addChild(axis);
     scene->addChild(_bfh);
     scene->addChild(cam1);
-
-    // initialize sensor stuff
-    AppCommon::devLoc.originLatLonAlt(47.14271, 7.24337, 488.2);        // Ecke Giosa
-    AppCommon::devLoc.defaultLatLonAlt(47.14260, 7.24310, 488.7 + 1.7); // auf Parkplatz
-    AppCommon::devLoc.locMaxDistanceM(1000.0f);
-    AppCommon::devLoc.improveOrigin(false);
-    AppCommon::devLoc.useOriginAltitude(true);
-    AppCommon::devLoc.hasOrigin(true);
-    AppCommon::devLoc.offsetMode(LOM_twoFingerY);
-    AppCommon::devRot.zeroYawAtStart(false);
-    AppCommon::devRot.offsetMode(ROM_oneFingerX);
 
 #if defined(SL_OS_MACIOS) || defined(SL_OS_ANDROID)
     AppCommon::devLoc.isUsed(true);

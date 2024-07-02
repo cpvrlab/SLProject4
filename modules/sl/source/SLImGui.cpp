@@ -8,6 +8,7 @@
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
 */
 
+#include "SLEnums.h"
 #include "SLGLState.h"
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -111,6 +112,7 @@ void SLImGui::init(const string& configPath)
     io.KeyMap[ImGuiKey_Backspace]  = K_backspace;
     io.KeyMap[ImGuiKey_Enter]      = K_enter;
     io.KeyMap[ImGuiKey_Escape]     = K_esc;
+    io.KeyMap[ImGuiKey_Space]      = K_space;
     io.KeyMap[ImGuiKey_A]          = 'A';
     io.KeyMap[ImGuiKey_C]          = 'C';
     io.KeyMap[ImGuiKey_V]          = 'V';

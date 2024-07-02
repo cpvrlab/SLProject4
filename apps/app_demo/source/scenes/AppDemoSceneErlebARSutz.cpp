@@ -44,6 +44,24 @@ void AppDemoSceneErlebARSutz::registerAssetsToLoad(SLAssetLoader& al)
                         AppCommon::shaderPath + "PerPixTmBackground.vert",
                         AppCommon::shaderPath + "PerPixTmBackground.frag");
 
+    // initialize sensor stuff before loading the geotiff
+    // Go to https://map.geo.admin.ch and choose your origin and default point
+    AppCommon::devLoc.useOriginAltitude(false);
+    AppCommon::devLoc.originLatLonAlt(47.10600, 7.21772, 434.4f);        // Corner Carport
+    AppCommon::devLoc.defaultLatLonAlt(47.10598, 7.21757, 433.9f + 1.7); // In the street
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Corner Carport, Origin", 47, 6, 21.609, 7, 13, 3.788, 434.4));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Einfahrt (Dolendeckel)", 47, 6, 21.639, 7, 13, 2.764, 433.6 + 1.7));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Elektrokasten, Brunnenweg", 47, 6, 21.044, 7, 13, 4.920, 438.4 + 1.7));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Sitzbänkli am See", 47, 6, 24.537, 7, 13, 2.766, 431.2 + 1.7));
+    AppCommon::devLoc.originLatLonAlt(AppCommon::devLoc.nameLocations()[0].posWGS84LatLonAlt);
+    AppCommon::devLoc.activeNamedLocation(1);   // This sets the location 1 as defaultENU
+    AppCommon::devLoc.locMaxDistanceM(1000.0f); // Max. Distanz. zum Nullpunkt
+    AppCommon::devLoc.improveOrigin(false);     // Keine autom. Verbesserung vom Origin
+    AppCommon::devLoc.hasOrigin(true);
+    AppCommon::devLoc.offsetMode(LOM_twoFingerY);
+    AppCommon::devRot.zeroYawAtStart(false);
+    AppCommon::devRot.offsetMode(ROM_oneFingerX);
+
     // This loads the DEM file and overwrites the altitude of originLatLonAlt and defaultLatLonAlt
     al.addGeoTiffToLoad(AppCommon::devLoc,
                         AppCommon::dataPath +
@@ -117,25 +135,6 @@ void AppDemoSceneErlebARSutz::assemble(SLAssetManager* am, SLSceneView* sv)
     scene->addChild(axis);
     scene->addChild(_sutz);
     scene->addChild(cam1);
-
-    // initialize sensor stuff
-    // Go to https://map.geo.admin.ch and choose your origin and default point
-    AppCommon::devLoc.useOriginAltitude(false);
-    AppCommon::devLoc.originLatLonAlt(47.10600, 7.21772, 434.4f);        // Corner Carport
-    AppCommon::devLoc.defaultLatLonAlt(47.10598, 7.21757, 433.9f + 1.7); // In the street
-
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Corner Carport, Origin", 47, 6, 21.609, 7, 13, 3.788, 434.4));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Einfahrt (Dolendeckel)", 47, 6, 21.639, 7, 13, 2.764, 433.6 + 1.7));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Elektrokasten, Brunnenweg", 47, 6, 21.044, 7, 13, 4.920, 438.4 + 1.7));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Sitzbänkli am See", 47, 6, 24.537, 7, 13, 2.766, 431.2 + 1.7));
-    AppCommon::devLoc.originLatLonAlt(AppCommon::devLoc.nameLocations()[0].posWGS84LatLonAlt);
-    AppCommon::devLoc.activeNamedLocation(1);   // This sets the location 1 as defaultENU
-    AppCommon::devLoc.locMaxDistanceM(1000.0f); // Max. Distanz. zum Nullpunkt
-    AppCommon::devLoc.improveOrigin(false);     // Keine autom. Verbesserung vom Origin
-    AppCommon::devLoc.hasOrigin(true);
-    AppCommon::devLoc.offsetMode(LOM_twoFingerY);
-    AppCommon::devRot.zeroYawAtStart(false);
-    AppCommon::devRot.offsetMode(ROM_oneFingerX);
 
 #if defined(SL_OS_MACIOS) || defined(SL_OS_ANDROID)
     AppCommon::devLoc.isUsed(true);

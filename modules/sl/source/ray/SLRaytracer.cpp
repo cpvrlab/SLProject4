@@ -137,36 +137,27 @@ SLbool SLRaytracer::renderDistrib(SLSceneView* sv)
     // Measure time
     float t1 = GlobalTimer::timeS();
 
-#ifndef SL_EMSCRIPTEN
-    // Bind render functions to be called multi-threaded
-    auto sampleAAPixelsFunction = bind(&SLRaytracer::sampleAAPixels, this, _1, _2);
-    auto renderSlicesFunction   = _cam->lensSamples()->samples() == 1
-                                    ? bind(&SLRaytracer::renderSlices, this, _1, _2)
-                                    : bind(&SLRaytracer::renderSlicesMS, this, _1, _2);
-#else
-    // Wrap render functions in lambdas because Emscripten chokes on std::bind
-    std::function<void(bool, SLuint)> sampleAAPixelsFunction = [this](bool isMainThread, SLuint threadNum)
+    // Lambda function for async AA pixel sampling
+    sampleAAPixelsAsync = [this](bool isMainThread, SLuint threadNum)
     {
         sampleAAPixels(isMainThread, threadNum);
     };
 
-    std::function<void(bool, SLuint)> renderSlicesFunction;
-
+    // Lambda function for async slice rendering
     if (_cam->lensSamples()->samples() == 1)
     {
-        renderSlicesFunction = [this](bool isMainThread, SLuint threadNum)
+        renderSlicesAsync = [this](bool isMainThread, SLuint threadNum)
         {
             renderSlices(isMainThread, threadNum);
         };
     }
     else
     {
-        renderSlicesFunction = [this](bool isMainThread, SLuint threadNum)
+        renderSlicesAsync = [this](bool isMainThread, SLuint threadNum)
         {
             renderSlicesMS(isMainThread, threadNum);
         };
     }
-#endif
 
     // Do multi-threading only in release config
     // Render image without anti-aliasing
@@ -175,10 +166,10 @@ SLbool SLRaytracer::renderDistrib(SLSceneView* sv)
 
     // Start additional threads on the renderSlices function
     for (SLuint t = 1; t <= Utils::maxThreads() - 1; t++)
-        threads1.emplace_back(renderSlicesFunction, false, t);
+        threads1.emplace_back(renderSlicesAsync, false, t);
 
     // Do the same work in the main thread
-    renderSlicesFunction(true, 0);
+    renderSlicesAsync(true, 0);
 
     // Wait for the other threads to finish
     for (auto& thread : threads1)
@@ -195,10 +186,10 @@ SLbool SLRaytracer::renderDistrib(SLSceneView* sv)
 
         // Start additional threads on the sampleAAPixelFunction function
         for (SLuint t = 1; t <= Utils::maxThreads() - 1; t++)
-            threads2.emplace_back(sampleAAPixelsFunction, false, t);
+            threads2.emplace_back(sampleAAPixelsAsync, false, t);
 
         // Do the same work in the main thread
-        sampleAAPixelsFunction(true, 0);
+        sampleAAPixelsAsync(true, 0);
 
         // Wait for the other threads to finish
         for (auto& thread : threads2)
@@ -314,8 +305,8 @@ void SLRaytracer::renderSlicesMS(const bool isMainThread, SLuint threadNum)
     double t1 = 0;
 
     // lens sampling constants
-    SLVec3f lensRadiusX = _LR * (_cam->lensDiameter() * 0.5f);
-    SLVec3f lensRadiusY = _LU * (_cam->lensDiameter() * 0.5f);
+    SLVec3f lensRadiusX = _lr * (_cam->lensDiameter() * 0.5f);
+    SLVec3f lensRadiusY = _lu * (_cam->lensDiameter() * 0.5f);
 
     while (_nextLine < (SLint)_images[0]->width())
     {
@@ -331,8 +322,8 @@ void SLRaytracer::renderSlicesMS(const bool isMainThread, SLuint threadNum)
             for (SLuint x = 0; x < _images[0]->width(); ++x)
             {
                 // focal point is single shot primary dir
-                SLVec3f primaryDir(_BL + _pxSize * ((SLfloat)x * _LR + (SLfloat)y * _LU));
-                SLVec3f FP = _EYE + primaryDir;
+                SLVec3f primaryDir(_bl + _pxSize * ((SLfloat)x * _lr + (SLfloat)y * _lu));
+                SLVec3f FP = _eye + primaryDir;
                 SLCol4f color(SLCol4f::BLACK);
 
                 // Loop over radius r and angle phi of lens
@@ -343,7 +334,7 @@ void SLRaytracer::renderSlicesMS(const bool isMainThread, SLuint threadNum)
                         SLVec2f discPos(_cam->lensSamples()->point((SLuint)iR, (SLuint)iPhi));
 
                         // calculate lens position out of disc position
-                        SLVec3f lensPos(_EYE + discPos.x * lensRadiusX + discPos.y * lensRadiusY);
+                        SLVec3f lensPos(_eye + discPos.x * lensRadiusX + discPos.y * lensRadiusY);
                         SLVec3f lensToFP(FP - lensPos);
                         lensToFP.normalize();
 
@@ -479,15 +470,15 @@ void SLRaytracer::setPrimaryRay(SLfloat x, SLfloat y, SLRay* primaryRay)
     // calculate ray from eye to pixel (See also prepareImage())
     if (_cam->projType() == P_monoOrthographic)
     {
-        primaryRay->setDir(_LA);
-        primaryRay->origin = _BL + _pxSize * ((SLfloat)x * _LR + (SLfloat)y * _LU);
+        primaryRay->setDir(_la);
+        primaryRay->origin = _bl + _pxSize * ((SLfloat)x * _lr + (SLfloat)y * _lu);
     }
     else
     {
-        SLVec3f primaryDir(_BL + _pxSize * ((SLfloat)x * _LR + (SLfloat)y * _LU));
+        SLVec3f primaryDir(_bl + _pxSize * ((SLfloat)x * _lr + (SLfloat)y * _lu));
         primaryDir.normalize();
         primaryRay->setDir(primaryDir);
-        primaryRay->origin = _EYE;
+        primaryRay->origin = _eye;
     }
 
     if (_sv->s()->skybox())
@@ -857,12 +848,12 @@ void SLRaytracer::prepareImage()
     _cam = _sv->_camera; // camera shortcut
 
     // get camera vectors eye, lookAt, lookUp
-    _cam->updateAndGetVM().lookAt(&_EYE, &_LA, &_LU, &_LR);
+    _cam->updateAndGetVM().lookAt(&_eye, &_la, &_lu, &_lr);
 
     if (_cam->projType() == P_monoOrthographic)
     {
         /*
-        In orthographic projection the bottom-left vector (_BL) points
+        In orthographic projection the bottom-left vector (_bl) points
         from the eye to the center of the bottom-left pixel of a plane that
         parallel to the projection plan at zero distance from the eye.
         */
@@ -873,12 +864,12 @@ void SLRaytracer::prepareImage()
         // calculate the size of a pixel in world coords.
         _pxSize = hw * 2 / ((SLint)((SLfloat)_sv->viewportW() * _resolutionFactor));
 
-        _BL = _EYE - hw * _LR - hh * _LU + _pxSize / 2 * _LR - _pxSize / 2 * _LU;
+        _bl = _eye - hw * _lr - hh * _lu + _pxSize / 2 * _lr - _pxSize / 2 * _lu;
     }
     else
     {
         /*
-        In perspective projection the bottom-left vector (_BL) points
+        In perspective projection the bottom-left vector (_bl) points
         from the eye to the center of the bottom-left pixel on a projection
         plan in focal distance. See also the computer graphics script about
         primary ray calculation.
@@ -891,8 +882,8 @@ void SLRaytracer::prepareImage()
         _pxSize = hw * 2 / ((SLint)((SLfloat)_sv->viewportW() * _resolutionFactor));
 
         // calculate a vector to the center (C) of the bottom left (BL) pixel
-        SLVec3f C = _LA * _cam->focalDist();
-        _BL       = C - hw * _LR - hh * _LU + _pxSize / 2 * _LR + _pxSize / 2 * _LU;
+        SLVec3f C = _la * _cam->focalDist();
+        _bl       = C - hw * _lr - hh * _lu + _pxSize / 2 * _lr + _pxSize / 2 * _lu;
     }
 
     // Create the image for the first time
