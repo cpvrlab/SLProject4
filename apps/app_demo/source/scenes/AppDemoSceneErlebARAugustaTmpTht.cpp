@@ -1,14 +1,14 @@
 /**
  * \file      AppDemoSceneErlebARAugustaTmpTht.cpp
  * \brief     Implementation for an SLScene inherited class
- * \details   For more info about App framework and the scene assembly see: 
+ * \details   For more info about App framework and the scene assembly see:
  *            https://cpvrlab.github.io/SLProject4/app-framework.html
  * \date      May 2024
  * \authors   Marcus Hudritsch, Marino von Wattenwyl
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #include <AppDemoSceneErlebARAugustaTmpTht.h>
 #include <CVCapture.h>
@@ -43,6 +43,65 @@ void AppDemoSceneErlebARAugustaTmpTht::registerAssetsToLoad(SLAssetLoader& al)
     al.addProgramToLoad(_spRefl,
                         AppCommon::shaderPath + "Reflect.vert",
                         AppCommon::shaderPath + "Reflect.frag");
+
+    // initialize sensor stuff before loading geotiff
+    AppCommon::devLoc.useOriginAltitude(false);
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Center of theatre, Origin",
+                                                           47,
+                                                           31,
+                                                           59.461,
+                                                           7,
+                                                           43,
+                                                           19.446,
+                                                           282.6));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Treppe Tempel",
+                                                           47,
+                                                           31,
+                                                           58.933,
+                                                           7,
+                                                           43,
+                                                           16.799,
+                                                           290.5 + 1.7));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Abzweigung (Dolendeckel)",
+                                                           47,
+                                                           31,
+                                                           57.969,
+                                                           7,
+                                                           43,
+                                                           17.946,
+                                                           286.5 + 1.7));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Marker bei Tempel",
+                                                           47,
+                                                           31,
+                                                           59.235,
+                                                           7,
+                                                           43,
+                                                           15.161,
+                                                           293.1 + 1.7));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Theater 1. Rang Zugang Ost",
+                                                           47,
+                                                           31,
+                                                           59.698,
+                                                           7,
+                                                           43,
+                                                           20.518,
+                                                           291.0 + 1.7));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Theater 1. Rang Nord",
+                                                           47,
+                                                           32,
+                                                           0.216,
+                                                           7,
+                                                           43,
+                                                           19.173,
+                                                           291.0 + 1.7));
+    AppCommon::devLoc.originLatLonAlt(AppCommon::devLoc.nameLocations()[0].posWGS84LatLonAlt);
+    AppCommon::devLoc.activeNamedLocation(1);   // This sets the location 1 as defaultENU
+    AppCommon::devLoc.locMaxDistanceM(1000.0f); // Max. allowed distance to origin
+    AppCommon::devLoc.improveOrigin(false);     // No autom. origin improvement
+    AppCommon::devLoc.hasOrigin(true);
+    AppCommon::devLoc.offsetMode(LOM_twoFingerY);
+    AppCommon::devRot.zeroYawAtStart(false);
+    AppCommon::devRot.offsetMode(ROM_oneFingerX);
 
     // This loads the DEM file and overwrites the altitude of originLatLonAlt and defaultLatLonAlt
     al.addGeoTiffToLoad(AppCommon::devLoc,
@@ -133,7 +192,8 @@ void AppDemoSceneErlebARAugustaTmpTht::assemble(SLAssetManager* am,
     axis->castsShadows(false);
 
     // Set some ambient light
-    _thtAndTmp->updateMeshMat([](SLMaterial* m) { m->ambient(SLCol4f(.25f, .25f, .25f)); },
+    _thtAndTmp->updateMeshMat([](SLMaterial* m)
+                              { m->ambient(SLCol4f(.25f, .25f, .25f)); },
                               true);
     SLNode* scene = new SLNode("Scene");
     root3D(scene);
@@ -141,65 +201,6 @@ void AppDemoSceneErlebARAugustaTmpTht::assemble(SLAssetManager* am,
     scene->addChild(axis);
     scene->addChild(_thtAndTmp);
     scene->addChild(cam1);
-
-    // initialize sensor stuff
-    AppCommon::devLoc.useOriginAltitude(false);
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Center of theatre, Origin",
-                                                         47,
-                                                         31,
-                                                         59.461,
-                                                         7,
-                                                         43,
-                                                         19.446,
-                                                         282.6));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Treppe Tempel",
-                                                         47,
-                                                         31,
-                                                         58.933,
-                                                         7,
-                                                         43,
-                                                         16.799,
-                                                         290.5 + 1.7));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Abzweigung (Dolendeckel)",
-                                                         47,
-                                                         31,
-                                                         57.969,
-                                                         7,
-                                                         43,
-                                                         17.946,
-                                                         286.5 + 1.7));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Marker bei Tempel",
-                                                         47,
-                                                         31,
-                                                         59.235,
-                                                         7,
-                                                         43,
-                                                         15.161,
-                                                         293.1 + 1.7));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Theater 1. Rang Zugang Ost",
-                                                         47,
-                                                         31,
-                                                         59.698,
-                                                         7,
-                                                         43,
-                                                         20.518,
-                                                         291.0 + 1.7));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Theater 1. Rang Nord",
-                                                         47,
-                                                         32,
-                                                         0.216,
-                                                         7,
-                                                         43,
-                                                         19.173,
-                                                         291.0 + 1.7));
-    AppCommon::devLoc.originLatLonAlt(AppCommon::devLoc.nameLocations()[0].posWGS84LatLonAlt);
-    AppCommon::devLoc.activeNamedLocation(1);   // This sets the location 1 as defaultENU
-    AppCommon::devLoc.locMaxDistanceM(1000.0f); // Max. allowed distance to origin
-    AppCommon::devLoc.improveOrigin(false);     // No autom. origin improvement
-    AppCommon::devLoc.hasOrigin(true);
-    AppCommon::devLoc.offsetMode(LOM_twoFingerY);
-    AppCommon::devRot.zeroYawAtStart(false);
-    AppCommon::devRot.offsetMode(ROM_oneFingerX);
 
     // Level of Detail switch for Temple and Theater
     SLNode* tmpAltar = _thtAndTmp->findChild<SLNode>("TmpAltar");
@@ -213,7 +214,8 @@ void AppDemoSceneErlebARAugustaTmpTht::assemble(SLAssetManager* am,
     tmpL2->drawBits()->set(SL_DB_HIDDEN, true);
 
     // Add level of detail switch callback lambda
-    cam1->onCamUpdateCB([=](SLSceneView* sv) {
+    cam1->onCamUpdateCB([=](SLSceneView* sv)
+                        {
         SLVec3f posCam     = sv->camera()->updateAndGetWM().translation();
         SLVec3f posAlt     = tmpAltar->updateAndGetWM().translation();
         SLVec3f distCamAlt = posCam - posAlt;

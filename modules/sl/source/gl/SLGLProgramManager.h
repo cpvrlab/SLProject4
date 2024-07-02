@@ -28,8 +28,6 @@ enum SLStdShaderProg
     SP_textureOnly,
     SP_textureOnlyExternal,
     SP_fontTex,
-    SP_stereoOculus,
-    SP_stereoOculusDistortion,
     SP_depth,
     SP_errorTex,
 };

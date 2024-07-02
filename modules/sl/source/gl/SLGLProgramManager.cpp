@@ -5,12 +5,10 @@
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
  * \authors   Michael Goettlicher, Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0
-*/
+ */
 
 #include <SLGLProgramManager.h>
 #include <SLGLProgramGeneric.h>
-
-#include <utility>
 
 //-----------------------------------------------------------------------------
 string                                         SLGLProgramManager::shaderPath;
@@ -29,18 +27,37 @@ void SLGLProgramManager::init(string shaderPath, string configPath)
 //-----------------------------------------------------------------------------
 void SLGLProgramManager::loadPrograms()
 {
-    assert(!shaderPath.empty() && "Error in SLGLProgramManager: Please set call SLGLProgramManager::init and transfer the location of the default shader files!");
+    assert(!shaderPath.empty() &&
+           "Error in SLGLProgramManager: shader path is empty!");
 
-    loadProgram(SP_colorAttribute, "ColorAttribute.vert", "Color.frag");
-    loadProgram(SP_colorUniform, "ColorUniform.vert", "Color.frag");
-    loadProgram(SP_textureOnly, "TextureOnly.vert", "TextureOnly.frag");
-    loadProgram(SP_textureOnlyExternal, "TextureOnlyExternal.vert", "TextureOnlyExternal.frag");
-    loadProgram(SP_fontTex, "FontTex.vert", "FontTex.frag");
-    loadProgram(SP_errorTex, "ErrorTex.vert", "ErrorTex.frag");
-    loadProgram(SP_depth, "Depth.vert", "Depth.frag");
+    loadProgram(SP_colorAttribute,
+                "ColorAttribute.vert",
+                "Color.frag");
+    loadProgram(SP_colorUniform,
+                "ColorUniform.vert",
+                "Color.frag");
+    loadProgram(SP_textureOnly,
+                "TextureOnly.vert",
+                "TextureOnly.frag");
+    loadProgram(SP_textureOnlyExternal,
+                "TextureOnlyExternal.vert",
+                "TextureOnlyExternal.frag");
+    loadProgram(SP_fontTex,
+                "FontTex.vert",
+                "FontTex.frag");
+    loadProgram(SP_errorTex,
+                "ErrorTex.vert",
+                "ErrorTex.frag");
+    loadProgram(SP_depth,
+                "Depth.vert",
+                "Depth.frag");
 
-    SLGLProgram* colorUniformPoint = loadProgram(SP_colorUniformPoint, "ColorUniformPoint.vert", "Color.frag");
-    colorUniformPoint->addUniform1f(new SLGLUniform1f(UT_const, "u_pointSize", 3.0f));
+    SLGLProgram* colorUniformPoint = loadProgram(SP_colorUniformPoint,
+                                                 "ColorUniformPoint.vert",
+                                                 "Color.frag");
+    colorUniformPoint->addUniform1f(new SLGLUniform1f(UT_const,
+                                                      "u_pointSize",
+                                                      3.0f));
 }
 //-----------------------------------------------------------------------------
 void SLGLProgramManager::deletePrograms()
@@ -57,7 +74,9 @@ SLGLProgramGeneric* SLGLProgramManager::loadProgram(SLStdShaderProg id,
     SLstring vertShaderPath = shaderPath + vertShaderFilename;
     SLstring fragShaderPath = shaderPath + fragShaderFilename;
 
-    SLGLProgramGeneric* program = new SLGLProgramGeneric(nullptr, vertShaderPath, fragShaderPath);
+    SLGLProgramGeneric* program = new SLGLProgramGeneric(nullptr,
+                                                         vertShaderPath,
+                                                         fragShaderPath);
     _programs.insert({id, program});
     return program;
 }

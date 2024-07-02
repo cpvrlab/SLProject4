@@ -5,7 +5,7 @@
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
  * \authors   Marc Wacker, Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0
-*/
+ */
 
 #include "SLEnums.h"
 #include <SLAnimManager.h>

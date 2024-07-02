@@ -5,7 +5,7 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #include "SL.h"
 #include <SLSceneView.h>
@@ -23,18 +23,14 @@ SLint      SLCamera::currentDevRotation = 0;
 //-----------------------------------------------------------------------------
 /**
  * @brief Construct a new SLCamera::SLCamera object
- * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
- * get called because this constructor will be most probably called in a parallel 
- * thread from within a SLScene::assemble function. All objects that get rendered 
- * have to do their OpenGL initialization when they are used the first time 
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*)
+ * get called because this constructor will be most probably called in a parallel
+ * thread from within a SLScene::assemble function. All objects that get rendered
+ * have to do their OpenGL initialization when they are used the first time
  * during rendering in the main thread.
  * @param name Name of the camera
- * @param textureOnlyProgramId Shader program ID for the textureOnly shader used for background rendering
- * @param colorAttributeProgramId Shader program ID for the color attribute shader used for background rendering
  */
-SLCamera::SLCamera(const SLstring& name,
-                   SLStdShaderProg textureOnlyProgramId,
-                   SLStdShaderProg colorAttributeProgramId)
+SLCamera::SLCamera(const SLstring& name)
   : SLNode(name),
     _movedLastFrame(false),
     _oldTouchPos1(0, 0),
@@ -55,8 +51,8 @@ SLCamera::SLCamera(const SLstring& name,
     _fogColor(SLCol4f::GRAY),
     _fogColorIsBack(true),
     _viewport(0, 0, 640, 480),
-    _background(SLGLProgramManager::get(textureOnlyProgramId),
-                SLGLProgramManager::get(colorAttributeProgramId)),
+    _background(SLGLProgramManager::get(SP_textureOnly),
+                SLGLProgramManager::get(SP_colorAttribute)),
     _onCamUpdateCB(nullptr)
 {
     _fovInit       = 0;

@@ -5,7 +5,7 @@
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
  * \authors   Marc Wacker, Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0
-*/
+ */
 
 #ifndef SLCAMERA_H
 #define SLCAMERA_H
@@ -53,9 +53,7 @@ drawn on the far clipping plane of the visualized view frustum.
 class SLCamera : public SLNode
 {
 public:
-    explicit SLCamera(const SLstring& name                    = "Camera",
-                      SLStdShaderProg textureOnlyProgramId    = SP_textureOnly,
-                      SLStdShaderProg colorAttributeProgramId = SP_colorAttribute);
+    explicit SLCamera(const SLstring& name = "Camera");
     ~SLCamera() override;
 
     void           statsRec(SLNodeStats& stats) override;
