@@ -1,0 +1,95 @@
+@[link_name=slScriptContextUserData] native func context_user_data(context: Context) -> addr;
+@[link_name=slScriptContextSetUserData] native func context_set_user_data(context: Context, user_data: addr);
+@[link_name=slScriptContextScene] native func context_scene(context: Context) -> Scene;
+@[link_name=slScriptContextSceneID] native func context_scene_id(context: Context) -> i32;
+@[link_name=slScriptSceneName] native func scene_name(scene: Scene) -> *u8;
+@[link_name=slScriptSceneFindNodeByName] native func scene_find_node_by_name(scene: Scene, name: *u8) -> Node;
+@[link_name=slScriptNodePosition] native func node_position(node: Node) -> Vec3;
+@[link_name=slScriptNodeSetPosition] native func node_set_position(node: Node, position: Vec3);
+@[link_name=slScriptNodeLookAt] native func node_look_at(node: Node, target: Vec3, up: Vec3);
+
+struct Vec3 {
+    var x: f32;
+    var y: f32;
+    var z: f32;
+
+    pub func xyz(x: f32, y: f32, z: f32) -> Vec3 {
+        return { x, y, z };
+    }
+
+    pub func right() -> Vec3 {
+        return xyz(1.0, 0.0, 0.0);
+    }
+
+    pub func up() -> Vec3 {
+        return xyz(0.0, 1.0, 0.0);
+    }
+
+    pub func backward() -> Vec3 {
+        return xyz(0.0, 0.0, 1.0);
+    }
+
+    pub func __add__(self, other: *Vec3) -> Vec3 {
+        return xyz(self.x + other.x, self.y + other.y, self.z + other.z);
+    }
+
+    pub func __sub_(self, other: *Vec3) -> Vec3 {
+        return xyz(self.x - other.x, self.y - other.y, self.z - other.z);
+    }
+}
+
+struct Context {
+    var context: addr;
+
+    func user_data(self) -> addr {
+        return context_user_data(*self);
+    }
+
+    func set_user_data(self, user_data: addr) {
+        context_set_user_data(*self, user_data);
+    }
+
+    func scene(self) -> Scene {
+        return context_scene(*self);
+    }
+
+    func scene_id(self) -> i32 {
+        return context_scene_id(*self);
+    }
+}
+
+struct Scene {
+    var scene: addr;
+
+    func name(self) -> String {
+        return String.from(scene_name(*self));
+    }
+
+    func find_node_by_name(self, name: *u8) -> Node {
+        return scene_find_node_by_name(*self, name);
+    }
+}
+
+struct Node {
+    var node: addr;
+
+    func position(self) -> Vec3 {
+        return node_position(*self);
+    }
+
+    func set_position(self, position: Vec3) {
+        node_set_position(*self, position);
+    }
+
+    func translate(self, translation: Vec3) {
+        var position = self.position();
+        position.x += translation.x;
+        position.y += translation.y;
+        position.z += translation.z;
+        self.set_position(position);
+    }
+
+    func look_at(self, target: Vec3, up: Vec3) {
+        node_look_at(*self, target, up);
+    }
+}

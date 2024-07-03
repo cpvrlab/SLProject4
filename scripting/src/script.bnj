@@ -1,0 +1,52 @@
+use slproject.{Context, Vec3};
+
+const SPEED: f32 = 1.0;
+
+var d_pressed: bool = false;
+var a_pressed: bool = false;
+
+@exposed
+func on_update(context: Context, delta_time: f32) {
+    if context.scene_id() != 40 {
+        return;
+    }
+
+    var scene = context.scene();
+    var suzanne = scene.find_node_by_name("Suzanne");
+    var camera = scene.find_node_by_name("Camera 1");
+
+    if d_pressed { suzanne.translate(Vec3.xyz(delta_time * SPEED, 0.0, 0.0)); }
+    if a_pressed { suzanne.translate(Vec3.xyz(-delta_time * SPEED, 0.0, 0.0)); }
+
+    camera.look_at(suzanne.position() + Vec3.xyz(0.0, 0.4, 0.0), Vec3.up());
+}
+
+@exposed
+func on_key_press(context: Context, key: i32) -> bool {
+    if key == 'D' as i32 {
+        d_pressed = true;
+        return true;
+    } else if key == 'A' as i32 {
+        a_pressed = true;
+        return true;
+    } else if key == 'W' as i32 || key == 'S' as i32 {
+        return true;
+    }
+
+    return false;
+}
+
+@exposed
+func on_key_release(context: Context, key: i32) -> bool {
+    if key == 'D' as i32 {
+        d_pressed = false;
+        return true;
+    } else if key == 'A' as i32 {
+        a_pressed = false;
+        return true;
+    } else if key == 'W' as i32 || key == 'S' as i32 {
+        return true;
+    }
+
+    return false;
+}

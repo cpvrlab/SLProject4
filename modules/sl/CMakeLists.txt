@@ -75,6 +75,10 @@ file(GLOB sources
         source/SLEntities.h
         source/SLSceneView.cpp
         source/SLSceneView.h
+        source/SLScript.cpp
+        source/SLScript.h
+        source/SLScriptInterface.cpp
+        source/SLScriptInterface.h
         source/SLShadowMap.cpp
         source/SLShadowMap.h
         source/SLTexColorLUT.cpp
@@ -408,6 +412,11 @@ target_link_libraries(${target}
         sl_cv
         sl_utils
         sl_external
+        
+        banjo
+        ${CMAKE_CURRENT_SOURCE_DIR}/externals/banjo-lang/lib/runtime/bin/x86_64-windows-msvc.lib
+        dbghelp
+
         ${DEFAULT_LINKER_OPTIONS}
         INTERFACE
 

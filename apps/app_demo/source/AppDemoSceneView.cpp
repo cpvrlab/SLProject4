@@ -7,11 +7,15 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
  */
 
+#include "SLScript.h"
+
 #include <AppDemoSceneView.h>
 #include <AppCommon.h>
 #include <AppDemoGui.h>
 #include <AppDemoSceneID.h>
 
+//-----------------------------------------------------------------------------
+extern SLScript script;
 //-----------------------------------------------------------------------------
 AppDemoSceneView::AppDemoSceneView(SLScene*        s,
                                    int             dpi,
@@ -26,6 +30,9 @@ AppDemoSceneView::AppDemoSceneView(SLScene*        s,
 */
 SLbool AppDemoSceneView::onKeyPress(SLKey key, SLKey mod)
 {
+    if (script.onKeyPress(key))
+        return true;
+
     // Keyboard shortcuts for next or previous sceneID loading
     if (mod & K_alt && mod & K_shift)
     {
@@ -35,15 +42,12 @@ SLbool AppDemoSceneView::onKeyPress(SLKey key, SLKey mod)
             AppCommon::sceneToLoad = SID_Empty;
             return true;
         }
-        else if (key == K_left && sv &&
-                 AppCommon::sceneID > 0 &&
-                 AppCommon::sceneID < SID_MaxNoBenchmarks)
+        else if (key == K_left && sv && AppCommon::sceneID > 0)
         {
             AppCommon::sceneToLoad = static_cast<SLSceneID>(AppCommon::sceneID - 1);
             return true;
         }
-        else if (key == K_right && sv &&
-                 AppCommon::sceneID < SID_MaxNoBenchmarks - 1)
+        else if (key == K_right && sv && AppCommon::sceneID < SID_MaxNoBenchmarks - 1)
         {
             AppCommon::sceneToLoad = static_cast<SLSceneID>(AppCommon::sceneID + 1);
             return true;
@@ -59,6 +63,9 @@ SLbool AppDemoSceneView::onKeyPress(SLKey key, SLKey mod)
 */
 SLbool AppDemoSceneView::onKeyRelease(SLKey key, SLKey mod)
 {
+    if (script.onKeyRelease(key))
+        return true;
+
     if (AppDemoGui::hideUI)
     {
         AppDemoGui::hideUI = false;

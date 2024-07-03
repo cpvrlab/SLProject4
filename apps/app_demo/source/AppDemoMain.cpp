@@ -15,6 +15,9 @@
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
  */
 
+#include "SLScriptInterface.h"
+#include "SLScript.h"
+
 #include <App.h>
 #include <AppCommon.h>
 #include <AppDemoGui.h>
@@ -97,6 +100,14 @@
 #else
 #    include <CVTracked.h>
 #endif
+
+#include <WindowsDirWatcher.h>
+#include <windows.h>
+
+//-----------------------------------------------------------------------------
+const SLstring    SCRIPT_SOURCE_DIR = std::string(SL_PROJECT_ROOT) + "/scripting/src/";
+SLScript          script(SCRIPT_SOURCE_DIR);
+WindowsDirWatcher dirWatcher(SCRIPT_SOURCE_DIR);
 
 //-----------------------------------------------------------------------------
 // Global pointers and functions declared in AppDemoVideo
@@ -265,6 +276,12 @@ static void onAfterSceneAssembly(SLSceneView* sv, SLScene* s)
 //-----------------------------------------------------------------------------
 static SLbool onUpdate(SLSceneView* sv)
 {
+    if (dirWatcher.hasChanged())
+        script.reload();
+
+    if (AppCommon::scene)
+        script.onUpdate(AppCommon::scene, AppCommon::sceneID);
+
     // If live video image is requested grab it and copy it
     if (CVCapture::instance()->videoType() != VT_NONE)
     {
@@ -284,6 +301,8 @@ static SLbool onUpdate(SLSceneView* sv)
 // to set up the application configuration.
 int SL_MAIN_FUNCTION(int argc, char* argv[])
 {
+    script.load();
+
     App::Config config;
     config.argc                  = argc;
     config.argv                  = argv;

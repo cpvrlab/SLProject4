@@ -222,3 +222,18 @@ target_link_libraries(${target}
         ${DEFAULT_LINKER_OPTIONS}
         INTERFACE
         )
+
+include(FetchContent)
+
+message(STATUS "Cloning and configuring banjo-lang...")
+
+FetchContent_Declare(
+    banjo-lang
+    GIT_REPOSITORY "https://github.com/chnoblouch/banjo-lang.git"
+    GIT_TAG "a53bf1b44e527506c7b0aa7ce07e01ad0ef0de87"
+    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/banjo-lang"
+)
+
+FetchContent_MakeAvailable(banjo-lang)
+
+message(STATUS "Done configuring banjo-lang")
