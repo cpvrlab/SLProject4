@@ -170,7 +170,7 @@ SLbool SLGLShader::createAndCompile(SLVLight* lights)
             if (Utils::containsString(path, "generatedShaders"))
             {
                 SLFileStorage::writeString(_file, IOK_shader, _code);
-                SL_LOG("Exported Shader Program: %s", filename.c_str());
+                SL_LOG("Exported Shader  : %s", filename.c_str());
             }
         }
         else
@@ -183,7 +183,7 @@ SLbool SLGLShader::createAndCompile(SLVLight* lights)
             if (Utils::dirExists(path))
             {
                 SLFileStorage::writeString(_file, IOK_shader, _code);
-                SL_LOG("Exported Shader Program: %s", filename.c_str());
+                SL_LOG("Exported Shader  : %s", filename.c_str());
             }
             else
                 SL_WARN_MSG("**** No path to write shader ***");

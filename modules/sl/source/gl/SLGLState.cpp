@@ -6,11 +6,16 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
+#include <SL.h>
+#include <Utils.h>
 #include <SLGLState.h>
 #include <SLMaterial.h>
 #include <CVImage.h>
+#include <AppCommon.h>
+#include <string>
+
 #ifdef SL_OS_ANDROID
 #    include <android/log.h>
 #endif
@@ -117,6 +122,14 @@ void SLGLState::initAll()
  */
 SLGLState::~SLGLState()
 {
+#if _DEBUG
+    SL_LOG("--------------------- Collected OpenGL Error: --------------------");
+    SL_LOG("Destructor       : ~SLGLState");
+    for (size_t i = 0; i < errorTexts.size(); ++i)
+        SL_LOG("(%04d) %s", errorCounts[i], errorTexts[i].c_str());
+    if (errorTexts.size() == 0) SL_LOG("None");
+    SL_LOG("------------------------------------------------------------------");
+#endif
 }
 //-----------------------------------------------------------------------------
 /*! One time initialization
@@ -472,8 +485,8 @@ void SLGLState::getGLError(const char* file,
                            int         line,
                            bool        quit)
 {
-    GLenum err;
-    if ((err = glGetError()) != GL_NO_ERROR)
+    GLenum err = glGetError();
+    if (err != GL_NO_ERROR)
     {
         string errStr;
         switch (err)
@@ -498,25 +511,32 @@ void SLGLState::getGLError(const char* file,
         }
 
         // Build error string as a concatenation of file, line & error
-        char sLine[32];
-        snprintf(sLine, sizeof(sLine), "%d", line);
-
-        string newErr(file);
+        string newErr("OpenGL Error in scene: ");
+        newErr += std::to_string(AppCommon::sceneID);
+        newErr += ": file: ";
+        newErr += Utils::getFileName(file);
         newErr += ": line:";
-        newErr += sLine;
+        newErr += std::to_string(line);
         newErr += ": ";
         newErr += errStr;
 
         // Check if error exists already
-        SLGLState* state     = SLGLState::instance();
-        bool       errExists = std::find(state->errors.begin(),
-                                   state->errors.end(),
-                                   newErr) != state->errors.end();
-        // Only print
-        if (!errExists)
+        SLGLState* state    = SLGLState::instance();
+        auto       foundErr = std::find(state->errorTexts.begin(),
+                                  state->errorTexts.end(),
+                                  newErr);
+
+        // Add error if not found in errorTexts
+        if (foundErr == state->errorTexts.end())
         {
-            state->errors.push_back(newErr);
-            SL_LOG("OpenGL Error in %s, line %d: %s\n", file, line, errStr.c_str());
+            state->errorTexts.push_back(newErr);
+            state->errorCounts.push_back(1);
+            SL_LOG("**** %s ****", newErr.c_str());
+        }
+        else // error occurred already
+        {
+            long errorIndex = foundErr - state->errorTexts.begin();
+            state->errorCounts[errorIndex]++;
         }
 
         if (quit)

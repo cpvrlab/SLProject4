@@ -6,7 +6,7 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #ifndef SLGLSTATE_H
 #define SLGLSTATE_H
@@ -205,7 +205,8 @@ private:
     GLboolean _colorMaskB;    //!< current color mask for B
     GLboolean _colorMaskA;    //!< current color mask for A
 
-    SLVstring errors; //!< vector for errors collected in getGLError
+    SLVstring errorTexts;  //!< vector for error texts collected in getGLError
+    SLVlong   errorCounts; //!< vector for counts for the corresponding errorTexts
 
     SLMaterial* _currentMaterial;
 };

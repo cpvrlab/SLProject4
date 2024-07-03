@@ -286,7 +286,7 @@ bool SLNode::deleteChild(SLNode* child)
     {
         if (_children[i] == child)
         {
-            _children.erase(_children.begin() + i);
+            _children.erase(_children.begin() + (long)i);
             delete child;
             _isAABBUpToDate = false;
             return true;
@@ -433,12 +433,8 @@ void SLNode::cull3DRec(SLSceneView* sv)
                 }
                 else
                 {
-                    // Add camera node without mesh to opaque vector for line drawing
-                    if (dynamic_cast<SLCamera*>(this))
-                        sv->nodesOpaque3D().push_back(this);
-
-                    // Add selected nodes without mesh to opaque vector for line drawing
-                    else if (this->_isSelected)
+                    // Add camera or selected node without mesh to opaque vector for line drawing
+                    if (dynamic_cast<SLCamera*>(this) || this->_isSelected)
                         sv->nodesOpaque3D().push_back(this);
 
                     // Add special text node to blended vector

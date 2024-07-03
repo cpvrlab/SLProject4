@@ -5,7 +5,7 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #include <SLGLState.h>
 #include <SLGLTexture.h>
@@ -737,12 +737,7 @@ SLbool SLGLTexture::copyVideoImage(SLint           camWidth,
     _wrap_t = GL_CLAMP_TO_EDGE;
 
     if (needsBuild || _texID == 0)
-    {
-        SL_LOG("SLGLTexture::copyVideoImage: Rebuild: %d, %s",
-               _texID,
-               _images[0]->name().c_str());
         build(0);
-    }
 
     _needsUpdate = true;
     return needsBuild;
@@ -786,12 +781,7 @@ SLbool SLGLTexture::copyVideoImage(SLint           camWidth,
     _wrap_t = GL_CLAMP_TO_EDGE;
 
     if (needsBuild || _texID == 0)
-    {
-        SL_LOG("SLGLTexture::copyVideoImage: Rebuild: %d, %s",
-               _texID,
-               _images[0]->name().c_str());
         build(0);
-    }
 
     _needsUpdate = true;
     return needsBuild;

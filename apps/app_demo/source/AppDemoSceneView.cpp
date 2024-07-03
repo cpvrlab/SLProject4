@@ -5,7 +5,7 @@
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
  * \authors   Marcus Hudritsch, Michael Göttlicher
  * \copyright http://opensource.org/licenses/GPL-3.0
-*/
+ */
 
 #include <AppDemoSceneView.h>
 #include <AppCommon.h>
@@ -31,12 +31,15 @@ SLbool AppDemoSceneView::onKeyPress(SLKey key, SLKey mod)
             AppCommon::sceneToLoad = SID_Empty;
             return true;
         }
-        else if (key == K_left && sv && AppCommon::sceneID > 0)
+        else if (key == K_left && sv &&
+                 AppCommon::sceneID > 0 &&
+                 AppCommon::sceneID < SID_MaxNoBenchmarks)
         {
             AppCommon::sceneToLoad = static_cast<SLSceneID>(AppCommon::sceneID - 1);
             return true;
         }
-        else if (key == K_right && sv && AppCommon::sceneID < SID_MaxNoBenchmarks - 1)
+        else if (key == K_right && sv &&
+                 AppCommon::sceneID < SID_MaxNoBenchmarks - 1)
         {
             AppCommon::sceneToLoad = static_cast<SLSceneID>(AppCommon::sceneID + 1);
             return true;

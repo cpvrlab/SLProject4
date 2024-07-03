@@ -328,10 +328,10 @@ SLbool SLDeviceLocation::calculateSolarAngles(SLVec3d     locationLatLonAlt,
         _originSolarSunset  = (SLfloat)spa.sunset;
 
         SLfloat SRh = _originSolarSunrise;
-        SLfloat SRm = (SLfloat)(60.0f * (SRh - (int)(SRh)));
-        SLfloat SRs = (SLfloat)(60.0 * (SRm - floor(SRm)));
+        SLfloat SRm = (SLfloat)(60.0f * (SRh - floor(SRh)));
+        SLfloat SRs = (SLfloat)(60.0f * (SRm - floor(SRm)));
         SLfloat SSh = _originSolarSunset;
-        SLfloat SSm = (SLfloat)(60.0f * (SSh - (int)(SSh)));
+        SLfloat SSm = (SLfloat)(60.0f * (SSh - floor(SSh)));
         SLfloat SSs = (SLfloat)(60.0f * (SSm - floor(SSm)));
 
         SL_LOG("Zenith          : %.6f degrees", _originSolarZenith);

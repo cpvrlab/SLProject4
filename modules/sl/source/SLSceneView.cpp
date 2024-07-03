@@ -420,7 +420,7 @@ void SLSceneView::onInitialize()
 
         // Warn if there are no light in scene
         if (_s->lights().empty())
-            SL_LOG("**** No Lights found in scene! ****");
+            SL_LOG("sv->onInitialize : No Lights found in scene!");
 
         //_s->root3D()->dumpRec();
     }
