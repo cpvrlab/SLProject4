@@ -5,7 +5,7 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #ifndef SL_H
 #define SL_H

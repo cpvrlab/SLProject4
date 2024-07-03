@@ -10,6 +10,7 @@
 #include <AppDemoSceneView.h>
 #include <AppCommon.h>
 #include <AppDemoGui.h>
+#include <AppDemoSceneID.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneView::AppDemoSceneView(SLScene*        s,
@@ -19,7 +20,10 @@ AppDemoSceneView::AppDemoSceneView(SLScene*        s,
 {
 }
 //-----------------------------------------------------------------------------
-// ???
+/*! This method overrides the same method from the base class SLSceneView.
+  It runs some app-specific code if a certain key is pressed and calls the
+  default implementation from SLSceneView if it doesn't consume the event.
+*/
 SLbool AppDemoSceneView::onKeyPress(SLKey key, SLKey mod)
 {
     // Keyboard shortcuts for next or previous sceneID loading
@@ -49,7 +53,10 @@ SLbool AppDemoSceneView::onKeyPress(SLKey key, SLKey mod)
     return SLSceneView::onKeyPress(key, mod);
 }
 //-----------------------------------------------------------------------------
-// ???
+/*! This method overrides the same method from the base class SLSceneView.
+  It runs some app-specific code if a certain key is pressed and calls the
+  default implementation from SLSceneView if it doesn't consume the event.
+*/
 SLbool AppDemoSceneView::onKeyRelease(SLKey key, SLKey mod)
 {
     if (AppDemoGui::hideUI)
@@ -62,7 +69,7 @@ SLbool AppDemoSceneView::onKeyRelease(SLKey key, SLKey mod)
 }
 //-----------------------------------------------------------------------------
 /*! This method overrides the same method from the base class SLSceneView.
- Most events such as all mouse and keyboard events from the OS is forwarded to
+ Most events such as all mouse and keyboard events from the OS are forwarded to
  SLSceneview. SLSceneview implements a default behaviour. If you want a
  different or additional behaviour for a certain eventhandler you have to sub-
  class SLSceneView and override the eventhandler.

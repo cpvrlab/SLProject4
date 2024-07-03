@@ -1,17 +1,18 @@
 /**
  * \file      AppDemoSceneLevelOfDetail.cpp
  * \brief     Implementation for an SLScene inherited class
- * \details   For more info about App framework and the scene assembly see: 
+ * \details   For more info about App framework and the scene assembly see:
  *            https://cpvrlab.github.io/SLProject4/app-framework.html
  * \date      May 2024
  * \authors   Marcus Hudritsch, Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #include <AppDemoSceneLevelOfDetail.h>
 #include <AppCommon.h>
+#include <AppDemoSceneID.h>
 #include <SLAssetLoader.h>
 #include <SLRectangle.h>
 #include <SLNodeLOD.h>
@@ -98,11 +99,11 @@ void AppDemoSceneLevelOfDetail::assemble(SLAssetManager* am, SLSceneView* sv)
     // Let the sun be rotated by time and location
     AppCommon::devLoc.sunLightNode(sunLight);
     AppCommon::devLoc.originLatLonAlt(47.14271,
-                                    7.24337,
-                                    488.2); // Ecke Giosa
+                                      7.24337,
+                                      488.2); // Ecke Giosa
     AppCommon::devLoc.defaultLatLonAlt(47.14260,
-                                     7.24310,
-                                     488.7 + 1.7); // auf Parkplatz
+                                       7.24310,
+                                       488.7 + 1.7); // auf Parkplatz
 
     // Floor rectangle
     SLNode* rect = new SLNode(new SLRectangle(am,

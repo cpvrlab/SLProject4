@@ -1,17 +1,18 @@
 /**
  * \file      AppDemoSceneGLTF.cpp
  * \brief     Implementation for an SLScene inherited class
- * \details   For more info about App framework and the scene assembly see: 
+ * \details   For more info about App framework and the scene assembly see:
  *            https://cpvrlab.github.io/SLProject4/app-framework.html
  * \date      May 2024
  * \authors   Marcus Hudritsch, Marino von Wattenwyl
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #include <AppDemoSceneGLTF.h>
 #include <AppCommon.h>
+#include <AppDemoSceneID.h>
 #include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLSphere.h>
@@ -109,22 +110,22 @@ void AppDemoSceneGLTF::assemble(SLAssetManager* am, SLSceneView* sv)
     scene->addChild(cam1);
 
     // Add directional light with a position that corresponds roughly to the sun direction
-    SLLight::gamma        = 2.2f;
+    SLLight::gamma       = 2.2f;
     SLLightDirect* light = new SLLightDirect(am,
-                                              this,
-                                              0.55f,
-                                              1.0f,
-                                              -0.2f,
-                                              0.2f,
-                                              0,
-                                              1,
-                                              1);
+                                             this,
+                                             0.55f,
+                                             1.0f,
+                                             -0.2f,
+                                             0.2f,
+                                             0,
+                                             1,
+                                             1);
     light->lookAt(0, 0, 0);
     light->attenuation(1, 0, 0);
     light->createsShadows(true);
     light->createShadowMapAutoSize(cam1,
-                                    SLVec2i(2048, 2048),
-                                    4);
+                                   SLVec2i(2048, 2048),
+                                   4);
     light->shadowMap()->cascadesFactor(1.0);
     light->doSmoothShadows(true);
     light->castsShadows(false);
@@ -133,7 +134,8 @@ void AppDemoSceneGLTF::assemble(SLAssetManager* am, SLSceneView* sv)
     scene->addChild(light);
 
     // Update all materials and set their skybox to _skybox
-    _modelGLTF->updateMeshMat([=](SLMaterial* m) { m->skybox(_skybox); },
+    _modelGLTF->updateMeshMat([=](SLMaterial* m)
+                              { m->skybox(_skybox); },
                               true);
 
     scene->addChild(_modelGLTF);

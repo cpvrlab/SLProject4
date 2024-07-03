@@ -1,17 +1,18 @@
 /**
  * \file      AppDemoSceneVideoChessboard.cpp
  * \brief     Implementation for an SLScene inherited class
- * \details   For more info about App framework and the scene assembly see: 
+ * \details   For more info about App framework and the scene assembly see:
  *            https://cpvrlab.github.io/SLProject4/app-framework.html
  * \date      May 2024
  * \authors   Marino von Wattenwyl
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #include <AppDemoSceneVideoTrackChessboard.h>
 #include <AppCommon.h>
+#include <AppDemoSceneID.h>
 #include <CVCapture.h>
 #include <CVTrackedChessboard.h>
 #include <CVCalibrationEstimator.h>
@@ -46,15 +47,15 @@ void AppDemoSceneVideoTrackChessboard::registerAssetsToLoad(SLAssetLoader& al)
     // Create video texture on global pointer updated in AppDemoVideo
     al.addTextureToLoad(gVideoTexture,
                         AppCommon::texturePath +
-                        "LiveVideoError.png",
+                          "LiveVideoError.png",
                         GL_LINEAR,
                         GL_LINEAR);
 
     // Create a chessboard tracker
-    al.addLoadTask([]() {
+    al.addLoadTask([]()
+                   {
         gVideoTracker = new CVTrackedChessboard(AppCommon::calibIniPath);
-        gVideoTracker->drawDetection(true);
-    });
+        gVideoTracker->drawDetection(true); });
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

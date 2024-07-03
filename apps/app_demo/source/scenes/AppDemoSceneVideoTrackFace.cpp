@@ -1,17 +1,18 @@
 /**
  * \file      AppDemoSceneVideoTrackFace.cpp
  * \brief     Implementation for an SLScene inherited class
- * \details   For more info about App framework and the scene assembly see: 
+ * \details   For more info about App framework and the scene assembly see:
  *            https://cpvrlab.github.io/SLProject4/app-framework.html
  * \date      May 2024
  * \authors   Marino von Wattenwyl
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #include <AppDemoSceneVideoTrackFace.h>
 #include <AppCommon.h>
+#include <AppDemoSceneID.h>
 #include <CVCapture.h>
 #include <CVTrackedFaces.h>
 #include <SLAssetLoader.h>
@@ -51,12 +52,12 @@ void AppDemoSceneVideoTrackFace::registerAssetsToLoad(SLAssetLoader& al)
                         GL_LINEAR);
 
     // Create a face tracker
-    al.addLoadTask([]() {
+    al.addLoadTask([]()
+                   {
         gVideoTracker = new CVTrackedFaces(AppCommon::calibIniPath + "haarcascade_frontalface_alt2.xml",
                                            AppCommon::calibIniPath + "lbfmodel.yaml",
                                            3);
-        gVideoTracker->drawDetection(true);
-    });
+        gVideoTracker->drawDetection(true); });
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.

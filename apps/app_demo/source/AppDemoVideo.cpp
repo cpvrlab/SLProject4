@@ -6,8 +6,11 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
+#include <AppDemoSceneView.h>
+#include <AppCommon.h>
+#include <AppDemoSceneID.h>
 #include <SLScene.h>
 #include <SLSceneView.h>
 #include <CVCapture.h>
@@ -15,8 +18,6 @@
 #include <CVTrackedAruco.h>
 #include <SLGLTexture.h>
 #include <CVCalibrationEstimator.h>
-#include <AppDemoSceneView.h>
-#include <AppCommon.h>
 #include <GlobalTimer.h>
 #include <Profiler.h>
 
@@ -69,14 +70,14 @@ void runCalibrationEstimator(CVCamera* ac, SLScene* s, SLSceneView* sv)
         if (!AppCommon::calibrationEstimator)
         {
             AppCommon::calibrationEstimator = new CVCalibrationEstimator(AppCommon::calibrationEstimatorParams,
-                                                                       CVCapture::instance()->activeCamSizeIndex,
-                                                                       ac->mirrorH(),
-                                                                       ac->mirrorV(),
-                                                                       ac->type(),
-                                                                       Utils::ComputerInfos::get(),
-                                                                       AppCommon::calibIniPath,
-                                                                       AppCommon::externalPath,
-                                                                       AppCommon::exePath);
+                                                                         CVCapture::instance()->activeCamSizeIndex,
+                                                                         ac->mirrorH(),
+                                                                         ac->mirrorV(),
+                                                                         ac->type(),
+                                                                         Utils::ComputerInfos::get(),
+                                                                         AppCommon::calibIniPath,
+                                                                         AppCommon::externalPath,
+                                                                         AppCommon::exePath);
 
             // clear grab request from sceneview
             adSv->grab           = false;
@@ -86,8 +87,8 @@ void runCalibrationEstimator(CVCamera* ac, SLScene* s, SLSceneView* sv)
         if (AppCommon::calibrationEstimator->isStreaming())
         {
             AppCommon::calibrationEstimator->updateAndDecorate(CVCapture::instance()->lastFrame,
-                                                             CVCapture::instance()->lastFrameGray,
-                                                             adSv->grab);
+                                                               CVCapture::instance()->lastFrameGray,
+                                                               adSv->grab);
             // reset grabbing switch
             adSv->grab = false;
 
@@ -102,15 +103,15 @@ void runCalibrationEstimator(CVCamera* ac, SLScene* s, SLSceneView* sv)
             // also reset grabbing, user has to click again
             adSv->grab = false;
             AppCommon::calibrationEstimator->updateAndDecorate(CVCapture::instance()->lastFrame,
-                                                             CVCapture::instance()->lastFrameGray,
-                                                             false);
+                                                               CVCapture::instance()->lastFrameGray,
+                                                               false);
             s->info("Busy extracting corners, please wait with grabbing ...");
         }
         else if (AppCommon::calibrationEstimator->isCalculating())
         {
             AppCommon::calibrationEstimator->updateAndDecorate(CVCapture::instance()->lastFrame,
-                                                             CVCapture::instance()->lastFrameGray,
-                                                             false);
+                                                               CVCapture::instance()->lastFrameGray,
+                                                               false);
             s->info("Calculating calibration, please wait ...");
         }
         else if (AppCommon::calibrationEstimator->isDone())
@@ -256,8 +257,8 @@ bool onUpdateVideo()
             if (gVideoTracker && gVideoTrackedNode)
             {
                 bool foundPose = gVideoTracker->track(CVCapture::instance()->lastFrameGray,
-                                                CVCapture::instance()->lastFrame,
-                                                &ac->calibration);
+                                                      CVCapture::instance()->lastFrame,
+                                                      &ac->calibration);
                 if (foundPose)
                 {
                     // clang-format off
@@ -316,21 +317,21 @@ bool onUpdateVideo()
 
                 // CVCapture::instance()->gVideoTexture()->copyVideoImage(undistorted.cols,
                 gVideoTexture->copyVideoImage(undistorted.cols,
-                                             undistorted.rows,
-                                             CVCapture::instance()->format,
-                                             undistorted.data,
-                                             undistorted.isContinuous(),
-                                             true);
+                                              undistorted.rows,
+                                              CVCapture::instance()->format,
+                                              undistorted.data,
+                                              undistorted.isContinuous(),
+                                              true);
             }
             else
             {
                 // CVCapture::instance()->gVideoTexture()->copyVideoImage(CVCapture::instance()->lastFrame.cols,
                 gVideoTexture->copyVideoImage(CVCapture::instance()->lastFrame.cols,
-                                             CVCapture::instance()->lastFrame.rows,
-                                             CVCapture::instance()->format,
-                                             CVCapture::instance()->lastFrame.data,
-                                             CVCapture::instance()->lastFrame.isContinuous(),
-                                             true);
+                                              CVCapture::instance()->lastFrame.rows,
+                                              CVCapture::instance()->format,
+                                              CVCapture::instance()->lastFrame.data,
+                                              CVCapture::instance()->lastFrame.isContinuous(),
+                                              true);
             }
         }
         else
