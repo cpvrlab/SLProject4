@@ -237,7 +237,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
     {
         ImGui::Begin("Loading",
                      nullptr,
-                     ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground);
+                     ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoNavInputs);
 
         float width  = static_cast<float>(sv->viewportW());
         float height = static_cast<float>(sv->viewportH());
@@ -282,7 +282,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
             centerNextWindow(sv, 0.9f, 0.5f);
             ImGui::Begin("Parallel Job in Progress",
                          &showProgress,
-                         ImGuiWindowFlags_NoTitleBar);
+                         ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoNavInputs);
             ImGui::Text("Parallel Job in Progress:");
             ImGui::Separator();
             ImGui::Text("%s", AppCommon::jobProgressMsg().c_str());
@@ -315,7 +315,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
 
                 // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
                 // because it would be confusing to have two docking targets within each others.
-                ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
+                ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoNavInputs;
                 if (opt_fullscreen)
                 {
                     ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -363,7 +363,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
             if (showAbout)
             {
                 centerNextWindow(sv);
-                ImGui::Begin("About SLProject", &showAbout, ImGuiWindowFlags_NoResize);
+                ImGui::Begin("About SLProject", &showAbout, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoNavInputs);
                 ImGui::Text("Version: %s", AppCommon::version.c_str());
                 ImGui::Text("Configuration: %s", AppCommon::configuration.c_str());
                 ImGui::Separator();
@@ -378,7 +378,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
             if (showHelp)
             {
                 centerNextWindow(sv);
-                ImGui::Begin("Help on Interaction", &showHelp, ImGuiWindowFlags_NoResize);
+                ImGui::Begin("Help on Interaction", &showHelp, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoNavInputs);
                 ImGui::TextWrapped("%s", infoHelp.c_str());
                 ImGui::End();
                 return;
@@ -387,7 +387,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
             if (showHelpCalibration)
             {
                 centerNextWindow(sv);
-                ImGui::Begin("Help on Camera Calibration", &showHelpCalibration, ImGuiWindowFlags_NoResize);
+                ImGui::Begin("Help on Camera Calibration", &showHelpCalibration, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoNavInputs);
                 ImGui::TextWrapped("%s", infoCalibrate.c_str());
                 ImGui::End();
                 return;
@@ -396,7 +396,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
             if (showCredits)
             {
                 centerNextWindow(sv);
-                ImGui::Begin("Credits for all Contributors and external Libraries", &showCredits, ImGuiWindowFlags_NoResize);
+                ImGui::Begin("Credits for all Contributors and external Libraries", &showCredits, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoNavInputs);
                 ImGui::TextWrapped("%s", infoCredits.c_str());
                 ImGui::End();
                 return;
@@ -569,7 +569,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                 }
 
                 ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
-                ImGui::Begin("Timing", &showStatsTiming, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+                ImGui::Begin("Timing", &showStatsTiming, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNavInputs);
                 ImGui::TextUnformatted(m);
                 ImGui::End();
                 ImGui::PopFont();
@@ -640,7 +640,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
 
                 // Switch to fixed font
                 ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
-                ImGui::Begin("Scene Statistics", &showStatsScene, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+                ImGui::Begin("Scene Statistics", &showStatsScene, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNavInputs);
                 ImGui::Text("%s (%d)", s->name().c_str(), AppCommon::sceneID);
                 ImGui::Separator();
                 ImGui::TextUnformatted(m);
@@ -807,7 +807,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
 
                 // Switch to fixed font
                 ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
-                ImGui::Begin("Video", &showStatsVideo, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+                ImGui::Begin("Video", &showStatsVideo, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNavInputs);
                 ImGui::TextUnformatted(m);
                 ImGui::End();
                 ImGui::PopFont();
@@ -816,7 +816,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
             if (showStatsWAI && AppCommon::sceneID == SID_VideoTrackWAI)
             {
                 ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
-                ImGui::Begin("WAI Statistics", &showStatsWAI, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+                ImGui::Begin("WAI Statistics", &showStatsWAI, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNavInputs);
 
                 if (!AverageTiming::instance().empty())
                 {
@@ -845,6 +845,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                 window_flags |= ImGuiWindowFlags_NoTitleBar;
                 window_flags |= ImGuiWindowFlags_NoResize;
                 window_flags |= ImGuiWindowFlags_NoScrollbar;
+                window_flags |= ImGuiWindowFlags_NoNavInputs;
                 SLfloat  w    = (SLfloat)sv->viewportW();
                 ImVec2   size = ImGui::CalcTextSize(s->info().c_str(),
                                                   nullptr,
@@ -1045,7 +1046,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
 
                 // Switch to fixed font
                 ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
-                ImGui::Begin("Device Informations", &showInfosDevice, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+                ImGui::Begin("Device Informations", &showInfosDevice, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNavInputs);
                 ImGui::TextUnformatted(m);
                 ImGui::End();
                 ImGui::PopFont();
@@ -1080,7 +1081,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
 
                 // Switch to fixed font
                 ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
-                ImGui::Begin("Sensor Information", &showInfosSensors, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+                ImGui::Begin("Sensor Information", &showInfosSensors, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNavInputs);
                 ImGui::TextUnformatted(m);
                 ImGui::End();
                 ImGui::PopFont();
@@ -1100,6 +1101,8 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
             {
                 ImGuiWindowFlags window_flags = 0;
                 window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
+                window_flags |= ImGuiWindowFlags_NoNavInputs;
+
                 ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
                 ImGui::Begin("User Interface Preferences", &showUIPrefs, window_flags);
                 ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.66f);
@@ -1144,6 +1147,8 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                 {
                     ImGuiWindowFlags window_flags = 0;
                     window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
+                    window_flags |= ImGuiWindowFlags_NoNavInputs;
+
                     ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
                     ImGui::Begin("Date and Time Settings", &showDateAndTime, window_flags);
                     ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.66f);
@@ -1259,7 +1264,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                 {
                     ImGui::Begin("Christoffel",
                                  &showErlebAR,
-                                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+                                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNavInputs);
 
                     // Get scene nodes once
                     if (!bern)
@@ -1320,7 +1325,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                 {
                     ImGui::Begin("Augst-Theatre-Temple",
                                  &showErlebAR,
-                                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+                                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNavInputs);
 
 #if defined(SL_OS_MACIOS) || defined(SL_OS_ANDROID)
                     bool devLocIsUsed = AppCommon::devLoc.isUsed();
@@ -1340,7 +1345,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                 {
                     ImGui::Begin("Avenche-Amphitheatre",
                                  &showErlebAR,
-                                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+                                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNavInputs);
 
 #if defined(SL_OS_MACIOS) || defined(SL_OS_ANDROID)
                     bool devLocIsUsed = AppCommon::devLoc.isUsed();
@@ -1360,7 +1365,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                 {
                     ImGui::Begin("Avenche-Cigognier",
                                  &showErlebAR,
-                                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+                                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNavInputs);
 
 #if defined(SL_OS_MACIOS) || defined(SL_OS_ANDROID)
                     bool devLocIsUsed = AppCommon::devLoc.isUsed();
@@ -1379,7 +1384,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                 {
                     ImGui::Begin("Avenche-Theatre",
                                  &showErlebAR,
-                                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+                                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNavInputs);
 
 #if defined(SL_OS_MACIOS) || defined(SL_OS_ANDROID)
                     bool devLocIsUsed = AppCommon::devLoc.isUsed();
@@ -1399,7 +1404,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                 {
                     ImGui::Begin("Sutz-Kirchrain18",
                                  &showErlebAR,
-                                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+                                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNavInputs);
 
 #if defined(SL_OS_MACIOS) || defined(SL_OS_ANDROID)
                     bool devLocIsUsed = AppCommon::devLoc.isUsed();
@@ -3072,7 +3077,7 @@ void AppDemoGui::buildSceneGraph(SLScene* s)
     // assert(s->assetManager() && "No asset manager assigned to scene!");
 
     ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
-    ImGui::Begin("Scenegraph", &showSceneGraph);
+    ImGui::Begin("Scenegraph", &showSceneGraph, ImGuiWindowFlags_NoNavInputs);
 
     if (s->root3D())
         addSceneGraphNode(s, s->root3D());
@@ -3166,7 +3171,7 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
     bool    partialSelection = !s->selectedMeshes().empty() && !s->selectedMeshes()[0]->IS32.empty();
 
     ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
-    ImGui::Begin("Properties", &showProperties, ImGuiWindowFlags_AlwaysVerticalScrollbar);
+    ImGui::Begin("Properties", &showProperties, ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_NoNavInputs);
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 1.0f, 1.0f));
 
     if (ImGui::TreeNode("Scene Properties"))
@@ -4399,7 +4404,7 @@ void AppDemoGui::buildProperties(SLScene* s, SLSceneView* sv)
         else if (!singleFullMesh && !s->selectedMeshes().empty())
         {
             // See also SLMesh::handleRectangleSelection
-            ImGui::Begin("Properties of Selection", &showProperties, ImGuiWindowFlags_AlwaysVerticalScrollbar);
+            ImGui::Begin("Properties of Selection", &showProperties, ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_NoNavInputs);
 
             for (auto* selectedNode : s->selectedNodes())
             {
