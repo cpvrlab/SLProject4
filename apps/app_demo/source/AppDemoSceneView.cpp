@@ -10,6 +10,7 @@
 #include <AppDemoSceneView.h>
 #include <AppCommon.h>
 #include <AppDemoGui.h>
+#include <AppDemoSceneID.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneView::AppDemoSceneView(SLScene*        s,

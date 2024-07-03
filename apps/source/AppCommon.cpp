@@ -3,14 +3,14 @@
  * \brief     The AppCommon class holds the top-level instances for SLProject apps
  * \details   For more info on how to create a new app with SLProject see:
  *            https://github.com/cpvrlab/SLProject4/wiki/Creating-a-New-App
- *            For more info about App framework see: 
+ *            For more info about App framework see:
  *            https://cpvrlab.github.io/SLProject4/app-framework.html
  * \date      Februar 2014
  * \authors   Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 #include <App.h>
 #include <AppCommon.h>
 #include <SL.h>
@@ -77,7 +77,7 @@ SLstring AppCommon::texturePath;
 SLstring AppCommon::fontPath;
 SLstring AppCommon::videoPath;
 
-SLSceneID                   AppCommon::sceneID = SID_Empty;
+SLSceneID                   AppCommon::sceneID = SL_EMPTY_SCENE_ID;
 deque<function<void(void)>> AppCommon::jobsToBeThreaded;
 deque<function<void(void)>> AppCommon::jobsToFollowInMain;
 atomic<bool>                AppCommon::jobIsRunning(false);
@@ -95,7 +95,7 @@ const string AppCommon::PROFILE_FTP_DIR = "profiles";
 //-----------------------------------------------------------------------------
 //! Application creation function
 /*! Writes and inits the static application information and create the single
-instances of SLGLState, SLAssetManager and SLAssetLoader. Gets called by the 
+instances of SLGLState, SLAssetManager and SLAssetLoader. Gets called by the
 C-interface function slCreateApp.
 <br>
 <br>
@@ -134,8 +134,8 @@ void AppCommon::createApp(SLstring appName)
 }
 //-----------------------------------------------------------------------------
 /*! Registers core assets to load async by all apps. Scene specific assets have
-to be loaded async by overriding SLScene::registerAssetsToLoad and 
-SLScene::assemble. Async loading and assembling means that it happens in a 
+to be loaded async by overriding SLScene::registerAssetsToLoad and
+SLScene::assemble. Async loading and assembling means that it happens in a
 parallel thread and that inthere are no OpenGL calls allowed. OpenGL calls are
 only allowed in the main thread.
 */
@@ -207,9 +207,9 @@ void AppCommon::switchScene(SLSceneView* sv, SLSceneID sceneID)
     ////////////////////
 
     AppCommon::sceneID = sceneID;
-    SLScene* s       = App::config.onNewScene(sceneID);
-    SL_LOG("Scene name       : %s (SceneID: %d)", 
-           s->name().c_str(), 
+    SLScene* s         = App::config.onNewScene(sceneID);
+    SL_LOG("Scene name       : %s (SceneID: %d)",
+           s->name().c_str(),
            AppCommon::sceneID);
 
     // Initialize all preloaded stuff from SLScene
@@ -241,7 +241,7 @@ void AppCommon::switchScene(SLSceneView* sv, SLSceneID sceneID)
         App::config.onBeforeSceneLoad(sv, s);
 }
 //-----------------------------------------------------------------------------
-/*! OnDoneLoading is called when the asyn asset loading is finished and the 
+/*! OnDoneLoading is called when the asyn asset loading is finished and the
 async scene assembly can be started.
 */
 void AppCommon::onDoneLoading(SLSceneView* sv, SLScene* s, SLfloat startLoadMS)

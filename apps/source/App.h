@@ -5,14 +5,14 @@
  *            Beside this is contains the callback functions typedefs.
  *            For more info on how to create a new app with SLProject see:
  *            https://github.com/cpvrlab/SLProject4/wiki/Creating-a-New-App
- *            For more info about App framework see: 
+ *            For more info about App framework see:
  *            https://cpvrlab.github.io/SLProject4/app-framework.html
  * \date      June 2024
  * \authors   Marino von Wattenwyl
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #ifndef APP_H
 #define APP_H
@@ -32,11 +32,11 @@ class SLSceneView;
 class SLInputManager;
 //-----------------------------------------------------------------------------
 //! The App namespace declares the App::Config struct and the App::run function
-/*! An App::Config can be passed to the run function defined. 
+/*! An App::Config can be passed to the run function defined.
  Beside this is contains the callback functions typedefs.
  For more info on how to create a new app with SLProject see:
  https://github.com/cpvrlab/SLProject4/wiki/Creating-a-New-App
- For more info about App framework see: 
+ For more info about App framework see:
  https://cpvrlab.github.io/SLProject4/app-framework.html
  */
 namespace App
@@ -60,7 +60,7 @@ struct Config
     SLint                         windowHeight          = 720;
     SLstring                      windowTitle           = "SLProject Application";
     SLint                         numSamples            = 4;
-    SLSceneID                     startSceneID          = SID_Empty;
+    SLSceneID                     startSceneID          = SL_EMPTY_SCENE_ID;
     OnNewSceneViewCallback        onNewSceneView        = nullptr;
     OnNewSceneCallback            onNewScene            = nullptr;
     OnBeforeSceneDeleteCallback   onBeforeSceneDelete   = nullptr;

@@ -6,10 +6,11 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #include <AppDemoGui.h>
 #include <AppCommon.h>
+#include <AppDemoSceneID.h>
 #include <SLEnums.h>
 #include <Utils.h>
 #include <SL.h>
@@ -1106,10 +1107,10 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                 ImGui::SliderFloat("Prop. Font Size", &SLImGui::fontPropDots, 16.f, 70.f, "%0.0f");
                 ImGui::SliderFloat("Fixed Font Size", &SLImGui::fontFixedDots, 13.f, 50.f, "%0.0f");
                 ImGuiStyle& style = ImGui::GetStyle();
-                
+
                 if (ImGui::SliderFloat("Item Spacing X", &style.ItemSpacing.x, 0.0f, 20.0f, "%0.0f"))
                     style.WindowPadding.x = style.FramePadding.x = style.ItemInnerSpacing.x = style.ItemSpacing.x;
-               
+
                 if (ImGui::SliderFloat("Item Spacing Y", &style.ItemSpacing.y, 0.0f, 20.0f, "%0.0f"))
                 {
                     style.FramePadding.y = style.ItemInnerSpacing.y = style.ItemSpacing.y;
@@ -1162,14 +1163,14 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                         lt.tm_mon    = month - 1;
                         adjustedTime = mktime(&lt);
                         AppCommon::devLoc.calculateSolarAngles(AppCommon::devLoc.originLatLonAlt(),
-                                                             adjustedTime);
+                                                               adjustedTime);
                     }
 
                     if (ImGui::SliderInt("Day", &lt.tm_mday, 1, 31))
                     {
                         adjustedTime = mktime(&lt);
                         AppCommon::devLoc.calculateSolarAngles(AppCommon::devLoc.originLatLonAlt(),
-                                                             adjustedTime);
+                                                               adjustedTime);
                     }
 
                     SLfloat SRh  = AppCommon::devLoc.originSolarSunrise();
@@ -1181,7 +1182,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                         lt.tm_min    = (int)((nowF - (int)nowF) * 60.0f);
                         adjustedTime = mktime(&lt);
                         AppCommon::devLoc.calculateSolarAngles(AppCommon::devLoc.originLatLonAlt(),
-                                                             adjustedTime);
+                                                               adjustedTime);
                     }
 
                     SLchar      strTime[100];
@@ -1206,7 +1207,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                         lt.tm_sec    = 0;
                         adjustedTime = mktime(&lt);
                         AppCommon::devLoc.calculateSolarAngles(AppCommon::devLoc.originLatLonAlt(),
-                                                             adjustedTime);
+                                                               adjustedTime);
                     }
 
                     snprintf(strTime, sizeof(strTime), "Set lowest noon (21.12.%02d 12:00)", lt.tm_year - 100);
@@ -1219,7 +1220,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                         lt.tm_sec    = 0;
                         adjustedTime = mktime(&lt);
                         AppCommon::devLoc.calculateSolarAngles(AppCommon::devLoc.originLatLonAlt(),
-                                                             adjustedTime);
+                                                               adjustedTime);
                     }
 
                     SLNode* sunLightNode = AppCommon::devLoc.sunLightNode();
@@ -2210,15 +2211,15 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                     if (ImGui::MenuItem("Start Calibration (Main Camera)"))
                     {
                         AppCommon::sceneToLoad = SID_VideoCalibrateMain;
-                        showHelpCalibration  = false;
-                        showInfosScene       = true;
+                        showHelpCalibration    = false;
+                        showInfosScene         = true;
                     }
 
                     if (ImGui::MenuItem("Start Calibration (Scnd. Camera)", nullptr, false, capture->hasSecondaryCamera))
                     {
                         AppCommon::sceneToLoad = SID_VideoCalibrateScnd;
-                        showHelpCalibration  = false;
-                        showInfosScene       = true;
+                        showHelpCalibration    = false;
+                        showInfosScene         = true;
                     }
 
                     if (ImGui::MenuItem("Undistort Image", nullptr, ac->showUndistorted(), ac->calibration.state() == CS_calibrated))

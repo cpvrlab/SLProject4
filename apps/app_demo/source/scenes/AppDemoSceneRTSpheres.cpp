@@ -1,17 +1,18 @@
 /**
  * \file      AppDemoSceneRTSpheres.cpp
  * \brief     Implementation for an SLScene inherited class
- * \details   For more info about App framework and the scene assembly see: 
+ * \details   For more info about App framework and the scene assembly see:
  *            https://cpvrlab.github.io/SLProject4/app-framework.html
  * \date      May 2024
  * \authors   Marcus Hudritsch, Marino von Wattenwyl
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #include <AppDemoSceneRTSpheres.h>
 #include <AppCommon.h>
+#include <AppDemoSceneID.h>
 #include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLRectangle.h>
@@ -30,7 +31,8 @@ AppDemoSceneRTSpheres::AppDemoSceneRTSpheres(SLSceneID sceneID)
         name("Soft Shadow Ray Tracing");
         info("Ray tracing with soft shadow light sampling. Each light "
              "source is sampled 64x per pixel. Be patient on mobile devices.");
-    } else
+    }
+    else
         SL_EXIT_MSG("Should not get here!");
 }
 //-----------------------------------------------------------------------------
