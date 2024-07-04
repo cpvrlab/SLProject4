@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLRevolver.h
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLRevolver.h
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLREVOLVER_H
 #define SLREVOLVER_H
@@ -17,16 +17,23 @@
 class SLAssetManager;
 
 //-----------------------------------------------------------------------------
-//! SLRevolver is an SLMesh object built out of revolving points.
-/*!
- SLRevolver is an SLMesh object that is built out of points that are revolved
- in slices around and axis. The surface will be outwards if the points in the
- array _revPoints increase towards the axis direction.
- If all points in the array _revPoints are different the normals will be
- smoothed. If two consecutive points are identical the normals will define a
- hard edge. Texture coords. are cylindrically mapped.
- See the online example \subpage example-revolver with various revolver objects.
-*/
+/**
+ * @brief SLRevolver is an SLMesh object built out of revolving points.
+ * @details SLRevolver is an SLMesh object that is built out of points that 
+ * are revolved in slices around and axis. The surface will be outwards if the 
+ * points in the array _revPoints increase towards the axis direction. If all 
+ * points in the array _revPoints are different the normals will be smoothed. 
+ * If two consecutive points are identical the normals will define a hard edge. 
+ * Texture coords. are cylindrically mapped. See the online example 
+ * \subpage example-revolver with various revolver objects.
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * For this mesh it means that the objects for OpenGL drawing (_vao, _vaoP,
+ * _vaoN, _vaoT and _vaoS) remain unused until the first frame is rendered.
+ */
 class SLRevolver : public SLMesh
 {
 public:

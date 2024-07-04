@@ -1,12 +1,13 @@
-//#############################################################################
-//   File:      SLScene.cpp
-//   Date:      July 2014
-//   Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//   Authors:   Marcus Hudritsch
-//   License:   This software is provided under the GNU General Public License
-//              Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLScene.cpp
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ */
 
+#include "SL.h"
 #include <SLScene.h>
 #include <Utils.h>
 #include <SLKeyframeCamera.h>
@@ -30,13 +31,12 @@ the C-interface function slCreateScene in SLInterface.cpp that is called by the
 platform and UI-toolkit dependent window initialization.
 As examples you can see it in:
   - app_demo_slproject/glfw: glfwMain.cpp in function main()
-  - app-Demo-SLProject/android: Java_ch_fhnw_comgRT_glES2Lib_onInit()
+  - app-demo/android: Java_ch_fhnw_comgRT_glES2Lib_onInit()
   - app_demo_slproject/ios: ViewController.m in method viewDidLoad()
   - _old/app-Demo-Qt: qtGLWidget::initializeGL()
   - _old/app-Viewer-Qt: qtGLWidget::initializeGL()
 */
-SLScene::SLScene(const SLstring& name,
-                 cbOnSceneLoad   onSceneLoadCallback)
+SLScene::SLScene(const SLstring& name)
   : SLObject(name),
     _loadTimeMS(0.0f),
     _frameTimesMS(60, 0.0f),
@@ -45,8 +45,6 @@ SLScene::SLScene(const SLstring& name,
     _updateAnimTimesMS(60, 0.0f),
     _updateDODTimesMS(60, 0.0f)
 {
-    onLoad = onSceneLoadCallback;
-
     _assetManager     = nullptr;
     _root3D           = nullptr;
     _root2D           = nullptr;
@@ -65,11 +63,8 @@ SLScene::~SLScene()
 {
     unInit();
 
-    // delete global SLGLState instance
-    SLGLState::deleteInstance();
-
-    SL_LOG("Destructor      : ~SLScene");
-    SL_LOG("------------------------------------------------------------------");
+    SL_LOG_DEBUG("Destructor       : ~SLScene");
+    SL_LOG_DEBUG("------------------------------------------------------------------");
 }
 //-----------------------------------------------------------------------------
 /*! The scene init is called before a new scene is assembled.
@@ -81,9 +76,6 @@ void SLScene::init(SLAssetManager* am)
     unInit();
 
     _assetManager = am;
-
-    // reset all states
-    SLGLState::instance()->initAll();
 
     // reset global light settings
     SLLight::gamma = 1.0f;
@@ -119,10 +111,6 @@ void SLScene::unInit()
 
     _selectedMeshes.clear();
     _selectedNodes.clear();
-
-    // Delete the default material that are scene dependent
-    SLMaterialDefaultGray::deleteInstance();
-    SLMaterialDefaultColorAttribute::deleteInstance();
 }
 //-----------------------------------------------------------------------------
 //! Updates animations and AABBs

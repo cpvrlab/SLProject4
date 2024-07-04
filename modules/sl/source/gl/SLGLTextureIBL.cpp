@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLGLTextureIBL.cpp
-//  Date:      April 2018
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  Authors:   Carlos Arauz, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLGLTextureIBL.cpp
+ * \date      April 2018
+ * \authors   Carlos Arauz, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLAssetManager.h>
 #include <SLScene.h>
@@ -90,7 +90,7 @@ SLGLTextureIBL::SLGLTextureIBL(SLAssetManager* am,
 //-----------------------------------------------------------------------------
 SLGLTextureIBL::~SLGLTextureIBL()
 {
-    deleteData();
+    deleteData(true);
 
     glDeleteVertexArrays(1, &_cubeVAO);
     _cubeVAO = 0;
@@ -506,15 +506,15 @@ void SLGLTextureIBL::logFramebufferStatus()
     GLenum fbStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     switch (fbStatus)
     {
-        case GL_FRAMEBUFFER_COMPLETE: SL_LOG("GL_FRAMEBUFFER_COMPLETE"); break;
-        case GL_FRAMEBUFFER_UNDEFINED: SL_LOG("GL_FRAMEBUFFER_UNDEFINED"); break;
-        case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT: SL_LOG("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT"); break;
-        case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: SL_LOG("GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT"); break;
-        case GL_FRAMEBUFFER_UNSUPPORTED: SL_LOG("GL_FRAMEBUFFER_UNSUPPORTED"); break;
-        case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE: SL_LOG("GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE"); break;
-        // case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER: SL_LOG("GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER"); break;
-        // case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER: SL_LOG("GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER"); break;
-        // case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS: SL_LOG("GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS"); break;
+        case GL_FRAMEBUFFER_COMPLETE: break;
+        case GL_FRAMEBUFFER_UNDEFINED: SL_LOG("**** GL_FRAMEBUFFER_UNDEFINED ****"); break;
+        case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT: SL_LOG("**** GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT ****"); break;
+        case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: SL_LOG("GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT ****"); break;
+        case GL_FRAMEBUFFER_UNSUPPORTED: SL_LOG("**** GL_FRAMEBUFFER_UNSUPPORTED ****"); break;
+        case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE: SL_LOG("**** GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE ****"); break;
+        // case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER: SL_LOG("**** GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER ****"); break;
+        // case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER: SL_LOG("**** GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER ****"); break;
+        // case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS: SL_LOG("**** GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS ****"); break;
         default: SL_LOG("Unknown framebuffer status!!!");
     }
 #endif

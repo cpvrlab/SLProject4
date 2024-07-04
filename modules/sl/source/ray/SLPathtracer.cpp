@@ -1,11 +1,12 @@
-//#############################################################################
-//  File:      SLPathtracer.cpp
-//  Authors:   Thomas Schneiter
-//  Date:      July 2014
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLPathtracer.cpp
+ * \authors   Thomas Schneiter
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ */
 
 #include <algorithm>
 
@@ -37,7 +38,7 @@ SLbool SLPathtracer::render(SLSceneView* sv)
     _renderSec  = 0.0f;   // reset time
     _progressPC = 0;      // % rendered
 
-    initStats(0);         // init statistics
+    initStats(0); // init statistics
     prepareImage();
 
     // Set second image for render update to the same size
@@ -53,12 +54,11 @@ SLbool SLPathtracer::render(SLSceneView* sv)
     // Measure time
     double t1 = GlobalTimer::timeS();
 
-    // Bind the renderSlices method to a function object
-    auto renderSlicesFunction = bind(&SLPathtracer::renderSlices,
-                                     this,
-                                     std::placeholders::_1,
-                                     std::placeholders::_2,
-                                     std::placeholders::_3);
+    // Lambda function for async slice rendering
+    renderSlicesPTAsync = [this](bool isMainThread, SLint curSample, SLuint threadNum)
+    {
+        SLPathtracer::renderSlices(isMainThread, curSample, threadNum);
+    };
 
     // Do multi-threading only in release config
     SL_LOG("\n\nRendering with %d samples", _aaSamples);
@@ -70,10 +70,10 @@ SLbool SLPathtracer::render(SLSceneView* sv)
 
         // Start additional threads on the renderSlices function
         for (SLuint t = 0; t < Utils::maxThreads() - 1; t++)
-            threads.emplace_back(renderSlicesFunction, false, currentSample, t);
+            threads.emplace_back(renderSlicesPTAsync, false, currentSample, t);
 
         // Do the same work in the main thread
-        renderSlicesFunction(true, currentSample, 0);
+        renderSlicesPTAsync(true, currentSample, 0);
 
         for (auto& thread : threads)
             thread.join();
@@ -125,8 +125,8 @@ void SLPathtracer::renderSlices(const bool isMainThread,
 
                 // calculate direction for primary ray - scatter with random variables for anti aliasing
                 SLRay primaryRay;
-                setPrimaryRay((SLfloat)(x - rnd01() + 0.5f),
-                              (SLfloat)(y - rnd01() + 0.5f),
+                setPrimaryRay((SLfloat)((SLfloat)x - rnd01() + 0.5f),
+                              (SLfloat)((SLfloat)y - rnd01() + 0.5f),
                               &primaryRay);
 
                 ///////////////////////////////////
@@ -173,7 +173,7 @@ void SLPathtracer::renderSlices(const bool isMainThread,
             }
 
             // update image after 500 ms
-            if (isMainThread)
+            if (_sv->onWndUpdate && isMainThread)
             {
                 if (GlobalTimer::timeS() - t1 > 0.5f)
                 {

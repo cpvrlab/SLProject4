@@ -146,6 +146,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCH
             -Wno-newline-eof
             -Wno-old-style-cast
             -Wno-switch-enum
+			-Wno-unused-lambda-capture
             -Wno-unused-macros
             -Wno-unused-function
             -Wno-unused-parameter
@@ -200,6 +201,13 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCH
 	endif()
 endif ()
 
+# Android options
+if(SYSTEM_NAME_UPPER STREQUAL "ANDROID")
+	set(DEFAULT_COMPILE_OPTIONS
+		${DEFAULT_COMPILE_OPTIONS}
+		"-Wno-error=format-security"
+	)
+endif()
 
 # Clang only compiler options
 #if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
@@ -252,31 +260,36 @@ endif ()
 #
 
 if ("${SYSTEM_NAME_UPPER}" MATCHES "EMSCRIPTEN")
+	add_compile_definitions(
+		# Force `igl::parallel_for` to run in a single thread because the function would
+		# otherwise spawn multiple threads and join them, which is not allowed on
+		# the main browser thread.
+		"IGL_PARALLEL_FOR_FORCE_SERIAL"
+	)
+
 	add_compile_options(
-			"-sUSE_PTHREADS"
-			#"-fsanitize=address"
+			"-pthread"
 	)
 	add_link_options(
+			"-pthread"
+
+			# Create a thread pool of Web Workers before starting the application.
+			"-sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency + 4"
+
 			# The Wasm heap has a limited size.
 			# Enable growing the heap when allocating more than the initial heap size.
 			"-sALLOW_MEMORY_GROWTH=1"
 
+			# Workaround for WebKit memory leak(?).
+			# The Wasm heap can normally grow to up to 2GB, but this causes an error on iOS and iPadOS Safari.
+			# The workaround is to set the heap size limit to 1GB, which doesn't crash on WebKit right away.
+			# The bug can still occur when reloading the page, so restart Safari if this happens.
+			# Emscripten issue: https://github.com/emscripten-core/emscripten/issues/19374
+			# WebKit Bug: https://bugs.webkit.org/show_bug.cgi?id=255103
+			"-sMAXIMUM_MEMORY=1536mb"
+
 			# Enable assertions that provide information about errors.
 			"-sASSERTIONS"
-
-			# Enable support for pthreads, which are implemented using a pool of web workers.
-			"-sUSE_PTHREADS"
-
-			# Run the entire application in a web worker, so we can block while fetching.
-			# Functions that have to run on the main thread are proxied to it using messages.
-			"-sPROXY_TO_PTHREAD"
-
-			# The canvas that WebGL renders to has to be on the same thread as the WebGL context.
-			# This flags enables support for transferring canvases to a worker.
-			"-sOFFSCREENCANVAS_SUPPORT=1"
-
-			# Transfer the app canvas to the worker.
-			"-sOFFSCREENCANVASES_TO_PTHREAD='#canvas'"
 
 			# Strings are always decoded on the main thread, which accesses it using a SharedArrayBuffer.
 			# Chrome doesn't support decoding from SharedArrayBuffers, so we disable the JavaScript TextDecoder API.

@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      SLCompactGrid.cpp
-//  Authors:   Manuel Frischknecht, Marcus Hudritsch
-//  Date:      July 2015
-//  Authors:   Manuel Frischknecht, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLCompactGrid.cpp
+ * \authors   Manuel Frischknecht, Marcus Hudritsch
+ * \date      July 2015
+ * \authors   Manuel Frischknecht, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <SLCompactGrid.h>
 #include <SLNode.h>
@@ -168,19 +167,25 @@ void SLCompactGrid::build(SLVec3f minV, SLVec3f maxV)
     if (_m->I16.size())
     {
         _triangleIndexes16.resize(_voxelOffsets.back());
-        ifTriangleInVoxelDo([&](const SLushort& i, const SLuint& voxIndex)
-                            {
-            SLuint location              = --_voxelOffsets[voxIndex];
-            _triangleIndexes16[location] = i; });
+        ifTriangleInVoxelDo(
+          [&](const SLushort& i, const SLuint& voxIndex)
+          {
+              assert(_voxelOffsets[voxIndex] != 0);
+              SLuint location              = --_voxelOffsets[voxIndex];
+              _triangleIndexes16[location] = i;
+          });
         _triangleIndexes16.shrink_to_fit();
     }
     else
     {
         _triangleIndexes32.resize(_voxelOffsets.back());
-        ifTriangleInVoxelDo([&](const SLuint& i, const SLuint& voxIndex)
-                            {
-            SLuint location              = --_voxelOffsets[voxIndex];
-            _triangleIndexes32[location] = i; });
+        ifTriangleInVoxelDo(
+          [&](const SLuint& i, const SLuint& voxIndex)
+          {
+              assert(_voxelOffsets[voxIndex] != 0);
+              SLuint location              = --_voxelOffsets[voxIndex];
+              _triangleIndexes32[location] = i;
+          });
         _triangleIndexes32.shrink_to_fit();
     }
 

@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLAnimManager.cpp
-//  Date:      Autumn 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marc Wacker, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLAnimManager.cpp
+ * \date      Autumn 2014
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Marc Wacker, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <SLScene.h>
 
@@ -20,20 +20,20 @@ SLAnimManager::~SLAnimManager()
 //! Clears and deletes all node animations and skeletons
 void SLAnimManager::clear()
 {
-    for (const auto& it : _nodeAnimations)
+    for (const auto& it : _animationNamesMap)
         delete it.second;
-    _nodeAnimations.clear();
+    _animationNamesMap.clear();
 
-    for (const auto& it : _nodeAnimPlaybacks)
+    for (const auto& it : _animPlaybackNamesMap)
         delete it.second;
-    _nodeAnimPlaybacks.clear();
+    _animPlaybackNamesMap.clear();
 
     for (auto* skeleton : _skeletons)
         delete skeleton;
     _skeletons.clear();
 
-    _allAnimNames.clear();
-    _allAnimPlaybacks.clear();
+    _animationNames.clear();
+    _animPlaybacks.clear();
 }
 //-----------------------------------------------------------------------------
 //! Add a skeleton to the skeleton vector
@@ -47,7 +47,7 @@ void SLAnimManager::addSkeleton(SLAnimSkeleton* skel)
 */
 SLAnimation* SLAnimManager::createNodeAnimation(SLfloat duration)
 {
-    SLuint             index = (SLuint)_nodeAnimations.size();
+    SLuint             index = (SLuint)_animationNamesMap.size();
     std::ostringstream oss;
 
     do
@@ -55,7 +55,7 @@ SLAnimation* SLAnimManager::createNodeAnimation(SLfloat duration)
         oss.clear();
         oss << "Node_" << index;
         index++;
-    } while (_nodeAnimations.find(oss.str()) != _nodeAnimations.end());
+    } while (_animationNamesMap.find(oss.str()) != _animationNamesMap.end());
 
     return createNodeAnimation(oss.str(), duration);
 }
@@ -70,7 +70,7 @@ SLAnimation* SLAnimManager::createNodeAnimation(const SLstring& name,
                                                 SLAnimLooping   looping)
 {
     SLAnimation*    anim     = createNodeAnimation(name, duration);
-    SLAnimPlayback* playback = nodeAnimPlayback(name);
+    SLAnimPlayback* playback = animPlaybackByName(name);
     playback->enabled(enabled);
     playback->easing(easing);
     playback->loop(looping);
@@ -84,29 +84,33 @@ SLAnimation* SLAnimManager::createNodeAnimation(const SLstring& name,
 SLAnimation* SLAnimManager::createNodeAnimation(const SLstring& name,
                                                 SLfloat         duration)
 {
-    assert(_nodeAnimations.find(name) == _nodeAnimations.end() &&
+    assert(_animationNamesMap.find(name) == _animationNamesMap.end() &&
            "node animation with same name already exists!");
 
-    SLAnimation* anim     = new SLAnimation(name, duration);
-    _nodeAnimations[name] = anim;
+    SLAnimation* anim        = new SLAnimation(name, duration);
+    _animationNamesMap[name] = anim;
 
-    SLAnimPlayback* playback = new SLAnimPlayback(anim);
-    _nodeAnimPlaybacks[name] = playback;
+    SLAnimPlayback* playback    = new SLAnimPlayback(anim);
+    _animPlaybackNamesMap[name] = playback;
 
     // Add node animation to the combined vector
-    _allAnimNames.push_back(name);
-    _allAnimPlaybacks.push_back(playback);
+    _animationNames.push_back(name);
+    _animPlaybacks.push_back(playback);
 
     return anim;
 }
 //-----------------------------------------------------------------------------
-//! Returns the playback of a node animation by name if it exists.
-SLAnimPlayback* SLAnimManager::nodeAnimPlayback(const SLstring& name)
+//! Returns the playback of a node animation or skeleton by name if it exists.
+SLAnimPlayback* SLAnimManager::animPlaybackByName(const SLstring& name)
 {
-    if (_nodeAnimPlaybacks.find(name) != _nodeAnimPlaybacks.end())
-        return _nodeAnimPlaybacks[name];
+    for(auto playback : _animPlaybacks)
+    {
+        if (playback->parentAnimation()->name() == name)
+            return playback;
+    }
 
-    SL_WARN_MSG("*** Playback found in SLAnimManager::getNodeAnimPlayack ***");
+
+    SL_WARN_MSG("*** SLAnimManager::animPlaybackByName: animation not found ***");
     return nullptr;
 }
 //-----------------------------------------------------------------------------
@@ -125,7 +129,7 @@ SLbool SLAnimManager::update(SLfloat elapsedTimeSec)
     // node will have its animation applied.
     // We need to save the playback differently if we want to blend them.
 
-    for (const auto& it : _nodeAnimPlaybacks)
+    for (const auto& it : _animPlaybackNamesMap)
     {
         SLAnimPlayback* playback = it.second;
         if (playback->enabled())
@@ -148,7 +152,7 @@ SLbool SLAnimManager::update(SLfloat elapsedTimeSec)
 //! Draws the animation visualizations.
 void SLAnimManager::drawVisuals(SLSceneView* sv)
 {
-    for (const auto& it : _nodeAnimPlaybacks)
+    for (const auto& it : _animPlaybackNamesMap)
     {
         SLAnimPlayback* playback = it.second;
         playback->parentAnimation()->drawNodeVisuals(sv);

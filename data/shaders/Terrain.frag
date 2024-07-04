@@ -1,10 +1,9 @@
-//#############################################################################
-//  File:      Terrain.frag
-//  Purpose:   GLSL per vertex diffuse lighting with texturing
-//  Date:      September 2012 (HS12)
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      Terrain.frag
+ * \brief     GLSL per vertex diffuse lighting with texturing
+ * \date      September 2012 (HS12)
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

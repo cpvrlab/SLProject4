@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLMaterial.h
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLMaterial.h
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLMATERIAL_H
 #define SLMATERIAL_H
@@ -23,9 +23,8 @@ class SLAssetManager;
 
 //-----------------------------------------------------------------------------
 //! Defines a standard CG material with textures and a shader program
-/*!
- The SLMaterial class defines a material with either the Blinn-Phong (default)
- or the Cook-Torrance reflection) model.<br>
+/** @details The SLMaterial class defines a material with either the 
+ Blinn-Phong (default) or the Cook-Torrance reflection) model.<br>
  <br>
  In the Blinn-Phong reflection model the following parameters get used:<br>
  The ambient, diffuse, specular and emissive color as well as the shininess
@@ -44,6 +43,14 @@ class SLAssetManager;
  shaders (a vertex and fragment shader) gets automatically generated
  according to the reflection model and the material parameters. See
  SLGLProgramGenerated for more details.
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * For this material it means, that OpenGL shader programs in _programs 
+ * and the textures in _textures do not get built until the first frame is
+ * rendered.
 */
 class SLMaterial : public SLObject
 {
@@ -231,25 +238,25 @@ public:
     static SLfloat PERFECT; //!< PM: shininess/translucency limit
 
 protected:
-    SLAssetManager*   _assetManager;                //!< pointer to the asset manager (the owner) if available
-    SLReflectionModel _reflectionModel;             //!< reflection model (RM_BlinnPhong or RM_CookTorrance)
-    SLCol4f           _ambient;                     //!< ambient color (RGB reflection coefficients)
-    SLCol4f           _diffuse;                     //!< diffuse color (RGB reflection coefficients)
-    SLCol4f           _specular;                    //!< specular color (RGB reflection coefficients)
-    SLCol4f           _emissive;                    //!< emissive color coefficients
-    SLfloat           _shininess;                   //!< shininess exponent in Blinn-Phong model
-    SLfloat           _roughness;                   //!< roughness property (0-1) in Cook-Torrance model
-    SLfloat           _metalness;                   //!< metallic property (0-1) in Cook-Torrance model
-    SLCol4f           _transmissive;                //!< transmissive color (RGB reflection coefficients) for path tracing
-    SLfloat           _translucency;                //!< translucency exponent for light refraction for path tracing
-    SLfloat           _kr{};                        //!< reflection coefficient 0.0 - 1.0 used for ray and path tracing
-    SLfloat           _kt{};                        //!< transmission coefficient 0.0 - 1.0 used for ray and path tracing
-    SLfloat           _kn{};                        //!< refraction index
-    SLbool            _getsShadows;                 //!< true if shadows are visible on this material
-    SLGLProgram*      _program{};                   //!< pointer to a GLSL shader program
-    SLGLProgram*      _programTF{};                 //!< pointer to a GLSL shader program for transformFeedback
-    SLint             _numTextures;                 //!< number of textures in all _textures vectors array
-    SLSkybox*         _skybox;                      //!< pointer to the skybox
+    SLAssetManager*   _assetManager;    //!< pointer to the asset manager (the owner) if available
+    SLReflectionModel _reflectionModel; //!< reflection model (RM_BlinnPhong or RM_CookTorrance)
+    SLCol4f           _ambient;         //!< ambient color (RGB reflection coefficients)
+    SLCol4f           _diffuse;         //!< diffuse color (RGB reflection coefficients)
+    SLCol4f           _specular;        //!< specular color (RGB reflection coefficients)
+    SLCol4f           _emissive;        //!< emissive color coefficients
+    SLfloat           _shininess;       //!< shininess exponent in Blinn-Phong model
+    SLfloat           _roughness;       //!< roughness property (0-1) in Cook-Torrance model
+    SLfloat           _metalness;       //!< metallic property (0-1) in Cook-Torrance model
+    SLCol4f           _transmissive;    //!< transmissive color (RGB reflection coefficients) for path tracing
+    SLfloat           _translucency;    //!< translucency exponent for light refraction for path tracing
+    SLfloat           _kr{};            //!< reflection coefficient 0.0 - 1.0 used for ray and path tracing
+    SLfloat           _kt{};            //!< transmission coefficient 0.0 - 1.0 used for ray and path tracing
+    SLfloat           _kn{};            //!< refraction index
+    SLbool            _getsShadows;     //!< true if shadows are visible on this material
+    SLGLProgram*      _program{};       //!< pointer to a GLSL shader program
+    SLGLProgram*      _programTF{};     //!< pointer to a GLSL shader program for transformFeedback
+    SLint             _numTextures;     //!< number of textures in all _textures vectors array
+    SLSkybox*         _skybox;          //!< pointer to the skybox
 
     // For particle system
     SLParticleSystem* _ps; //!< pointer to a particle system

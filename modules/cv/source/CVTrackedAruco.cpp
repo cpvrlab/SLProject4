@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      CVTrackedAruco.cpp
-//  Date:      Winter 2016
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch, Michael Goettlicher, Marino von Wattenwyl
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      CVTrackedAruco.cpp
+ * \date      Winter 2016
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Marcus Hudritsch, Michael Goettlicher, Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 /*
 The OpenCV library version 3.4 or above with extra module must be present.
@@ -20,14 +20,17 @@ for a good top down information.
 #include <Profiler.h>
 
 //-----------------------------------------------------------------------------
-// Initialize static variables
-bool          CVTrackedAruco::paramsLoaded = false;
-CVArucoParams CVTrackedAruco::params;
-//-----------------------------------------------------------------------------
 CVTrackedAruco::CVTrackedAruco(int arucoID, string calibIniPath)
   : _calibIniPath(calibIniPath),
     _arucoID(arucoID)
 {
+    SLbool paramsLoaded = _params.loadFromFile(_calibIniPath);
+
+    if (!paramsLoaded)
+        Utils::exitMsg("SLProject",
+                       "CVTrackedAruco::track: Failed to load Aruco parameters.",
+                       __LINE__,
+                       __FILE__);
 }
 //-----------------------------------------------------------------------------
 //! Tracks the all Aruco markers in the given image for the first sceneview
@@ -67,19 +70,8 @@ bool CVTrackedAruco::trackAll(CVMat          imageGray,
     assert(!imageBgr.empty() && "ImageBGR is empty");
     assert(!calib->cameraMat().empty() && "Calibration is empty");
 
-    // Load aruco parameter once
-    if (!paramsLoaded)
-    {
-        paramsLoaded = params.loadFromFile(_calibIniPath);
-        if (!paramsLoaded)
-            Utils::exitMsg("SLProject",
-                           "CVTrackedAruco::track: Failed to load Aruco parameters.",
-                           __LINE__,
-                           __FILE__);
-    }
-
 #if CV_MAJOR_VERSION < 4 || CV_MINOR_VERSION < 7
-    if (params.arucoParams.empty() || params.dictionary.empty())
+    if (_params.arucoParams.empty() || _params.dictionary.empty())
     {
         Utils::warnMsg("SLProject",
                        "CVTrackedAruco::track: Aruco paramters are empty.",
@@ -103,13 +95,13 @@ bool CVTrackedAruco::trackAll(CVMat          imageGray,
 
 #if CV_MAJOR_VERSION < 4 || CV_MINOR_VERSION < 7
     cv::aruco::detectMarkers(croppedImageGray,
-                             params.dictionary,
+                             _params.dictionary,
                              corners,
                              arucoIDs,
-                             params.arucoParams,
+                             _params.arucoParams,
                              rejected);
 #else
-    cv::aruco::ArucoDetector detector(params.dictionary, params.arucoParams);
+    cv::aruco::ArucoDetector detector(_params.dictionary, _params.arucoParams);
     detector.detectMarkers(croppedImageGray,
                            corners,
                            arucoIDs,
@@ -144,7 +136,7 @@ bool CVTrackedAruco::trackAll(CVMat          imageGray,
         // find the camera extrinsic parameters (rVec & tVec)
         CVVPoint3d rVecs, tVecs;
         cv::aruco::estimatePoseSingleMarkers(corners,
-                                             params.edgeLength,
+                                             _params.edgeLength,
                                              calib->cameraMat(),
                                              calib->distortion(),
                                              rVecs,

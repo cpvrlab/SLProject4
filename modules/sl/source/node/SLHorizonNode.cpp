@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLHorizonNode.cpp
-//  Date:      November 2020
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Michael Göttlicher, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLHorizonNode.cpp
+ * \date      November 2020
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Michael Göttlicher, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <SLHorizonNode.h>
 #include <SLText.h>
@@ -13,6 +13,20 @@
 #include <cmath>
 
 //-----------------------------------------------------------------------------
+/**
+ * @brief Construct a new SLHorizonNode::SLHorizonNode object
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * @param name Name of the node
+ * @param devRot Device rotation object
+ * @param font Font for the text label
+ * @param shaderDir Path to the shader directory
+ * @param scrW Width of the screen in pixels
+ * @param scrH Height of the sceen in pixels
+ */
 SLHorizonNode::SLHorizonNode(SLstring          name,
                              SLDeviceRotation* devRot,
                              SLTexFont*        font,

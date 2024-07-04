@@ -1,12 +1,12 @@
-//#############################################################################
-//  File:      SLOculus.h
-//  Purpose:   Wrapper around Oculus Rift
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marc Wacker, Roman Kuehne, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLOculus.h
+ * \brief   Wrapper around Oculus Rift
+ * \date      July 2014
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Marc Wacker, Roman Kuehne, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #ifndef SLOCULUS_H
 #define SLOCULUS_H

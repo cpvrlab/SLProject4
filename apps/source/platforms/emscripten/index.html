@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <title>SLProject</title>
+  <link rel="icon" type="image/png" href="data/images/textures/LogoCPVR_256L.png" />
+  <link rel="apple-touch-icon" type="image/png" href="data/images/textures/LogoCPVR_256L.png" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      touch-action: none;
+    }
+
+    #canvas {
+      position: absolute;
+      background-color: black;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      outline: none;
+    }
+
+    #snapshot-overlay {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(0, 0, 0, 75%);
+    }
+
+    #snapshot-overlay:not(.visible) {
+      display: none;
+    }
+
+    #snapshot-image {
+      max-width: 80%;
+      max-height: 80%;
+      border: 1px solid white;
+    }
+
+    #snapshot-download {
+      color: white;
+      font-family: monospace;
+      font-size: 20pt;
+      margin-top: 20pt;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(-180deg);
+      }
+
+      100% {
+        transform: rotate(180deg);
+      }
+    }
+
+    #capture-video {
+      display: none;
+    }
+
+    #capture-canvas {
+      display: none;
+    }
+
+    #loading-overlay {
+      position: absolute;
+      background-color: rgb(40, 40, 40);
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      outline: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.5s ease-in-out;
+      pointer-events: none;
+    }
+
+    #loading-overlay-logo {
+      transition: opacity 1s ease-in-out;
+      animation-name: loading-overlay-logo-animation;
+      animation-duration: 8s;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+      border-radius: 32px;
+    }
+
+    @keyframes loading-overlay-logo-animation {
+
+      0%,
+      100% {
+        transform: scale(0.5);
+      }
+
+      50% {
+        transform: scale(0.75);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="canvas" tabindex="1" oncontextmenu="return false;"></canvas>
+  <div id="snapshot-overlay">
+    <img id="snapshot-image" alt="Snapshot" />
+    <a id="snapshot-download">Download</a>
+  </div>
+  <video id="capture-video" autoplay></video>
+  <canvas id="capture-canvas"></canvas>
+
+  <div id="loading-overlay">
+    <img id="loading-overlay-logo" src="data/images/textures/LogoCPVR_256L.png" alt="cpvrLab Logo" style="opacity: 0" />
+  </div>
+
+  <script type="text/javascript">
+    document.querySelector("#snapshot-overlay").addEventListener("click", event => {
+      event.target.classList.remove('visible');
+      URL.revokeObjectURL(snapshotURL);
+    });
+
+    var Module = {
+      canvas: document.querySelector("#canvas")
+    };
+
+    document.querySelector("#loading-overlay-logo").addEventListener("load", event => {
+      event.target.style.opacity = 1;
+    });
+  </script>
+  <!-- "TARGET" is replaced with the actual name of the target in apps/CMakeLists.txt -->
+  <script type="text/javascript" src="TARGET.js"></script>
+
+</body>
+
+</html>

@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      Color.frag
-//  Purpose:   Simple GLSL fragment program for constant color
-//  Date:      July 2014
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      Color.frag
+ * \brief     Simple GLSL fragment program for constant color
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

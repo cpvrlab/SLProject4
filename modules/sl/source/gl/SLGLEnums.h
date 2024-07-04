@@ -1,12 +1,12 @@
-//#############################################################################
-//  File:      SLGLEnums.h
-//  Purpose:   Enumerations containing OpenGL constants
-//  Date:      January 2016
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLGLEnums.h
+ * \brief     Enumerations containing OpenGL constants
+ * \date      January 2016
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLGLENUM_H
 #define SLGLENUM_H

@@ -1,11 +1,12 @@
-//#############################################################################
-//  File:      SLTexColorLUT.h
-//  Purpose:   Declares a color look up table functionality
-//  Date:      July 2017
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLTexColorLUT.h
+ * \brief     Declares a color look up table functionality
+ * \date      July 2017
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLCOLORLUT_H
 #define SLCOLORLUT_H
@@ -24,6 +25,7 @@ typedef enum
 {
     CLUT_BW,       //!< black to white
     CLUT_WB,       //!< white to black
+    CLUT_WYR,      //!< white to black
     CLUT_RYGCB,    //!< red to yellow to green to cyan to blue
     CLUT_BCGYR,    //!< blue to cyan to green to yellow to red
     CLUT_RYGCBK,   //!< red to yellow to green to cyan to blue to black
@@ -92,6 +94,7 @@ public:
     SLVColorLUTPoint& colors() { return _colors; }
     SLVAlphaLUTPoint& alphas() { return _alphas; }
     SLVfloat          allAlphas();
+    SLVCol3f          allColors();
 
 protected:
     SLuint           _length;   //! Length of transfer function (default 256)

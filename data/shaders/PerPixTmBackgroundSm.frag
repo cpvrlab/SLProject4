@@ -1,12 +1,11 @@
-//#############################################################################
-//  File:      PerPixTmBackgroundSm.frag
-//  Purpose:   GLSL fragment shader for background texture mapping with
+/**
+ * \file      PerPixTmBackgroundSm.frag
+ * \brief     GLSL fragment shader for background texture mapping with
 //             shadow mapping
-//  Date:      November 2020
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+ * \date      November 2020
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      ZipUtils.h
-//  Authors:   Luc Girod
-//  Date:      2020
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      ZipUtils.h
+ * \authors   Luc Girod
+ * \date      2020
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef CPLVRLAB_ZIP_UTILS_H
 #define CPLVRLAB_ZIP_UTILS_H

@@ -1,12 +1,12 @@
-//#############################################################################
-//  File:      WebCamera.h
-//  Purpose:   Interface to access the camera through the browser.
-//  Date:      October 2022
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marino von Wattenwyl
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      WebCamera.cpp
+ * \brief     Interface to access the camera through the browser.
+ * \date      October 2022
+ * \authors   Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <WebCamera.h>
 #include <emscripten.h>
@@ -18,12 +18,12 @@
  * object as soon as it is ready. It must be called before accessing any of
  * the other member functions. The function does not block, so the stream may
  * not be ready yet after it returns.
- * @param facing Preferred facing mode on mobile
+ * \param facing Preferred facing mode on mobile
  */
 void WebCamera::open(WebCameraFacing facing)
 {
     // clang-format off
-    MAIN_THREAD_EM_ASM({
+    EM_ASM({
         console.log("[WebCamera] Requesting stream...");
 
         let facingMode;
@@ -52,7 +52,7 @@ void WebCamera::open(WebCameraFacing facing)
  * The video stream is not immediately available when calling WebCamera::open.
  * This function can be used to determine if the user has allowed camera
  * access and if it is ready for reading.
- * @return True if the stream has been acquired
+ * \return True if the stream has been acquired
  */
 bool WebCamera::isReady()
 {
@@ -63,7 +63,7 @@ bool WebCamera::isReady()
 /*!
  * If the video stream is ready, copies the current frame from the video HTML
  * element into a CVMat in BGR format. Returns an empty image otherwise.
- * @return The CVMat containing the image data in BGR format
+ * \return The CVMat containing the image data in BGR format
  */
 CVMat WebCamera::read()
 {
@@ -83,7 +83,7 @@ CVMat WebCamera::read()
     }
 
     // clang-format off
-    MAIN_THREAD_EM_ASM({
+    EM_ASM({
         let video = document.querySelector("#capture-video");
         let canvas = document.querySelector("#capture-canvas");
         let ctx = canvas.getContext("2d");
@@ -115,7 +115,7 @@ CVMat WebCamera::read()
 /*!
  * The size is determined by getting the width and height of the HTML video
  * element.
- * @return The size of the video input
+ * \return The size of the video input
  */
 CVSize2i WebCamera::getSize()
 {
@@ -123,7 +123,7 @@ CVSize2i WebCamera::getSize()
     int32_t height;
 
     // clang-format off
-    MAIN_THREAD_EM_ASM({
+    EM_ASM({
         let video = document.querySelector("#capture-video");
         let width = video.videoWidth;
         let height = video.videoHeight;
@@ -141,7 +141,7 @@ CVSize2i WebCamera::getSize()
  * The function tries to resize the video size. It is not guaranteed that this
  * will have any effect or that the size after resizing will be equal to the
  * size provided because the browser may not support it.
- * @param size Preferred size of the video
+ * \param size Preferred size of the video
  */
 void WebCamera::setSize(CVSize2i size)
 {
@@ -160,7 +160,7 @@ void WebCamera::setSize(CVSize2i size)
     _waitingForResize = true;
 
     // clang-format off
-    MAIN_THREAD_EM_ASM({
+    EM_ASM({
         let video = document.querySelector("#capture-video");
         let stream = video.srcObject;
 
@@ -189,7 +189,7 @@ void WebCamera::setSize(CVSize2i size)
 void WebCamera::close()
 {
     // clang-format off
-    MAIN_THREAD_EM_ASM({
+    EM_ASM({
         let video = document.querySelector("#capture-video");
         let stream = video.srcObject;
 

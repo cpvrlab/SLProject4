@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SENSAndroidARCore.cpp
-//  Authors:   Michael Goettlicher, Marcus Hudritsch
-//  Date:      Winter 2021
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  License:   This software is provide under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SENSAndroidARCore.cpp
+ * \authors   Michael Goettlicher, Marcus Hudritsch
+ * \date      Winter 2021
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include "SENSAndroidARCore.h"
 #include <jni.h>

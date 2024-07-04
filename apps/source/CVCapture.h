@@ -1,12 +1,12 @@
-//#############################################################################
-//  File:      CVCapture
-//  Purpose:   OpenCV Capture Device
-//  Date:      Winter 2016
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Michael Goettlicher, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      CVCapture
+ * \brief   OpenCV Capture Device
+ * \date      Winter 2016
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Michael Goettlicher, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #ifndef CVCapture_H
 #define CVCapture_H
@@ -133,13 +133,13 @@ public: //! Public static instance getter for singleton pattern
     CVVSize camSizes;           //!< All possible camera sizes
     int     activeCamSizeIndex; //!< Currently active camera size index
 
-    CVCamera* activeCamera;     //!< Pointer to the active camera
-    CVCamera  mainCam;          //!< camera representation for main video camera
-    CVCamera  scndCam;          //!< camera representation for secondary video camera
-    CVCamera  videoFileCam;     //!< camera representation for simulation using a video file
+    CVCamera* activeCamera; //!< Pointer to the active camera
+    CVCamera  mainCam;      //!< camera representation for main video camera
+    CVCamera  scndCam;      //!< camera representation for secondary video camera
+    CVCamera  videoFileCam; //!< camera representation for simulation using a video file
 
 private:
-    CVCapture();                 //!< private onetime constructor
+    CVCapture(); //!< private onetime constructor
     ~CVCapture();
     static CVCapture* _instance; //!< global singleton object
 
@@ -149,9 +149,9 @@ private:
     WebCamera _webCamera; //!< Browser capture stream
 #endif
 
-    CVVideoType  _videoType;      //!< Flag for using the live video image
-    AvgFloat     _captureTimesMS; //!< Averaged time for video capturing in ms
-    HighResTimer _timer;          //!< High resolution timer
+    CVVideoType  _videoType = VT_NONE; //!< Flag for using the live video image
+    AvgFloat     _captureTimesMS;      //!< Averaged time for video capturing in ms
+    HighResTimer _timer;               //!< High resolution timer
 };
 //-----------------------------------------------------------------------------
 #endif // CVCapture_H

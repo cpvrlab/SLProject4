@@ -1,11 +1,12 @@
-//#############################################################################
-//  File:      SLGLDepthBuffer.h
-//  Purpose:   Uses an OpenGL framebuffer object as a depth-buffer
-//  Date:      May 2020
-//  Authors:   Michael Schertenleib
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLGLDepthBuffer.h
+ * \brief     Uses an OpenGL framebuffer object as a depth-buffer
+ * \date      May 2020
+ * \authors   Michael Schertenleib
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLGLState.h>
 #include <SLGLDepthBuffer.h>
@@ -14,13 +15,13 @@
 //-----------------------------------------------------------------------------
 /*!
  * Constructor for OpenGL depth buffer framebuffer used in shadow mapping
- * @param dimensions 2D vector pixel dimensions
- * @param magFilter OpenGL magnification filter enum
- * @param minFilter OpenGL minification filter enum
- * @param wrap OpenGL texture wrapping enum
- * @param borderColor
- * @param target OpenGL texture target enum GL_TEXTURE_2D or GL_TEXTURE_CUBE_MAP
- * @param name Name of the depth buffer
+ * \param dimensions 2D vector pixel dimensions
+ * \param magFilter OpenGL magnification filter enum
+ * \param minFilter OpenGL minification filter enum
+ * \param wrap OpenGL texture wrapping enum
+ * \param borderColor
+ * \param target OpenGL texture target enum GL_TEXTURE_2D or GL_TEXTURE_CUBE_MAP
+ * \param name Name of the depth buffer
  */
 SLGLDepthBuffer::SLGLDepthBuffer(const SLVec2i& dimensions,
                                  SLenum         magFilter,

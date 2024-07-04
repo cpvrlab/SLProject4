@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      ch09_TextureMapping.vert
-//  Purpose:   GLSL vertex program for per pixel lighting with texture mapping
-//  Date:      February 2014
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      ch09_TextureMapping.vert
+ * \brief     GLSL vertex program for per pixel lighting with texture mapping
+ * \date      February 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

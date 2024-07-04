@@ -1,17 +1,17 @@
-//#############################################################################
-//  File:      math/Math/SLVec3.h
-//  Purpose:   3 Component vector class
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      math/Math/SLVec3.h
+ * \brief     3 Component vector class
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLVEC3_H
 #define SLVEC3_H
 
-#include <math.h>
+#include <cmath>
 #include <SLMath.h>
 #include <SLVec2.h>
 #include <Utils.h>
@@ -218,10 +218,10 @@ class SLVec3
                 T h = fmod(fmod(hsv.x, Utils::TWOPI) + Utils::TWOPI, Utils::TWOPI); // 0 deg <= H <= 360 deg
                 T s = clamp(hsv.y, 0.0f, 1.0f);
                 T v = clamp(hsv.z, 0.0f, 1.0f);
-                T a = clamp(hsv.w, 0.0f, 1.0f);
+                T a = clamp(hsv.x, 0.0f, 1.0f);
 
                 T c = v * s;
-                T x = c * (1.0f - fabs(fmod(h*3.0f / M_PI, 2.0f) - 1.0f));
+                T x = c * (1.0f - fabs(fmod(h*3.0f / Utils::PI, 2.0f) - 1.0f));
                 T m = v - c;
 
                 switch (SLint(floor(h*3.0f * Utils::ONEOVERPI)))

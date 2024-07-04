@@ -1,13 +1,14 @@
-//#############################################################################
-//  File:      SLTransformNode.cpp
-//  Authors:   Jan Dellsperger
-//  Date:      April 2020
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Jan Dellsperger, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLTransformNode.cpp
+ * \authors   Jan Dellsperger
+ * \date      April 2020
+ * \authors   Jan Dellsperger, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
+#include <SLGLProgramManager.h>
 #include <SLTransformNode.h>
 #include <SLVec3.h>
 #include <SLCoordAxisArrow.h>
@@ -15,14 +16,16 @@
 #include <SLDisk.h>
 
 //-----------------------------------------------------------------------------
-/*!
- Constructor for a transform node.
- Because a transform node will be added and removed on the fly to the
- scenegraph it well be the owner of its meshes (SLMesh), materials (SLMaterial)
- and shader programs (SLGLProgram). It has to delete them in the destructor.
- @param sv Pointer to the SLSceneView
- @param targetNode Pointer to the node that should be transformed.
- @param shaderDir Path to the shader files
+/**
+ * @brief Construct a new SLTransformNode::SLTransformNode object * 
+ * @details It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * @param sv Pointer to the SLSceneView
+ * @param targetNode Pointer to the node that should be transformed.
+ * @param shaderDir Path to the shader files
  */
 SLTransformNode::SLTransformNode(SLSceneView* sv,
                                  SLNode*      targetNode,
@@ -34,17 +37,16 @@ SLTransformNode::SLTransformNode(SLSceneView* sv,
     _mouseIsDown(false),
     _gizmoScale(1.0f)
 {
-    _prog = new SLGLProgramGeneric(nullptr, shaderDir + "ColorUniformPoint.vert", shaderDir + "Color.frag");
-    _prog->addUniform1f(new SLGLUniform1f(UT_const, "u_pointSize", 3.0f));
+    SLGLProgram* prog = SLGLProgramManager::get(SP_colorUniformPoint);
 
-    _matR  = new SLMaterial(nullptr, "Red Opaque", SLCol4f::RED, SLVec4f::WHITE, 100.0f, 0.0f, 0.0f, 0.0f, _prog);
-    _matRT = new SLMaterial(nullptr, "Red Transp", SLCol4f::RED, SLVec4f::WHITE, 100.0f, 0.0f, 0.5f, 0.0f, _prog);
-    _matG  = new SLMaterial(nullptr, "Green Opaque", SLCol4f::GREEN, SLVec4f::WHITE, 100.0f, 0.0f, 0.0f, 0.0f, _prog);
-    _matGT = new SLMaterial(nullptr, "Green Transp", SLCol4f::GREEN, SLVec4f::WHITE, 100.0f, 0.0f, 0.5f, 0.0f, _prog);
-    _matB  = new SLMaterial(nullptr, "Blue Opaque", SLCol4f::BLUE, SLVec4f::WHITE, 100.0f, 0.0f, 0.0f, 0.0f, _prog);
-    _matBT = new SLMaterial(nullptr, "Blue Transp", SLCol4f::BLUE, SLVec4f::WHITE, 100.0f, 0.0f, 0.5f, 0.0f, _prog);
-    _matY  = new SLMaterial(nullptr, "Yellow Opaque", SLCol4f::YELLOW, SLVec4f::WHITE, 100.0f, 0.0f, 0.0f, 0.0f, _prog);
-    _matYT = new SLMaterial(nullptr, "Yellow Transp", SLCol4f::YELLOW, SLVec4f::WHITE, 100.0f, 0.0f, 0.5f, 0.0f, _prog);
+    _matR  = new SLMaterial(nullptr, "Red Opaque", SLCol4f::RED, SLVec4f::WHITE, 100.0f, 0.0f, 0.0f, 0.0f, prog);
+    _matRT = new SLMaterial(nullptr, "Red Transp", SLCol4f::RED, SLVec4f::WHITE, 100.0f, 0.0f, 0.5f, 0.0f, prog);
+    _matG  = new SLMaterial(nullptr, "Green Opaque", SLCol4f::GREEN, SLVec4f::WHITE, 100.0f, 0.0f, 0.0f, 0.0f, prog);
+    _matGT = new SLMaterial(nullptr, "Green Transp", SLCol4f::GREEN, SLVec4f::WHITE, 100.0f, 0.0f, 0.5f, 0.0f, prog);
+    _matB  = new SLMaterial(nullptr, "Blue Opaque", SLCol4f::BLUE, SLVec4f::WHITE, 100.0f, 0.0f, 0.0f, 0.0f, prog);
+    _matBT = new SLMaterial(nullptr, "Blue Transp", SLCol4f::BLUE, SLVec4f::WHITE, 100.0f, 0.0f, 0.5f, 0.0f, prog);
+    _matY  = new SLMaterial(nullptr, "Yellow Opaque", SLCol4f::YELLOW, SLVec4f::WHITE, 100.0f, 0.0f, 0.0f, 0.0f, prog);
+    _matYT = new SLMaterial(nullptr, "Yellow Transp", SLCol4f::YELLOW, SLVec4f::WHITE, 100.0f, 0.0f, 0.5f, 0.0f, prog);
 
     _axisR             = new SLCoordAxisArrow(nullptr, _matRT);
     _axisG             = new SLCoordAxisArrow(nullptr, _matGT);
@@ -164,11 +166,10 @@ SLTransformNode::~SLTransformNode()
 {
     // delete gizmos
     _gizmosNode->deleteChildren();
-    // delete _gizmosNode;
     this->deleteChild(_gizmosNode);
     this->deleteChildren();
-    // delete all programs, materials and meshes
-    delete _prog;
+    
+    // delete all materials and meshes
     delete _matR;
     delete _matG;
     delete _matB;
@@ -196,7 +197,7 @@ SLTransformNode::~SLTransformNode()
 /*!
  * Setter function for the edit mode. It shows or hides the appropriate gizmo
  * meshes for the mouse interaction.
- * @param editMode New edit mode to switch to.
+ * \param editMode New edit mode to switch to.
  */
 void SLTransformNode::editMode(SLNodeEditMode editMode)
 {

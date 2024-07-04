@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      Geom.frag
-//  Purpose:   GLSL fragment shader for geom exercise
-//  Date:      November 2021
-//  Authors:   Marc Affolter
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      Geom.frag
+ * \brief     GLSL fragment shader for geom exercise
+ * \date      November 2021
+ * \authors   Marc Affolter
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

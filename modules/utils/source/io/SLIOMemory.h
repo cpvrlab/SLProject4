@@ -1,11 +1,11 @@
-//#############################################################################
-//   File:      SLIOMemory.h
-//   Date:      October 2022
-//   Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//   Authors:   Marino von Wattenwyl
-//   License:   This software is provided under the GNU General Public License
-//              Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLIOMemory.h
+ * \date      October 2022
+ * \authors   Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLPROJECT_SLIOMEMORY_H
 #define SLPROJECT_SLIOMEMORY_H

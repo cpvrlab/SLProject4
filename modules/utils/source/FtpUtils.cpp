@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      FtpUtils.cpp
-//  Authors:   Marcus Hudritsch, Michael Goettlicher
-//  Date:      May 2019
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      FtpUtils.cpp
+ * \authors   Marcus Hudritsch, Michael Goettlicher
+ * \date      May 2019
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef __EMSCRIPTEN__
 
@@ -23,14 +23,14 @@ namespace FtpUtils
 //! Uploads the file to the ftp server. checks if the filename already exists and adds a version number
 /*!
  *
- * @param fileDir
- * @param fileName
- * @param ftpHost
- * @param ftpUser
- * @param ftpPwd
- * @param ftpDir
- * @param errorMsg
- * @return
+ * \param fileDir
+ * \param fileName
+ * \param ftpHost
+ * \param ftpUser
+ * \param ftpPwd
+ * \param ftpDir
+ * \param errorMsg
+ * \return
  */
 bool uploadFileLatestVersion(const string& fileDir,
                              const string& fileName,
@@ -111,14 +111,14 @@ bool uploadFileLatestVersion(const string& fileDir,
 //! Download the file from the ftp server which has the latest version and store it as fileName locally
 /*!
  *
- * @param fileDir
- * @param fileName
- * @param ftpHost
- * @param ftpUser
- * @param ftpPwd
- * @param ftpDir
- * @param errorMsg
- * @return
+ * \param fileDir
+ * \param fileName
+ * \param ftpHost
+ * \param ftpUser
+ * \param ftpPwd
+ * \param ftpDir
+ * \param errorMsg
+ * \return
  */
 bool downloadFileLatestVersion(const string& fileDir,
                                const string& fileName,
@@ -188,14 +188,14 @@ bool downloadFileLatestVersion(const string& fileDir,
 //! Uploads file to the ftp server
 /*!
  *
- * @param fileDir
- * @param fileName
- * @param ftpHost
- * @param ftpUser
- * @param ftpPwd
- * @param ftpDir
- * @param errorMsg
- * @return
+ * \param fileDir
+ * \param fileName
+ * \param ftpHost
+ * \param ftpUser
+ * \param ftpPwd
+ * \param ftpDir
+ * \param errorMsg
+ * \return
  */
 bool uploadFile(const string& fileDir,
                 const string& fileName,
@@ -257,14 +257,14 @@ bool uploadFile(const string& fileDir,
 //! Download file from the ftp server
 /*!
  *
- * @param fileDir
- * @param fileName
- * @param ftpHost
- * @param ftpUser
- * @param ftpPwd
- * @param ftpDir
- * @param errorMsg
- * @return
+ * \param fileDir
+ * \param fileName
+ * \param ftpHost
+ * \param ftpUser
+ * \param ftpPwd
+ * \param ftpDir
+ * \param errorMsg
+ * \return
  */
 bool downloadFile(const string& fileDir,
                   const string& fileName,
@@ -332,14 +332,14 @@ bool downloadFile(const string& fileDir,
 //-----------------------------------------------------------------------------
 /*!
  *
- * @param fileDir
- * @param ftpHost
- * @param ftpUser
- * @param ftpPwd
- * @param ftpDir
- * @param searchFileTag
- * @param errorMsg
- * @return
+ * \param fileDir
+ * \param ftpHost
+ * \param ftpUser
+ * \param ftpPwd
+ * \param ftpDir
+ * \param searchFileTag
+ * \param errorMsg
+ * \return
  */
 bool downloadAllFilesFromDir(const string& fileDir,
                              const string& ftpHost,
@@ -414,12 +414,12 @@ bool downloadAllFilesFromDir(const string& fileDir,
 //! Get a list of all filenames with given search file tag in remote directory
 /*!
  *
- * @param ftp
- * @param localDir
- * @param searchFileTag
- * @param retrievedFileNames
- * @param errorMsg
- * @return
+ * \param ftp
+ * \param localDir
+ * \param searchFileTag
+ * \param retrievedFileNames
+ * \param errorMsg
+ * \return
  */
 bool getAllFileNamesWithTag(ftplib&         ftp,
                             const string&   localDir,
@@ -507,10 +507,10 @@ bool getAllFileNamesWithTag(ftplib&         ftp,
 //! Returns the latest fileName of the same fullPathAndFilename
 /*!
  *
- * @param ftp
- * @param fileDir
- * @param fileName
- * @return
+ * \param ftp
+ * \param fileDir
+ * \param fileName
+ * \return
  */
 string getLatestFilename(ftplib&       ftp,
                          const string& fileDir,
@@ -560,8 +560,8 @@ string getLatestFilename(ftplib&       ftp,
 //! Returns the version number at the end of the fileName
 /*!
  *
- * @param filename Filename on ftp server with an ending *(#).ext
- * @return Returns the number in the brackets at the end of the filename
+ * \param filename Filename on ftp server with an ending *(#).ext
+ * \return Returns the number in the brackets at the end of the filename
  */
 int getVersionInFilename(const string& filename)
 {

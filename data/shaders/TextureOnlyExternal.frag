@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      TextureOnlyExternal.frag
-//  Purpose:   GLSL fragment shader for texture mapping of an external texture
-//  Date:      July 2014
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      TextureOnlyExternal.frag
+ * \brief     GLSL fragment shader for texture mapping of an external texture
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #extension GL_OES_EGL_image_external_essl3 : enable
 

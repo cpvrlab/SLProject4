@@ -1,37 +1,40 @@
-//#############################################################################
-//  File:      sl/SLInterface.cpp
-//  Purpose:   Implementation of the main Scene Library C-Interface.
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLInterface.cpp
+ * \brief     Implementation of the main Scene Library C-Interface.
+ * \details   The SLInterface.cpp has all implementations of the SLProject
+ *            C-Interface. Only these functions should called by the
+ *            OS-dependent GUI applications. These functions can be called from
+ *            any C, C++ or ObjectiveC GUI framework or by a native API such
+ *            as Java Native Interface (JNI).
+ *            For more info on how to create a new app with SLProject see:
+ *            https://github.com/cpvrlab/SLProject4/wiki/Creating-a-New-App
+ *            For more info about App framework see:
+ *            https://cpvrlab.github.io/SLProject4/app-framework.html
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ */
 
 #include <SLInterface.h>
-#include <AppDemo.h>
+#include <AppCommon.h>
 #include <SLAssimpImporter.h>
+#include <SLAssetManager.h>
+#include <SLAssetLoader.h>
 #include <SLInputManager.h>
 #include <SLScene.h>
 #include <SLSceneView.h>
-#include <SLGLImGui.h>
+#include <SLImGui.h>
 #include <Profiler.h>
 #include <ZipUtils.h>
-
-//! \file SLInterface.cpp SLProject C-functions interface implementation.
-/*! \file SLInterface.cpp
-The SLInterface.cpp has all implementations of the SLProject C-Interface.
-Only these functions should called by the OS-dependent GUI applications.
-These functions can be called from any C, C++ or ObjectiveC GUI framework or
-by a native API such as Java Native Interface (JNI).
-*/
 
 //-----------------------------------------------------------------------------
 //! global flag that determines if the application should be closed
 bool gShouldClose = false;
 
 //-----------------------------------------------------------------------------
-/*! Global creation function for a SLScene instance. This function should be
+/*! Global creation function for a app instance. This function should be
 called only once per application. The SLScene constructor call is delayed until
 the first SLSceneView is created to guarantee, that the OpenGL context is
 present.<br>
@@ -46,54 +49,53 @@ present.<br>
 /param onSceneLoadCallback C Callback function as void* pointer for the scene creation.
 <br>
 See examples usages in:
-  - app_demo_slproject/glfw:    AppDemoMainGLFW.cpp in function main()
-  - app-Demo-SLProject/android: native-lib.cpp      in Java_ch_fhnw_comgr_GLES3Lib_onInit()
-  - app_demo_slproject/ios:     ViewController.m    in viewDidLoad()
+  - apps/source/platforms/android   /AppAndroid.cpp > Java_ch_bfh_cpvrlab_AppAndroidJNI_onInit
+  - apps/source/platforms/emscripten/AppEmscripten.cpp > App::run
+  - apps/source/platforms/glfw      /AppGLFW > App::run
+  - apps/source/platforms/ios       /ViewController.mm > viewDidLoad
 */
-void slCreateAppAndScene(SLVstring&      cmdLineArgs,
-                         const SLstring& dataPath,
-                         const SLstring& shaderPath,
-                         const SLstring& modelPath,
-                         const SLstring& texturePath,
-                         const SLstring& fontPath,
-                         const SLstring& videoPath,
-                         const SLstring& configPath,
-                         const SLstring& applicationName,
-                         void*           onSceneLoadCallback)
+void slCreateApp(SLVstring&      cmdLineArgs,
+                 const SLstring& dataPath,
+                 const SLstring& shaderPath,
+                 const SLstring& modelPath,
+                 const SLstring& texturePath,
+                 const SLstring& fontPath,
+                 const SLstring& videoPath,
+                 const SLstring& configPath,
+                 const SLstring& applicationName)
 {
-    assert(AppDemo::scene == nullptr && "SLScene is already created!");
+    assert(AppCommon::scene == nullptr && "SLScene is already created!");
 
     // For more info on PROFILING read Utils/lib-utils/source/Profiler.h
 #if PROFILING
-    if (Utils::dirExists(AppDemo::externalPath))
+    if (Utils::dirExists(AppCommon::externalPath))
     {
         SLstring computerInfo = Utils::ComputerInfos::get();
-        SLstring profileFile  = AppDemo::externalPath + "Profile_" + computerInfo + ".slt";
+        SLstring profileFile  = AppCommon::externalPath + "Profile_" + computerInfo + ".slt";
         BEGIN_PROFILING_SESSION(profileFile);
         PROFILE_THREAD("Main Thread");
     }
 #endif
 
     // Default paths for all loaded resources
-    SLstring exe         = Utils::unifySlashes(cmdLineArgs.size() ? cmdLineArgs[0] : "", false);
-    AppDemo::exePath     = Utils::getDirName(exe);
-    AppDemo::dataPath    = Utils::unifySlashes(dataPath);
-    AppDemo::shaderPath  = shaderPath;
-    AppDemo::modelPath   = modelPath;
-    AppDemo::texturePath = texturePath;
-    AppDemo::fontPath    = fontPath;
-    AppDemo::videoPath   = videoPath;
-    AppDemo::configPath  = configPath;
+    SLstring exe           = Utils::unifySlashes(cmdLineArgs.size() ? cmdLineArgs[0] : "", false);
+    AppCommon::exePath     = Utils::getDirName(exe);
+    AppCommon::dataPath    = Utils::unifySlashes(dataPath);
+    AppCommon::shaderPath  = shaderPath;
+    AppCommon::modelPath   = modelPath;
+    AppCommon::texturePath = texturePath;
+    AppCommon::fontPath    = fontPath;
+    AppCommon::videoPath   = videoPath;
+    AppCommon::configPath  = configPath;
 
     SLGLState* stateGL = SLGLState::instance();
-
-    SL_LOG("Path to exe      : %s", AppDemo::exePath.c_str());
+    SL_LOG("Path to exe      : %s", AppCommon::exePath.c_str());
     SL_LOG("Path to Models   : %s", modelPath.c_str());
     SL_LOG("Path to Shaders  : %s", shaderPath.c_str());
     SL_LOG("Path to Textures : %s", texturePath.c_str());
     SL_LOG("Path to Fonts    : %s", fontPath.c_str());
     SL_LOG("Path to Config.  : %s", configPath.c_str());
-    SL_LOG("Path to Documents: %s", AppDemo::externalPath.c_str());
+    SL_LOG("Path to Documents: %s", AppCommon::externalPath.c_str());
     SL_LOG("OpenCV Version   : %d.%d.%d", CV_MAJOR_VERSION, CV_MINOR_VERSION, CV_VERSION_REVISION);
     SL_LOG("OpenCV has OpenCL: %s", cv::ocl::haveOpenCL() ? "yes" : "no");
     SL_LOG("OpenGL Ver. Str. : %s", stateGL->glVersion().c_str());
@@ -103,7 +105,7 @@ void slCreateAppAndScene(SLVstring&      cmdLineArgs,
     SL_LOG("OpenGL GLSL Ver. : %s (%s) ", stateGL->glSLVersion().c_str(), stateGL->getSLVersionNO().c_str());
     SL_LOG("------------------------------------------------------------------");
 
-    AppDemo::createAppAndScene(applicationName, onSceneLoadCallback);
+    AppCommon::createApp(applicationName);
 }
 //-----------------------------------------------------------------------------
 /*! Global creation function for a SLSceneview instance returning the index of
@@ -114,7 +116,7 @@ slCreateSceneView. You can create multiple sceneview per application.<br>
 <br>
 See examples usages in:
   - app_demo_slproject/glfw:    AppDemoMainGLFW.cpp   in function main()
-  - app-Demo-SLProject/android: AppDemoAndroidJNI.cpp in Java_ch_fhnw_comgr_GLES3Lib_onInit()
+  - app-demo/android: AppDemoAndroidJNI.cpp in Java_ch_fhnw_comgr_GLES3Lib_onInit()
   - app_demo_slproject/ios:     ViewController.m      in viewDidLoad()
 */
 SLint slCreateSceneView(SLAssetManager* am,
@@ -130,7 +132,7 @@ SLint slCreateSceneView(SLAssetManager* am,
                         void*           onImGuiLoadConfig,
                         void*           onImGuiSaveConfig)
 {
-    assert(scene && "No valid scene!");
+    // assert(scene && "No valid scene!");
 
     // Use our own sceneview creator callback or the passed one.
     cbOnNewSceneView newSVCallback;
@@ -140,38 +142,73 @@ SLint slCreateSceneView(SLAssetManager* am,
         newSVCallback = (cbOnNewSceneView)onNewSceneViewCallback;
 
     // Create the sceneview & get the pointer with the sceneview index
-    SLSceneView* sv = newSVCallback(scene, dotsPerInch, AppDemo::inputManager);
+    SLSceneView* sv = newSVCallback(scene, dotsPerInch, AppCommon::inputManager);
 
-    // maintain multiple scene views in AppDemo
-    AppDemo::sceneViews.push_back(sv);
+    // maintain multiple scene views in AppCommon
+    AppCommon::sceneViews.push_back(sv);
 
-    AppDemo::gui = new SLGLImGui((cbOnImGuiBuild)onImGuiBuild,
+    // Scale for proportional and fixed size fonts
+    SLfloat dpiScaleProp  = (float)dotsPerInch / 120.0f;
+    SLfloat dpiScaleFixed = (float)dotsPerInch / 142.0f;
+
+    // Default settings for the first time
+    SLImGui::fontPropDots  = std::max(16.0f * dpiScaleProp, 16.0f);
+    SLImGui::fontFixedDots = std::max(13.0f * dpiScaleFixed, 13.0f);
+
+    // Create gui renderer
+    AppCommon::gui = new SLImGui((cbOnImGuiBuild)onImGuiBuild,
                                  (cbOnImGuiLoadConfig)onImGuiLoadConfig,
                                  (cbOnImGuiSaveConfig)onImGuiSaveConfig,
                                  dotsPerInch,
-                                 AppDemo::fontPath);
+                                 AppCommon::fontDataProp,
+                                 AppCommon::fontDataFixed);
 
     sv->init("SceneView",
              screenWidth,
              screenHeight,
              onWndUpdateCallback,
              onSelectNodeMeshCallback,
-             AppDemo::gui,
-             AppDemo::configPath);
+             AppCommon::gui,
+             AppCommon::configPath);
 
     // Set active sceneview and load scene. This is done for the first sceneview
-    if (!scene->root3D())
+    if (!scene)
     {
-        if (AppDemo::sceneID == SID_Empty)
-            scene->onLoad(am, AppDemo::scene, sv, initScene);
+        if (AppCommon::sceneID == SL_EMPTY_SCENE_ID)
+            AppCommon::sceneToLoad = initScene;
         else
-            scene->onLoad(am, scene, sv, AppDemo::sceneID);
+            AppCommon::sceneToLoad = AppCommon::sceneID;
     }
     else
         sv->onInitialize();
 
     // return the identifier index
-    return (SLint)AppDemo::sceneViews.size() - 1;
+    return (SLint)AppCommon::sceneViews.size() - 1;
+}
+//-----------------------------------------------------------------------------
+/*! Global C function for synchronous asset loading used by all platforms
+except on emscripten where slLoadCoreAssetsAsync is used.
+*/
+void slLoadCoreAssetsSync()
+{
+    AppCommon::registerCoreAssetsLoad();
+    AppCommon::assetLoader->loadAssetsSync();
+}
+//-----------------------------------------------------------------------------
+/*! Global C function for asynchronous asset loading used on emscripten
+platform.
+*/
+void slLoadCoreAssetsAsync()
+{
+    AppCommon::registerCoreAssetsLoad();
+    AppCommon::assetLoader->loadAssetsAsync([] {});
+}
+//-----------------------------------------------------------------------------
+/*! Global C function for scene switching with a sceneID
+ */
+void slSwitchScene(SLSceneView* sv, SLSceneID sceneID)
+{
+    AppCommon::switchScene(sv, sceneID);
 }
 //-----------------------------------------------------------------------------
 /*! Global sceneview construction function returning the index of the created
@@ -211,8 +248,8 @@ void slTerminate()
 {
     SL_LOG("Begin of Terminate");
 
-    // Deletes all remaining sceneviews the current scene instance
-    AppDemo::deleteAppAndScene();
+    // Deletes all remaining sceneviews and the current scene instance
+    AppCommon::deleteApp();
 
     // For more info on PROFILING read Utils/lib-utils/source/Profiler.h
 #if PROFILING
@@ -225,30 +262,7 @@ void slTerminate()
     Profiler::instance().endSession();
 
     if (Utils::fileExists(filePathName))
-    {
         SL_LOG("Profile written : %s", filePathName.c_str());
-        /*
-        //ZipUtils::zip("/Users/hudrima1/Library/Application Support/SLProject/DEVELOPMENT-map_20200529-154142_avenches_aamphitheater_FAST_ORBS_2000.json");
-
-        SLstring errorMsg;
-        SLstring path = Utils::getPath(filePathName);
-        SLstring file = Utils::getFileName(filePathName);
-
-        SL_LOG("Profile Uploading ...");
-
-        if (FtpUtils::uploadFile(path,
-                                 file,
-                                 AppDemo::CALIB_FTP_HOST,
-                                 AppDemo::CALIB_FTP_USER,
-                                 AppDemo::CALIB_FTP_PWD,
-                                 AppDemo::PROFILE_FTP_DIR,
-                                 errorMsg))
-        {
-            SL_LOG("Uploaded Profile: %s", filePathName.c_str());
-        } else
-            SL_LOG(errorMsg.c_str());
-        */
-    }
     else
         SL_LOG("No Profile written: %s", filePathName.c_str());
 #else
@@ -261,30 +275,31 @@ void slTerminate()
 //-----------------------------------------------------------------------------
 /*!
  * Updates the parallel running job an allowes the update of a progress bar.
- * @return Returns true if parallel jobs are still running.
+ * \return Returns true if parallel jobs are still running.
  */
 bool slUpdateParallelJob()
 {
-    AppDemo::handleParallelJob();
-    return AppDemo::jobIsRunning;
+    AppCommon::handleParallelJob();
+    return AppCommon::jobIsRunning;
 }
 //-----------------------------------------------------------------------------
 /*!
  * Draws all scene views
- * @return return true if another repaint is needed.
+ * \return return true if another repaint is needed.
  */
 bool slPaintAllViews()
 {
     bool needUpdate = false;
 
-    for (auto sv : AppDemo::sceneViews)
+    for (auto sv : AppCommon::sceneViews)
     {
         // Save previous frame as image
         if (sv->screenCaptureIsRequested())
         {
-            SLstring path = AppDemo::externalPath + "screenshots/";
+            SLstring path = AppCommon::externalPath + "screenshots/";
             Utils::makeDirRecurse(path);
-            SLstring filename     = "Screenshot_" + Utils::getDateTime2String() + ".png";
+            SLstring filename = "Screenshot_" +
+                                Utils::getDateTime2String() + ".png";
             SLstring pathFilename = path + filename;
             sv->saveFrameBufferAsImage(pathFilename);
         }
@@ -305,7 +320,7 @@ void slResize(int sceneViewIndex, int width, int height)
     e->svIndex       = sceneViewIndex;
     e->width         = width;
     e->height        = height;
-    AppDemo::inputManager.queueEvent(e);
+    AppCommon::inputManager.queueEvent(e);
 }
 //-----------------------------------------------------------------------------
 /*! Global event handler for mouse button down events.
@@ -322,7 +337,7 @@ void slMouseDown(int           sceneViewIndex,
     e->x            = xpos;
     e->y            = ypos;
     e->modifier     = modifier;
-    AppDemo::inputManager.queueEvent(e);
+    AppCommon::inputManager.queueEvent(e);
 }
 //-----------------------------------------------------------------------------
 /*! Global event handler for mouse move events.
@@ -335,7 +350,7 @@ void slMouseMove(int sceneViewIndex,
     e->svIndex      = sceneViewIndex;
     e->x            = x;
     e->y            = y;
-    AppDemo::inputManager.queueEvent(e);
+    AppCommon::inputManager.queueEvent(e);
 }
 //-----------------------------------------------------------------------------
 /*! Global event handler for mouse button up events.
@@ -352,7 +367,7 @@ void slMouseUp(int           sceneViewIndex,
     e->x            = xpos;
     e->y            = ypos;
     e->modifier     = modifier;
-    AppDemo::inputManager.queueEvent(e);
+    AppCommon::inputManager.queueEvent(e);
 }
 //-----------------------------------------------------------------------------
 /*! Global event handler for double click events.
@@ -369,7 +384,7 @@ void slDoubleClick(int           sceneViewIndex,
     e->x            = xpos;
     e->y            = ypos;
     e->modifier     = modifier;
-    AppDemo::inputManager.queueEvent(e);
+    AppCommon::inputManager.queueEvent(e);
 }
 //-----------------------------------------------------------------------------
 /*! Global event handler for the two finger touch down events of touchscreen
@@ -388,7 +403,7 @@ void slTouch2Down(int sceneViewIndex,
     e->x2           = xpos2;
     e->y2           = ypos2;
 
-    AppDemo::inputManager.queueEvent(e);
+    AppCommon::inputManager.queueEvent(e);
 }
 //-----------------------------------------------------------------------------
 /*! Global event handler for the two finger move events of touchscreen devices.
@@ -405,7 +420,7 @@ void slTouch2Move(int sceneViewIndex,
     e->y1           = ypos1;
     e->x2           = xpos2;
     e->y2           = ypos2;
-    AppDemo::inputManager.queueEvent(e);
+    AppCommon::inputManager.queueEvent(e);
 }
 //-----------------------------------------------------------------------------
 /*! Global event handler for the two finger touch up events of touchscreen
@@ -423,7 +438,7 @@ void slTouch2Up(int sceneViewIndex,
     e->y1           = ypos1;
     e->x2           = xpos2;
     e->y2           = ypos2;
-    AppDemo::inputManager.queueEvent(e);
+    AppCommon::inputManager.queueEvent(e);
 }
 //-----------------------------------------------------------------------------
 /*! Global event handler for mouse wheel events.
@@ -436,7 +451,7 @@ void slMouseWheel(int   sceneViewIndex,
     e->svIndex      = sceneViewIndex;
     e->y            = pos;
     e->modifier     = modifier;
-    AppDemo::inputManager.queueEvent(e);
+    AppCommon::inputManager.queueEvent(e);
 }
 //-----------------------------------------------------------------------------
 /*! Global event handler for keyboard key press events.
@@ -449,7 +464,7 @@ void slKeyPress(int   sceneViewIndex,
     e->svIndex    = sceneViewIndex;
     e->key        = key;
     e->modifier   = modifier;
-    AppDemo::inputManager.queueEvent(e);
+    AppCommon::inputManager.queueEvent(e);
 }
 //-----------------------------------------------------------------------------
 /*! Global event handler for keyboard key release events.
@@ -462,7 +477,7 @@ void slKeyRelease(int   sceneViewIndex,
     e->svIndex    = sceneViewIndex;
     e->key        = key;
     e->modifier   = modifier;
-    AppDemo::inputManager.queueEvent(e);
+    AppCommon::inputManager.queueEvent(e);
 }
 
 //-----------------------------------------------------------------------------
@@ -474,13 +489,13 @@ void slCharInput(int          sceneViewIndex,
     SLCharInputEvent* e = new SLCharInputEvent();
     e->svIndex          = sceneViewIndex;
     e->character        = character;
-    AppDemo::inputManager.queueEvent(e);
+    AppCommon::inputManager.queueEvent(e);
 }
 //-----------------------------------------------------------------------------
 bool slUsesRotation()
 {
-    if (AppDemo::scene)
-        return AppDemo::devRot.isUsed();
+    if (AppCommon::scene)
+        return AppCommon::devRot.isUsed();
     return false;
 }
 //-----------------------------------------------------------------------------
@@ -491,12 +506,12 @@ void slRotationQUAT(float quatX,
                     float quatZ,
                     float quatW)
 {
-    AppDemo::devRot.onRotationQUAT(quatX, quatY, quatZ, quatW);
+    AppCommon::devRot.onRotationQUAT(quatX, quatY, quatZ, quatW);
 }
 //-----------------------------------------------------------------------------
 bool slUsesLocation()
 {
-    return AppDemo::devLoc.isUsed();
+    return AppCommon::devLoc.isUsed();
 }
 //-----------------------------------------------------------------------------
 /*! Global event handler for device GPS location with longitude and latitude in
@@ -509,16 +524,16 @@ void slLocationLatLonAlt(double latitudeDEG,
                          double altitudeM,
                          float  accuracyM)
 {
-    AppDemo::devLoc.onLocationLatLonAlt(latitudeDEG,
-                                        longitudeDEG,
-                                        altitudeM,
-                                        accuracyM);
+    AppCommon::devLoc.onLocationLatLonAlt(latitudeDEG,
+                                          longitudeDEG,
+                                          altitudeM,
+                                          accuracyM);
 }
 //-----------------------------------------------------------------------------
 //! Global function to retrieve a window title generated by the scene library.
 string slGetWindowTitle(int sceneViewIndex)
 {
-    SLSceneView* sv = AppDemo::sceneViews[(SLuint)sceneViewIndex];
+    SLSceneView* sv = AppCommon::sceneViews[(SLuint)sceneViewIndex];
     return sv->windowTitle();
 }
 //-----------------------------------------------------------------------------
@@ -528,7 +543,7 @@ void slSetupExternalDir(const SLstring& externalPath)
     if (Utils::dirExists(externalPath))
     {
         SL_LOG("Ext. directory   : %s", externalPath.c_str());
-        AppDemo::externalPath = Utils::trimRightString(externalPath, "/") + "/";
+        AppCommon::externalPath = Utils::trimRightString(externalPath, "/") + "/";
     }
     else
     {
@@ -540,6 +555,6 @@ void slSetupExternalDir(const SLstring& externalPath)
 void slSetDeviceParameter(const SLstring& parameter,
                           SLstring        value)
 {
-    AppDemo::deviceParameter[parameter] = std::move(value);
+    AppCommon::deviceParameter[parameter] = std::move(value);
 }
 //-----------------------------------------------------------------------------

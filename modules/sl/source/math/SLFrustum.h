@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLFrustum.h
-//  Authors:   Luc Girod
-//  Date:      Summer 2021
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Licesne:   This software is provide under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLFrustum.h
+ * \authors   Luc Girod
+ * \date      Summer 2021
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLFRUSTUM
 #define SLFRUSTUM

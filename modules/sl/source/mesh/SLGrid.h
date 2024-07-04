@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLGrid.h
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLGrid.h
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLGRID_H
 #define SLGRID_H
@@ -13,10 +13,18 @@
 #include <SLMesh.h>
 
 //-----------------------------------------------------------------------------
-//! SLGrid creates a rectangular grid with lines with a certain resolution
-/*! The SLGrid mesh draws a grid between a minimal and a maximal corner in the
-XZ-plane.
-*/
+/**
+ * @brief SLGrid creates a rectangular grid with lines with a certain resolution
+ * @details The SLGrid mesh draws a grid between a minimal and a maximal corner 
+ * in the XZ-plane.
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * For this mesh it means that the objects for OpenGL drawing (_vao, _vaoP,
+ * _vaoN, _vaoT and _vaoS) remain unused until the first frame is rendered.
+ */
 class SLGrid : public SLMesh
 {
 public:

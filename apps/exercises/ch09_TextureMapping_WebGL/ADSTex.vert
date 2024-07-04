@@ -1,12 +1,11 @@
-//#############################################################################
-//  File:      ch09_TextureMapping.vert
-//  Purpose:   GLSL vertex program for ambient, diffuse & specular per vertex 
-//             point lighting with texture mapping.
-//  Authors:   Marcus Hudritsch
-//  Date:      September 2011 (HS11)
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      ch09_TextureMapping.vert
+ * \details   GLSL vertex program for ambient, diffuse & specular per vertex 
+ *            point lighting with texture mapping.
+ * \authors   Marcus Hudritsch
+ * \date      September 2011 (HS11)
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 //-----------------------------------------------------------------------------
 attribute   vec4     a_position;// Vertex position attribute

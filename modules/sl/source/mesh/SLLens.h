@@ -1,10 +1,9 @@
-//#############################################################################
-//  File:      SLLens.h
-//  Date:      October 2014
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLLens.h
+ * \date      October 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #ifndef SLLENS_H
 #define SLLENS_H
@@ -19,15 +18,15 @@ Different constructors allow to either create the lens from the values
 written in the eyeglass prescription card or from the radius of the lens.<br>
 <br>
 <b>Lens types:</b>
-@image html https://pallas.ti.bfh.ch/slproject/images/LensTypes.png
+@image html images/LensTypes.png
 <b>Myopia</b> ( http://en.wikipedia.org/wiki/Myopia )<br>
 The eye is too long for its optical power.<br>
 To correct myopic (short-sightedness) a diverging lens is needed.
-@image html https://pallas.ti.bfh.ch/slproject/images/Myopia.png
+@image html images/Myopia.png
 <b>Hypermetropia</b> ( http://en.wikipedia.org/wiki/Hyperopia )<br>
 The eye is too short for its optical power.<br>
 To correct presbyopic (far-sightedness) a converging lens is needed.
-@image html https://pallas.ti.bfh.ch/slproject/images/Hypermetropia.png
+@image html images/Hypermetropia.png
 */
 class SLLens : public SLRevolver
 {

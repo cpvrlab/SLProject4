@@ -1,9 +1,9 @@
-//#############################################################################
-//  File:      cv13_FaceTracking.cpp
-//  Purpose:   Minimal OpenCV application for face Tracking in video
-//  Source:    https://docs.opencv.org/3.0-beta/doc/tutorials/objdetect/cascade_classifier/cascade_classifier.html
-//  Date:      Authumn 2017
-//#############################################################################
+/**
+ * \file      cv13_FaceTracking.cpp
+ * \brief     Minimal OpenCV application for face Tracking in video
+ * \copyright Based on Satya Mallick's Tutorial at https://www.learnopencv.com
+ * \date      Authumn 2017
+*/
 
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>

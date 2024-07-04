@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLLightDirect.cpp
-//  Date:      July 2016
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLLightDirect.cpp
+ * \date      July 2016
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLArrow.h>
 #include <SLLightDirect.h>
@@ -17,6 +17,19 @@
 #include <SLSpheric.h>
 
 //-----------------------------------------------------------------------------
+/**
+ * @brief Construct a new SLLightDirect::SLLightDirect object
+ * @details It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within a SLScene::assemble function. All objects that get rendered 
+ * have to do their OpenGL initialization when they are used the first time 
+ * during rendering in the main thread.
+ * @param assetMgr AssetManager that will own the light mesh
+ * @param s SLScene pointer
+ * @param arrowLength Length of the arrow visualization mesh
+ * @param hasMesh Boolean if a mesh should be created and shown
+ * @param doCascadedShadows Boolean for doing cascaded shadow mapping
+ */
 SLLightDirect::SLLightDirect(SLAssetManager* assetMgr,
                              SLScene*        s,
                              SLfloat         arrowLength,
@@ -51,6 +64,25 @@ SLLightDirect::SLLightDirect(SLAssetManager* assetMgr,
     init(s);
 }
 //-----------------------------------------------------------------------------
+/**
+ * @brief Construct a new SLLightDirect::SLLightDirect object
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * @param assetMgr AssetManager that will own the light mesh
+ * @param s SLScene pointer
+ * @param posx Light position x
+ * @param posy Light position y
+ * @param posz Light position z
+ * @param arrowLength Length of the arrow visualization mesh
+ * @param ambiPower Ambient light power
+ * @param diffPower Diffuse light power
+ * @param specPower Specular light power
+ * @param hasMesh Boolean if a mesh should be created and shown
+ * @param doCascadedShadows Boolean for doing cascaded shadow mapping
+ */
 SLLightDirect::SLLightDirect(SLAssetManager* assetMgr,
                              SLScene*        s,
                              SLfloat         posx,
@@ -96,7 +128,7 @@ SLLightDirect::~SLLightDirect()
     delete _shadowMap;
 
     // Clear the color LUT that is also an OpenGL texture
-    _sunLightColorLUT.deleteData();
+    _sunLightColorLUT.deleteData(true);
 }
 //-----------------------------------------------------------------------------
 /*!
@@ -172,10 +204,10 @@ void SLLightDirect::drawMesh(SLSceneView* sv)
 }
 //-----------------------------------------------------------------------------
 /*! Creates an fixed sized standard shadow map for a directional light.
- * @param clipNear The light frustums near clipping distance
- * @param clipFar The light frustums near clipping distance
- * @param size Width and height of the orthographic light frustum
- * @param texSize Shadow texture map size
+ * \param clipNear The light frustums near clipping distance
+ * \param clipFar The light frustums near clipping distance
+ * \param size Width and height of the orthographic light frustum
+ * \param texSize Shadow texture map size
  */
 void SLLightDirect::createShadowMap(float   clipNear,
                                     float   clipFar,
@@ -193,9 +225,9 @@ void SLLightDirect::createShadowMap(float   clipNear,
 }
 //-----------------------------------------------------------------------------
 /*! Creates an automatic sized and cascaded shadow map for the directional light.
- * @param camera Pointer to the camera for witch the shadow map gets sized
- * @param texSize Shadow texture map size (equal for all cascades)
- * @param numCascades NO. of cascades shadow maps
+ * \param camera Pointer to the camera for witch the shadow map gets sized
+ * \param texSize Shadow texture map size (equal for all cascades)
+ * \param numCascades NO. of cascades shadow maps
  */
 void SLLightDirect::createShadowMapAutoSize(SLCamera* camera,
                                             SLVec2i   texSize,

@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLFileStorage.h
-//  Date:      October 2022
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marino von Wattenwyl
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLFileStorage.h
+ * \date      October 2022
+ * \authors   Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLPROJECT_SLFILESTORAGE_H
 #define SLPROJECT_SLFILESTORAGE_H
@@ -28,6 +28,9 @@ struct SLIOBuffer
 {
     unsigned char* data;
     size_t         size;
+
+    SLIOBuffer copy();
+    void       deallocate();
 };
 //-----------------------------------------------------------------------------
 //! Enum of file kinds
@@ -81,7 +84,6 @@ SLIOStream* open(std::string path, SLIOStreamKind kind, SLIOStreamMode mode);
 void        close(SLIOStream* stream);
 bool        exists(std::string path, SLIOStreamKind kind);
 SLIOBuffer  readIntoBuffer(std::string path, SLIOStreamKind kind);
-void        deleteBuffer(SLIOBuffer& buffer);
 std::string readIntoString(std::string path, SLIOStreamKind kind);
 void        writeString(std::string path, SLIOStreamKind kind, const std::string& string);
 }

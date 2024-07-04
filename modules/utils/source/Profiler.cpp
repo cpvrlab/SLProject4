@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      Profiler.cpp
-//  Authors:   Marino von Wattenwyl
-//  Date:      December 2021
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      Profiler.cpp
+ * \authors   Marino von Wattenwyl
+ * \date      December 2021
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <Profiler.h>
 #include <utility>
@@ -20,7 +20,7 @@
  * Starts a profiling session by saving the session start timestamp so it
  * can later be subtracted from the individual result timestamps to get the
  * time points relative to the start of the session.
- * @param filePath The path where the trace file should be written to
+ * \param filePath The path where the trace file should be written to
  */
 void Profiler::beginSession(std::string filePath)
 {
@@ -130,7 +130,7 @@ void Profiler::endSession()
 /*!
  * Stores a result thread-safely in a vector so it can be written to a trace
  * file at the end of the session.
- * @param result
+ * \param result
  */
 void Profiler::recordResult(ProfilingResult result)
 {
@@ -143,7 +143,7 @@ void Profiler::recordResult(ProfilingResult result)
  * Associates the thread in which the function was called with the name provided.
  * This function must be called at the start of every profiled thread.
  * It is sensibly also thread-safe.
- * @param name
+ * \param name
  */
 void Profiler::profileThread(const std::string& name)
 {
@@ -182,7 +182,7 @@ thread_local uint32_t ProfilerTimer::threadDepth = 0;
  * thread-local depth since we have just entered a scope.
  * PROFILE_THREAD must be called in the current thread before this function
  * or else the current thread can't be identified and the application exits.
- * @param name Name of the scope
+ * \param name Name of the scope
  */
 ProfilerTimer::ProfilerTimer(const char* name)
 {

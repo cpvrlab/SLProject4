@@ -45,6 +45,7 @@ The code is provided without any warranties whether expressed or implied.
 <p>
 Read the \subpage introduction for an overview of the framework.<br>
 Read \subpage on-paint for an overview of how on frame gets rendered.<br>
+Read \subpage app-framework for an overview of the app framework.<br>
 Read \subpage emscripten for an overview of how SLProject runs in the browser.
 </p>
 
@@ -86,7 +87,7 @@ The framework uses beside OpenGL the following external libraries that are also 
 </ul>
 
 <p>
-Authors: marcus.hudritsch@bfh.ch<br>
-Date: June 2023<br>
+Author: marcus.hudritsch@bfh.ch<br>
+Date: June 2024<br>
 Copyright (c): 2002-2023 Marcus Hudritsch, Kirchrain 18, 2572 Sutz, Switzerland
 </p>

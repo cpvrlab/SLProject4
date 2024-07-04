@@ -1,13 +1,13 @@
-//#############################################################################
-//  File:      gl/SLGLImGui.cpp
-//  Purpose:   Wrapper Class around the external ImGui GUI-framework
-//             See also: https://github.com/ocornut/imgui
-//  Date:      October 2015
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      gl/SLGLImGui.cpp
+ * \details   Wrapper Class around the external ImGui GUI-framework
+ *            See also: https://github.com/ocornut/imgui
+ * \date      October 2015
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLGLState.h>
 #include <SLSceneView.h>
@@ -15,6 +15,7 @@
 #include <SLScene.h>
 #include <SLFileStorage.h>
 #include <GlobalTimer.h>
+#include <cstddef>
 
 //-----------------------------------------------------------------------------
 SLfloat SLGLImGui::fontPropDots  = 16.0f;
@@ -24,8 +25,8 @@ SLGLImGui::SLGLImGui(cbOnImGuiBuild      buildCB,
                      cbOnImGuiLoadConfig loadConfigCB,
                      cbOnImGuiSaveConfig saveConfigCB,
                      int                 dpi,
-                     SLstring            fontDir)
-  : _fontDir(fontDir)
+                     SLIOBuffer          fontDataProp,
+                     SLIOBuffer          fontDataFixed)
 {
     _build             = buildCB;
     _saveConfig        = saveConfigCB;
@@ -47,6 +48,8 @@ SLGLImGui::SLGLImGui(cbOnImGuiBuild      buildCB,
     _mousePressed[0]   = false;
     _mousePressed[1]   = false;
     _mousePressed[2]   = false;
+    _fontDataProp      = fontDataProp;
+    _fontDataFixed     = fontDataFixed;
 
     // create imgui context
     ImGui::CreateContext();
@@ -62,7 +65,15 @@ SLGLImGui::SLGLImGui(cbOnImGuiBuild      buildCB,
         loadConfigCB(dpi);
 
     // load GUI fonts depending on the resolution
-    loadFonts(SLGLImGui::fontPropDots, SLGLImGui::fontFixedDots, fontDir);
+    loadFonts(SLGLImGui::fontPropDots, SLGLImGui::fontFixedDots);
+
+    // Scale for proportional and fixed size fonts
+    SLfloat dpiScaleProp  = (float)dpi / 120.0f;
+    SLfloat dpiScaleFixed = (float)dpi / 142.0f;
+
+    // Default settings for the first time
+    SLGLImGui::fontPropDots  = std::max(16.0f * dpiScaleProp, 16.0f);
+    SLGLImGui::fontFixedDots = std::max(13.0f * dpiScaleFixed, 13.0f);
 }
 //-----------------------------------------------------------------------------
 SLGLImGui::~SLGLImGui()
@@ -146,9 +157,8 @@ void SLGLImGui::init(const string& configPath)
 }
 //-----------------------------------------------------------------------------
 //! Loads the proportional and fixed size font depending on the passed DPI
-void SLGLImGui::loadFonts(SLfloat  fontPropDotsToLoad,
-                          SLfloat  fontFixedDotsToLoad,
-                          SLstring fontDir)
+void SLGLImGui::loadFonts(SLfloat fontPropDotsToLoad,
+                          SLfloat fontFixedDotsToLoad)
 {
     _fontPropDots  = fontPropDotsToLoad;
     _fontFixedDots = fontFixedDotsToLoad;
@@ -156,27 +166,19 @@ void SLGLImGui::loadFonts(SLfloat  fontPropDotsToLoad,
     ImGuiIO& io = ImGui::GetIO();
     io.Fonts->Clear();
 
-    // Load proportional font for menue and text displays
-    SLstring DroidSans = fontDir + "DroidSans.ttf";
-    if (SLFileStorage::exists(DroidSans, IOK_font))
-    {
-        SLIOBuffer buffer = SLFileStorage::readIntoBuffer(DroidSans, IOK_font);
-        io.Fonts->AddFontFromMemoryTTF(buffer.data, (int)buffer.size, fontPropDotsToLoad);
-        // ImGui takes ownership of the buffer, so no memory deallocation
-    }
-    else
-        SL_LOG("\n*** Error ***: \nFont doesn't exist: %s\n", DroidSans.c_str());
+    // Create copies of the font data because ImGUI takes ownerhip of the data.
+    SLIOBuffer fontDataProp  = _fontDataProp.copy();
+    SLIOBuffer fontDataFixed = _fontDataFixed.copy();
+
+    // Load proportional font for menu and text displays
+    io.Fonts->AddFontFromMemoryTTF(fontDataProp.data,
+                                   static_cast<int>(fontDataProp.size),
+                                   fontPropDotsToLoad);
 
     // Load fixed size font for statistics windows
-    SLstring ProggyClean = fontDir + "ProggyClean.ttf";
-    if (SLFileStorage::exists(ProggyClean, IOK_font))
-    {
-        SLIOBuffer buffer = SLFileStorage::readIntoBuffer(ProggyClean, IOK_font);
-        io.Fonts->AddFontFromMemoryTTF(buffer.data, (int)buffer.size, fontFixedDotsToLoad);
-        // ImGui takes ownership of the buffer, so no memory deallocation
-    }
-    else
-        SL_LOG("\n*** Error ***: \nFont doesn't exist: %s\n", ProggyClean.c_str());
+    io.Fonts->AddFontFromMemoryTTF(fontDataFixed.data,
+                                   static_cast<int>(fontDataFixed.size),
+                                   fontFixedDotsToLoad);
 
     deleteOpenGLObjects();
     createOpenGLObjects();
@@ -268,26 +270,24 @@ void SLGLImGui::createOpenGLObjects()
 
     GET_GL_ERROR;
 
-#define OFFSETOF(TYPE, ELEMENT) ((size_t) & (((TYPE*)nullptr)->ELEMENT))
     glVertexAttribPointer((SLuint)_attribLocPosition,
                           2,
                           GL_FLOAT,
                           GL_FALSE,
                           sizeof(ImDrawVert),
-                          (GLvoid*)OFFSETOF(ImDrawVert, pos));
+                          (GLvoid*)offsetof(ImDrawVert, pos));
     glVertexAttribPointer((SLuint)_attribLocUV,
                           2,
                           GL_FLOAT,
                           GL_FALSE,
                           sizeof(ImDrawVert),
-                          (GLvoid*)OFFSETOF(ImDrawVert, uv));
+                          (GLvoid*)offsetof(ImDrawVert, uv));
     glVertexAttribPointer((SLuint)_attribLocColor,
                           4,
                           GL_UNSIGNED_BYTE,
                           GL_TRUE,
                           sizeof(ImDrawVert),
-                          (GLvoid*)OFFSETOF(ImDrawVert, col));
-#undef OFFSETOF
+                          (GLvoid*)offsetof(ImDrawVert, col));
 
     GET_GL_ERROR;
 
@@ -399,11 +399,11 @@ void SLGLImGui::printCompileErrors(SLint shaderHandle, const SLchar* src)
 void SLGLImGui::onInitNewFrame(SLScene* s, SLSceneView* sv)
 {
     // If no _build function is provided there is no ImGui
-    if (!_build) return;
+    // if (!_build) return;
 
     if ((SLint)SLGLImGui::fontPropDots != (SLint)_fontPropDots ||
         (SLint)SLGLImGui::fontFixedDots != (SLint)_fontFixedDots)
-        loadFonts(SLGLImGui::fontPropDots, SLGLImGui::fontFixedDots, _fontDir);
+        loadFonts(SLGLImGui::fontPropDots, SLGLImGui::fontFixedDots);
 
     if (!_fontTexture)
         createOpenGLObjects();
@@ -442,10 +442,10 @@ void SLGLImGui::onInitNewFrame(SLScene* s, SLSceneView* sv)
 }
 //-----------------------------------------------------------------------------
 //! Callback if window got resized
-void SLGLImGui::onResize(SLint scrW, SLint scrH)
+void SLGLImGui::onResize(const SLRecti& viewportRect)
 {
     ImGuiIO& io                = ImGui::GetIO();
-    io.DisplaySize             = ImVec2((SLfloat)scrW, (SLfloat)scrH);
+    io.DisplaySize             = ImVec2((SLfloat)viewportRect.width, (SLfloat)viewportRect.height);
     io.DisplayFramebufferScale = ImVec2(1, 1);
 }
 //-----------------------------------------------------------------------------

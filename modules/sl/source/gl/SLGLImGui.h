@@ -1,13 +1,13 @@
-//#############################################################################
-//  File:      gl/SLGLImGui.cpp
-//  Purpose:   Wrapper Class around the external ImGui GUI-framework
+/**
+ * \file      gl/SLGLImGui.cpp
+ * \brief   Wrapper Class around the external ImGui GUI-framework
 //             See also: https://github.com/ocornut/imgui
-//  Date:      October 2015
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+ * \date      October 2015
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLGLIMGUI_H
 #define SLGLIMGUI_H
@@ -16,8 +16,10 @@
 #include <SLEnums.h>
 #include <SLVec2.h>
 #include <math/SLRect.h>
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
 #include <SLUiInterface.h>
+#include "SLFileStorage.h"
 
 class SLScene;
 class SLSceneView;
@@ -41,7 +43,7 @@ SLSceneView the according callback in ImGui is called.\n
 There is no UI drawn with this class. It must be defined in another class
 that provides the build function. For the Demo apps this is done in the class
 SLDemoGui and the build function is passed e.g. in glfwMain function of the
-app-Demo-SLProject project.\n
+app-demo project.\n
 \n
 The full call stack for rendering one frame is:\n
 - The top-level onPaint of the app (Win, Linux, MacOS, Android or iOS)
@@ -64,12 +66,13 @@ public:
               cbOnImGuiLoadConfig loadConfigCB,
               cbOnImGuiSaveConfig saveConfigCB,
               int                 dpi,
-              SLstring            fontDir);
+              SLIOBuffer          fontDataProp,
+              SLIOBuffer          fontDataFixed);
     ~SLGLImGui() override;
     void init(const string& configPath) override;
 
     void onInitNewFrame(SLScene* s, SLSceneView* sv) override;
-    void onResize(SLint scrW, SLint scrH) override;
+    void onResize(const SLRecti& viewportRect) override;
     void onPaint(const SLRecti& viewport) override;
     void onMouseDown(SLMouseButton button, SLint x, SLint y) override;
     void onMouseUp(SLMouseButton button, SLint x, SLint y) override;
@@ -83,7 +86,7 @@ public:
     void renderExtraFrame(SLScene* s, SLSceneView* sv, SLint mouseX, SLint mouseY) override;
     bool doNotDispatchKeyboard() override { return ImGui::GetIO().WantCaptureKeyboard; }
     bool doNotDispatchMouse() override { return ImGui::GetIO().WantCaptureMouse; }
-    void loadFonts(SLfloat fontPropDots, SLfloat fontFixedDots, SLstring fontDir);
+    void loadFonts(SLfloat fontPropDots, SLfloat fontFixedDots);
     void drawMouseCursor(bool doDraw) override { ImGui::GetIO().MouseDrawCursor = doDraw; }
 
     // Default font dots
@@ -102,26 +105,27 @@ private:
     // save config callback
     cbOnImGuiSaveConfig _saveConfig = nullptr;
 
-    SLfloat  _timeSec;           //!< Time in seconds
-    SLVec2f  _mousePosPX;        //!< Mouse cursor position
-    SLfloat  _mouseWheel;        //!< Mouse wheel position
-    SLbool   _mousePressed[3];   //!< Mouse button press state
-    SLuint   _fontTexture;       //!< OpenGL texture id for font
-    SLint    _progHandle;        //!< OpenGL handle for shader program
-    SLint    _vertHandle;        //!< OpenGL handle for vertex shader
-    SLint    _fragHandle;        //!< OpenGL handle for fragment shader
-    SLint    _attribLocTex;      //!< OpenGL attribute location for texture
-    SLint    _attribLocProjMtx;  //!< OpenGL attribute location for ???
-    SLint    _attribLocPosition; //!< OpenGL attribute location for vertex pos.
-    SLint    _attribLocUV;       //!< OpenGL attribute location for texture coords
-    SLint    _attribLocColor;    //!< OpenGL attribute location for color
-    SLuint   _vboHandle;         //!< OpenGL handle for vertex buffer object
-    SLuint   _vaoHandle;         //!< OpenGL vertex array object handle
-    SLuint   _elementsHandle;    //!< OpenGL handle for vertex indexes
-    SLfloat  _fontPropDots;      //!< Active font size of proportional font
-    SLfloat  _fontFixedDots;     //!< Active font size of fixed size font
-    SLstring _fontDir;
-    SLstring _configPath;
+    SLfloat    _timeSec;           //!< Time in seconds
+    SLVec2f    _mousePosPX;        //!< Mouse cursor position
+    SLfloat    _mouseWheel;        //!< Mouse wheel position
+    SLbool     _mousePressed[3];   //!< Mouse button press state
+    SLuint     _fontTexture;       //!< OpenGL texture id for font
+    SLint      _progHandle;        //!< OpenGL handle for shader program
+    SLint      _vertHandle;        //!< OpenGL handle for vertex shader
+    SLint      _fragHandle;        //!< OpenGL handle for fragment shader
+    SLint      _attribLocTex;      //!< OpenGL attribute location for texture
+    SLint      _attribLocProjMtx;  //!< OpenGL attribute location for ???
+    SLint      _attribLocPosition; //!< OpenGL attribute location for vertex pos.
+    SLint      _attribLocUV;       //!< OpenGL attribute location for texture coords
+    SLint      _attribLocColor;    //!< OpenGL attribute location for color
+    SLuint     _vboHandle;         //!< OpenGL handle for vertex buffer object
+    SLuint     _vaoHandle;         //!< OpenGL vertex array object handle
+    SLuint     _elementsHandle;    //!< OpenGL handle for vertex indexes
+    SLfloat    _fontPropDots;      //!< Active font size of proportional font
+    SLfloat    _fontFixedDots;     //!< Active font size of fixed size font
+    SLstring   _configPath;        //!< Path to config files
+    SLIOBuffer _fontDataProp;      //!< Raw data of proportional font file
+    SLIOBuffer _fontDataFixed;     //!< Raw data of fixed size font file
 };
 //-----------------------------------------------------------------------------
 #endif

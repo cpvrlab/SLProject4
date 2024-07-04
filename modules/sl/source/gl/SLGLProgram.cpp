@@ -1,13 +1,11 @@
-//#############################################################################
-//   File:      SLGLProgram.cpp
-//   Date:      July 2014
-//   Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//   Authors:   Marcus Hudritsch
-//              Mainly based on Martin Christens GLSL Tutorial
-//              See http://www.clockworkcoders.com
-//   License:   This software is provided under the GNU General Public License
-//              Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLGLProgram.cpp
+ * \date      July 2014
+ * \authors   Marcus Hudritsch, Martin Christens. See http://www.clockworkcoders.com
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLAssetManager.h>
 #include <SLGLDepthBuffer.h>

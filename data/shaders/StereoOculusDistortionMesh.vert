@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      StereoOculusDistortionMesh.vert
-//  Purpose:   Oculus Rift Distortion Shader
-//  Date:      November 2013
-//  Authors:   Marc Wacker, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      StereoOculusDistortionMesh.vert
+ * \brief   Oculus Rift Distortion Shader
+ * \date      November 2013
+ * \authors   Marc Wacker, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

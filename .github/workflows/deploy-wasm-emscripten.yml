@@ -16,14 +16,28 @@ jobs:
     - name: Install Emscripten
       uses: mymindstorm/setup-emsdk@v11
       with:
-        version: 3.1.46
+        version: 3.1.60
 
     - name: Configure CMake
-      run: emcmake cmake -B ${{ github.workspace }}/build -DSL_BUILD_WAI=OFF -DSL_BUILD_WITH_OPENSSL=OFF -DSL_DOWNLOAD_DATA=OFF -DCMAKE_BUILD_TYPE=Release
+      run: |
+        emcmake cmake \
+          -B ${{ github.workspace }}/build \
+          -DSL_BUILD_WAI=OFF \
+          -DSL_BUILD_WITH_OPENSSL=OFF \
+          -DSL_BUILD_WITH_MEDIAPIPE=OFF \
+          -DSL_DOWNLOAD_DATA=OFF \
+          -DCMAKE_BUILD_TYPE=Release
 
     - name: Build
-      run: cmake --build ${{ github.workspace }}/build --target app-Demo-SLProject -j $(nproc)
+      run: cmake --build ${{ github.workspace }}/build --target app-demo -j $(nproc)
 
     - name: Upload
       working-directory: ${{ github.workspace }}/build
-      run: sshpass -p "${{ secrets.EMSCRIPTEN_DEPLOY_PASSWORD }}" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null app-Demo-SLProject.* github@pallas.ti.bfh.ch:.
+      run: |
+        sshpass -p "${{ secrets.EMSCRIPTEN_DEPLOY_PASSWORD }}" sftp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${{ secrets.EMSCRIPTEN_DEPLOY_REMOTE }}" << EOF
+          put app-demo.html public/www/app-demo.html
+          put app-demo.js public/www/app-demo.js
+          put app-demo.wasm public/www/app-demo.wasm
+          put app-demo.worker.js public/www/app-demo.worker.js
+          put app-demo.ww.js public/www/app-demo.ww.js
+        EOF

@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLBox.cpp
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLBox.cpp
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLBox.h>
 #include <SLMaterial.h>
@@ -65,18 +65,18 @@ void SLBox::buildMesh(SLMaterial* material)
 
     // clang-format off
     // towards +x
-    P[p].x=_max.x; P[p].y=_max.y; P[p].z=_max.z; N[p]= NX; p++;  //  0
-    P[p].x=_max.x; P[p].y=_min.y; P[p].z=_max.z; N[p]= NX; p++;  //  1
-    P[p].x=_max.x; P[p].y=_min.y; P[p].z=_min.z; N[p]= NX; p++;  //  2
-    P[p].x=_max.x; P[p].y=_max.y; P[p].z=_min.z; N[p]= NX; p++;  //  3
+    P[p].x=_max.x; P[p].y=_max.y; P[p].z=_min.z; N[p]= NX; p++;  //  0
+    P[p].x=_max.x; P[p].y=_max.y; P[p].z=_max.z; N[p]= NX; p++;  //  1
+    P[p].x=_max.x; P[p].y=_min.y; P[p].z=_max.z; N[p]= NX; p++;  //  2
+    P[p].x=_max.x; P[p].y=_min.y; P[p].z=_min.z; N[p]= NX; p++;  //  3
     I16[i++] = 0; I16[i++] = 1; I16[i++] = 2;
     I16[i++] = 0; I16[i++] = 2; I16[i++] = 3;
    
     // towards -z
-    P[p].x=_max.x; P[p].y=_max.y; P[p].z=_min.z; N[p]=-NZ; p++;  //  4
-    P[p].x=_max.x; P[p].y=_min.y; P[p].z=_min.z; N[p]=-NZ; p++;  //  5
-    P[p].x=_min.x; P[p].y=_min.y; P[p].z=_min.z; N[p]=-NZ; p++;  //  6
-    P[p].x=_min.x; P[p].y=_max.y; P[p].z=_min.z; N[p]=-NZ; p++;  //  7
+    P[p].x=_min.x; P[p].y=_max.y; P[p].z=_min.z; N[p]=-NZ; p++;  //  4
+    P[p].x=_max.x; P[p].y=_max.y; P[p].z=_min.z; N[p]=-NZ; p++;  //  5
+    P[p].x=_max.x; P[p].y=_min.y; P[p].z=_min.z; N[p]=-NZ; p++;  //  6
+    P[p].x=_min.x; P[p].y=_min.y; P[p].z=_min.z; N[p]=-NZ; p++;  //  7
     I16[i++] = 4; I16[i++] = 5; I16[i++] = 6;
     I16[i++] = 4; I16[i++] = 6; I16[i++] = 7;
    
@@ -111,6 +111,15 @@ void SLBox::buildMesh(SLMaterial* material)
     P[p].x=_max.x; P[p].y=_min.y; P[p].z=_max.z; N[p]=-NY;       // 23
     I16[i++] = 20; I16[i++] = 21; I16[i++] = 22;
     I16[i++] = 20; I16[i++] = 22; I16[i] = 23;
+
+    UV[0].resize(6ull * 4ull);
+    for (SLint i = 0; i < 6; i++)
+    {
+        UV[0][4 * i + 0] = SLVec2f(1, 1);
+        UV[0][4 * i + 1] = SLVec2f(0, 1);
+        UV[0][4 * i + 2] = SLVec2f(0, 0);
+        UV[0][4 * i + 3] = SLVec2f(1, 0);
+    }
 }
 //-----------------------------------------------------------------------------
 

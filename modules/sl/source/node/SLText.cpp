@@ -1,20 +1,30 @@
-//#############################################################################
-//  File:      SLText.cpp
-//  Authors:   Marcus Hudritsch
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLText.cpp
+ * \authors   Marcus Hudritsch
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLScene.h>
 #include <SLText.h>
 
 //-----------------------------------------------------------------------------
-/*!
-The ctor sets all members and translates to the min. position.
-*/
+/**
+ * @brief Construct a new SLText::SLText object
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * @param text Text to be rendered
+ * @param font SLTexTont to be used
+ * @param color Color for font
+ * @param maxWidth Max. line width in pixels
+ * @param lineHeightFactor Line hight factor >= 1.0
+ */
 SLText::SLText(SLstring   text,
                SLTexFont* font,
                SLCol4f    color,

@@ -1,19 +1,17 @@
-//#############################################################################
-//  File:      sl/SLVector.h
-//  Authors:   Jonas Lottner, Marcus Hudritsch
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Institut fr Informatik, FHBB Muttenz, Switzerland
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//  Changes:   jlottner    09-JAN-2003
-//             mhudritsch  08-FEB-2003
-//             jlottner    10-FEB-2003
-//#############################################################################
+/**
+ * \file      SLVector.h
+ * \authors   Jonas Lottner, Marcus Hudritsch
+ * \date      July 2014
+ * \authors   Institut fr Informatik, FHBB Muttenz, Switzerland
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLVECTOR_H
 #define SLVECTOR_H
 
+#include <SL.h>
 #include <SLMath.h>
 
 //-----------------------------------------------------------------------------

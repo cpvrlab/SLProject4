@@ -43,6 +43,21 @@ endif ()
 include(cmake/SetGitBranchNameAndCommitID.cmake)
 include(cmake/CompileOptions.cmake)
 
+# Determine the platform that apps will run on.
+# On desktop operating systems, the platform is GLFW.
+# On Android, iOS, and Emscripten, the platform name is just directly the system name.
+if(SYSTEM_NAME_UPPER MATCHES "^(WINDOWS|DARWIN|LINUX)$")
+	set(SL_PLATFORM "GLFW")
+elseif(SYSTEM_NAME_UPPER STREQUAL "ANDROID")
+	set(SL_PLATFORM "ANDROID")
+elseif(SYSTEM_NAME_UPPER STREQUAL "IOS")
+	set(SL_PLATFORM "IOS")
+elseif(SYSTEM_NAME_UPPER STREQUAL "EMSCRIPTEN")
+	set(SL_PLATFORM "EMSCRIPTEN")
+else()
+	set(SL_PLATFORM "UNKNOWN")
+endif()
+
 option(SL_DOWNLOAD_DATA "Specifies if the data ZIP file should be downloaded" ON)
 option(SL_DOWNLOAD_PREBUILTS "Specifies if prebuilt libraries should be downloaded" ON)
 option(SL_BUILD_WAI "Specifies if the WAI library should be built" ON)
@@ -54,18 +69,22 @@ option(SL_BUILD_WITH_OPTIX "Specifies if Optix renderer should be built" OFF)
 option(SL_BUILD_WITH_KTX "Specifies if Kronos Texture library (ktx) should be used" ON)
 option(SL_BUILD_WITH_OPENSSL "Specifies if OpenSSL should be used" ON)
 option(SL_BUILD_WITH_ASSIMP "Specifies if Assimp should be used" ON)
-
-if ("${SYSTEM_NAME_UPPER}" MATCHES "IOS" OR "${SYSTEM_NAME_UPPER}" MATCHES "EMSCRIPTEN")
-    option(SL_BUILD_WITH_MEDIAPIPE "Specifies if MediaPipe should be used" OFF)
-else ()
-    option(SL_BUILD_WITH_MEDIAPIPE "Specifies if MediaPipe should be used" ON)
-endif ()
+option(SL_BUILD_WITH_MEDIAPIPE "Specifies if MediaPipe should be used" ON)
 
 option(LIBIGL_USE_STATIC_LIBRARY "Specifies if LibIGL should be built statically" ON)
+
+if(SYSTEM_NAME_UPPER STREQUAL "IOS")
+    set(SL_BUILD_WITH_MEDIAPIPE OFF)
+elseif(SYSTEM_NAME_UPPER STREQUAL "EMSCRIPTEN")
+    set(SL_BUILD_WAI OFF)
+    set(SL_BUILD_WITH_OPENSSL OFF)
+    set(SL_BUILD_WITH_MEDIAPIPE OFF)
+endif()
 
 message(STATUS "----------------------------------------------------------------")
 message(STATUS "System: ${SYSTEM_NAME_UPPER}")
 message(STATUS "Architecture: ${CMAKE_SYSTEM_PROCESSOR}")
+message(STATUS "Platform: ${SL_PLATFORM}")
 message(STATUS "----------------------------------------------------------------")
 message(STATUS "SL_DOWNLOAD_PREBUILTS: ${SL_DOWNLOAD_PREBUILTS}")
 message(STATUS "SL_BUILD_WAI: ${SL_BUILD_WAI}")
@@ -83,15 +102,14 @@ message(STATUS "----------------------------------------------------------------
 
 if (SL_DOWNLOAD_DATA)
     include(cmake/DownloadData.cmake)
+    message(STATUS "----------------------------------------------------------------")
 endif ()
-
-message(STATUS "----------------------------------------------------------------")
 
 if (SL_DOWNLOAD_PREBUILTS)
     include(cmake/DownloadPrebuilts.cmake)
+    message(STATUS "Finished downloading prebuilts")
+    message(STATUS "----------------------------------------------------------------")
 endif ()
-
-message(STATUS "----------------------------------------------------------------")
 
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Android")
     message(STATUS "SL_APP: ${SL_APP}")

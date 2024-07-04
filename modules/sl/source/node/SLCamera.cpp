@@ -1,12 +1,13 @@
-//#############################################################################
-//   File:      SLCamera.cpp
-//   Date:      July 2014
-//   Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//   Authors:   Marc Wacker, Marcus Hudritsch
-//   License:   This software is provided under the GNU General Public License
-//              Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLCamera.cpp
+ * \date      July 2014
+ * \authors   Marc Wacker, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ */
 
+#include "SL.h"
 #include <SLSceneView.h>
 #include <SLDeviceLocation.h>
 #include <SLDeviceRotation.h>
@@ -20,15 +21,21 @@ SLProjType SLCamera::currentProjection  = P_monoPerspective;
 SLfloat    SLCamera::currentFOV         = 45.0f;
 SLint      SLCamera::currentDevRotation = 0;
 //-----------------------------------------------------------------------------
-SLCamera::SLCamera(const SLstring& name,
-                   SLStdShaderProg textureOnlyProgramId,
-                   SLStdShaderProg colorAttributeProgramId)
+/**
+ * @brief Construct a new SLCamera::SLCamera object
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*)
+ * get called because this constructor will be most probably called in a parallel
+ * thread from within a SLScene::assemble function. All objects that get rendered
+ * have to do their OpenGL initialization when they are used the first time
+ * during rendering in the main thread.
+ * @param name Name of the camera
+ */
+SLCamera::SLCamera(const SLstring& name)
   : SLNode(name),
     _movedLastFrame(false),
     _oldTouchPos1(0, 0),
     _oldTouchPos2(0, 0),
     _trackballSize(0.8f),
-    _moveDir(0, 0, 0),
     _drag(0.05f),
     _maxSpeed(0.0f),
     _velocity(0.0f, 0.0f, 0.0f),
@@ -44,8 +51,8 @@ SLCamera::SLCamera(const SLstring& name,
     _fogColor(SLCol4f::GRAY),
     _fogColorIsBack(true),
     _viewport(0, 0, 640, 480),
-    _background(SLGLProgramManager::get(textureOnlyProgramId),
-                SLGLProgramManager::get(colorAttributeProgramId)),
+    _background(SLGLProgramManager::get(SP_textureOnly),
+                SLGLProgramManager::get(SP_colorAttribute)),
     _onCamUpdateCB(nullptr)
 {
     _fovInit       = 0;
@@ -66,6 +73,18 @@ SLCamera::SLCamera(const SLstring& name,
     _background.colors(SLCol4f(0.6f, 0.6f, 0.6f), SLCol4f(0.3f, 0.3f, 0.3f));
 
     _enucorrRenu.identity();
+
+    // Set the state of all movement keys to released.
+    _keyStates['W']             = false;
+    _keyStates['A']             = false;
+    _keyStates['S']             = false;
+    _keyStates['D']             = false;
+    _keyStates['Q']             = false;
+    _keyStates['E']             = false;
+    _keyStates[(SLchar)K_up]    = false;
+    _keyStates[(SLchar)K_down]  = false;
+    _keyStates[(SLchar)K_right] = false;
+    _keyStates[(SLchar)K_left]  = false;
 }
 //-----------------------------------------------------------------------------
 SLCamera::~SLCamera()
@@ -82,7 +101,15 @@ SLbool SLCamera::camUpdate(SLSceneView* sv, SLfloat elapsedTimeMS)
     if (_onCamUpdateCB)
         _onCamUpdateCB(sv);
 
-    if (_velocity == SLVec3f::ZERO && _moveDir == SLVec3f::ZERO)
+    SLVec3f moveDir(0, 0, 0);
+    if (_keyStates['W'] || _keyStates[(SLchar)K_up]) moveDir.z -= 1.0;
+    if (_keyStates['A'] || _keyStates[(SLchar)K_left]) moveDir.x -= 1.0;
+    if (_keyStates['S'] || _keyStates[(SLchar)K_down]) moveDir.z += 1.0;
+    if (_keyStates['D'] || _keyStates[(SLchar)K_right]) moveDir.x += 1.0;
+    if (_keyStates['Q']) moveDir.y -= 1.0;
+    if (_keyStates['E']) moveDir.y += 1.0;
+
+    if (_velocity == SLVec3f::ZERO && moveDir == SLVec3f::ZERO)
     {
         return false;
     }
@@ -96,7 +123,7 @@ SLbool SLCamera::camUpdate(SLSceneView* sv, SLfloat elapsedTimeMS)
     SLfloat dtS = elapsedTimeMS * 0.001f;
 
     SLbool braking = false;
-    if (_moveDir != SLVec3f::ZERO)
+    if (moveDir != SLVec3f::ZERO)
     {
         // x and z movement direction vector should be projected on the x,z plane while
         // but still in local space
@@ -109,8 +136,8 @@ SLbool SLCamera::camUpdate(SLSceneView* sv, SLfloat elapsedTimeMS)
         r.y       = 0;
         r.normalize();
 
-        _acceleration   = f * -_moveDir.z + r * _moveDir.x;
-        _acceleration.y = _moveDir.y;
+        _acceleration   = f * -moveDir.z + r * moveDir.x;
+        _acceleration.y = moveDir.y;
         _acceleration.normalize();
         _acceleration *= _moveAccel;
 
@@ -1400,16 +1427,18 @@ SLbool SLCamera::onKeyPress(const SLKey key, const SLKey mod)
     // Keep in sync with SLDemoGui::buildMenuBar
     switch ((SLchar)key)
     {
-        case 'W': _moveDir.z -= 1.0f; return true;
-        case 'A': _moveDir.x -= 1.0f; return true;
-        case 'S': _moveDir.z += 1.0f; return true;
-        case 'D': _moveDir.x += 1.0f; return true;
-        case 'Q': _moveDir.y -= 1.0f; return true;
-        case 'E': _moveDir.y += 1.0f; return true;
-        case (SLchar)K_up: _moveDir.z -= 1.0f; return true;
-        case (SLchar)K_down: _moveDir.z += 1.0f; return true;
-        case (SLchar)K_right: _moveDir.x += 1.0f; return true;
-        case (SLchar)K_left: _moveDir.x -= 1.0f; return true;
+        case 'W':
+        case 'A':
+        case 'S':
+        case 'D':
+        case 'Q':
+        case 'E':
+        case (SLchar)K_up:
+        case (SLchar)K_down:
+        case (SLchar)K_right:
+        case (SLchar)K_left:
+            _keyStates[(SLchar)key] = true;
+            return true;
 
         // View setting as in standard Blender
         case '1':
@@ -1442,16 +1471,18 @@ SLbool SLCamera::onKeyRelease(const SLKey key, const SLKey mod)
 {
     switch ((SLchar)key)
     {
-        case 'D': _moveDir.x -= 1.0f; return true;
-        case 'A': _moveDir.x += 1.0f; return true;
-        case 'Q': _moveDir.y += 1.0f; return true;
-        case 'E': _moveDir.y -= 1.0f; return true;
-        case 'S': _moveDir.z -= 1.0f; return true;
-        case 'W': _moveDir.z += 1.0f; return true;
-        case (SLchar)K_up: _moveDir.z += 1.0f; return true;
-        case (SLchar)K_down: _moveDir.z -= 1.0f; return true;
-        case (SLchar)K_right: _moveDir.x -= 1.0f; return true;
-        case (SLchar)K_left: _moveDir.x += 1.0f; return true;
+        case 'W':
+        case 'A':
+        case 'S':
+        case 'D':
+        case 'Q':
+        case 'E':
+        case (SLchar)K_up:
+        case (SLchar)K_down:
+        case (SLchar)K_right:
+        case (SLchar)K_left:
+            _keyStates[(SLchar)key] = false;
+            return true;
     }
 
     return false;

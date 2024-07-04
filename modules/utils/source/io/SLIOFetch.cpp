@@ -1,21 +1,25 @@
-//#############################################################################
-//  File:      SLIOFetch.cpp
-//  Date:      October 2022
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marino von Wattenwyl
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLIOFetch.cpp
+ * \date      October 2022
+ * \authors   Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLIOFetch.h>
 
 #ifdef SL_STORAGE_WEB
 //-----------------------------------------------------------------------------
 #    include <emscripten/fetch.h>
+#    include <pthread.h>
+#    include <cassert>
 #    include <iostream>
 //-----------------------------------------------------------------------------
 bool SLIOReaderFetch::exists(std::string url)
 {
+    assert(pthread_self() != 0 && "Fetching is not allowed on the main thread");
+
     emscripten_fetch_attr_t attr;
     emscripten_fetch_attr_init(&attr);
     std::strcpy(attr.requestMethod, "HEAD");
@@ -23,13 +27,14 @@ bool SLIOReaderFetch::exists(std::string url)
     emscripten_fetch_t* fetch  = emscripten_fetch(&attr, url.c_str());
     bool                exists = fetch->status == 200;
     emscripten_fetch_close(fetch);
+
     return exists;
 }
 //-----------------------------------------------------------------------------
 SLIOReaderFetch::SLIOReaderFetch(std::string url)
   : SLIOReaderMemory(url)
 {
-    Utils::showSpinnerMsg(url);
+    assert(pthread_self() != 0 && "Fetching is not allowed on the main thread");
 
     std::cout << "FETCH \"" << url << "\"" << std::endl;
 
@@ -49,7 +54,6 @@ SLIOReaderFetch::SLIOReaderFetch(std::string url)
     }
 
     emscripten_fetch_close(fetch);
-    Utils::hideSpinnerMsg();
 }
 //-----------------------------------------------------------------------------
 SLIOReaderFetch::~SLIOReaderFetch()

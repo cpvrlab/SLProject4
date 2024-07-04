@@ -1,10 +1,11 @@
-//#############################################################################
-//  File:      SLRaytracer.h
-//  Date:      July 2014
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLRaytracer.h
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLRAYTRACER_H
 #define SLRAYTRACER_H
@@ -131,6 +132,9 @@ public:
     virtual void saveImage();
 
 protected:
+    function<void(bool, SLuint)> renderSlicesAsync;
+    function<void(bool, SLuint)> sampleAAPixelsAsync; 
+
     SLSceneView* _sv;               //!< Parent sceneview
     SLRTState    _state;            //!< RT state;
     SLCamera*    _cam;              //!< shortcut to the camera
@@ -144,9 +148,9 @@ protected:
     AvgFloat     _raysPerMS;        //!< Averaged rays per ms
 
     SLfloat  _pxSize;               //!< Pixel size
-    SLVec3f  _EYE;                  //!< Camera position
-    SLVec3f  _LA, _LU, _LR;         //!< Camera lookat, lookup, lookright
-    SLVec3f  _BL;                   //!< Bottom left vector
+    SLVec3f  _eye;                  //!< Camera position
+    SLVec3f  _la, _lu, _lr;         //!< Camera lookat, lookup, lookright
+    SLVec3f  _bl;                   //!< Bottom left vector
     SLint    _nextLine;             //!< next line index to render RT in a thread
     SLVPixel _aaPixels;             //!< Vector for antialiasing pixels
     SLfloat  _gamma;                //!< gamma correction value

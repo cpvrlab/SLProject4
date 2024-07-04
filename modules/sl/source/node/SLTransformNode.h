@@ -1,12 +1,12 @@
-//#############################################################################
-//  File:      SLTransformNode.h
-//  Authors:   Jan Dellsperger
-//  Date:      July 2016
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Jan Dellsperger
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLTransformNode.h
+ * \authors   Jan Dellsperger
+ * \date      July 2016
+ * \authors   Jan Dellsperger
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SL_TRANSFORMATION_NODE_H
 #define SL_TRANSFORMATION_NODE_H
@@ -61,29 +61,28 @@ private:
 
     SLNodeEditMode _editMode;
 
-    SLGLProgram* _prog  = nullptr;
-    SLMaterial*  _matR  = nullptr;
-    SLMaterial*  _matG  = nullptr;
-    SLMaterial*  _matB  = nullptr;
-    SLMaterial*  _matY  = nullptr;
-    SLMaterial*  _matRT = nullptr;
-    SLMaterial*  _matGT = nullptr;
-    SLMaterial*  _matBT = nullptr;
-    SLMaterial*  _matYT = nullptr;
-    SLMesh*      _axisR = nullptr;
-    SLMesh*      _axisG = nullptr;
-    SLMesh*      _axisB = nullptr;
-    SLMesh*      _lineR = nullptr;
-    SLMesh*      _lineG = nullptr;
-    SLMesh*      _lineB = nullptr;
-    SLMesh*      _circR = nullptr;
-    SLMesh*      _circG = nullptr;
-    SLMesh*      _circB = nullptr;
-    SLMesh*      _circY = nullptr;
-    SLMesh*      _diskR = nullptr;
-    SLMesh*      _diskG = nullptr;
-    SLMesh*      _diskB = nullptr;
-    SLMesh*      _diskY = nullptr;
+    SLMaterial* _matR  = nullptr;
+    SLMaterial* _matG  = nullptr;
+    SLMaterial* _matB  = nullptr;
+    SLMaterial* _matY  = nullptr;
+    SLMaterial* _matRT = nullptr;
+    SLMaterial* _matGT = nullptr;
+    SLMaterial* _matBT = nullptr;
+    SLMaterial* _matYT = nullptr;
+    SLMesh*     _axisR = nullptr;
+    SLMesh*     _axisG = nullptr;
+    SLMesh*     _axisB = nullptr;
+    SLMesh*     _lineR = nullptr;
+    SLMesh*     _lineG = nullptr;
+    SLMesh*     _lineB = nullptr;
+    SLMesh*     _circR = nullptr;
+    SLMesh*     _circG = nullptr;
+    SLMesh*     _circB = nullptr;
+    SLMesh*     _circY = nullptr;
+    SLMesh*     _diskR = nullptr;
+    SLMesh*     _diskG = nullptr;
+    SLMesh*     _diskB = nullptr;
+    SLMesh*     _diskY = nullptr;
 
     bool    _mouseIsDown;
     float   _gizmoScale;

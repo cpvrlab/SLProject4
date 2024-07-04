@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      Globals/SL/SLUtils.cs
-//  Purpose:   General utility functions not found anywhere else
-//  Date:      February 2014
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      Globals/SL/SLUtils.cs
+ * \brief     General utility functions not found anywhere else
+ * \date      February 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 using System;
 using System.Drawing;

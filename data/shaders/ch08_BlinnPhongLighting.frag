@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      ch08_BlinnPhongLighting.frag
-//  Purpose:   GLSL fragment shader for per pixel Blinn-Phong lighting
-//  Date:      July 2014
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      ch08_BlinnPhongLighting.frag
+ * \brief     GLSL fragment shader for per pixel Blinn-Phong lighting
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

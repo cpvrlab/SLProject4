@@ -148,7 +148,7 @@ int Bezier(const char* label, float P[5], float StaEnd[4]) {
 
   const ImGuiID id = Window->GetID(label);
   hovered |=
-      0 != ItemHoverable(ImRect(bb.Min, bb.Min + ImVec2(avail, dim)), id);
+      0 != ItemHoverable(ImRect(bb.Min, bb.Min + ImVec2(avail, dim)), id, ImGuiItemFlags_AllowOverlap);
 
   RenderFrame(bb.Min, bb.Max, GetColorU32(ImGuiCol_FrameBg, 1), true,
               Style.FrameRounding);

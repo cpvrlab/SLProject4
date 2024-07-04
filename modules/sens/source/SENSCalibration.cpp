@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SENSCalibration.cpp
-//  Authors:   Michael Goettlicher, Marcus Hudritsch
-//  Date:      Winter 2016
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  License:   This software is provide under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SENSCalibration.cpp
+ * \authors   Michael Goettlicher, Marcus Hudritsch
+ * \date      Winter 2016
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ */
 
 #include <SENSCalibration.h>
 #include <Utils.h>
@@ -368,10 +368,15 @@ void SENSCalibration::buildUndistortionMaps()
                                 CV_16SC2, //before we had CV_32FC1 but in all tutorials they use CV_16SC2.. is there a reason?
                                 _undistortMapX,
                                 _undistortMapY);
-    Utils::log("SENSCalibration", "initUndistortRectifyMap: %fms", t.elapsedTimeInMilliSec());
+    Utils::logDebug("SLProject",
+                    "initUndistortRectifyMap: %fms",
+                    t.elapsedTimeInMilliSec());
 
     if (_undistortMapX.empty() || _undistortMapY.empty())
-        Utils::exitMsg("SLProject", "SENSCalibration::buildUndistortionMaps failed.", __LINE__, __FILE__);
+        Utils::exitMsg("SLProject",
+                       "SENSCalibration::buildUndistortionMaps failed.",
+                       __LINE__,
+                       __FILE__);
 }
 //-----------------------------------------------------------------------------
 //! Undistorts the inDistorted image into the outUndistorted

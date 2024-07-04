@@ -1,13 +1,13 @@
-//#############################################################################
-//  File:      ImGuiWrapper.cpp
-//  Purpose:   Wrapper Class around the external ImGui GUI-framework
+/**
+ * \file      ImGuiWrapper.cpp
+ * \brief   Wrapper Class around the external ImGui GUI-framework
 //             See also: https://github.com/ocornut/imgui
-//  Date:      October 2015
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+ * \date      October 2015
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef IMGUIWRAPPER_H
 #define IMGUIWRAPPER_H
@@ -228,19 +228,19 @@ SLSceneView the according callback in ImGui is called.\n
 There is no UI drawn with this class. It must be defined in another class
 that provides the build function. For the Demo apps this is done in the class
 SLDemoGui and the build function is passed e.g. in glfwMain function of the
-app-Demo-SLProject project.\n
+app-demo project.\n
 \n
 The full call stack for rendering one frame is:\n
 - The top-level onPaint of the app (Win, Linux, MacOS, Android or iOS)
   - slUpdateAndPaint: C-Interface function of SLProject
     - SLSceneView::onPaint: Main onPaint function of a sceneview
-      - SLGLImGui::onInitNewFrame: Initializes a new GUI frame
+      - SLImGui::newFrame: Initializes a new GUI frame
         - ImGui::NewFrame()
-        - SLGLImGui::build: The UI build function
+        - SLImGui::build: The UI build function
       - ... normal scene rendering of SLProject
       - SLSceneView::draw2DGL:
         - ImGui::Render
-          - SLGLImGui::onPaint(ImGui::GetDrawData())
+          - SLImGui::render(ImGui::GetDrawData())
           - SLDemoGui::buildDemoGui: Builds the full UI
 */
 

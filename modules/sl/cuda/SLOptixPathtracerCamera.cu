@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      SLOptixPathtracerCamera.cu
-//  Purpose:   CUDA Shader file used in Optix Tracing
-//  Date:      October 2019
-//  Authors:   Nic Dorner, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLOptixPathtracerCamera.cu
+ * \brief     CUDA Shader file used in Optix Tracing
+ * \date      October 2019
+ * \authors   Nic Dorner, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <SLOptixDefinitions.h>
 #include <SLOptixHelper.h>

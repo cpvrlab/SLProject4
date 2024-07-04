@@ -1,12 +1,16 @@
-//#############################################################################
-//  File:      sl/SLInterface.h
-//  Purpose:   Declaration of the main Scene Library C-Interface.
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLInterface.h
+ * \brief     Declaration of the main Scene Library C-Interface.
+ * \details   For more info on how to create a new app with SLProject see:
+ *            https://github.com/cpvrlab/SLProject4/wiki/Creating-a-New-App
+ *            For more info about App framework see: 
+ *            https://cpvrlab.github.io/SLProject4/app-framework.html
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLINTERFACE_H
 #define SLINTERFACE_H
@@ -19,31 +23,16 @@ class SLScene;
 class SLSceneView;
 class SLInputManager;
 
-//! \file SLInterface.h SLProject C-functions interface declaration.
-/*! \file SLInterface.h
-The SLInterface.h has all declarations of the SLProject C-Interface.
-Only these functions should called by the OS-dependent GUI applications.
-These functions can be called from any C, C++ or ObjectiveC GUI framework or
-by a native API such as Java Native Interface (JNI).
-See the implementation for more information.<br>
- <br>
- See examples usages in:
- - app_demo_slproject/glfw:    in AppDemoMainGLFW.cpp
- - app-Demo-SLProject/android: in AppDemoAndroidJNI.cpp
- - app_demo_slproject/ios:     in ViewController.m
- <br>
-*/
 //-----------------------------------------------------------------------------
-void slCreateAppAndScene(SLVstring&      cmdLineArgs,
-                         const SLstring& dataPath,
-                         const SLstring& shaderPath,
-                         const SLstring& modelPath,
-                         const SLstring& texturePath,
-                         const SLstring& fontPath,
-                         const SLstring& videoPath,
-                         const SLstring& configPath,
-                         const SLstring& applicationName,
-                         void*           onSceneLoadCallback = nullptr);
+void slCreateApp(SLVstring&      cmdLineArgs,
+                 const SLstring& dataPath,
+                 const SLstring& shaderPath,
+                 const SLstring& modelPath,
+                 const SLstring& texturePath,
+                 const SLstring& fontPath,
+                 const SLstring& videoPath,
+                 const SLstring& configPath,
+                 const SLstring& applicationName);
 //-----------------------------------------------------------------------------
 SLint slCreateSceneView(SLAssetManager* am,
                         SLScene*        scene,
@@ -57,6 +46,10 @@ SLint slCreateSceneView(SLAssetManager* am,
                         void*           onImGuiBuild             = nullptr,
                         void*           onImGuiLoadConfig        = nullptr,
                         void*           onImGuiSaveConfig        = nullptr);
+//-----------------------------------------------------------------------------
+void slLoadCoreAssetsSync();
+void slLoadCoreAssetsAsync();
+void slSwitchScene(SLSceneView* sv, SLSceneID sceneID);
 //-----------------------------------------------------------------------------
 SLSceneView* slNewSceneView(SLScene* s, int dotsPerInch, SLInputManager& inputManager);
 bool         slShouldClose();

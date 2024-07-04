@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLFrustum.cpp
-//  Authors:   Luc Girod, Marcus Hudritsch
-//  Date:      Summer 2021
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Licesne:   This software is provide under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLFrustum.cpp
+ * \authors   Luc Girod, Marcus Hudritsch
+ * \date      Summer 2021
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <vector>
 #include <SLPlane.h>
@@ -17,9 +17,9 @@
  * Calculates the coefficients of the 6 frustum planes from the passed
  * projection and view matrices. See the paper from Gribb and Hartmann:
  * https://www.gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf
- * @param planes Pointer to an array of 6 SLPlanes (L R T B N F)
- * @param projectionMat 4x4 projection matrix
- * @param viewMat 4x4 view matrix
+ * \param planes Pointer to an array of 6 SLPlanes (L R T B N F)
+ * \param projectionMat 4x4 projection matrix
+ * \param viewMat 4x4 view matrix
  */
 void SLFrustum::viewToFrustumPlanes(SLPlane*       planes,
                                     const SLMat4f& projectionMat,
@@ -36,8 +36,8 @@ void SLFrustum::viewToFrustumPlanes(SLPlane*       planes,
  * Calculates the coefficients of the 6 frustum planes from the passed
  * matrix A. See the paper from Gribb and Hartmann:
  * https://www.gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf
- * @param planes Pointer to an array of 6 SLPlanes (L R T B N F)
- * @param A The projection matrix
+ * \param planes Pointer to an array of 6 SLPlanes (L R T B N F)
+ * \param A The projection matrix
  */
 void SLFrustum::viewToFrustumPlanes(SLPlane* planes, const SLMat4f& A)
 {

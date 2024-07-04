@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      ZipUtils.cpp
-//  Authors:   Luc Girod
-//  Date:      2020
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      ZipUtils.cpp
+ * \authors   Luc Girod
+ * \date      2020
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <cstring>
 #include <string>
@@ -20,9 +20,9 @@ namespace ZipUtils
 //-----------------------------------------------------------------------------
 /*!
  *
- * @param zfile ???
- * @param dirname ???
- * @return ???
+ * \param zfile ???
+ * \param dirname ???
+ * \return ???
  */
 static bool zip_add_dir(zipFile zfile, string dirname)
 {
@@ -68,11 +68,11 @@ static bool zip_add_dir(zipFile zfile, string dirname)
 //-----------------------------------------------------------------------------
 /*!
  *
- * @param zfile ???
- * @param fs ???
- * @param filename ???
- * @param zipPath ???
- * @return ???
+ * \param zfile ???
+ * \param fs ???
+ * \param filename ???
+ * \param zipPath ???
+ * \return ???
  */
 static bool zip_add_file(zipFile        zfile,
                          std::ifstream& fs,
@@ -117,10 +117,10 @@ static bool zip_add_file(zipFile        zfile,
 //-----------------------------------------------------------------------------
 /*!
  *
- * @param zfile ???
- * @param filepath ???
- * @param zipPath ???
- * @return ???
+ * \param zfile ???
+ * \param filepath ???
+ * \param zipPath ???
+ * \return ???
  */
 static bool zip_add_file(zipFile zfile,
                          string  filepath,
@@ -248,9 +248,9 @@ bool unzip(string                                         zipfile,
 //-----------------------------------------------------------------------------
 /*!
  *
- * @param path ???
- * @param zipname ???
- * @return ???
+ * \param path ???
+ * \param zipname ???
+ * \return ???
  */
 bool zip(string path, string zipname)
 {

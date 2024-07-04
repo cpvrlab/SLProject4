@@ -1,11 +1,11 @@
-//#############################################################################
-//   File:      SLGLTexture.cpp
-//   Date:      July 2014
-//   Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//   Authors:   Marcus Hudritsch
-//   License:   This software is provided under the GNU General Public License
-//              Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLGLTexture.cpp
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ */
 
 #include <SLGLState.h>
 #include <SLGLTexture.h>
@@ -113,18 +113,18 @@ SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
  * Textures can be used in multiple materials. Textures can belong therefore
  * to the global assets such as meshes (SLMesh), materials (SLMaterial),
  * textures (SLGLTexture) and shader programs (SLGLProgram).
- * @param assetMgr Pointer to a global asset manager. If passed the asset
+ * \param assetMgr Pointer to a global asset manager. If passed the asset
  * manager is the owner of the instance and will do the deallocation. If a
  * nullptr is passed the creator is responsible for the deallocation.
- * @param data Data pointer to the first top-left pixel
- * @param width Width of the image in pixels
- * @param height Height of the image in pixels
- * @param cvtype OpenCV image type
- * @param min_filter Minification filter constant from OpenGL
- * @param mag_filter Magnification filter constant from OpenGL
- * @param type Type of the texture
- * @param wrapS Texture wrapping in S direction (OpenGL constant)
- * @param wrapT Texture wrapping in T direction (OpenGL constant)
+ * \param data Data pointer to the first top-left pixel
+ * \param width Width of the image in pixels
+ * \param height Height of the image in pixels
+ * \param cvtype OpenCV image type
+ * \param min_filter Minification filter constant from OpenGL
+ * \param mag_filter Magnification filter constant from OpenGL
+ * \param type Type of the texture
+ * \param wrapS Texture wrapping in S direction (OpenGL constant)
+ * \param wrapT Texture wrapping in T direction (OpenGL constant)
  */
 SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
                          unsigned char*  data,
@@ -172,16 +172,16 @@ SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
  * Textures can be used in multiple materials. Textures can belong therefore
  * to the global assets such as meshes (SLMesh), materials (SLMaterial),
  * textures (SLGLTexture) and shader programs (SLGLProgram).
- * @param assetMgr Pointer to a global asset manager. If passed the asset
+ * \param assetMgr Pointer to a global asset manager. If passed the asset
  * manager is the owner of the instance and will do the deallocation. If a
  * nullptr is passed the creator is responsible for the deallocation.
- * @param filename Name of the texture image file. If only a filename is
+ * \param filename Name of the texture image file. If only a filename is
  * passed it will be search on the SLGLTexture::defaultPath.
- * @param min_filter Minification filter constant from OpenGL
- * @param mag_filter Magnification filter constant from OpenGL
- * @param type Type of the texture
- * @param wrapS Texture wrapping in S direction (OpenGL constant)
- * @param wrapT Texture wrapping in T direction (OpenGL constant)
+ * \param min_filter Minification filter constant from OpenGL
+ * \param mag_filter Magnification filter constant from OpenGL
+ * \param type Type of the texture
+ * \param wrapS Texture wrapping in S direction (OpenGL constant)
+ * \param wrapT Texture wrapping in T direction (OpenGL constant)
  */
 SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
                          const SLstring& filename,
@@ -246,17 +246,17 @@ SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
  * Textures can be used in multiple materials. Textures can belong therefore
  * to the global assets such as meshes (SLMesh), materials (SLMaterial),
  * textures (SLGLTexture) and shader programs (SLGLProgram).
- * @param assetMgr Pointer to a global asset manager. If passed the asset
+ * \param assetMgr Pointer to a global asset manager. If passed the asset
  * manager is the owner of the instance and will do the deallocation. If a
  * nullptr is passed the creator is responsible for the deallocation.
- * @param files Vector of texture image files. If only filenames are
+ * \param files Vector of texture image files. If only filenames are
  * passed they will be searched on the SLGLTexture::defaultPath.
- * @param min_filter Minification filter constant from OpenGL
- * @param mag_filter Magnification filter constant from OpenGL
- * @param wrapS Texture wrapping in S direction (OpenGL constant)
- * @param wrapT Texture wrapping in T direction (OpenGL constant)
- * @param name Name of the 3D texture
- * @param loadGrayscaleIntoAlpha Flag if grayscale image should be loaded into
+ * \param min_filter Minification filter constant from OpenGL
+ * \param mag_filter Magnification filter constant from OpenGL
+ * \param wrapS Texture wrapping in S direction (OpenGL constant)
+ * \param wrapT Texture wrapping in T direction (OpenGL constant)
+ * \param name Name of the 3D texture
+ * \param loadGrayscaleIntoAlpha Flag if grayscale image should be loaded into
  * alpha channel.
  */
 SLGLTexture::SLGLTexture(SLAssetManager*  assetMgr,
@@ -312,18 +312,18 @@ SLGLTexture::SLGLTexture(SLAssetManager*  assetMgr,
  * Textures can be used in multiple materials. Textures can belong therefore
  * to the global assets such as meshes (SLMesh), materials (SLMaterial),
  * textures (SLGLTexture) and shader programs (SLGLProgram).
- * @param assetMgr Pointer to a global asset manager. If passed the asset
+ * \param assetMgr Pointer to a global asset manager. If passed the asset
  * manager is the owner of the instance and will do the deallocation. If a
  * nullptr is passed the creator is responsible for the deallocation.
- * @param depth Depth of 3D texture.
- * @param filename texture image file. If only filenames are
+ * \param depth Depth of 3D texture.
+ * \param filename texture image file. If only filenames are
  * passed they will be searched on the SLGLTexture::defaultPath.
- * @param min_filter Minification filter constant from OpenGL
- * @param mag_filter Magnification filter constant from OpenGL
- * @param wrapS Texture wrapping in S direction (OpenGL constant)
- * @param wrapT Texture wrapping in T direction (OpenGL constant)
- * @param name Name of the 3D texture
- * @param loadGrayscaleIntoAlpha Flag if grayscale image should be loaded into
+ * \param min_filter Minification filter constant from OpenGL
+ * \param mag_filter Magnification filter constant from OpenGL
+ * \param wrapS Texture wrapping in S direction (OpenGL constant)
+ * \param wrapT Texture wrapping in T direction (OpenGL constant)
+ * \param name Name of the 3D texture
+ * \param loadGrayscaleIntoAlpha Flag if grayscale image should be loaded into
  * alpha channel.
  */
 SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
@@ -380,14 +380,14 @@ SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
  * Textures can be used in multiple materials. Textures can belong therefore
  * to the global assets such as meshes (SLMesh), materials (SLMaterial),
  * textures (SLGLTexture) and shader programs (SLGLProgram).
- * @param assetMgr Pointer to a global asset manager. If passed the asset
+ * \param assetMgr Pointer to a global asset manager. If passed the asset
  * manager is the owner of the instance and will do the deallocation. If a
  * nullptr is passed the creator is responsible for the deallocation.
- * @param colors Vector of colors
- * @param min_filter Minification filter constant from OpenGL
- * @param mag_filter Magnification filter constant from OpenGL
- * @param wrapS Texture wrapping in S direction (OpenGL constant)
- * @param name Name of the 1D texture
+ * \param colors Vector of colors
+ * \param min_filter Minification filter constant from OpenGL
+ * \param mag_filter Magnification filter constant from OpenGL
+ * \param wrapS Texture wrapping in S direction (OpenGL constant)
+ * \param name Name of the 1D texture
  */
 SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
                          const SLVCol4f& colors,
@@ -442,18 +442,18 @@ SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
  * Textures can be used in multiple materials. Textures can belong therefore
  * to the global assets such as meshes (SLMesh), materials (SLMaterial),
  * textures (SLGLTexture) and shader programs (SLGLProgram).
- * @param assetMgr Pointer to a global asset manager. If passed the asset
+ * \param assetMgr Pointer to a global asset manager. If passed the asset
  * manager is the owner of the instance and will do the deallocation. If a
  * nullptr is passed the creator is responsible for the deallocation.
- * @param filenameXPos Filename of the cubemap image in the pos. X direction.
- * @param filenameXNeg Filename of the cubemap image in the neg. X direction.
- * @param filenameYPos Filename of the cubemap image in the pos. Y direction.
- * @param filenameYNeg Filename of the cubemap image in the neg. Y direction.
- * @param filenameZPos Filename of the cubemap image in the pos. Z direction.
- * @param filenameZNeg Filename of the cubemap image in the neg. Z direction.
- * @param min_filter Minification filter constant from OpenGL
- * @param mag_filter Magnification filter constant from OpenGL
- * @param type Texture Type
+ * \param filenameXPos Filename of the cubemap image in the pos. X direction.
+ * \param filenameXNeg Filename of the cubemap image in the neg. X direction.
+ * \param filenameYPos Filename of the cubemap image in the pos. Y direction.
+ * \param filenameYNeg Filename of the cubemap image in the neg. Y direction.
+ * \param filenameZPos Filename of the cubemap image in the pos. Z direction.
+ * \param filenameZNeg Filename of the cubemap image in the neg. Z direction.
+ * \param min_filter Minification filter constant from OpenGL
+ * \param mag_filter Magnification filter constant from OpenGL
+ * \param type Texture Type
  */
 SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
                          const SLstring& filenameXPos,
@@ -521,17 +521,20 @@ SLGLTexture::SLGLTexture(SLAssetManager* assetMgr,
 SLGLTexture::~SLGLTexture()
 {
     // SL_LOG("~SLGLTexture(%s)", name().c_str());
-    deleteData();
+    deleteData(true);
 }
 //-----------------------------------------------------------------------------
 //! Delete all data (CVImages and GPU textures)
-void SLGLTexture::deleteData()
+void SLGLTexture::deleteData(SLbool deleteAlsoOnGPU)
 {
     deleteImages();
-    deleteDataGpu();
+
+    // Delete date on GPU only from the main thread where OpenGL calls are allowed
+    if (deleteAlsoOnGPU)
+        deleteDataGpu();
 
 #ifdef SL_BUILD_WITH_KTX
-    if (_ktxTexture)
+    if (deleteAlsoOnGPU && _ktxTexture)
         ktxTexture_Destroy((ktxTexture*)_ktxTexture);
 #endif
 
@@ -556,6 +559,8 @@ void SLGLTexture::deleteImages()
 }
 //-----------------------------------------------------------------------------
 //! Deletes the OpenGL texture objects and releases the memory on the GPU
+/*! Call this function only from the main thread where OpenGL calls are allowed
+ */
 void SLGLTexture::deleteDataGpu()
 {
     glDeleteTextures(1, &_texID);
@@ -634,7 +639,7 @@ void SLGLTexture::load(const SLstring& filename,
             // the available compression extensions to pick the right format.
             if (SLGLState::instance()->hasExtension("WEBGL_compressed_texture_s3tc"))
                 _compressionFormat = KTX_TTF_BC3_RGBA;
-            if (SLGLState::instance()->hasExtension("WEBGL_compressed_texture_etc"))
+            else if (SLGLState::instance()->hasExtension("WEBGL_compressed_texture_etc"))
                 _compressionFormat = KTX_TTF_ETC2_RGBA;
             else
                 SL_EXIT_MSG("No valid compression format found for this WebGL context");
@@ -732,12 +737,7 @@ SLbool SLGLTexture::copyVideoImage(SLint           camWidth,
     _wrap_t = GL_CLAMP_TO_EDGE;
 
     if (needsBuild || _texID == 0)
-    {
-        SL_LOG("SLGLTexture::copyVideoImage: Rebuild: %d, %s",
-               _texID,
-               _images[0]->name().c_str());
         build(0);
-    }
 
     _needsUpdate = true;
     return needsBuild;
@@ -781,12 +781,7 @@ SLbool SLGLTexture::copyVideoImage(SLint           camWidth,
     _wrap_t = GL_CLAMP_TO_EDGE;
 
     if (needsBuild || _texID == 0)
-    {
-        SL_LOG("SLGLTexture::copyVideoImage: Rebuild: %d, %s",
-               _texID,
-               _images[0]->name().c_str());
         build(0);
-    }
 
     _needsUpdate = true;
     return needsBuild;
@@ -1297,7 +1292,7 @@ void SLGLTexture::drawSprite(SLbool doUpdate, SLfloat x, SLfloat y, SLfloat w, S
         // Indexes for a triangle strip
         SLVushort I = {0, 1, 2, 3};
 
-        SLGLProgram* sp = SLGLProgramManager::get(SP_TextureOnly);
+        SLGLProgram* sp = SLGLProgramManager::get(SP_textureOnly);
         sp->useProgram();
         _vaoSprite.setAttrib(AT_position, AT_position, &P);
         _vaoSprite.setAttrib(AT_uv1, AT_uv1, &T);
@@ -1310,7 +1305,7 @@ void SLGLTexture::drawSprite(SLbool doUpdate, SLfloat x, SLfloat y, SLfloat w, S
 
     // Draw the character triangles
     SLGLState*   stateGL = SLGLState::instance();
-    SLGLProgram* sp      = SLGLProgramManager::get(SP_TextureOnly);
+    SLGLProgram* sp      = SLGLProgramManager::get(SP_textureOnly);
     sp->useProgram();
     sp->uniformMatrix4fv("u_mMatrix", 1, (SLfloat*)&stateGL->modelMatrix);
     sp->uniformMatrix4fv("u_vMatrix", 1, (SLfloat*)&stateGL->viewMatrix);
@@ -1615,7 +1610,8 @@ void SLGLTexture::calc3DGradients(SLint                      sampleRadius,
     // check that all images in depth have the same size
     for (auto img : _images)
         if ((SLint)img->width() != volX ||
-            (SLint)img->height() != volY || img->format() != PF_rgba)
+            (SLint)img->height() != volY ||
+            img->format() != PF_rgba)
             SL_EXIT_MSG("SLGLTexture::calc3DGradients: Not all images have the same size!");
 
     for (int z = r; z < volZ - r; ++z)
@@ -1649,8 +1645,11 @@ void SLGLTexture::calc3DGradients(SLint                      sampleRadius,
 
                 // Calculate progress in percent
                 cntVoxels++;
-                SLint progress = (SLint)((SLfloat)cntVoxels / (SLfloat)numVoxels * 100.0f);
-                onUpdateProgress(progress);
+                if (onUpdateProgress)
+                {
+                    SLint progress = (SLint)((SLfloat)cntVoxels / (SLfloat)numVoxels * 100.0f);
+                    onUpdateProgress(progress);
+                }
             }
         }
     }
@@ -1716,8 +1715,12 @@ void SLGLTexture::smooth3DGradients(SLint               smoothRadius,
 
                 // Calculate progress in percent
                 cntVoxels++;
-                SLint progress = (SLint)((SLfloat)cntVoxels / (SLfloat)numVoxels * 100.0f);
-                onUpdateProgress(progress);
+
+                if (onUpdateProgress)
+                {
+                    SLint progress = (SLint)((SLfloat)cntVoxels / (SLfloat)numVoxels * 100.0f);
+                    onUpdateProgress(progress);
+                }
             }
         }
     }

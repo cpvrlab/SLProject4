@@ -1,12 +1,11 @@
-//#############################################################################
-//  File:      ch09_TextureMapping.frag
-//  Purpose:   GLSL fragment program for simple ADS per vertex lighting with
+/**
+ * \file      ch09_TextureMapping.frag
+ * \brief     GLSL fragment program for simple ADS per vertex lighting with
 //             texture mapping
-//  Authors:   Marcus Hudritsch
-//  Date:      September 2011 (HS11)
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+ * \authors   Marcus Hudritsch
+ * \date      September 2011 (HS11)
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #ifdef GL_ES
 precision highp float;

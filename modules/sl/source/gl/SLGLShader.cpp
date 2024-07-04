@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLGLShader.cpp
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLGLShader.cpp
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <Utils.h>
 #include <SLGLState.h>
@@ -34,8 +34,8 @@ SLGLShader::SLGLShader()
 //! Ctor with shader filename & shader type
 /*! If the shader filename does not belong to an existing file the shader code
  * will be generated at a later stage by SLGLProgramGenerated.
- * @param filename Path and filename of the shader to be loaded or generated.
- * @param shaderType Shader type: ST_vertex, ST_fragment and ST_geometry.
+ * \param filename Path and filename of the shader to be loaded or generated.
+ * \param shaderType Shader type: ST_vertex, ST_fragment and ST_geometry.
  */
 SLGLShader::SLGLShader(const SLstring& filename, SLShaderType shaderType)
   : SLObject(Utils::getFileName(filename), filename)
@@ -55,7 +55,11 @@ void SLGLShader::load(const SLstring& filename)
 {
     SLIOBuffer buffer = SLFileStorage::readIntoBuffer(filename, IOK_shader);
     _code             = SLstring(buffer.data, buffer.data + buffer.size);
-    SLFileStorage::deleteBuffer(buffer);
+    buffer.deallocate();
+
+    // Expand include pragmas. This has to be done here because we are not
+    // allowed to perform I/O later on when compiling the shader.
+    _code = preprocessIncludePragmas(_code);
 
     // remove comments because some stupid ARM compiler can't handle GLSL comments
     _code = removeComments(_code);
@@ -122,7 +126,7 @@ SLbool SLGLShader::createAndCompile(SLVLight* lights)
     if (state->glIsES3()) srcVersion += " es";
     srcVersion += "\n";
 
-    _code = preprocessPragmas(_code, lights);
+    _code = preprocessDefinePragmas(_code, lights);
 
     // Concatenate final code string
     _code = srcVersion + _code;
@@ -154,10 +158,11 @@ SLbool SLGLShader::createAndCompile(SLVLight* lights)
         return false;
     }
 
+#ifndef SL_EMSCRIPTEN
     // Write generated shader out
     if (!_file.empty())
     {
-#if defined(DEBUG) || defined(_DEBUG)
+#    if defined(DEBUG) || defined(_DEBUG)
         string filename = Utils::getFileName(_file);
         string path     = Utils::getDirName(_file);
         if (Utils::dirExists(path))
@@ -165,12 +170,12 @@ SLbool SLGLShader::createAndCompile(SLVLight* lights)
             if (Utils::containsString(path, "generatedShaders"))
             {
                 SLFileStorage::writeString(_file, IOK_shader, _code);
-                SL_LOG("Exported Shader Program: %s", filename.c_str());
+                SL_LOG("Exported Shader  : %s", filename.c_str());
             }
         }
         else
             SL_WARN_MSG("**** No path to write shader ***");
-#else
+#    else
         if (!SLFileStorage::exists(_file, IOK_shader))
         {
             string filename = Utils::getFileName(_file);
@@ -178,15 +183,16 @@ SLbool SLGLShader::createAndCompile(SLVLight* lights)
             if (Utils::dirExists(path))
             {
                 SLFileStorage::writeString(_file, IOK_shader, _code);
-                SL_LOG("Exported Shader Program: %s", filename.c_str());
+                SL_LOG("Exported Shader  : %s", filename.c_str());
             }
             else
                 SL_WARN_MSG("**** No path to write shader ***");
         }
-#endif
+#    endif
     }
     else
         SL_WARN_MSG("**** No shader path and filename for shader ***");
+#endif
 
     return true;
 }
@@ -244,8 +250,8 @@ SLstring SLGLShader::typeName()
     }
 }
 // ----------------------------------------------------------------------------
-//! Replaces our own pragma directives in GLSL code
-SLstring SLGLShader::preprocessPragmas(SLstring inCode, SLVLight* lights)
+//! Replaces our custom `pragma include` directives in GLSL code
+SLstring SLGLShader::preprocessIncludePragmas(SLstring inCode)
 {
     // Check first if #pragma exists at all
     size_t pragmaStart = inCode.find("#pragma");
@@ -287,7 +293,39 @@ SLstring SLGLShader::preprocessPragmas(SLstring inCode, SLVLight* lights)
                     outCode += line + '\n';
                 }
             }
-            else if (pragmaParts[1] == "define") //............................
+            else
+                outCode += line + '\n';
+        }
+    }
+    return outCode;
+}
+// ----------------------------------------------------------------------------
+//! Replaces our custom `pragma define` directives in GLSL code
+SLstring SLGLShader::preprocessDefinePragmas(SLstring inCode, SLVLight* lights)
+{
+    // Check first if #pragma exists at all
+    size_t pragmaStart = inCode.find("#pragma");
+    if (pragmaStart == string::npos)
+        return inCode;
+
+    SLVstring codeLines = Utils::getStringLines(inCode);
+
+    string outCode;
+
+    for (string& line : codeLines)
+    {
+        pragmaStart = line.find("#pragma");
+        if (pragmaStart == string::npos)
+            outCode += line + '\n';
+        else
+        {
+            SLVstring pragmaParts;
+            Utils::splitString(line, ' ', pragmaParts);
+
+            for (auto& part : pragmaParts)
+                part = Utils::trimString(part);
+
+            if (pragmaParts[1] == "define") //............................
             {
                 if (pragmaParts[2] == "NUM_LIGHTS")
                 {

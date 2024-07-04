@@ -1,10 +1,9 @@
-//#############################################################################
-//  File:      SLLens.cpp
-//  Date:      October 2014
-//  Authors:   Marcus Hudritsch, Philipp Jueni
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLLens.cpp
+ * \date      October 2014
+ * \authors   Marcus Hudritsch, Philipp Jueni
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <SLLens.h>
 #include <SLMaterial.h>
@@ -17,7 +16,7 @@ using std::endl;
 /*!
 SLLens::SLLens ctor for lens revolution object around the y-axis. <br>
 Create the lens with the eye prescription card.
-@image html https://pallas.ti.bfh.ch/slproject/images/EyePrescriptionCard.png
+@image html images/EyePrescriptionCard.png
 The first values in the prescription card is called Sphere. It is also the
 diopter of the front side of the lens. <br>
 The second value from the prescription card is called Cylinder. The sum from
@@ -25,7 +24,7 @@ the sphere and the cylinder is the diopter of the back side of the lens. <br>
 The diopter is the inverse of the focal distance (f) of the lens. <br>
 To correct myopic, negative diopters are used. <br>
 To correct presbyopic, positive diopters are used.<br>
-@image html https://pallas.ti.bfh.ch/slproject/images/Lens.png
+@image html images/Lens.png
 
 @param assetMgr Pointer to the asset manager
 @param sphere SLfloat taken from the eyeglass passport.
@@ -67,7 +66,7 @@ SLLens::SLLens ctor for lens revolution object around the y-axis. <br>
 Create the lens with radius.<br>
 To correct presbyopic (far-sightedness) a converging lens is needed.
 To correct myopic (short-sightedness) a diverging lens is needed.
-@image html https://pallas.ti.bfh.ch/slproject/images/Lens.png
+@image html images/Lens.png
 
 @param assetMgr Pointer to the asset manager
 @param radiusBot The radius of the front side of the lens
@@ -370,7 +369,7 @@ SLfloat SLLens::generateLensTop(SLfloat radius)
  See also: http://en.wikipedia.org/wiki/Sagitta_%28geometry%29
  @param radius r of the lens
  @return sagitta s of the lens
- @image html https://pallas.ti.bfh.ch/slproject/images/sagitta.png
+ @image html images/sagitta.png
 */
 SLfloat SLLens::calcSagitta(SLfloat radius)
 {

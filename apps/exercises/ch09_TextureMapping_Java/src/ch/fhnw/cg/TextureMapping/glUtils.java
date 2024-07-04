@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      glUtils.java
-//  Purpose:   General OpenGL utility functions for simple OpenGL demo apps
-//  Date:      September 2012 (HS12)
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      glUtils.java
+ * \brief     General OpenGL utility functions for simple OpenGL demo apps
+ * \date      September 2012 (HS12)
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 package ch.bfh.cpvrlab.TextureMapping;
 
@@ -23,7 +22,7 @@ import javax.media.opengl.GL2GL3;
 import com.sun.opengl.util.BufferUtil;
 
 /**
- * @author hudrima1
+ * \author hudrima1
  *
  */
 public class glUtils
@@ -33,8 +32,8 @@ public class glUtils
      * If the file can not be opened an error message is sent to System.out 
      * before the application exits with code 1.
      *  
-     * @param filename (Full path and name of a file that contains the shader code) 
-     * @return 	shader code as single string
+     * \param filename (Full path and name of a file that contains the shader code) 
+     * \return 	shader code as single string
      */
     public static String loadShader(String filename)
     {
@@ -59,10 +58,10 @@ public class glUtils
      * source code and returns the handle to the internal shader object. If the 
      * compilation fails the compiler log is sent to the System.out before the 
      * application exits with code 1.
-     * @param gl (OpenGL interface)
-     * @param shaderFile (Full path and filename of the shader text file)
-     * @param shaderType (GL_VERTEX_SHADER, GL_FRAGMENT_SHADER)
-     * @return OpenGL shader id
+     * \param gl (OpenGL interface)
+     * \param shaderFile (Full path and filename of the shader text file)
+     * \param shaderType (GL_VERTEX_SHADER, GL_FRAGMENT_SHADER)
+     * \return OpenGL shader id
      */
     public static int buildShader(GL2GL3 gl, String shaderFile, int shaderType)
     {  
@@ -98,10 +97,10 @@ public class glUtils
      * attaches the shaders, links them and returns the OpenGL handle of the 
      * program. If the linking fails the linker log is sent to the System.out 
      * before the application exits with code 1.
-     * @param gl (OpenGL interface)
-     * @param vertShaderID (Vertex shader id)
-     * @param fragShaderID (Fragment shader id)
-     * @return OpenGL program id
+     * \param gl (OpenGL interface)
+     * \param vertShaderID (Vertex shader id)
+     * \param fragShaderID (Fragment shader id)
+     * \return OpenGL program id
      */
     public static int buildProgram(GL2GL3 gl,
                                    int vertShaderID, 
@@ -139,14 +138,14 @@ public class glUtils
      * (4 for float). The targetTypeGL distinct between GL_ARRAY_BUFFER for attribute 
      * data and GL_ELEMENT_ARRAY_BUFFER for index data. The usageTypeGL distinct 
      * between GL_STREAM_DRAW, GL_STATIC_DRAW and GL_DYNAMIC_DRAW.
-     * @param gl (OpenGL interface)
-     * @param data (Native IO buffer data buffer (IntBuffer or FloatBuffer))
-     * @param numElements (NO. of e.g. vertices)
-     * @param elementSize (Size of one element in e.g. floats)
-     * @param typeSize (Size of type, e.g. bytes per float)
-     * @param targetTypeGL (GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER)
-     * @param usageTypeGL (GL_STREAM_DRAW, GL_STATIC_DRAW, or GL_DYNAMIC_DRAW)
-     * @return VBO id as int[]
+     * \param gl (OpenGL interface)
+     * \param data (Native IO buffer data buffer (IntBuffer or FloatBuffer))
+     * \param numElements (NO. of e.g. vertices)
+     * \param elementSize (Size of one element in e.g. floats)
+     * \param typeSize (Size of type, e.g. bytes per float)
+     * \param targetTypeGL (GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER)
+     * \param usageTypeGL (GL_STREAM_DRAW, GL_STATIC_DRAW, or GL_DYNAMIC_DRAW)
+     * \return VBO id as int[]
      */    
 	public static int[] buildVBO(GL2GL3 gl,
 							   	 Buffer data, 
@@ -177,12 +176,12 @@ public class glUtils
 	 * data in the client memory is deleted again. The parameters min_filter and
 	 * mag_filter set the minification and magnification. The wrapS and wrapT parameters
 	 * set the texture wrapping mode. See the GL specification.
-	 * @param gl OpenGL interface
-	 * @param textureFile Full path and file name of texture image file
-	 * @param min_filter GL_NEAREST, GL_LINEAR, GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_NEAREST or GL_LINEAR_MIPMAP_LINEAR
-	 * @param mag_filter GL_NEAREST or GL_LINEAR
-	 * @param wrapS GL_CLAMP_TO_EDGE, GL_MIRRORED_REPEAT, or GL_REPEAT
-	 * @param wrapT GL_CLAMP_TO_EDGE, GL_MIRRORED_REPEAT, or GL_REPEAT
+	 * \param gl OpenGL interface
+	 * \param textureFile Full path and file name of texture image file
+	 * \param min_filter GL_NEAREST, GL_LINEAR, GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_NEAREST or GL_LINEAR_MIPMAP_LINEAR
+	 * \param mag_filter GL_NEAREST or GL_LINEAR
+	 * \param wrapS GL_CLAMP_TO_EDGE, GL_MIRRORED_REPEAT, or GL_REPEAT
+	 * \param wrapT GL_CLAMP_TO_EDGE, GL_MIRRORED_REPEAT, or GL_REPEAT
 	 */
 	public static int[] buildTexture(GL2GL3 gl,
 			                       	 String textureFile,
@@ -268,8 +267,8 @@ public class glUtils
 
 	/**
 	 * Print the OpenGL error if any occurred.
-	 * @param gl: OpenGL interface
-	 * @param location: Additional information string 
+	 * \param gl: OpenGL interface
+	 * \param location: Additional information string 
 	 */
 	public static void getGLError(GL2GL3 gl, String location)
 	{

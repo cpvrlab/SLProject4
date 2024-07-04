@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SENSARBaseCamera.h
-//  Authors:   Michael Goettlicher, Marcus Hudritsch
-//  Date:      Winter 2021
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  License:   This software is provide under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SENSARBaseCamera.h
+ * \authors   Michael Goettlicher, Marcus Hudritsch
+ * \date      Winter 2021
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #ifndef SENS_ARBASECAMERA_H
 #define SENS_ARBASECAMERA_H
@@ -16,8 +16,7 @@
 #include <thread>
 #include <Utils.h>
 #include <opencv2/opencv.hpp>
-#include "SENS.h"
-
+#include <SENS.h>
 #include <SENSFrame.h>
 #include <SENSCalibration.h>
 #include <SENSCamera.h>

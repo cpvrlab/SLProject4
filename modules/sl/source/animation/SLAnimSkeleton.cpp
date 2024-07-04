@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLAnimSkeleton.cpp
-//  Date:      Autumn 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marc Wacker, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLAnimSkeleton.cpp
+ * \date      Autumn 2014
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Marc Wacker, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <SLScene.h>
 #include <SLSceneView.h>
@@ -108,8 +108,8 @@ SLAnimation* SLAnimSkeleton::createAnimation(SLAnimManager& aniMan, const SLstri
     _animPlaybacks[name] = play;
 
     // Add node animation to the combined vector
-    aniMan.allAnimNames().push_back(name);
-    aniMan.allAnimPlaybacks().push_back(play);
+    aniMan.animationNames().push_back(name);
+    aniMan.animPlaybacks().push_back(play);
 
     return anim;
 }

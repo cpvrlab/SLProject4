@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLBackground.cpp
-//  Date:      August 2015
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLBackground.cpp
+ * \date      August 2015
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLBackground.h>
 #include <SLGLProgram.h>
@@ -91,7 +91,7 @@ void SLBackground::colors(const SLCol4f& topColor,
     _avgColor  = (topColor + bottomColor) / 2.0f;
     _isUniform = false;
     _texture   = nullptr;
-    _vao.clearAttribs();
+    //_vao.clearAttribs(); Not allowed here during assembly
 }
 //-----------------------------------------------------------------------------
 //! Sets a gradient background color with a color per corner

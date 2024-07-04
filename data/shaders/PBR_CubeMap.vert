@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      PBR_CubeMap.vert
-//  Purpose:   GLSL vertex program for rendering cube maps
-//  Date:      April 2018
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      PBR_CubeMap.vert
+ * \brief     GLSL vertex program for rendering cube maps
+ * \date      April 2018
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

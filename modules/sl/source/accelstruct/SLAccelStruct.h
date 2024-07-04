@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      SLAccelStruct.h
-//  Authors:   Marcus Hudritsch
-//  Date:      July 2014
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLAccelStruct.h
+ * \authors   Marcus Hudritsch
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #ifndef SLACCELSTRUCT_H
 #define SLACCELSTRUCT_H

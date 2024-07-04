@@ -1,5 +1,4 @@
 \page blender-to-sl Blender to SLProject Export
-
 \section intro Introduction
 <p>
 This page gives an overview of things to consider when preparing models created in the 3D software Blender for use in SLProject.
@@ -9,7 +8,7 @@ This page gives an overview of things to consider when preparing models created 
 <p>
 Units in SLProject are metric, 1 unit = 1 meter. For an easier workflow we recommend setting the units in blender to metric a well.
 </p>
-<img src="https://pallas.ti.bfh.ch/slproject/images/blender_units.png"/>
+<img src="images/blender_units.png"/>
 	
 \section yup Working with Y up inside Blender (optional)
 <p>

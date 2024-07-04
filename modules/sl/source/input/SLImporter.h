@@ -1,12 +1,12 @@
-//#############################################################################
-//  File:      sl/SLImporter.h
-//  Authors:   Marcus Hudritsch
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLImporter.h
+ * \authors   Marcus Hudritsch
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLIMPORTER_H
 #define SLIMPORTER_H
@@ -118,7 +118,7 @@ public:
     SLNode*         rootNode() { return _sceneRoot; }
     SLVMesh&        meshes() { return _meshes; }
     SLAnimSkeleton* skeleton() { return _skeleton; }
-    SLVAnimation&   nodeAnimations() { return _nodeAnimations; }
+    SLVAnimation&   nodeAnimations() { return _animationNamesMap; }
 
 protected:
     std::ofstream  _log;                 //!< log stream
@@ -130,7 +130,7 @@ protected:
     SLNode*         _sceneRoot;      //!< the root node of the scene
     SLVMesh         _meshes;         //!< all imported meshes
     SLAnimSkeleton* _skeleton;       //!< the imported skeleton for this file
-    SLVAnimation    _nodeAnimations; //!< all imported node animations
+    SLVAnimation    _animationNamesMap; //!< all imported node animations
 
     // misc helper
     void logMessage(SLLogVerbosity verbosity, const char* msg, ...);

@@ -1,5 +1,4 @@
 \page example-ibl Image Based Lighting
-
 The following scene shows 7 x 7 spheres with different metallic (vertical) and 
 roughness (horizontal) material parameters. 
 These parameters can be passed either by float values or as textures per pixel.
@@ -9,7 +8,9 @@ The ambient part is added by the HDRI environment map shown around the scene as 
 The shaders for this type of SLMaterial are generated automatically in SLGLProgramGenerated.
 
 \htmlonly
-<iframe src="https://pallas.ti.bfh.ch/slproject?scene=15" width="100%" height="640" tabindex="0" style="border: 1px solid gray"></iframe>
+Unfortunately, we can not embed externally hosted WebAssembly code on github.io.<br>
+<a href="https://pallas.ti.bfh.ch/slproject?scene=15" target="_blank">Please open example in new tab</a>
+<!--<iframe src="https://pallas.ti.bfh.ch/slproject?scene=15" width="100%" height="640" tabindex="0" style="border: 1px solid gray"></iframe>-->
 \endhtmlonly
 
 General help:

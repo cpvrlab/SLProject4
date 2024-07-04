@@ -1,12 +1,12 @@
-//#############################################################################
-//  File:      cv01_ChangeBrightnessAndContrast.cpp
-//  Purpose:   Minimal OpenCV application that changes brightness and contrast
-//             Taken from the OpenCV Tutorial:
-//             http://docs.opencv.org/3.1.0/d3/dc1/tutorial_basic_linear_transform.html
-//             See also the root page of all OpenCV Tutorials:
-//             http://docs.opencv.org/3.1.0/d9/df8/tutorial_root.html
-//  Date:      Spring 2017
-//#############################################################################
+/**
+ * \file      cv01_ChangeBrightnessAndContrast.cpp
+ * \details   Minimal OpenCV application that changes brightness and contrast
+ *            Taken from the OpenCV Tutorial:
+ *            http://docs.opencv.org/3.1.0/d3/dc1/tutorial_basic_linear_transform.html
+ *            See also the root page of all OpenCV Tutorials:
+ *            http://docs.opencv.org/3.1.0/d9/df8/tutorial_root.html
+ * \date      Spring 2017
+*/
 
 #include <iostream>
 #include <opencv2/opencv.hpp>

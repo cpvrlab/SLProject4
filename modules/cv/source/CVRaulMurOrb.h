@@ -1,14 +1,14 @@
-//#############################################################################
-//  File:      CVRaulMurOrb.h
-//  Purpose:   Declares the Raul Mur ORB feature detector and descriptor
-//  Source:    This File is based on the ORB Implementation of ORB_SLAM
-//             https://github.com/raulmur/ORB_SLAM2
-//  Date:      Spring 2017
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Pascal Zingg, Timon Tschanz, Michael Goettlicher, Marcus Hudritsch
-//             This softwareis provide under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      CVRaulMurOrb.h
+ * \brief     Declares the Raul Mur ORB feature detector and descriptor
+ * \details   This File is based on the ORB Implementation of ORB_SLAM
+ *            https://github.com/raulmur/ORB_SLAM2
+ * \date      Spring 2017
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Pascal Zingg, Timon Tschanz, Michael Goettlicher, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #ifndef CVRAULMURORB_H
 #define CVRAULMURORB_H

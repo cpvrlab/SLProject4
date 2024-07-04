@@ -1,11 +1,11 @@
-//#############################################################################
-//   File:      cv/CVImage.cpp
-//   Date:      Spring 2017
-//   Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//   Authors:   Marcus Hudritsch
-//   License:   This software is provided under the GNU General Public License
-//              Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      cv/CVImage.cpp
+ * \date      Spring 2017
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <CVImage.h>
 #include <Utils.h>
@@ -385,7 +385,9 @@ void CVImage::load(const string& filename,
     _path        = Utils::getPath(filename);
     _bytesInFile = Utils::getFileSize(filename);
 
-    // load the image format as stored in the file
+    // Load the image from the file.
+    // On most platforms, we use OpenCV for image loading, but on Emscripten there is no
+    // `cv::imread` function, so we use stb_image instead.
 
 #ifndef __EMSCRIPTEN__
     _cvMat = cv::imread(filename, cv::ImreadModes::IMREAD_UNCHANGED);
@@ -401,7 +403,7 @@ void CVImage::load(const string& filename,
     unsigned char* data = stbi_load_from_memory(encodedData, size, &width, &height, &numChannels, 0);
     _cvMat              = CVMat(height, width, CV_8UC(numChannels), data);
 
-    SLFileStorage::deleteBuffer(buffer);
+    buffer.deallocate();
 #endif
 
     if (!_cvMat.data)
@@ -410,15 +412,28 @@ void CVImage::load(const string& filename,
         Utils::exitMsg("SLProject", msg.c_str(), __LINE__, __FILE__);
     }
 
-#ifndef __EMSCRIPTEN__
     // Convert greater component depth than 8 bit to 8 bit, only if the image is not HDR
     if (_cvMat.depth() > CV_8U && ext != "hdr")
         _cvMat.convertTo(_cvMat, CV_8U, 1.0 / 256.0);
 
-    _format        = cvType2glPixelFormat(_cvMat.type());
+#ifndef __EMSCRIPTEN__
+    _format = cvType2glPixelFormat(_cvMat.type());
+#else
+    // When using stb_image instead of OpenCV to load the file, the format is always RGB(A)
+    // and not BGR(A). We have to handle these two cases differently because
+    // `cvType2glPixelFormat` assumes for example that CV_8UC3 corresponds to PF_bgr and not PF_rgb.
+
+    if (_cvMat.type() == CV_8UC3)
+        _format = PF_rgb;
+    else if (_cvMat.type() == CV_8UC4)
+        _format = PF_rgba;
+    else
+        _format = cvType2glPixelFormat(_cvMat.type());
+#endif
+
     _bytesPerPixel = bytesPerPixel(_format);
 
-    // OpenCV always loads with BGR(A) but some OpenGL prefer RGB(A)
+    // OpenCV always loads with BGR(A) but OpenGL uses RGB(A)
     if (_format == PF_bgr || _format == PF_rgb32f)
     {
         string typeStr1 = typeString(_cvMat.type());
@@ -460,7 +475,6 @@ void CVImage::load(const string& filename,
         // string filename = Utils::getFileNameWOExt(pathfilename);
         // savePNG(_path + filename + "_InAlpha.png");
     }
-#else
 
     switch (_cvMat.type())
     {
@@ -495,7 +509,6 @@ void CVImage::load(const string& filename,
 
         _format = PF_rgba;
     }
-#endif
 
     _bytesPerLine  = bytesPerLine((uint)_cvMat.cols, _format, _cvMat.isContinuous());
     _bytesPerImage = _bytesPerLine * (uint)_cvMat.rows;

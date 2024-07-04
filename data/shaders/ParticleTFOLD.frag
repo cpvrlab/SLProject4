@@ -1,13 +1,12 @@
-//#############################################################################
-//  File:      ParticleTF.frag
-//  Purpose:   Simple GLSL fragment program for particle system updating this
+/**
+ * \file      ParticleTF.frag
+ * \brief   Simple GLSL fragment program for particle system updating this
 //  shader is never used because of the transform feedback and the 
 //  rasterization off.
-//  Date:      December 2021
-//  Authors:   Affolter Marc
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+ * \date      December 2021
+ * \authors   Affolter Marc
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 precision highp float;
 
 //-----------------------------------------------------------------------------

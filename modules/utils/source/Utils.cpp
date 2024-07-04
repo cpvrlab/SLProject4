@@ -1,12 +1,12 @@
-// #############################################################################
-//   File:      Utils.cpp
-//   Authors:   Marcus Hudritsch
-//   Date:      May 2019
-//   Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//   Authors:   Marcus Hudritsch
-//   License:   This software is provided under the GNU General Public License
-//              Please visit: http://opensource.org/licenses/GPL-3.0
-// #############################################################################
+/**
+ * \file:     Utils.cpp
+ * \brief     Implementation of various utility functions defined in Utils.h
+ * \date      May 2019
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <Utils.h>
 #include <cstddef>
@@ -969,6 +969,7 @@ string getAppsWritableDir(string appName)
 #else
 #    error "No port to this OS"
 #endif
+    return "";
 }
 //-----------------------------------------------------------------------------
 // Returns the working directory with forward slashes inbetween and at the end
@@ -1053,16 +1054,14 @@ void dumpFileSystemRec(const char* logtag, const string& folderPath)
 
     loopFileSystemRec(
       folderPath,
-      [logtag, tab](string path, string baseName, int depth) -> void
-      {
+      [logtag, tab](string path, string baseName, int depth) -> void {
           string indent;
           for (int d = 0; d < depth; ++d)
               indent += tab;
           string indentFolderName = indent + baseName;
           Utils::log(logtag, "%s", indentFolderName.c_str());
       },
-      [logtag, tab](string path, string baseName, int depth) -> void
-      {
+      [logtag, tab](string path, string baseName, int depth) -> void {
           string indent;
           for (int d = 0; d < depth; ++d)
               indent += tab;
@@ -1185,40 +1184,6 @@ void errorMsg(const char* tag,
               << "Location: " << file << ":" << line << '\n'
               << "Message: " << msg << '\n'
               << "--------------------------------" << std::endl;
-#endif
-}
-//-----------------------------------------------------------------------------
-// Shows the a spinner icon message. So far only used with emscripten
-void showSpinnerMsg(string msg)
-{
-#ifdef __EMSCRIPTEN__
-    // clang-format off
-    MAIN_THREAD_EM_ASM({
-        let resource = UTF8ToString($0);
-        document.querySelector("#loading-text").innerHTML = resource;
-
-        if (globalThis.hideTimer === null) {
-            document.querySelector("#loading-overlay").classList.add("visible");
-        } else {
-            clearTimeout(globalThis.hideTimer);
-        }
-    }, msg.c_str());
-    // clang-format on
-#endif
-}
-//-----------------------------------------------------------------------------
-// Hides the previous spinner icon message. So far only used with emscripten
-void hideSpinnerMsg()
-{
-#ifdef __EMSCRIPTEN__
-    // clang-format off
-    MAIN_THREAD_EM_ASM({
-        globalThis.hideTimer = setTimeout(function () {
-              globalThis.hideTimer = null;
-              document.querySelector("#loading-overlay").classList.remove("visible");
-          }, 500);
-    });
-    // clang-format on
 #endif
 }
 //-----------------------------------------------------------------------------
@@ -1410,11 +1375,11 @@ std::string ComputerInfos::get()
 
     char hostC[PROP_VALUE_MAX];
     len  = __system_property_get("ro.build.host", hostC);
-    name = hostC ? string(hostC) : "NAME?";
+    name = !string(hostC).empty() ? string(hostC) : "NAME?";
 
     char userC[PROP_VALUE_MAX];
     len  = __system_property_get("ro.build.user", userC);
-    user = userC ? string(userC) : "USER?";
+    user = !string(userC).empty() ? string(userC) : "USER?";
 
     char brandC[PROP_VALUE_MAX];
     len   = __system_property_get("ro.product.brand", brandC);

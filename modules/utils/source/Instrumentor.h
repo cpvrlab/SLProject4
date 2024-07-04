@@ -1,14 +1,16 @@
-//#############################################################################
-//  File:      Utils/lib-utils/source/Instrumentor.h
-//  Authors:   Cherno, adaptations by Marcus Hudritsch
-//  Purpose:   Basic instrumentation profiler for writing performance measures
-//             that can be used in Chrome://tracing app.
-//  Original:  Based on https://gist.github.com/TheCherno
-//  Changes:   Compared to Cherno's original I added in memory storage which is
-//             faster and the addProfil function is now thread safe.
-//  Date:      June 2020
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//#############################################################################
+/**
+ * \file      Utils/lib-utils/source/Instrumentor.h
+ * \authors   Cherno, adaptations by Marcus Hudritsch
+ * \brief     Basic instrumentation profiler for writing performance measures
+ * \details   It can be used in Chrome://tracing app. 
+ *            Based on https://gist.github.com/TheCherno
+ *            Changes: Compared to Cherno's original I added in memory storage 
+ *            which is faster and the addProfil function is now thread safe.
+ * \date      June 2020
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef INSTRUMENTOR_H
 #define INSTRUMENTOR_H
@@ -60,7 +62,7 @@ struct InstrumentationSession
  the profileResults will be stored in memory instead of being written into the
  file stream which is pretty slow. Of course the in memory storage can quickly
  use a lot of memory depending how fine grained your profiling is.
- In app-Demo-SLProject this is done in SLInterface::slCreateAppAndScene.
+ In app-demo this is done in slCreateApp.
 
  In between you can add either PROFILE_FUNCTION(); at the beginning of any routine
  or PROFILE_SCOPE(scopeName) at the beginning of any scope you want to measure.
@@ -70,7 +72,7 @@ struct InstrumentationSession
 
  After the endSession you can drag the Profiling-Results.json file into the
  chrome://tracing page of the Google Chrome browser.
- In app-Demo-SLProject this is done in SLInterface::slTerminate.
+ In app-demo this is done in SLInterface::slTerminate.
 */
 class Instrumentor
 {

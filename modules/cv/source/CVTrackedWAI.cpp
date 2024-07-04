@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      CVTrackedWAI.cpp
-//  Date:      Spring 2020
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Michael Goettlicher, Jan Dellsperger
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      CVTrackedWAI.cpp
+ * \date      Spring 2020
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Michael Goettlicher, Jan Dellsperger
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <CVTrackedWAI.h>
 #include <SL.h>
@@ -28,7 +28,7 @@ CVTrackedWAI::CVTrackedWAI(const string& vocabularyFile)
                    e.what());
         exit(0);
     }
-    SL_LOG("Loaded voc file : %f ms", _timer.elapsedTimeInMilliSec() - startMS);
+    SL_LOG_DEBUG("Loaded voc file  : %f ms", _timer.elapsedTimeInMilliSec() - startMS);
 }
 //-----------------------------------------------------------------------------
 CVTrackedWAI::~CVTrackedWAI()

@@ -1,10 +1,9 @@
-//#############################################################################
-//  File:      Utils_iOS.mm
-//  Date:      September 2011 (HS11)
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      Utils_iOS.mm
+ * \date      September 2011 (HS11)
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include "Utils_iOS.h"
 #include <Utils.h>

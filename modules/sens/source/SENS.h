@@ -1,3 +1,12 @@
+/**
+ * \file      SENS.h
+ * \authors   Michael Goettlicher, Marcus Hudritsch
+ * \date      Winter 2021
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
+
 #ifndef SENS_H
 #define SENS_H
 

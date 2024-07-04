@@ -1,13 +1,13 @@
-//#############################################################################
-//  File:      CVCapture.cpp
-//  Purpose:   OpenCV Capture Device
-//  Authors:   Michael Goettlicher, Marcus Hudritsch, Jan Dellsperger
-//  Date:      Winter 2016
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      CVCapture.cpp
+ * \brief   OpenCV Capture Device
+ * \authors   Michael Goettlicher, Marcus Hudritsch, Jan Dellsperger
+ * \date      Winter 2016
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ */
 
 /*
 The OpenCV library version 3.4 with extra module must be present.
@@ -24,8 +24,9 @@ for a good top down information.
 #include <CVImage.h>
 #include <Utils.h>
 #include <FtpUtils.h>
-#include <AppDemo.h>
+#include <AppCommon.h>
 #include <Profiler.h>
+#include <opencv2/core/utils/logger.hpp>
 
 //-----------------------------------------------------------------------------
 CVCapture* CVCapture::_instance = nullptr;
@@ -49,6 +50,9 @@ CVCapture::CVCapture()
     activeCamSizeIndex = -1;
     activeCamera       = nullptr;
     _captureTimesMS.init(60, 0);
+
+    // Silences OpenCV debug logging
+    cv::utils::logging::setLogLevel(cv::utils::logging::LogLevel::LOG_LEVEL_SILENT);
 }
 //-----------------------------------------------------------------------------
 //! Private constructor
@@ -76,8 +80,9 @@ CVSize2i CVCapture::open(int deviceNum)
 
         if (!_captureDevice.isOpened())
             return CVSize2i(0, 0);
-
-        Utils::log("SLProject", "Capture devices created.");
+#    if _DEBUG
+        Utils::log("SLProject", "CVCapture::open  : Capture devices created.");
+#    endif
         //_captureDevice.set(cv::CAP_PROP_FRAME_WIDTH, 1440);
         //_captureDevice.set(cv::CAP_PROP_FRAME_HEIGHT, 1080);
         int w = (int)_captureDevice.get(cv::CAP_PROP_FRAME_WIDTH);
@@ -330,11 +335,6 @@ void CVCapture::loadIntoLastFrame(const float           viewportWdivH,
                 break;
             }
             case PF_bgr:
-            {
-                cvType = CV_8UC3;
-                bpp    = 3;
-                break;
-            }
             case PF_rgb:
             {
                 cvType = CV_8UC3;
@@ -342,11 +342,6 @@ void CVCapture::loadIntoLastFrame(const float           viewportWdivH,
                 break;
             }
             case PF_bgra:
-            {
-                cvType = CV_8UC4;
-                bpp    = 4;
-                break;
-            }
             case PF_rgba:
             {
                 cvType = CV_8UC4;
@@ -371,7 +366,7 @@ void CVCapture::loadIntoLastFrame(const float           viewportWdivH,
     adjustForSL(viewportWdivH);
 }
 //-----------------------------------------------------------------------------
-//! Does all adjustments needed for the videoTexture
+//! Does all adjustments needed for the gVideoTexture
 /*! CVCapture::adjustForSL processes the following adjustments for all input
 images no matter with what they where captured:
 \n
@@ -920,12 +915,12 @@ void CVCapture::loadCalibrations(const string& computerInfo,
         /*
         //todo: move this download call out of cvcaputure (during refactoring of this class)
         string errorMsg;
-        if (!FtpUtils::downloadFileLatestVersion(AppDemo::calibFilePath,
+        if (!FtpUtils::downloadFileLatestVersion(AppCommon::calibFilePath,
                                               mainCalibFilename,
-                                              AppDemo::CALIB_FTP_HOST,
-                                              AppDemo::CALIB_FTP_USER,
-                                              AppDemo::CALIB_FTP_PWD,
-                                              AppDemo::CALIB_FTP_DIR,
+                                              AppCommon::CALIB_FTP_HOST,
+                                              AppCommon::CALIB_FTP_USER,
+                                              AppCommon::CALIB_FTP_PWD,
+                                              AppCommon::CALIB_FTP_DIR,
                                               errorMsg))
         {
          Utils::log("SLProject", errorMsg.c_str());
@@ -939,23 +934,23 @@ void CVCapture::loadCalibrations(const string& computerInfo,
     /*
     //todo: move this download call out of cvcaputure (during refactoring of this class)
     string errorMsg;
-    if (!FtpUtils::downloadFile(AppDemo::calibFilePath,
+    if (!FtpUtils::downloadFile(AppCommon::calibFilePath,
                                 mainCalibFilename,
-                                AppDemo::CALIB_FTP_HOST,
-                                AppDemo::CALIB_FTP_USER,
-                                AppDemo::CALIB_FTP_PWD,
-                                AppDemo::CALIB_FTP_DIR,
+                                AppCommon::CALIB_FTP_HOST,
+                                AppCommon::CALIB_FTP_USER,
+                                AppCommon::CALIB_FTP_PWD,
+                                AppCommon::CALIB_FTP_DIR,
                                 errorMsg))
     {
         Utils::log("SLProject", errorMsg.c_str());
     }
     //todo: move this download call out of cvcaputure (during refactoring of this class)
-    if (!FtpUtils::downloadFile(AppDemo::calibFilePath,
+    if (!FtpUtils::downloadFile(AppCommon::calibFilePath,
                                 scndCalibFilename,
-                                AppDemo::CALIB_FTP_HOST,
-                                AppDemo::CALIB_FTP_USER,
-                                AppDemo::CALIB_FTP_PWD,
-                                AppDemo::CALIB_FTP_DIR,
+                                AppCommon::CALIB_FTP_HOST,
+                                AppCommon::CALIB_FTP_USER,
+                                AppCommon::CALIB_FTP_PWD,
+                                AppCommon::CALIB_FTP_DIR,
                                 errorMsg))
     {
         Utils::log("SLProject", errorMsg.c_str());

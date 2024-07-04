@@ -1,12 +1,13 @@
-//#############################################################################
-//  File:      Utils/lib-utils/source/HighResTimer.h
-//  Authors:   Marcus Hudritsch
-//  Purpose:   High Resolution Timer that is able to measure the elapsed time
-//             with 1 micro-second accuracy with C++11 high_resolution_clock
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Song Ho Ahn (song.ahn@gmail.com)
-//#############################################################################
+/**
+ * \file      Utils/lib-utils/source/HighResTimer.h
+ * \authors   Marcus Hudritsch
+ * \details   High Resolution Timer that is able to measure the elapsed time
+ *            with 1 micro-second accuracy with C++11 high_resolution_clock
+ * \date      July 2014
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef HIGHRESTIMER
 #define HIGHRESTIMER

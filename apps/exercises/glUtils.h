@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      glUtils.h
-//  Purpose:   General OpenGL utility functions for simple OpenGL demo apps
-//  Date:      July 2014
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      glUtils.h
+ * \brief     General OpenGL utility functions for simple OpenGL demo apps
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #ifndef GLUTILS_H
 #define GLUTILS_H

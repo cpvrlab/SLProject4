@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      ch07_DiffuseLighting.frag
-//  Purpose:   GLSL fragment program for simple diffuse per vertex lighting
-//  Date:      September 2012 (HS12)
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      ch07_DiffuseLighting.frag
+ * \brief     GLSL fragment program for simple diffuse per vertex lighting
+ * \date      September 2012 (HS12)
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLMesh.cpp
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLMesh.cpp
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLCompactGrid.h>
 #include <SLNode.h>
@@ -23,19 +23,26 @@ using std::set;
 #    pragma clang diagnostic push
 #    pragma clang diagnostic ignored "-Weverything"
 #endif
+
 #include <igl/remove_duplicate_vertices.h>
 #include <igl/per_face_normals.h>
 #include <igl/unique_edge_map.h>
+
 #ifdef __clang__
 #    pragma clang diagnostic pop
 #endif
 
 //-----------------------------------------------------------------------------
-/*!
- * Constructor for mesh objects.
- * Meshes can be used in multiple nodes (SLNode). Meshes can belong
+/**
+ * @brief Construct a new SLMesh::SLMesh object
+ * @details Meshes can be used in multiple nodes (SLNode). Meshes can belong
  * therefore to the global assets such as meshes (SLMesh), materials
- * (SLMaterial), textures (SLGLTexture) and shader programs (SLGLProgram).
+ * (SLMaterial), textures (SLGLTexture) and shader programs (SLGLProgram).\n
+ * It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
  * @param assetMgr Pointer to a global asset manager. If passed the asset
  * manager is the owner of the instance and will do the deallocation. If a
  * nullptr is passed the creator is responsible for the deallocation.

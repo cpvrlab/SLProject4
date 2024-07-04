@@ -1,11 +1,11 @@
-//#############################################################################
-//   File:      SLNode.cpp
-//   Date:      July 2014
-//   Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//   Authors:   Marc Wacker, Marcus Hudritsch, Jan Dellsperger
-//   License:   This software is provided under the GNU General Public License
-//              Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLNode.cpp
+ * \date      July 2014
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Marc Wacker, Marcus Hudritsch, Jan Dellsperger
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <SLAnimation.h>
 #include <SLKeyframeCamera.h>
@@ -28,9 +28,15 @@ unsigned int SLNode::instanceIndex = 0;
 // Static updateRec counter
 SLuint SLNode::numWMUpdates = 0;
 //-----------------------------------------------------------------------------
-/*!
-Default constructor just setting the name.
-*/
+/**
+ * @brief Construct a new SLNode::SLNode object
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * @param name Name of the node
+ */
 SLNode::SLNode(const SLstring& name) : SLObject(name)
 {
     _parent   = nullptr;
@@ -53,6 +59,11 @@ SLNode::SLNode(const SLstring& name) : SLObject(name)
 //-----------------------------------------------------------------------------
 /*!
 Constructor with a mesh pointer and name.
+It is important that during instantiation NO OpenGL functions (gl*) get called
+because this constructor will be most probably called in a parallel thread from
+within a SLScene::assemble function. All objects that get rendered have to do 
+their OpenGL initialization when they are used the first time during rendering 
+in the main thread.
 */
 SLNode::SLNode(SLMesh* mesh, const SLstring& name) : SLObject(name)
 {
@@ -80,6 +91,11 @@ SLNode::SLNode(SLMesh* mesh, const SLstring& name) : SLObject(name)
 //-----------------------------------------------------------------------------
 /*!
 Constructor with a mesh pointer, translation vector and name.
+It is important that during instantiation NO OpenGL functions (gl*) get called
+because this constructor will be most probably called in a parallel thread from
+within a SLScene::assemble function. All objects that get rendered have to do 
+their OpenGL initialization when they are used the first time during rendering 
+in the main thread.
 */
 SLNode::SLNode(SLMesh*         mesh,
                const SLVec3f&  translation,
@@ -270,7 +286,7 @@ bool SLNode::deleteChild(SLNode* child)
     {
         if (_children[i] == child)
         {
-            _children.erase(_children.begin() + i);
+            _children.erase(_children.begin() + (long)i);
             delete child;
             _isAABBUpToDate = false;
             return true;
@@ -377,7 +393,7 @@ void SLNode::cullChildren3D(SLSceneView* sv)
  * material is added to the SLSceneview::_visibleMaterials3D set and the node
  * to the SLMaterials::nodesVisible3D vector. See also SLSceneView::draw3DGLAll
  * for more details.
-*/
+ */
 void SLNode::cull3DRec(SLSceneView* sv)
 {
     if (!this->drawBit(SL_DB_HIDDEN))
@@ -415,18 +431,16 @@ void SLNode::cull3DRec(SLSceneView* sv)
                     sv->visibleMaterials3D().insert(this->mesh()->mat());
                     this->mesh()->mat()->nodesVisible3D().push_back(this);
                 }
+                else
+                {
+                    // Add camera or selected node without mesh to opaque vector for line drawing
+                    if (dynamic_cast<SLCamera*>(this) || this->_isSelected)
+                        sv->nodesOpaque3D().push_back(this);
 
-                // Add camera node without mesh to opaque vector for line drawing
-                else if (dynamic_cast<SLCamera*>(this))
-                    sv->nodesOpaque3D().push_back(this);
-
-                // Add selected nodes without mesh to opaque vector for line drawing
-                else if (this->_isSelected)
-                    sv->nodesOpaque3D().push_back(this);
-
-                // Add special text node to blended vector
-                else if (typeid(*this) == typeid(SLText))
-                    sv->nodesBlended3D().push_back(this);
+                    // Add special text node to blended vector
+                    else if (typeid(*this) == typeid(SLText))
+                        sv->nodesBlended3D().push_back(this);
+                }
             }
         }
     }
@@ -768,10 +782,16 @@ void SLNode::dumpRec()
     // dump meshes of node
     for (SLint i = 0; i < _depth; ++i)
         cout << "   ";
-    cout << "- Mesh: " << _mesh->name();
-    cout << ", " << _mesh->numI() * 3 << " tri";
-    if (_mesh->mat())
-        cout << ", Mat: " << _mesh->mat()->name();
+
+    if (_mesh)
+    {
+        cout << "- Mesh: " << _mesh->name();
+        cout << ", " << _mesh->numI() * 3 << " tri";
+        if (_mesh->mat())
+            cout << ", Mat: " << _mesh->mat()->name();
+    }
+    else
+        cout << "- Mesh: none";
     cout << endl;
 
     // dump children nodes

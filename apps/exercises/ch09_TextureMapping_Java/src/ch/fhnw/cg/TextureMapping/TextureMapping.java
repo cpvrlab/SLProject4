@@ -22,7 +22,7 @@ public class TextureMapping
 	
 	/**
 	 * The applications main routine
-	 * @param args: command line arguments
+	 * \param args: command line arguments
 	 */
 	public static void main(String[] args) 
 	{				

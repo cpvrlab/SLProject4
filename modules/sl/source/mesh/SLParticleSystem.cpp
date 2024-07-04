@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLParticleSystem.cpp
-//  Date:      February 2022
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Affolter Marc in his bachelor thesis in spring 2022
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLParticleSystem.cpp
+ * \date      February 2022
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Affolter Marc in his bachelor thesis in spring 2022
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #include <climits>
 #include <SLParticleSystem.h>
@@ -30,13 +30,14 @@ SLParticleSystem::SLParticleSystem(SLAssetManager* assetMgr,
                                    SLGLTexture*    texC,
                                    const SLstring& name,
                                    SLGLTexture*    texFlipbook,
+                                   SLTexColorLUT*  texGradient,
                                    const bool      doInstancedDrawing) : SLMesh(assetMgr, name)
 {
     assert(!name.empty());
 
-    _assetManager  = assetMgr;
+    _assetManager       = assetMgr;
     _doInstancedDrawing = !SLGLState::instance()->glHasGeometryShaders() || doInstancedDrawing;
-    _primitive     = PT_points;
+    _primitive          = PT_points;
 
     // Trick SL project because it wants the mesh to have vertex
     P.push_back(SLVec3f(0, 0, 0));
@@ -50,8 +51,12 @@ SLParticleSystem::SLParticleSystem(SLAssetManager* assetMgr,
     _velocityRndMin = velocityRandomStart;
     _velocityRndMax = velocityRandomEnd;
 
-    _textureFirst    = texC;
-    _textureFlipbook = texFlipbook;
+    _texParticle = texC;
+    _texFlipbook = texFlipbook;
+    if (texGradient)
+        _texGradient = texGradient;
+    else
+        _texGradient = new SLTexColorLUT(assetMgr, CLUT_WYR, 256);
 
     _updateTime.init(60, 0.0f);
     _drawTime.init(60, 0.0f);
@@ -308,7 +313,8 @@ void SLParticleSystem::generate()
         SLMaterial* mDraw = new SLMaterial(_assetManager,
                                            "Drawing-Material",
                                            this,
-                                           _textureFlipbook);
+                                           _texFlipbook);
+        mDraw->addTexture(_texGradient);
         mat(mDraw);
     }
     else
@@ -316,7 +322,8 @@ void SLParticleSystem::generate()
         SLMaterial* mDraw = new SLMaterial(_assetManager,
                                            "Drawing-Material",
                                            this,
-                                           _textureFirst);
+                                           _texParticle);
+        mDraw->addTexture(_texGradient);
         mat(mDraw);
     }
 
@@ -895,8 +902,13 @@ void SLParticleSystem::draw(SLSceneView* sv, SLNode* node, SLuint instances)
     if (_doColorOverLT)
     {
         spD->uniform1fv("u_colorArr",
+                        _texGradient->length() * 3,
+                        (float*)&_texGradient->allColors()[0]);
+        /*
+        spD->uniform1fv("u_colorArr",
                         256 * 3,
                         _colorArr);
+                        */
     }
     else
     {
@@ -962,12 +974,12 @@ void SLParticleSystem::changeTexture()
     if (_doFlipBookTexture)
     {
         mat()->removeTextureType(TT_diffuse);
-        mat()->addTexture(_textureFlipbook);
+        mat()->addTexture(_texFlipbook);
     }
     else
     {
         mat()->removeTextureType(TT_diffuse);
-        mat()->addTexture(_textureFirst);
+        mat()->addTexture(_texParticle);
     }
 }
 //-----------------------------------------------------------------------------

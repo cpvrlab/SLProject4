@@ -1,11 +1,12 @@
-//#############################################################################
-//  File:      SLTexColorLUT.cpp
-//  Purpose:   Implements a transfer function functionality
-//  Date:      July 2017
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLTexColorLUT.cpp
+ * \brief     Implements a transfer function functionality
+ * \date      July 2017
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLTexColorLUT.h>
 #include <SLAssetManager.h>
@@ -105,12 +106,18 @@ void SLTexColorLUT::colors(SLColorLUTType lutType)
         case CLUT_BW:
             _colors.push_back(SLColorLUTPoint(SLCol3f::BLACK, 0.0f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::WHITE, 1.0f));
-            name("Transfer Function: Color LUT: B-W");
+            name("Gradient Texture (LUT): B-W");
             break;
         case CLUT_WB:
             _colors.push_back(SLColorLUTPoint(SLCol3f::WHITE, 0.0f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::BLACK, 1.0f));
-            name("Transfer Function: Color LUT: W-B");
+            name("Gradient Texture (LUT): W-B");
+            break;
+        case CLUT_WYR:
+            _colors.push_back(SLColorLUTPoint(SLCol3f::WHITE, 0.0f));
+            _colors.push_back(SLColorLUTPoint(SLCol3f::YELLOW, 0.5f));
+            _colors.push_back(SLColorLUTPoint(SLCol3f::RED, 1.0f));
+            name("Gradient Texture (LUT): W-Y-R");
             break;
         case CLUT_RYGCB:
             _colors.push_back(SLColorLUTPoint(SLCol3f::RED, 0.00f));
@@ -118,7 +125,7 @@ void SLTexColorLUT::colors(SLColorLUTType lutType)
             _colors.push_back(SLColorLUTPoint(SLCol3f::GREEN, 0.50f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::CYAN, 0.75f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::BLUE, 1.00f));
-            name("Transfer Function: Color LUT: R-Y-G-C-B");
+            name("Gradient Texture (LUT): R-Y-G-C-B");
             break;
         case CLUT_BCGYR:
             _colors.push_back(SLColorLUTPoint(SLCol3f::BLUE, 0.00f));
@@ -126,7 +133,7 @@ void SLTexColorLUT::colors(SLColorLUTType lutType)
             _colors.push_back(SLColorLUTPoint(SLCol3f::GREEN, 0.50f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::YELLOW, 0.75f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::RED, 1.00f));
-            name("Transfer Function: Color LUT: B-C-G-Y-R");
+            name("Gradient Texture (LUT): B-C-G-Y-R");
             break;
         case CLUT_RYGCBK:
             _colors.push_back(SLColorLUTPoint(SLCol3f::RED, 0.00f));
@@ -135,7 +142,7 @@ void SLTexColorLUT::colors(SLColorLUTType lutType)
             _colors.push_back(SLColorLUTPoint(SLCol3f::CYAN, 0.60f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::BLUE, 0.80f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::BLACK, 1.00f));
-            name("Transfer Function: Color LUT: R-Y-G-C-B-K");
+            name("Gradient Texture (LUT): R-Y-G-C-B-K");
             break;
         case CLUT_KBCGYR:
             _colors.push_back(SLColorLUTPoint(SLCol3f::BLACK, 0.00f));
@@ -144,7 +151,7 @@ void SLTexColorLUT::colors(SLColorLUTType lutType)
             _colors.push_back(SLColorLUTPoint(SLCol3f::GREEN, 0.60f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::YELLOW, 0.00f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::RED, 1.00f));
-            name("Transfer Function: Color LUT: K-B-C-G-Y-R");
+            name("Gradient Texture (LUT): K-B-C-G-Y-R");
             break;
         case CLUT_RYGCBM:
             _colors.push_back(SLColorLUTPoint(SLCol3f::RED, 0.00f));
@@ -153,7 +160,7 @@ void SLTexColorLUT::colors(SLColorLUTType lutType)
             _colors.push_back(SLColorLUTPoint(SLCol3f::CYAN, 0.60f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::BLUE, 0.80f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::MAGENTA, 1.00f));
-            name("Transfer Function: Color LUT: R-Y-G-C-B-M");
+            name("Gradient Texture (LUT): R-Y-G-C-B-M");
             break;
         case CLUT_MBCGYR:
             _colors.push_back(SLColorLUTPoint(SLCol3f::MAGENTA, 0.00f));
@@ -162,7 +169,7 @@ void SLTexColorLUT::colors(SLColorLUTType lutType)
             _colors.push_back(SLColorLUTPoint(SLCol3f::GREEN, 0.60f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::YELLOW, 0.00f));
             _colors.push_back(SLColorLUTPoint(SLCol3f::RED, 1.00f));
-            name("Transfer Function: Color LUT: M-B-C-G-Y-R");
+            name("Gradient Texture (LUT): M-B-C-G-Y-R");
             break;
         case CLUT_DAYLIGHT:
             // Daylight color ramp with white at noon in the middle
@@ -171,7 +178,7 @@ void SLTexColorLUT::colors(SLColorLUTType lutType)
             _colors.push_back(SLColorLUTPoint(SLCol3f(1, 243.0f / 255.0f, 6.0f / 255.0f), 0.10f));
             _colors.push_back(SLColorLUTPoint(SLCol3f(1, 1, 245.0f / 255.0f), 0.20f));
             _colors.push_back(SLColorLUTPoint(SLCol3f(1, 1, 1), 1.00f));
-            name("Color LUT: For daylight");
+            name("Gradient Texture (LUT): For daylight");
             break;
         default:
             SL_EXIT_MSG("SLTexColorLUT::colors: undefined color LUT.");
@@ -187,7 +194,7 @@ void SLTexColorLUT::generateTexture()
            "SLTexColorLUT::generateTexture: Not enough color values.");
 
     // Delete old data in case of regeneration
-    deleteData();
+    deleteData(false);
 
     SLfloat delta = 1.0f / (SLfloat)_length;
 
@@ -240,7 +247,8 @@ void SLTexColorLUT::generateTexture()
             SL_EXIT_MSG("SLTexColorLUT::generateTexture: Color position deltas to small.");
 
     // Clamp all colors
-    for (auto c : _colors) c.color.clampMinMax(0.0f, 1.0f);
+    for (auto c : _colors)
+        c.color.clampMinMax(0.0f, 1.0f);
 
     // Finally create color LUT vector by lerping color and alpha values
     SLuint  c      = 0;    // current color segment index
@@ -316,5 +324,38 @@ SLVfloat SLTexColorLUT::allAlphas()
     }
 
     return allA;
+}
+//-----------------------------------------------------------------------------
+//! Returns all alpha values of the transfer function as a float vector
+SLVCol3f SLTexColorLUT::allColors()
+{
+    // Finally create color LUT vector by lerping color and alpha values
+    SLuint  c      = 0;    // current color segment index
+    SLfloat pos    = 0.0f; // overall position between 0-1
+    SLfloat posC   = 0.0f; // position in color segment
+    SLfloat delta  = 1.0f / (SLfloat)_length;
+    SLfloat deltaC = 1.0f / ((_colors[c + 1].pos - _colors[c].pos) / delta);
+
+    SLVCol3f lut;
+    lut.resize((SLuint)_length);
+
+    // Interpolate color values
+    for (SLuint i = 0; i < _length; ++i)
+    {
+        lut[i].r = Utils::lerp(posC, _colors[c].color.r, _colors[c + 1].color.r);
+        lut[i].g = Utils::lerp(posC, _colors[c].color.g, _colors[c + 1].color.g);
+        lut[i].b = Utils::lerp(posC, _colors[c].color.b, _colors[c + 1].color.b);
+
+        pos += delta;
+        posC += deltaC;
+
+        if (pos > _colors[c + 1].pos && c < _colors.size() - 2)
+        {
+            c++;
+            posC   = 0.0f;
+            deltaC = 1.0f / ((_colors[c + 1].pos - _colors[c].pos) / delta);
+        }
+    }
+    return lut;
 }
 //-----------------------------------------------------------------------------

@@ -1,16 +1,14 @@
-//#############################################################################
-//  File:      SLAnimManager.h
-//  Date:      Autumn 2014
+/**
+ * \file      SLAnimManager.h
+ * \date      Autumn 2014
 //  Codestyle: https://code.google.com/p/slproject/wiki/CodingStyleGuidelines
-//  Authors:   Marc Wacker, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+ * \authors   Marc Wacker, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #ifndef SLANIMMANAGER_H
 #define SLANIMMANAGER_H
 
-#include <SLAnimManager.h>
 #include <SLAnimPlayback.h>
 #include <SLAnimation.h>
 #include <SLAnimSkeleton.h>
@@ -30,13 +28,8 @@ class SLAnimManager
 public:
     ~SLAnimManager();
 
-    void            addSkeleton(SLAnimSkeleton* skel);
-    void            addNodeAnimation(SLAnimation* anim);
-    SLbool          hasNodeAnimations() { return (_nodeAnimations.size() > 0); }
-    SLAnimPlayback* nodeAnimPlayback(const SLstring& name);
-    SLAnimPlayback* allAnimPlayback(SLuint ix) { return _allAnimPlaybacks[ix]; }
-    SLAnimPlayback* lastAnimPlayback() { return _allAnimPlaybacks.back(); }
-
+    void         addSkeleton(SLAnimSkeleton* skel);
+    void         addNodeAnimation(SLAnimation* anim);
     SLAnimation* createNodeAnimation(SLfloat duration);
     SLAnimation* createNodeAnimation(const SLstring& name,
                                      SLfloat         duration);
@@ -45,25 +38,27 @@ public:
                                      SLbool          enabled,
                                      SLEasingCurve   easing,
                                      SLAnimLooping   looping);
+    SLbool       hasNodeAnimations() { return (_animationNamesMap.size() > 0); }
 
-    SLMAnimation& animations()
-    {
-        return _nodeAnimations;
-    }
     SLVSkeleton&     skeletons() { return _skeletons; }
-    SLVstring&       allAnimNames() { return _allAnimNames; }
-    SLVAnimPlayback& allAnimPlaybacks() { return _allAnimPlaybacks; }
+    SLMAnimation&    animationNamesMap() { return _animationNamesMap; }
+    SLMAnimPlayback& animPlaybackNamesMap() { return _animPlaybackNamesMap; }
+    SLVstring&       animationNames() { return _animationNames; }
+    SLVAnimPlayback& animPlaybacks() { return _animPlaybacks; }
+    SLAnimPlayback*  animPlaybackByName(const SLstring& name);
+    SLAnimPlayback*  animPlaybackByIndex(SLuint ix) { return _animPlaybacks[ix]; }
+    SLAnimPlayback*  animPlaybacksBack() { return _animPlaybacks.back(); }
 
     SLbool update(SLfloat elapsedTimeSec);
     void   drawVisuals(SLSceneView* sv);
     void   clear();
 
 private:
-    SLVSkeleton     _skeletons;         //!< all skeleton instances
-    SLMAnimation    _nodeAnimations;    //!< node animations
-    SLMAnimPlayback _nodeAnimPlaybacks; //!< node animation playbacks
-    SLVstring       _allAnimNames;      //!< vector with all animation names
-    SLVAnimPlayback _allAnimPlaybacks;  //!< vector with all animation playbacks
+    SLVSkeleton     _skeletons;            //!< all skeleton instances
+    SLMAnimation    _animationNamesMap;    //!< map name to animation
+    SLMAnimPlayback _animPlaybackNamesMap; //!< map name to animation playbacks
+    SLVstring       _animationNames;       //!< vector with all animation names
+    SLVAnimPlayback _animPlaybacks;        //!< vector with all animation playbacks
 };
 //-----------------------------------------------------------------------------
 #endif

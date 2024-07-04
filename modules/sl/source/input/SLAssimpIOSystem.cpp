@@ -1,3 +1,12 @@
+/**
+ * \file      SLAssimpIOStream.cpp
+ * \date      May 2024
+ * \authors   Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
+
 #include <SLAssimpIOSystem.h>
 
 //-----------------------------------------------------------------------------

@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      sl/SLEnums.h
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      sl/SLEnums.h
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ */
 
 #ifndef SLENUMSID_H
 #define SLENUMSID_H
@@ -82,125 +82,16 @@ enum SLAxis
     A_z = 2
 };
 //-----------------------------------------------------------------------------
-//! SLCommand enumerates all possible menu and keyboard commands
-enum SLSceneID
-{
-    SID_FromFile = -2, // Custom asset loaded over menu
-    SID_Empty    = 0,  // No data in scene
-    SID_Minimal,
-    SID_Figure,
-    SID_MeshLoad,
-    SID_Revolver,
-    SID_TextureFilter,
-    SID_TextureBlend,
-    SID_TextureCompression,
-    SID_FrustumCull,
-    SID_2Dand3DText,
-    SID_PointClouds,
-    SID_ZFighting,
-
-    SID_ShaderPerVertexBlinn,
-    SID_ShaderPerPixelBlinn,
-    SID_ShaderPerPixelCook,
-    SID_ShaderIBL,
-    SID_ShaderPerVertexWave,
-    SID_ShaderBumpNormal,
-    SID_ShaderBumpParallax,
-    SID_ShaderSkyBox,
-    SID_ShaderEarth,
-    SID_ShadowMappingBasicScene,
-    SID_ShadowMappingLightTypes,
-    SID_ShadowMappingPointLights,
-    SID_ShadowMappingSpotLights,
-    SID_ShadowMappingCascaded,
-
-    SID_SuzannePerPixBlinn,
-    SID_SuzannePerPixBlinnTm,
-    SID_SuzannePerPixBlinnNm,
-    SID_SuzannePerPixBlinnAo,
-    SID_SuzannePerPixBlinnSm,
-    SID_SuzannePerPixBlinnTmNm,
-    SID_SuzannePerPixBlinnTmAo,
-    SID_SuzannePerPixBlinnNmAo,
-    SID_SuzannePerPixBlinnTmSm,
-    SID_SuzannePerPixBlinnNmSm,
-    SID_SuzannePerPixBlinnAoSm,
-    SID_SuzannePerPixBlinnTmNmAo,
-    SID_SuzannePerPixBlinnTmNmSm,
-    SID_SuzannePerPixBlinnTmNmAoSm,
-
-    SID_glTF_DamagedHelmet,
-    SID_glTF_FlightHelmet,
-    SID_glTF_Sponza,
-    SID_glTF_WaterBottle,
-
-    SID_Robotics_FanucCRX_FK,
-
-    SID_VolumeRayCast,
-    SID_VolumeRayCastLighted,
-
-    SID_AnimationMass,
-    SID_AnimationSkinned,
-    SID_AnimationNode,
-    SID_AnimationAstroboyArmy,
-
-    SID_VideoTextureLive,
-    SID_VideoTextureFile,
-    SID_VideoCalibrateMain,
-    SID_VideoCalibrateScnd,
-    SID_VideoTrackChessMain,
-    SID_VideoTrackChessScnd,
-    SID_VideoTrackArucoMain,
-    SID_VideoTrackArucoScnd,
-    SID_VideoTrackFeature2DMain,
-    SID_VideoTrackFaceMain,
-    SID_VideoTrackFaceScnd,
-    SID_VideoTrackMediaPipeHandsMain,
-    SID_VideoSensorAR,
-    SID_VideoTrackWAI,
-
-    SID_RTMuttenzerBox,
-    SID_RTSpheres,
-    SID_RTSoftShadows,
-    SID_RTDoF,
-    SID_RTLens,
-    SID_RTTest,
-
-    SID_ParticleSystem_First,
-    SID_ParticleSystem_Demo,
-    SID_ParticleSystem_DustStorm,
-    SID_ParticleSystem_Fountain,
-    SID_ParticleSystem_Sun,
-    SID_ParticleSystem_RingOfFire,
-    SID_ParticleSystem_FireComplex,
-
-    SID_MaxNoBenchmarks,
-
-    SID_Benchmark1_LargeModel,
-    SID_Benchmark2_MassiveNodes,
-    SID_Benchmark3_NodeAnimations,
-    SID_Benchmark4_SkinnedAnimations,
-    SID_Benchmark5_ColumnsNoLOD,
-    SID_Benchmark6_ColumnsLOD,
-    SID_Benchmark7_JansUniverse,
-    SID_Benchmark8_ParticleSystemFireComplex,
-    SID_Benchmark9_ParticleSystemManyParticles,
-
-    SID_MaxPublicAssets,
-
-    // These scenes are not part of the public data
-    SID_ErlebARBernChristoffel,
-    SID_ErlebARBielBFH,
-    SID_ErlebARAugustaRauricaTmp,
-    SID_ErlebARAugustaRauricaTht,
-    SID_ErlebARAugustaRauricaTmpTht,
-    SID_ErlebARAventicumAmphiteatre,
-    SID_ErlebARAventicumCigognier,
-    SID_ErlebARAventicumTheatre,
-    SID_ErlebARSutzKirchrain18,
-
-    SID_MaxAll
-};
+//! Scene identifier
+/*
+Apps define a custom enum for identifiying their scenes, SLSceneID simply aliases
+to an int. This app-specific enum has to be based on SLSceneID and has to include
+SL_EMPTY_SCENE_ID because the SL library requires an empty scene to be available.
+*/
+typedef int SLSceneID;
+//-----------------------------------------------------------------------------
+//! SLSceneID for an empty scene
+constexpr SLSceneID SL_EMPTY_SCENE_ID = 0;
 //-----------------------------------------------------------------------------
 //! Mouse button codes
 enum SLMouseButton
@@ -362,8 +253,7 @@ enum SLLogVerbosity
 enum SLViewportAlign
 {
     VA_center = 0,
-    VA_leftOrTop,
-    VA_rightOrBottom
+    VA_leftOrBottom
 };
 //-----------------------------------------------------------------------------
 //! Corresponds to the old fog modes in OpenGL 2.1

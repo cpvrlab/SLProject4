@@ -1,41 +1,63 @@
-//#############################################################################
-//  File:      SLGLProgramManager.cpp
-//  Date:      March 2020
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Michael Goettlicher, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLGLProgramManager.cpp
+ * \date      March 2020
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Michael Goettlicher, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ */
 
 #include <SLGLProgramManager.h>
 #include <SLGLProgramGeneric.h>
 
-#include <utility>
-
+//-----------------------------------------------------------------------------
+string                                         SLGLProgramManager::shaderPath;
+string                                         SLGLProgramManager::configPath;
 std::map<SLStdShaderProg, SLGLProgramGeneric*> SLGLProgramManager::_programs;
-
-string SLGLProgramManager::shaderPath;
-string SLGLProgramManager::configPath;
 //-----------------------------------------------------------------------------
 /*!
- * @param shdrPath Path to the shader files
- * @param confPath Path to the writable config directory
+ * \param shdrPath Path to the shader files
+ * \param confPath Path to the writable config directory
  */
-void SLGLProgramManager::init(string shdrPath, string confPath)
+void SLGLProgramManager::init(string shaderPath, string configPath)
 {
-    shaderPath = std::move(shdrPath);
-    configPath = std::move(confPath);
+    SLGLProgramManager::shaderPath = std::move(shaderPath);
+    SLGLProgramManager::configPath = std::move(configPath);
 }
 //-----------------------------------------------------------------------------
-SLGLProgramGeneric* SLGLProgramManager::get(SLStdShaderProg id)
+void SLGLProgramManager::loadPrograms()
 {
-    auto it = _programs.find(id);
-    if (it == _programs.end())
-    {
-        makeProgram(id);
-    }
+    assert(!shaderPath.empty() &&
+           "Error in SLGLProgramManager: shader path is empty!");
 
-    return _programs[id];
+    loadProgram(SP_colorAttribute,
+                "ColorAttribute.vert",
+                "Color.frag");
+    loadProgram(SP_colorUniform,
+                "ColorUniform.vert",
+                "Color.frag");
+    loadProgram(SP_textureOnly,
+                "TextureOnly.vert",
+                "TextureOnly.frag");
+    loadProgram(SP_textureOnlyExternal,
+                "TextureOnlyExternal.vert",
+                "TextureOnlyExternal.frag");
+    loadProgram(SP_fontTex,
+                "FontTex.vert",
+                "FontTex.frag");
+    loadProgram(SP_errorTex,
+                "ErrorTex.vert",
+                "ErrorTex.frag");
+    loadProgram(SP_depth,
+                "Depth.vert",
+                "Depth.frag");
+
+    SLGLProgram* colorUniformPoint = loadProgram(SP_colorUniformPoint,
+                                                 "ColorUniformPoint.vert",
+                                                 "Color.frag");
+    colorUniformPoint->addUniform1f(new SLGLUniform1f(UT_const,
+                                                      "u_pointSize",
+                                                      3.0f));
 }
 //-----------------------------------------------------------------------------
 void SLGLProgramManager::deletePrograms()
@@ -45,35 +67,17 @@ void SLGLProgramManager::deletePrograms()
     _programs.clear();
 }
 //-----------------------------------------------------------------------------
-void SLGLProgramManager::makeProgram(SLStdShaderProg id)
+SLGLProgramGeneric* SLGLProgramManager::loadProgram(SLStdShaderProg id,
+                                                    string          vertShaderFilename,
+                                                    string          fragShaderFilename)
 {
-    assert(!shaderPath.empty() && "Error in SLGLProgramManager: Please set call SLGLProgramManager::init and transfer the location of the default shader files!");
+    SLstring vertShaderPath = shaderPath + vertShaderFilename;
+    SLstring fragShaderPath = shaderPath + fragShaderFilename;
 
-    switch (id)
-    {
-        case SP_colorAttribute:
-            _programs.insert({id, new SLGLProgramGeneric(nullptr, shaderPath + "ColorAttribute.vert", shaderPath + "Color.frag")});
-            break;
-        case SP_colorUniform:
-            _programs.insert({id, new SLGLProgramGeneric(nullptr, shaderPath + "ColorUniform.vert", shaderPath + "Color.frag")});
-            break;
-        case SP_TextureOnly:
-            _programs.insert({id, new SLGLProgramGeneric(nullptr, shaderPath + "TextureOnly.vert", shaderPath + "TextureOnly.frag")});
-            break;
-        case SP_TextureOnlyExternal:
-            _programs.insert({id, new SLGLProgramGeneric(nullptr, shaderPath + "TextureOnlyExternal.vert", shaderPath + "TextureOnlyExternal.frag")});
-            break;
-        case SP_fontTex:
-            _programs.insert({id, new SLGLProgramGeneric(nullptr, shaderPath + "FontTex.vert", shaderPath + "FontTex.frag")});
-            break;
-        case SP_errorTex:
-            _programs.insert({id, new SLGLProgramGeneric(nullptr, shaderPath + "ErrorTex.vert", shaderPath + "ErrorTex.frag")});
-            break;
-        case SP_depth:
-            _programs.insert({id, new SLGLProgramGeneric(nullptr, shaderPath + "Depth.vert", shaderPath + "Depth.frag")});
-            break;
-        default:
-            SL_EXIT_MSG("SLGLProgramManager: unknown shader id!");
-    }
+    SLGLProgramGeneric* program = new SLGLProgramGeneric(nullptr,
+                                                         vertShaderPath,
+                                                         fragShaderPath);
+    _programs.insert({id, program});
+    return program;
 }
 //-----------------------------------------------------------------------------

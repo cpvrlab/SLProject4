@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      WAIKeyframeDB.h
-//  Date:      October 2017
+/**
+ * \file      WAIKeyframeDB.h
+ * \date      October 2017
 //  Codestyle: https://github.com/cpvrlab/SLProject/wiki/Coding-Style-Guidelines
-//  Authors:   Raul Mur-Artal, Michael Goettlicher, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+ * \authors   Raul Mur-Artal, Michael Goettlicher, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 /**
  * This file is part of ORB-SLAM2.

@@ -1,10 +1,9 @@
-//#############################################################################
-//  File:      cv13_HeadPoseEstimation.cpp
-//  Purpose:   Minimal OpenCV app for head pose estimation
-//  Taken from Satya Mallic on:
-//  http://www.learnopencv.com/head-pose-estimation-using-opencv-and-dlib/
-//  Date:      Authumn 2017
-//#############################################################################
+/**
+ * \file      cv13_HeadPoseEstimation.cpp
+ * \brief     Minimal OpenCV app for head pose estimation
+ * \copyright Based on Satya Mallick's Tutorial at https://www.learnopencv.com
+ * \date      Authumn 2017
+*/
 
 #include <opencv2/opencv.hpp>
 

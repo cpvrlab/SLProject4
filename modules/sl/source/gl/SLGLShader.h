@@ -1,13 +1,11 @@
-//#############################################################################
-//  File:      SLGLShader.h
-//  Authors:   Marcus Hudritsch
-//             Mainly based on Martin Christens GLSL Tutorial
-//             See http://www.clockworkcoders.com
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLGLShader.h
+ * \authors   Marcus Hudritsch, Martin Christens, http://www.clockworkcoders.com
+ * \date      July 2014
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLGLSHADER_H
 #define SLGLSHADER_H
@@ -49,7 +47,8 @@ public:
 
 private:
     SLbool   createAndCompile(SLVLight* lights);
-    SLstring preprocessPragmas(SLstring code, SLVLight* lights);
+    SLstring preprocessIncludePragmas(SLstring inCode);
+    SLstring preprocessDefinePragmas(SLstring inCode, SLVLight* lights);
 
 protected:
     SLShaderType _type;     //!< Shader type enumeration

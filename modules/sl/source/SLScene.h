@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      SLScene.h
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLScene.h
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLSCENE_H
 #define SLSCENE_H
@@ -23,6 +23,7 @@
 
 class SLCamera;
 class SLSkybox;
+class SLAssetLoader;
 
 //-----------------------------------------------------------------------------
 //! C-Callback function typedef for scene load function
@@ -33,28 +34,45 @@ typedef void(SL_STDCALL* cbOnSceneLoad)(SLAssetManager* am,
 //-----------------------------------------------------------------------------
 //! The SLScene class represents the top level instance holding the scene structure
 /*!
- The SLScene class holds everything that is common for all scene views such as
- the root pointer (_root3D) to the scene, an array of lights as well as the
- global resources (_meshes (SLMesh), _materials (SLMaterial), _textures
- (SLGLTexture) and _shaderProgs (SLGLProgram)).
- All these resources and the scene with all nodes to which _root3D pointer points
- get deleted in the method unInit.\n
- A scene could have multiple scene views. A pointer of each is stored in the
- vector _sceneViews.\n
- The scene assembly takes place outside of the library in function of the application.
- A pointer for this function must be passed to the SLScene constructor. For the
- demo project this function is in AppDemoSceneLoad.cpp.
+ The SLScene class holds everything that is common for all sceneviews such as
+ the pointer (_root3D) to the root node of the scene.
+ The scene loading happens in 3 steps:\n
+ 1) Registering all expensive assets to load in registerAssetsToLoad.\n
+ 2) Parallel loading of assets in threads with SLAssetLoader::loadAll.\n
+ 3) Assembling the scene in assemble.\n
+ To load a scene you must therefore inherit from this class and override the
+ methods registerAssetsToLoad and assemble.\n
 */
 class SLScene : public SLObject
 {
     friend class SLNode;
 
 public:
-    SLScene(const SLstring& name,
-            cbOnSceneLoad   onSceneLoadCallback);
+    SLScene(const SLstring& name);
     ~SLScene() override;
 
     void initOculus(SLstring shaderDir);
+
+    //! All assets the should be loaded in parallel must be registered in here.
+    
+    //! All scene specific assets have to be registered for async loading in here.
+    /*! @remark All scene sspecific assets have to be loaded async by overriding 
+    SLScene::registerAssetsToLoad and SLScene::assemble. Async loading and 
+    assembling means that it happens in a parallel thread and that in there are 
+    no OpenGL calls allowed. OpenGL calls are only allowed in the main thread.*/
+    virtual void registerAssetsToLoad(SLAssetLoader& al) {}
+
+    //! After parallel loading of the assets the scene gets assembled in here.
+    /*! @remark All scene-specific assets have to be loaded async by overriding 
+    SLScene::registerAssetsToLoad and SLScene::assemble. Async loading and 
+    assembling means that it happens in a parallel thread and that in there 
+    are no OpenGL calls allowed. OpenGL calls are only allowed in the main 
+    thread. It is important that all object instantiations within 
+    SLScene::assemble do NOT call any OpenGL functions (gl*) because they happen 
+    in a parallel thread. All objects that get rendered have to do their 
+    initialization when they are used the first time during rendering in the 
+    main thread.*/
+    virtual void assemble(SLAssetManager* am, SLSceneView* sv) {}
 
     // Setters
     void root3D(SLNode* root3D)
@@ -110,8 +128,6 @@ public:
     SLint     numSceneCameras();
     SLCamera* nextCameraInScene(SLCamera* activeSVCam);
 
-    cbOnSceneLoad onLoad; //!< C-Callback for scene load
-
     // Misc.
     bool         onUpdate(bool renderTypeIsRT,
                           bool voxelsAreShown,
@@ -133,26 +149,26 @@ protected:
     SLAnimManager   _animManager;   //!< Animation manager instance
     SLAssetManager* _assetManager;  //!< Pointer to the external assetManager
 
-    SLNode*   _root3D;              //!< Root node for 3D scene
-    SLNode*   _root2D;              //!< Root node for 2D scene displayed in ortho projection
-    SLSkybox* _skybox;              //!< pointer to skybox
-    SLstring  _info;                //!< scene info string
-    SLVNode   _selectedNodes;       //!< Vector of selected nodes. See SLMesh::selectNodeMesh.
-    SLVMesh   _selectedMeshes;      //!< Vector of selected meshes. See SLMesh::selectNodeMesh.
+    SLNode*   _root3D;         //!< Root node for 3D scene
+    SLNode*   _root2D;         //!< Root node for 2D scene displayed in ortho projection
+    SLSkybox* _skybox;         //!< pointer to skybox
+    SLstring  _info;           //!< scene info string
+    SLVNode   _selectedNodes;  //!< Vector of selected nodes. See SLMesh::selectNodeMesh.
+    SLVMesh   _selectedMeshes; //!< Vector of selected meshes. See SLMesh::selectNodeMesh.
 
-    SLfloat _loadTimeMS;            //!< time to load scene in ms
-    SLfloat _frameTimeMS;           //!< Last frame time in ms
-    SLfloat _lastUpdateTimeMS;      //!< Last time after update in ms
-    SLfloat _fps;                   //!< Averaged no. of frames per second
+    SLfloat _loadTimeMS;       //!< time to load scene in ms
+    SLfloat _frameTimeMS;      //!< Last frame time in ms
+    SLfloat _lastUpdateTimeMS; //!< Last time after update in ms
+    SLfloat _fps;              //!< Averaged no. of frames per second
 
     // major part times
-    AvgFloat _frameTimesMS;              //!< Averaged total time per frame in ms
-    AvgFloat _updateTimesMS;             //!< Averaged time for update in ms
-    AvgFloat _updateAABBTimesMS;         //!< Averaged time for update the nodes AABB in ms
-    AvgFloat _updateAnimTimesMS;         //!< Averaged time for update the animations in ms
-    AvgFloat _updateDODTimesMS;          //!< Averaged time for update the SLEntities graph
+    AvgFloat _frameTimesMS;      //!< Averaged total time per frame in ms
+    AvgFloat _updateTimesMS;     //!< Averaged time for update in ms
+    AvgFloat _updateAABBTimesMS; //!< Averaged time for update the nodes AABB in ms
+    AvgFloat _updateAnimTimesMS; //!< Averaged time for update the animations in ms
+    AvgFloat _updateDODTimesMS;  //!< Averaged time for update the SLEntities graph
 
-    SLbool _stopAnimations;              //!< Global flag for stopping all animations
+    SLbool _stopAnimations; //!< Global flag for stopping all animations
 
     std::unique_ptr<SLGLOculus> _oculus; //!< Oculus Rift interface
 };

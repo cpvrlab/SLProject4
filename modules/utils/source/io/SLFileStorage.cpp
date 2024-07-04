@@ -1,13 +1,15 @@
-//#############################################################################
-//  File:      SLFileStorage.cpp
-//  Date:      October 2022
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marino von Wattenwyl
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLFileStorage.cpp
+ * \date      October 2022
+ * \authors   Marino von Wattenwyl
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLFileStorage.h>
+
+#include <cstring>
 
 #if defined(SL_STORAGE_FS)
 #    include <SLIONative.h>
@@ -19,6 +21,20 @@
 #endif
 
 //-----------------------------------------------------------------------------
+//! Creates a copy of the data in the buffer
+SLIOBuffer SLIOBuffer::copy()
+{
+    unsigned char* copy = new unsigned char[size];
+    std::memcpy(copy, data, size);
+    return SLIOBuffer{copy, size};
+}
+//-----------------------------------------------------------------------------
+//! Deallocates the data owned by the buffer
+void SLIOBuffer::deallocate()
+{
+    delete[] data;
+}
+//-----------------------------------------------------------------------------
 //! Opens a file stream for I/O operations
 /*!
  * Opens a file stream and prepares it for reading or writing. After usage,
@@ -26,10 +42,10 @@
  * uses the kind and the mode  to determine which kind of stream it should
  * create. For example, in a web browser, configuration files are written to
  * local storage.
- * @param path Path to file
- * @param kind Kind of file
- * @param mode Mode to open the stream in
- * @return Opened stream ready for I/O
+ * \param path Path to file
+ * \param kind Kind of file
+ * \param mode Mode to open the stream in
+ * \return Opened stream ready for I/O
  */
 SLIOStream* SLFileStorage::open(std::string    path,
                                 SLIOStreamKind kind,
@@ -47,19 +63,9 @@ SLIOStream* SLFileStorage::open(std::string    path,
 
     if (mode == IOM_read)
     {
-        if (kind == IOK_shader)
+        if (kind == IOK_shader || kind == IOK_image || kind == IOK_model || kind == IOK_font)
         {
-            // Generated shaders exist in memory, pre-written shaders
-            // need to be downloaded from the server.
-
-            if (SLIOMemory::exists(path))
-                return new SLIOReaderMemory(path);
-            else
-                return new SLIOReaderFetch(path);
-        }
-        else if (kind == IOK_image || kind == IOK_model || kind == IOK_font)
-        {
-            // Images, models and fonts are always stored on the server.
+            // Shaders, images, models and fonts are always stored on the server.
             return new SLIOReaderFetch(path);
         }
         else if (kind == IOK_config)
@@ -76,14 +82,11 @@ SLIOStream* SLFileStorage::open(std::string    path,
     }
     else if (mode == IOM_write)
     {
-        // Generated shaders are written to memory, config files are written
-        // to local storage, so they can be read when the website is reloaded,
-        // images (e.g. screenshots) are displayed in the browser window so
-        // the user can download them.
+        // Config files are written to local storage so they can be read when
+        // the website is reloaded, images (e.g. screenshots) are displayed in
+        // the browser window so the user can download them.
 
-        if (kind == IOK_shader)
-            return new SLIOWriterMemory(path);
-        else if (kind == IOK_config)
+        if (kind == IOK_config)
             return new SLIOWriterLocalStorage(path);
         else if (kind == IOK_image)
             return new SLIOWriterBrowserPopup(path);
@@ -98,7 +101,7 @@ SLIOStream* SLFileStorage::open(std::string    path,
  * First flushes the stream to make sure that all data is written and
  * then deletes it. Implementations of SLIOStream will then close their
  * backing streams in the destructor.
- * @param stream Stream to close
+ * \param stream Stream to close
  */
 void SLFileStorage::close(SLIOStream* stream)
 {
@@ -111,9 +114,9 @@ void SLFileStorage::close(SLIOStream* stream)
  * Checks whether a file exists at the given path and if it is of the given
  * kind. When running in a web browser, the function may need to communicate
  * with a server to check whether the file exists, which is quite slow.
- * @param path Path to file
- * @param kind Kind of file
- * @return True if the file exists
+ * \param path Path to file
+ * \param kind Kind of file
+ * \return True if the file exists
  */
 bool SLFileStorage::exists(std::string path, SLIOStreamKind kind)
 {
@@ -124,7 +127,7 @@ bool SLFileStorage::exists(std::string path, SLIOStreamKind kind)
         return false;
 
     if (kind == IOK_shader)
-        return SLIOMemory::exists(path) || SLIOReaderFetch::exists(path);
+        return SLIOReaderFetch::exists(path);
     else if (kind == IOK_config)
         return SLIOLocalStorage::exists(path) || SLIOReaderFetch::exists(path);
     else
@@ -138,9 +141,9 @@ bool SLFileStorage::exists(std::string path, SLIOStreamKind kind)
  * for its content, reads the content into the buffer and closes the stream.
  * The buffer is owned by the caller and must be deallocated with a call to
  * SLFileStorage::deleteBuffer after usage.
- * @param path Path to the file to read
- * @param kind Kind of the file to read
- * @return Buffer holding the file contents and size
+ * \param path Path to the file to read
+ * \param kind Kind of the file to read
+ * \return Buffer holding the file contents and size
  */
 SLIOBuffer SLFileStorage::readIntoBuffer(std::string path, SLIOStreamKind kind)
 {
@@ -153,26 +156,15 @@ SLIOBuffer SLFileStorage::readIntoBuffer(std::string path, SLIOStreamKind kind)
     return SLIOBuffer{data, size};
 }
 //-----------------------------------------------------------------------------
-//! Deallocates the data of a buffer returned by SLFileStorage::readIntoBuffer
-/*!
- * Deallocates the data owned by an SLIOBuffer. This function should be
- * called as soon as the memory of readIntoBuffer is not used anymore.
- * @param buffer Buffer to delete
- */
-void SLFileStorage::deleteBuffer(SLIOBuffer& buffer)
-{
-    delete[] buffer.data;
-}
-//-----------------------------------------------------------------------------
 //! Reads an entire file into a string
 /*!
  * Opens a stream from the path provided in read mode, allocates a strings
  * for its content, reads the content into the string and closes the stream.
  * Line endings are NOT converted to LF, which means that on Windows, the
  * string may contain CRLF line endings.
- * @param path Path to the file to read
- * @param kind Kind of the file to read
- * @return String containing the contents of the file
+ * \param path Path to the file to read
+ * \param kind Kind of the file to read
+ * \return String containing the contents of the file
  */
 std::string SLFileStorage::readIntoString(std::string path, SLIOStreamKind kind)
 {
@@ -192,9 +184,9 @@ std::string SLFileStorage::readIntoString(std::string path, SLIOStreamKind kind)
  * the file and closes the stream. Line endings are NOT converted to LF,
  * which means that on Windows, the file may contain LF line endings after
  * writing instead of CRLF line endings.
- * @param path The path to the file to write to
- * @param kind The kind of the file to write to
- * @param string The string to write to the file
+ * \param path The path to the file to write to
+ * \param kind The kind of the file to write to
+ * \param string The string to write to the file
  */
 void SLFileStorage::writeString(std::string        path,
                                 SLIOStreamKind     kind,

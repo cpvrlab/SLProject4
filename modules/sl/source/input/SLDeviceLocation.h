@@ -1,13 +1,12 @@
-//#############################################################################
-//  File:      SLDeviceLocation.h
-//  Purpose:   Mobile device location class declaration
-//  Authors:   Marcus Hudritsch
-//  Date:      November 2017
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLDeviceLocation.h
+ * \brief     Mobile device location class declaration
+ * \authors   Marcus Hudritsch
+ * \date      November 2017
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ */
 
 #ifndef SLDEVICELOCATION_H
 #define SLDEVICELOCATION_H
@@ -60,8 +59,8 @@ enum SLLocOffsetMode
 //-----------------------------------------------------------------------------
 //! Encapsulation of a mobile device location set by the device's GPS sensor
 /*! This class is only used if SLProject runs on a mobile device. Check out the
- app-Demo-SLProject/android and app_demo_slproject/ios how the sensor data is generated
- and passed to this object hold by AppDemo. The class stores the devices location
+ app-demo/android and app_demo_slproject/ios how the sensor data is generated
+ and passed to this object hold by AppCommon. The class stores the devices location
  that it gets from its GPS (global positioning system) sensor. The device location can
  be used in the active camera to apply it to the scene camera
  (s. SLCamera::setView).\n
@@ -94,10 +93,8 @@ public:
                              SLdouble altM,
                              SLfloat  accuracyM);
 
-    SLbool calculateSolarAngles(SLVec3d     locationLatLonAlt,
-                                std::time_t time);
+    SLbool calculateSolarAngles(SLVec3d locationLatLonAlt, std::time_t time);
 
-    //! Converter method: the transferred wgs84 coordinate is converted to ENU frame and returned (does not change SLDeviceLocation)
     SLVec3d convertLatLonAlt2ENU(SLVec3d locLatLonAlt) const;
 
     // Setters

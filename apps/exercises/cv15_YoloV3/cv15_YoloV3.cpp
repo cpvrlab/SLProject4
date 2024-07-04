@@ -1,9 +1,9 @@
-//#############################################################################
-//  File:      cv15_YoloV3.cpp
-//  Purpose:   Object Detection with YOLO V3 and OpenCV
-//  Taken from Satya Mallic on: http://www.learnopencv.com
-//  Date:      December 2021
-//#############################################################################
+/**
+ * \file      cv15_YoloV3.cpp
+ * \brief     Object Detection with YOLO V3 and OpenCV
+ * \copyright Based on Satya Mallick's Tutorial at https://www.learnopencv.com
+ * \date      December 2021
+*/
 
 #include <fstream>
 #include <sstream>

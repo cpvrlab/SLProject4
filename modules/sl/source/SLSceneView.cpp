@@ -1,12 +1,14 @@
-//#############################################################################
-//   File:      SLSceneView.cpp
-//   Date:      July 2014
-//   Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//   Authors:   Marc Wacker, Marcus Hudritsch
-//   License:   This software is provided under the GNU General Public License
-//              Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLSceneView.cpp
+ * \date      July 2014
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Marc Wacker, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ */
 
+#include "SL.h"
+#include "SLEnums.h"
 #include <SLAnimManager.h>
 #include <SLCamera.h>
 #include <SLLight.h>
@@ -16,7 +18,8 @@
 #include <GlobalTimer.h>
 #include <SLInputManager.h>
 #include <Profiler.h>
-
+#include <SLImGui.h>
+#include <SLUiInterface.h>
 #include <utility>
 
 #ifdef SL_EMSCRIPTEN
@@ -47,10 +50,6 @@ SLSceneView::SLSceneView(SLScene* s, int dpi, SLInputManager& inputManager)
 //-----------------------------------------------------------------------------
 SLSceneView::~SLSceneView()
 {
-    if (_gui)
-        _gui->onClose();
-
-    SL_LOG("Destructor      : ~SLSceneView");
 }
 //-----------------------------------------------------------------------------
 /*! SLSceneView::init initializes default values for an empty scene
@@ -75,9 +74,6 @@ void SLSceneView::init(SLstring       name,
     _scrW       = screenWidth;
     _scrH       = screenHeight;
     _gotPainted = true;
-
-    // Set default viewport ratio to the same as the screen
-    setViewportFromRatio(SLVec2i(0, 0), VA_center, false);
 
     // The window update callback function is used to refresh the ray tracing
     // image during the rendering process. The ray tracing image is drawn by OpenGL
@@ -114,8 +110,17 @@ void SLSceneView::init(SLstring       name,
 
     _screenCaptureIsRequested = false;
 
+#if defined(SL_OS_ANDROID) || defined(SL_OS_MACIOS) || defined(SL_EMSCRIPTEN)
+    _viewportAlign = VA_center;
+#else
+    _viewportAlign = VA_leftOrBottom;
+#endif
+
     if (_gui)
         _gui->init(configPath);
+
+    // Set default viewport ratio to the same as the screen
+    setViewportFromRatio(SLVec2i(0, 0), _viewportAlign, false);
 
     onStartup();
 }
@@ -137,8 +142,17 @@ void SLSceneView::unInit()
     _doWaitOnIdle     = true;
     _drawBits.allOff();
 
+    for (auto* material : _visibleMaterials2D)
+        material->nodesVisible2D().clear();
+    _visibleMaterials2D.clear();
+
+    for (auto* material : _visibleMaterials3D)
+        material->nodesVisible3D().clear();
+    _visibleMaterials3D.clear();
+
     _stats2D.clear();
     _stats3D.clear();
+    _s = nullptr;
 }
 //-----------------------------------------------------------------------------
 /*!
@@ -306,10 +320,9 @@ void SLSceneView::setViewportFromRatio(const SLVec2i&  vpRatio,
     if (vpRatio == SLVec2i::ZERO)
     {
         _viewportRect.set(0, 0, _scrW, _scrH);
-        _viewportAlign = VA_center;
+        _viewportAlign = VA_leftOrBottom;
         if (_gui)
-            _gui->onResize(_viewportRect.width,
-                           _viewportRect.height);
+            _gui->onResize(_viewportRect);
         return;
     }
 
@@ -327,8 +340,7 @@ void SLSceneView::setViewportFromRatio(const SLVec2i&  vpRatio,
         switch (vpAlign)
         {
             // viewport coordinates are bottom-left
-            case VA_leftOrTop: vpRect.x = 0; break;
-            case VA_rightOrBottom: vpRect.x = _scrW - vpRect.width; break;
+            case VA_leftOrBottom: vpRect.x = 0; break;
             case VA_center:
             default: vpRect.x = (_scrW - vpRect.width) / 2; break;
         }
@@ -342,8 +354,7 @@ void SLSceneView::setViewportFromRatio(const SLVec2i&  vpRatio,
         switch (vpAlign)
         {
             // viewport coordinates are bottom-left
-            case VA_leftOrTop: vpRect.y = _scrH - vpRect.height; break;
-            case VA_rightOrBottom: vpRect.y = 0; break;
+            case VA_leftOrBottom: vpRect.y = 0; break;
             case VA_center:
             default: vpRect.y = (_scrH - vpRect.height) / 2; break;
         }
@@ -353,7 +364,7 @@ void SLSceneView::setViewportFromRatio(const SLVec2i&  vpRatio,
     {
         _viewportRect = vpRect;
         if (_gui)
-            _gui->onResize(_viewportRect.width, _viewportRect.height);
+            _gui->onResize(_viewportRect);
     }
     else
         SL_EXIT_MSG("SLSceneView::viewport: Viewport is bigger than the screen!");
@@ -368,8 +379,6 @@ void SLSceneView::onInitialize()
 {
     PROFILE_FUNCTION();
 
-    postSceneLoad();
-
     SLGLState* stateGL = SLGLState::instance();
 
     if (_camera)
@@ -383,7 +392,7 @@ void SLSceneView::onInitialize()
     _stats2D.clear();
     _stats3D.clear();
 
-    _raytracer.deleteData();
+    _raytracer.deleteData(false);
     _renderType   = RT_gl;
     _isFirstFrame = true;
 
@@ -404,15 +413,17 @@ void SLSceneView::onInitialize()
         _s->root3D()->updateAABBRec(true);
         _s->root3D()->updateMeshAccelStructs();
 
-        SL_LOG("Time for AABBs  : %5.3f sec.",
-               (SLfloat)(clock() - t) / (SLfloat)CLOCKS_PER_SEC);
+        SL_LOG_DEBUG("Time for AABBs   : %5.3f sec.",
+                     (SLfloat)(clock() - t) / (SLfloat)CLOCKS_PER_SEC);
 
         // Collect node statistics
         _s->root3D()->statsRec(_stats3D);
 
         // Warn if there are no light in scene
         if (_s->lights().empty())
-            SL_LOG("**** No Lights found in scene! ****");
+            SL_LOG_DEBUG("sv->onInitialize : No Lights found in scene!");
+
+        //_s->root3D()->dumpRec();
     }
 
     // init 2D scene with initial depth 1
@@ -438,7 +449,7 @@ void SLSceneView::onInitialize()
     initSceneViewCamera();
 
     if (_gui)
-        _gui->onResize(_viewportRect.width, _viewportRect.height);
+        _gui->onResize(_viewportRect);
 }
 //-----------------------------------------------------------------------------
 /*!
@@ -504,17 +515,21 @@ SLbool SLSceneView::onPaint()
     // this function is called for multiple SceneViews. In this way we only
     // update the geometric representations if all SceneViews got painted once.
     // (can only happen during raytracing)
-    if (_gotPainted && _s)
+    if (_gotPainted)
     {
         _gotPainted = false;
 
         // Process queued up system events and poll custom input devices
         viewConsumedEvents = _inputManager.pollAndProcessEvents(this);
 
-        // update current scene
-        sceneHasChanged = _s->onUpdate((_renderType == RT_rt),
-                                       drawBit(SL_DB_VOXELS),
-                                       !drawBit(SL_DB_GPU_SKINNING) || drawBit(SL_DB_WITHEDGES));
+        if (_s)
+        {
+            // update current scene
+            sceneHasChanged = _s->onUpdate((_renderType == RT_rt),
+                                           drawBit(SL_DB_VOXELS),
+                                           !drawBit(SL_DB_GPU_SKINNING) ||
+                                             drawBit(SL_DB_WITHEDGES));
+        }
     }
 
     SLbool camUpdated = false;
@@ -1123,8 +1138,8 @@ void SLSceneView::draw2DGLNodes()
 {
     PROFILE_FUNCTION();
 
-    SLfloat    depth   = 1.0f;                           // Render depth between -1 & 1
-    SLfloat    cs      = std::min(_scrW, _scrH) * 0.01f; // center size
+    SLfloat    depth   = 1.0f;                                         // Render depth between -1 & 1
+    SLfloat    cs      = std::min((float)_scrW, (float)_scrH) * 0.01f; // center size
     SLGLState* stateGL = SLGLState::instance();
 
     SLMat4f prevViewMat(stateGL->viewMatrix);
@@ -1198,7 +1213,7 @@ void SLSceneView::draw2DGLNodes()
             for (SLint i = 0; i < circlePoints; ++i)
             {
                 SLVec2f c;
-                c.fromPolar(r, i * deltaPhi);
+                c.fromPolar(r, (float)i * deltaPhi);
                 rombusAndCirclePoints.push_back(SLVec3f(c.x, c.y, 0));
             }
             _vaoTouch.clearAttribs();
@@ -1795,52 +1810,58 @@ SLstring SLSceneView::windowTitle()
     profiling = " *** PROFILING *** ";
 #endif
 
-    if (_renderType == RT_rt)
+    if (_s)
     {
-        int numThreads = _raytracer.doDistributed() ? _raytracer.numThreads() : 1;
+        if (_renderType == RT_rt)
+        {
+            SLuint numThreads = _raytracer.doDistributed() ? _raytracer.numThreads() : 1;
 
-        if (_raytracer.doContinuous())
+            if (_raytracer.doContinuous())
+            {
+                snprintf(title,
+                         sizeof(title),
+                         "Ray Tracing: %s (fps: %4.1f, Threads: %d)",
+                         _s->name().c_str(),
+                         _s->fps(),
+                         numThreads);
+            }
+            else
+            {
+                snprintf(title,
+                         sizeof(title),
+                         "Ray Tracing: %s (Threads: %d)",
+                         _s->name().c_str(),
+                         numThreads);
+            }
+        }
+        else if (_renderType == RT_pt)
         {
             snprintf(title,
                      sizeof(title),
-                     "Ray Tracing: %s (fps: %4.1f, Threads: %d)",
+                     "Path Tracing: %s (Threads: %d)",
+                     _s->name().c_str(),
+                     _pathtracer.numThreads());
+        }
+        else
+        {
+            string format;
+            if (_s->fps() > 5)
+                format = "OpenGL Renderer: %s (fps: %4.0f, %u nodes of %u rendered)";
+            else
+                format = "OpenGL Renderer: %s (fps: %4.1f, %u nodes of %u rendered)";
+
+            snprintf(title,
+                     sizeof(title),
+                     format.c_str(),
                      _s->name().c_str(),
                      _s->fps(),
-                     numThreads);
+                     _stats3D.numNodesOpaque + _stats3D.numNodesBlended,
+                     _stats3D.numNodes);
         }
-        else
-        {
-            snprintf(title,
-                     sizeof(title),
-                     "Ray Tracing: %s (Threads: %d)",
-                     _s->name().c_str(),
-                     numThreads);
-        }
-    }
-    else if (_renderType == RT_pt)
-    {
-        snprintf(title,
-                 sizeof(title),
-                 "Path Tracing: %s (Threads: %d)",
-                 _s->name().c_str(),
-                 _pathtracer.numThreads());
     }
     else
-    {
-        string format;
-        if (_s->fps() > 5)
-            format = "OpenGL Renderer: %s (fps: %4.0f, %u nodes of %u rendered)";
-        else
-            format = "OpenGL Renderer: %s (fps: %4.1f, %u nodes of %u rendered)";
+        snprintf(title, sizeof(title), "Scene is loading ...");
 
-        snprintf(title,
-                 sizeof(title),
-                 format.c_str(),
-                 _s->name().c_str(),
-                 _s->fps(),
-                 _stats3D.numNodesOpaque + _stats3D.numNodesBlended,
-                 _stats3D.numNodes);
-    }
     return profiling + SLstring(title) + profiling;
 }
 //-----------------------------------------------------------------------------

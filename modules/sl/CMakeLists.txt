@@ -16,6 +16,8 @@ set(platform_specific_include_dirs)
 
 if (DEFINED ENV{CUDA_PATH} AND SL_BUILD_WITH_OPTIX)
     message(STATUS "[OptiX] CUDA_PATH is defined")
+    message(STATUS "----------------------------------------------------------------")
+    
     find_package(CUDA 10 REQUIRED)
     find_package(OptiX 7.2 REQUIRED)
     set(DEFAULT_COMPILE_DEFINITIONS
@@ -26,13 +28,16 @@ else ()
     if (DEFINED ENV{CUDA_PATH})
         message(STATUS "[OptiX] Has CUDA but OPTIX will not be built.")
         message(STATUS "[OptiX] Please download Optix at: https://developer.nvidia.com/designworks/optix/download")
+        message(STATUS "----------------------------------------------------------------")
     endif ()
     if (SL_BUILD_WITH_OPTIX)
         if ("${SYSTEM_NAME_UPPER}" STREQUAL "WINDOWS" OR "${SYSTEM_NAME_UPPER}" STREQUAL "LINUX")
             message(STATUS "[OptiX] For Optix you have to install the latest CUDA Toolkit ")
             message(STATUS "[OptiX] and the latest Optix SDK from NVidia.")
+            message(STATUS "----------------------------------------------------------------")
         else ()
             message(STATUS "[OptiX] Optix is so far only available on Windows or Linux")
+            message(STATUS "----------------------------------------------------------------")
         endif ()
     endif ()
 endif ()
@@ -51,16 +56,16 @@ file(GLOB cuda
 file(GLOB sources
         cuda/SLOptixHelper.h
         cuda/SLOptixVectorMath.h
+        externals/imgui/backends/imgui_impl_opengl3.h
+        externals/imgui/backends/imgui_impl_opengl3.cpp
         source/SL.h
-        source/SLAssetManager.cpp
-        source/SLAssetManager.h
         source/SLBackground.cpp
         source/SLBackground.h
         source/SLDrawBits.h
         source/SLEnums.h
         source/SLEventHandler.h
-        source/math/SLFrustum.h
-        source/math/SLFrustum.cpp
+        source/SLImGui.h
+        source/SLImGui.cpp
         source/SLMaterial.cpp
         source/SLMaterial.h
         source/SLObject.h
@@ -129,6 +134,10 @@ file(GLOB sources
         source/gl/SLGLVertexArrayExt.h
         source/gl/SLGLVertexBuffer.cpp
         source/gl/SLGLVertexBuffer.h
+        source/input/SLAssetLoader.cpp
+        source/input/SLAssetLoader.h
+        source/input/SLAssetManager.cpp
+        source/input/SLAssetManager.h
         source/input/SLAssimpImporter.cpp
         source/input/SLAssimpImporter.h
         source/input/SLAssimpIOSystem.cpp
@@ -165,6 +174,8 @@ file(GLOB sources
         source/mesh/SLCylinder.h
         source/mesh/SLDisk.cpp
         source/mesh/SLDisk.h
+        source/math/SLFrustum.h
+        source/math/SLFrustum.cpp
         source/mesh/SLGrid.cpp
         source/mesh/SLGrid.h
         source/mesh/SLLens.cpp
@@ -348,7 +359,8 @@ target_include_directories(${target}
         ${SL_PROJECT_ROOT}/modules/sl/source
         ${SL_PROJECT_ROOT}/modules/sl/cuda
         ${SL_PROJECT_ROOT}/modules/math/source
-        ${SL_PROJECT_ROOT}/modules/sl/externals/stb/
+        ${SL_PROJECT_ROOT}/modules/sl/externals/stb
+        ${SL_PROJECT_ROOT}/modules/sl/externals/imgui/backends
         ${OptiX_INCLUDE}
         ${CUDA_INCLUDE_DIRS}
         ${SL_PROJECT_ROOT}/apps/source

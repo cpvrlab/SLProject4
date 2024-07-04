@@ -1,12 +1,12 @@
-//#############################################################################
-//  File:      SLGLVertexBuffer.h
-//  Purpose:   Wrapper class around OpenGL Vertex Buffer Objects (VBO)
-//  Date:      January 2016
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLGLVertexBuffer.h
+ * \brief     Wrapper class around OpenGL Vertex Buffer Objects (VBO)
+ * \date      January 2016
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef SLGLVERTEXBUFFER_H
 #define SLGLVERTEXBUFFER_H

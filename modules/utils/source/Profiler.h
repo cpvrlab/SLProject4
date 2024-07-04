@@ -1,11 +1,11 @@
-//#############################################################################
-//  File:      Profiler.h
-//  Authors:   Marino von Wattenwyl
-//  Date:      December 2021
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      Profiler.h
+ * \authors   Marino von Wattenwyl
+ * \date      December 2021
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifndef PROFILER_H
 #define PROFILER_H

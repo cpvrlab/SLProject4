@@ -1,11 +1,12 @@
-//#############################################################################
-//  File:      SLGLFbo.cpp
-//  Purpose:   Wraps an OpenGL framebuffer object
-//  Date:      September 2018
-//  Authors:   Stefan Thoeni
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLGLFbo.cpp
+ * \brief     Wraps an OpenGL framebuffer object
+ * \date      September 2018
+ * \authors   Stefan Thoeni
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLGLState.h>
 #include <SLGLFbo.h>

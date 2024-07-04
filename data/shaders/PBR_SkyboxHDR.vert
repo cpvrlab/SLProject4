@@ -1,11 +1,10 @@
-//#############################################################################
-//  File:      PBR_SkyboxHDR.vert
-//  Purpose:   GLSL vertex program for HDR skybox with a cube map
-//  Date:      April 2018
-//  Authors:   Carlos Arauz, Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      PBR_SkyboxHDR.vert
+ * \brief     GLSL vertex program for HDR skybox with a cube map
+ * \date      April 2018
+ * \authors   Carlos Arauz, Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 precision highp float;
 

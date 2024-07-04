@@ -1,12 +1,12 @@
-//#############################################################################
-//  File:      math/SLMath.h
-//  Purpose:   Container for general algorithm functions
-//  Date:      November 2020
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch, Micheal Goettlicher
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      math/SLMath.h
+ * \brief     Container for general algorithm functions
+ * \date      November 2020
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ * \authors   Marcus Hudritsch, Micheal Goettlicher
+ * \copyright http://opensource.org/licenses/GPL-3.0
+*/
 
 #ifndef SLMATH_H
 #define SLMATH_H

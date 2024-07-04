@@ -1,12 +1,12 @@
-//#############################################################################
-//  File:      SLLightSpot.cpp
-//  Authors:   Marcus Hudritsch
-//  Date:      July 2014
-//  Codestyle: https://github.com/cpvrlab/SLProject/wiki/SLProject-Coding-Style
-//  Authors:   Marcus Hudritsch
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLLightSpot.cpp
+ * \authors   Marcus Hudritsch
+ * \date      July 2014
+ * \authors   Marcus Hudritsch
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #include <SLLightSpot.h>
 #include <SLRay.h>
@@ -17,6 +17,19 @@
 #include <SLSpheric.h>
 
 //-----------------------------------------------------------------------------
+/**
+ * @brief Construct a new SLLightSpot::SLLightSpot object
+ * @remarks It is important that during instantiation NO OpenGL functions (gl*) 
+ * get called because this constructor will be most probably called in a parallel 
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
+ * function. All objects that get rendered have to do their OpenGL initialization 
+ * when they are used the first time during rendering in the main thread.
+ * @param assetMgr AssetManager that will own the light mesh
+ * @param s SLScene pointer
+ * @param radius Radius of the spot light sphere
+ * @param spotAngleDEG Spot cone shine angle in degrees
+ * @param hasMesh Boolean if a mesh should be created and shown
+ */
 SLLightSpot::SLLightSpot(SLAssetManager* assetMgr,
                          SLScene*        s,
                          SLfloat         radius,
@@ -181,10 +194,10 @@ void SLLightSpot::drawMesh(SLSceneView* sv)
 }
 //-----------------------------------------------------------------------------
 /*! Creates an fixed sized standard shadow map for the spotlight.
- * @param lightClipNear The light frustums near clipping distance
- * @param lightClipFar The light frustums near clipping distance
- * @param size Ignored for spot lights
- * @param texSize Shadow texture map size
+ * \param lightClipNear The light frustums near clipping distance
+ * \param lightClipFar The light frustums near clipping distance
+ * \param size Ignored for spot lights
+ * \param texSize Shadow texture map size
  */
 void SLLightSpot::createShadowMap(float   lightClipNear,
                                   float   lightClipFar,
@@ -202,9 +215,9 @@ void SLLightSpot::createShadowMap(float   lightClipNear,
 }
 //-----------------------------------------------------------------------------
 /*! Creates an automatic sized shadow map for the spot light.
- * @param camera Pointer to the camera for witch the shadow map gets sized
- * @param texSize Shadow texture map size
- * @param numCascades This value is ignored (default 0)
+ * \param camera Pointer to the camera for witch the shadow map gets sized
+ * \param texSize Shadow texture map size
+ * \param numCascades This value is ignored (default 0)
  */
 void SLLightSpot::createShadowMapAutoSize(SLCamera* camera,
                                           SLVec2i   texSize,

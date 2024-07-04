@@ -136,6 +136,7 @@ target_include_directories(${target}
     ${CMAKE_CURRENT_SOURCE_DIR}/source/io
     ${platform_specific_include_dirs}
     ${UTILS_ROOT}/externals/asio/include
+    ${UTILS_ROOT}/externals/ftplibpp
 	${UTILS_ROOT}/externals/zlib/contrib
     ${openssl_INCLUDE_DIR}
     INTERFACE
@@ -164,6 +165,7 @@ target_compile_options(${target}
     PRIVATE
 
     PUBLIC
+    ${DEFAULT_COMPILE_OPTIONS}
     ${EXTERNAL_LIB_COMPILE_OPTIONS}
 
     INTERFACE

@@ -1,11 +1,12 @@
-//#############################################################################
-//  File:      SLOptixRaytracer.cpp
-//  Authors:   Nic Dorner
-//  Date:      October 2019
-//  Authors:   Nic Dorner
-//  License:   This software is provided under the GNU General Public License
-//             Please visit: http://opensource.org/licenses/GPL-3.0
-//#############################################################################
+/**
+ * \file      SLOptixRaytracer.cpp
+ * \authors   Nic Dorner
+ * \date      October 2019
+ * \authors   Nic Dorner
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+*/
 
 #ifdef SL_HAS_OPTIX
 #    include <SLAssetManager.h>
@@ -31,7 +32,7 @@ SLOptixRaytracer::SLOptixRaytracer()
 //-----------------------------------------------------------------------------
 SLOptixRaytracer::~SLOptixRaytracer()
 {
-    SL_LOG("Destructor      : ~SLOptixRaytracer");
+    SL_LOG("Destructor       : ~SLOptixRaytracer");
     destroy();
 }
 //-----------------------------------------------------------------------------
