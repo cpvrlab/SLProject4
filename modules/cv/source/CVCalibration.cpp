@@ -5,7 +5,7 @@
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
  * \authors   Marcus Hudritsch, Michael Goettlicher
  * \copyright http://opensource.org/licenses/GPL-3.0
-*/
+ */
 
 /*
 The OpenCV library version 3.4 or above with extra module must be present.
@@ -296,14 +296,19 @@ void getInnerAndOuterRectangles(const cv::Mat&    cameraMatrix,
     {
         for (int x = 0; x < N; x++)
         {
-            pts.at<float>(k, 0) = (float)x * imgSize.width / (N - 1);
-            pts.at<float>(k, 1) = (float)y * imgSize.height / (N - 1);
+            pts.at<float>(k, 0) = (float)x * (float)imgSize.width / (N - 1);
+            pts.at<float>(k, 1) = (float)y * (float)imgSize.height / (N - 1);
             k++;
         }
     }
 
     pts = pts.reshape(2);
-    cv::undistortPoints(pts, pts, cameraMatrix, distCoeffs, R, newCameraMatrix);
+    cv::undistortPoints(pts,
+                        pts,
+                        cameraMatrix,
+                        distCoeffs,
+                        R,
+                        newCameraMatrix);
     pts = pts.reshape(1);
 
     float iX0 = -FLT_MAX, iX1 = FLT_MAX, iY0 = -FLT_MAX, iY1 = FLT_MAX;
@@ -313,7 +318,8 @@ void getInnerAndOuterRectangles(const cv::Mat&    cameraMatrix,
     for (int y = 0, k = 0; y < N; y++)
         for (int x = 0; x < N; x++)
         {
-            cv::Point2f p = {pts.at<float>(k, 0), pts.at<float>(k, 1)};
+            cv::Point2f p = {pts.at<float>(k, 0),
+                             pts.at<float>(k, 1)};
             oX0           = MIN(oX0, p.x);
             oX1           = MAX(oX1, p.x);
             oY0           = MIN(oY0, p.y);
@@ -356,10 +362,16 @@ void CVCalibration::buildUndistortionMaps()
                                 CV_16SC2, // before we had CV_32FC1 but in all tutorials they use CV_16SC2.. is there a reason?
                                 _undistortMapX,
                                 _undistortMapY);
-    Utils::log("CVCalibration", "initUndistortRectifyMap: %fms", t.elapsedTimeInMilliSec());
-
+#if _DEBUG
+    Utils::log("CVCalibration",
+               "initUndistortRectifyMap: %fms",
+               t.elapsedTimeInMilliSec());
+#endif
     if (_undistortMapX.empty() || _undistortMapY.empty())
-        Utils::exitMsg("SLProject", "CVCalibration::buildUndistortionMaps failed.", __LINE__, __FILE__);
+        Utils::exitMsg("SLProject",
+                       "CVCalibration::buildUndistortionMaps failed.",
+                       __LINE__,
+                       __FILE__);
 }
 //-----------------------------------------------------------------------------
 //! Undistorts the inDistorted image into the outUndistorted
@@ -397,8 +409,8 @@ void CVCalibration::createFromGuessedFOV(int   imageWidthPX,
                                          float fovH)
 {
     // if (fx == fy) and (cx == imgwidth * 0.5f) and (cy == imgheight  * 0.5f)
-    float f    = (0.5f * imageWidthPX) / tanf(fovH * 0.5f * Utils::DEG2RAD);
-    float fovV = 2.0f * (float)atan2(0.5f * imageHeightPX, f) * Utils::RAD2DEG;
+    float f    = (0.5f * (float)imageWidthPX) / tanf(fovH * 0.5f * Utils::DEG2RAD);
+    float fovV = 2.0f * (float)atan2(0.5f * (float)imageHeightPX, f) * Utils::RAD2DEG;
 
     // Create standard camera matrix
     // fx, fx, cx, cy are all in pixel values not mm
@@ -445,8 +457,8 @@ void CVCalibration::adaptForNewResolution(const CVSize& newSize, bool calcUndist
 
         fx                    = fxOrig * scaleFactor;
         fy                    = fyOrig * scaleFactor;
-        float oldHeightScaled = _imageSizeOrig.height * scaleFactor;
-        float heightDiff      = (oldHeightScaled - newSize.height) * 0.5f;
+        float oldHeightScaled = (float)_imageSizeOrig.height * scaleFactor;
+        float heightDiff      = (oldHeightScaled - (float)newSize.height) * 0.5f;
 
         cx = cxOrig * scaleFactor;
         cy = cyOrig * scaleFactor - heightDiff;
@@ -456,8 +468,8 @@ void CVCalibration::adaptForNewResolution(const CVSize& newSize, bool calcUndist
         float scaleFactor    = (float)newSize.height / (float)_imageSizeOrig.height;
         fx                   = fxOrig * scaleFactor;
         fy                   = fyOrig * scaleFactor;
-        float oldWidthScaled = _imageSizeOrig.width * scaleFactor;
-        float widthDiff      = (oldWidthScaled - newSize.width) * 0.5f;
+        float oldWidthScaled = (float)_imageSizeOrig.width * scaleFactor;
+        float widthDiff      = (oldWidthScaled - (float)newSize.width) * 0.5f;
 
         cx = cxOrig * scaleFactor - widthDiff;
         cy = cyOrig * scaleFactor;

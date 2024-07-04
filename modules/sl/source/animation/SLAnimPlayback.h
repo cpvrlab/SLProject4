@@ -1,17 +1,16 @@
 /**
  * \file      SLAnimPlayback.h
  * \date      Autumn 2014
-//  Codestyle: https://code.google.com/p/slproject/wiki/CodingStyleGuidelines
  * \authors   Marc Wacker, Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
 */
 
 #ifndef SLANIMPLAYBACK_h
 #define SLANIMPLAYBACK_h
 
 #include <map>
-#include <vector>
-
 #include <SL.h>
 #include <SLEnums.h>
 

@@ -157,7 +157,11 @@ void AppDemoSceneErlebARAugustaTmpTht::assemble(SLAssetManager* am,
     sunLight->castsShadows(false);
     sunLight->shadowMinBias(0.001f);
     sunLight->shadowMaxBias(0.001f);
-    AppCommon::devLoc.sunLightNode(sunLight); // Let the sun be rotated by time and location
+    
+    // Let the sun be rotated by time and location
+    AppCommon::devLoc.sunLightNode(sunLight); 
+    AppCommon::devLoc.calculateSolarAngles(AppCommon::devLoc.originLatLonAlt(),
+                                           std::time(nullptr));
 
     // Rotate to the true geographic rotation
     _thtAndTmp->rotate(16.7f, 0, 1, 0, TS_parent);

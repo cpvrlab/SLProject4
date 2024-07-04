@@ -7,6 +7,7 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
  */
 
+#include "SL.h"
 #include "SLEnums.h"
 #include <SLAnimManager.h>
 #include <SLCamera.h>
@@ -412,15 +413,15 @@ void SLSceneView::onInitialize()
         _s->root3D()->updateAABBRec(true);
         _s->root3D()->updateMeshAccelStructs();
 
-        SL_LOG("Time for AABBs   : %5.3f sec.",
-               (SLfloat)(clock() - t) / (SLfloat)CLOCKS_PER_SEC);
+        SL_LOG_DEBUG("Time for AABBs   : %5.3f sec.",
+                     (SLfloat)(clock() - t) / (SLfloat)CLOCKS_PER_SEC);
 
         // Collect node statistics
         _s->root3D()->statsRec(_stats3D);
 
         // Warn if there are no light in scene
         if (_s->lights().empty())
-            SL_LOG("sv->onInitialize : No Lights found in scene!");
+            SL_LOG_DEBUG("sv->onInitialize : No Lights found in scene!");
 
         //_s->root3D()->dumpRec();
     }
@@ -2072,14 +2073,14 @@ void SLSceneView::saveFrameBufferAsImage(SLstring pathFilename,
         CVMat rgbImg = CVMat(fbH, fbW, CV_8UC3, (void*)buffer.data(), stride);
         cv::cvtColor(rgbImg, rgbImg, cv::COLOR_BGR2RGB);
 #else
-        CVMat   rgbImg     = CVMat(fbH,
+        CVMat rgbImg = CVMat(fbH,
                              fbW,
                              CV_8UC4,
                              (void*)buffer.data(),
                              stride);
         cv::cvtColor(rgbImg, rgbImg, cv::COLOR_RGBA2RGB);
-        nrChannels  = 3;
-        stride      = nrChannels * fbW;
+        nrChannels = 3;
+        stride     = nrChannels * fbW;
 #endif
 
         cv::flip(rgbImg, rgbImg, 0);

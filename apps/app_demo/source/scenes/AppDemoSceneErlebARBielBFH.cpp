@@ -99,6 +99,8 @@ void AppDemoSceneErlebARBielBFH::assemble(SLAssetManager* am, SLSceneView* sv)
 
     // Let the sun be rotated by time and location
     AppCommon::devLoc.sunLightNode(sunLight);
+    AppCommon::devLoc.calculateSolarAngles(AppCommon::devLoc.originLatLonAlt(),
+                                           std::time(nullptr));
 
     _bfh->setMeshMat(matVideoBkgd, true);
 

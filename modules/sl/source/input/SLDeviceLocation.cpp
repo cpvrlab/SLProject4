@@ -6,8 +6,9 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
+#include "SL.h"
 #include <SLAlgo.h>
 #include <SLDeviceLocation.h>
 #include <SLImporter.h>
@@ -192,7 +193,8 @@ void SLDeviceLocation::originLatLonAlt(SLdouble latDEG,
     // Indicate that origin is set. Otherwise it would be reset on each update
     _hasOrigin = true;
 
-    calculateSolarAngles(_originLatLonAlt, std::time(nullptr));
+    calculateSolarAngles(_originLatLonAlt,
+                         std::time(nullptr));
 }
 //-----------------------------------------------------------------------------
 //! Default coordinate setter in WGS84 Lat-Lon in degrees, minutes and seconds
@@ -276,21 +278,21 @@ SLbool SLDeviceLocation::calculateSolarAngles(SLVec3d     locationLatLonAlt,
     ut.tm_mon++;
     lt.tm_mon++;
 
-    SL_LOG("Universal time  : %02d.%02d.%02d %02d:%02d:%02d",
+    SL_LOG("Universal time   : %02d.%02d.%02d %02d:%02d:%02d",
            ut.tm_mday,
            ut.tm_mon,
            ut.tm_year,
            ut.tm_hour,
            ut.tm_min,
            ut.tm_sec);
-    SL_LOG("Local time      : %02d.%02d.%02d %02d:%02d:%02d",
+    SL_LOG("Local time       : %02d.%02d.%02d %02d:%02d:%02d",
            lt.tm_mday,
            lt.tm_mon,
            lt.tm_year,
            lt.tm_hour,
            lt.tm_min,
            lt.tm_sec);
-    SL_LOG("Timezone        : %d", lt.tm_hour - ut.tm_hour);
+    SL_LOG("Timezone         : %d", lt.tm_hour - ut.tm_hour);
 
     spa_data spa; // declare the SPA structure
     SLint    result;
@@ -328,16 +330,16 @@ SLbool SLDeviceLocation::calculateSolarAngles(SLVec3d     locationLatLonAlt,
         _originSolarSunset  = (SLfloat)spa.sunset;
 
         SLfloat SRh = _originSolarSunrise;
-        SLfloat SRm = (SLfloat)(60.0f * (SRh - floor(SRh)));
-        SLfloat SRs = (SLfloat)(60.0f * (SRm - floor(SRm)));
+        SLfloat SRm = (SLfloat)(60.0f * (SRh - (int)(SRh)));
+        SLfloat SRs = (SLfloat)(60.0 * (SRm - floor(SRm)));
         SLfloat SSh = _originSolarSunset;
-        SLfloat SSm = (SLfloat)(60.0f * (SSh - floor(SSh)));
+        SLfloat SSm = (SLfloat)(60.0f * (SSh - (int)(SSh)));
         SLfloat SSs = (SLfloat)(60.0f * (SSm - floor(SSm)));
 
-        SL_LOG("Zenith          : %.6f degrees", _originSolarZenith);
-        SL_LOG("Azimuth         : %.6f degrees", _originSolarAzimuth);
-        SL_LOG("Sunrise         : %02d:%02d:%02d Local Time", (int)(SRh), (int)SRm, (int)SRs);
-        SL_LOG("Sunset          : %02d:%02d:%02d Local Time", (int)(SSh), (int)SSm, (int)SSs);
+        SL_LOG("Zenith           : %.6f degrees", _originSolarZenith);
+        SL_LOG("Azimuth          : %.6f degrees", _originSolarAzimuth);
+        SL_LOG("Sunrise          : %02d:%02d:%02d Local Time", (int)(SRh), (int)SRm, (int)SRs);
+        SL_LOG("Sunset           : %02d:%02d:%02d Local Time", (int)(SSh), (int)SSm, (int)SSs);
     }
     else
         SL_LOG("SPA Error Code: %d", result);

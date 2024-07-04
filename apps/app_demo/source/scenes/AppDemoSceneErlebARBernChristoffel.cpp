@@ -1,16 +1,16 @@
 /**
- * \file      AppDemoSceneErlebARChristoffel.cpp
+ * \file      AppDemoSceneErlebARBernChristoffel.cpp
  * \brief     Implementation for an SLScene inherited class
- * \details   For more info about App framework and the scene assembly see: 
+ * \details   For more info about App framework and the scene assembly see:
  *            https://cpvrlab.github.io/SLProject4/app-framework.html
  * \date      May 2024
  * \authors   Marcus Hudritsch, Marino von Wattenwyl
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
-#include <AppDemoSceneErlebARChristoffel.h>
+#include <AppDemoSceneErlebARBernChristoffel.h>
 #include <CVCapture.h>
 #include <AppCommon.h>
 #include <SLAssetLoader.h>
@@ -21,14 +21,14 @@
 extern SLGLTexture* gVideoTexture;
 
 //-----------------------------------------------------------------------------
-AppDemoSceneErlebARChristoffel::AppDemoSceneErlebARChristoffel()
+AppDemoSceneErlebARBernChristoffel::AppDemoSceneErlebARBernChristoffel()
   : SLScene("Christoffel Tower AR")
 {
     info("Augmented Reality Christoffel Tower");
 }
 //-----------------------------------------------------------------------------
 //! All assets the should be loaded in parallel must be registered in here.
-void AppDemoSceneErlebARChristoffel::registerAssetsToLoad(SLAssetLoader& al)
+void AppDemoSceneErlebARBernChristoffel::registerAssetsToLoad(SLAssetLoader& al)
 {
     // Create video texture on global pointer updated in AppDemoVideo
     al.addTextureToLoad(gVideoTexture,
@@ -53,61 +53,61 @@ void AppDemoSceneErlebARChristoffel::registerAssetsToLoad(SLAssetLoader& al)
     AppCommon::devLoc.originLatLonAlt(46.94763, 7.44074, 542.2);        // Loeb Ecken
     AppCommon::devLoc.defaultLatLonAlt(46.94841, 7.43970, 542.2 + 1.7); // Bahnhof Ausgang in Augenhöhe
     AppCommon::devLoc.nameLocations().push_back(SLLocation("Loeb Ecken, Origin",
-                                                         46,
-                                                         56,
-                                                         51.451,
-                                                         7,
-                                                         26,
-                                                         26.676,
-                                                         542.2));
+                                                           46,
+                                                           56,
+                                                           51.451,
+                                                           7,
+                                                           26,
+                                                           26.676,
+                                                           542.2));
     AppCommon::devLoc.nameLocations().push_back(SLLocation("Milchgässli, Velomarkierung, (N)",
-                                                         46,
-                                                         56,
-                                                         54.197,
-                                                         7,
-                                                         26,
-                                                         23.366,
-                                                         541.2 + 1.7));
+                                                           46,
+                                                           56,
+                                                           54.197,
+                                                           7,
+                                                           26,
+                                                           23.366,
+                                                           541.2 + 1.7));
     AppCommon::devLoc.nameLocations().push_back(SLLocation("Spitalgasse (E)",
-                                                         46,
-                                                         56,
-                                                         51.703,
-                                                         7,
-                                                         26,
-                                                         27.565,
-                                                         542.1 + 1.7));
+                                                           46,
+                                                           56,
+                                                           51.703,
+                                                           7,
+                                                           26,
+                                                           27.565,
+                                                           542.1 + 1.7));
     AppCommon::devLoc.nameLocations().push_back(SLLocation("Tramhaltestelle UBS, eckiger Schachtd. (S)",
-                                                         46,
-                                                         56,
-                                                         50.366,
-                                                         7,
-                                                         26,
-                                                         24.544,
-                                                         542.3 + 1.7));
+                                                           46,
+                                                           56,
+                                                           50.366,
+                                                           7,
+                                                           26,
+                                                           24.544,
+                                                           542.3 + 1.7));
     AppCommon::devLoc.nameLocations().push_back(SLLocation("Ecke Schauplatz-Christoffelgasse (S)",
-                                                         46,
-                                                         56,
-                                                         50.139,
-                                                         7,
-                                                         26,
-                                                         27.225,
-                                                         542.1 + 1.7));
+                                                           46,
+                                                           56,
+                                                           50.139,
+                                                           7,
+                                                           26,
+                                                           27.225,
+                                                           542.1 + 1.7));
     AppCommon::devLoc.nameLocations().push_back(SLLocation("Bubenbergplatz (S)",
-                                                         46,
-                                                         56,
-                                                         50.304,
-                                                         7,
-                                                         26,
-                                                         22.113,
-                                                         542.4 + 1.7));
+                                                           46,
+                                                           56,
+                                                           50.304,
+                                                           7,
+                                                           26,
+                                                           22.113,
+                                                           542.4 + 1.7));
     AppCommon::devLoc.nameLocations().push_back(SLLocation("Heiliggeistkirche (Dole, N-W)",
-                                                         46,
-                                                         56,
-                                                         53.500,
-                                                         7,
-                                                         26,
-                                                         25.499,
-                                                         541.6 + 1.7));
+                                                           46,
+                                                           56,
+                                                           53.500,
+                                                           7,
+                                                           26,
+                                                           25.499,
+                                                           541.6 + 1.7));
     AppCommon::devLoc.originLatLonAlt(AppCommon::devLoc.nameLocations()[0].posWGS84LatLonAlt);
     AppCommon::devLoc.activeNamedLocation(1);   // This sets the location 1 as defaultENU
     AppCommon::devLoc.locMaxDistanceM(1000.0f); // Max. Distanz. zum Loeb Ecken
@@ -125,7 +125,7 @@ void AppDemoSceneErlebARChristoffel::registerAssetsToLoad(SLAssetLoader& al)
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
-void AppDemoSceneErlebARChristoffel::assemble(SLAssetManager* am, SLSceneView* sv)
+void AppDemoSceneErlebARBernChristoffel::assemble(SLAssetManager* am, SLSceneView* sv)
 {
     gVideoTexture->texType(TT_videoBkgd);
 
@@ -171,7 +171,11 @@ void AppDemoSceneErlebARChristoffel::assemble(SLAssetManager* am, SLSceneView* s
     sunLight->castsShadows(false);
     sunLight->shadowMinBias(0.001f);
     sunLight->shadowMaxBias(0.003f);
-    AppCommon::devLoc.sunLightNode(sunLight); // Let the sun be rotated by time and location
+
+    // Let the sun be rotated by time and location
+    AppCommon::devLoc.sunLightNode(sunLight); 
+    AppCommon::devLoc.calculateSolarAngles(AppCommon::devLoc.originLatLonAlt(),
+                                           std::time(nullptr));
 
     // Make city with hard edges and without shadow mapping
     SLNode* Umg = _bern->findChild<SLNode>("Umgebung-Swisstopo");

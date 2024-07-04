@@ -7,7 +7,7 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 /*
 The OpenCV library version 3.4 with extra module must be present.
@@ -76,8 +76,9 @@ CVSize2i CVCapture::open(int deviceNum)
 
         if (!_captureDevice.isOpened())
             return CVSize2i(0, 0);
-
+#    if _DEBUG
         Utils::log("SLProject", "CVCapture::open  : Capture devices created.");
+#    endif
         //_captureDevice.set(cv::CAP_PROP_FRAME_WIDTH, 1440);
         //_captureDevice.set(cv::CAP_PROP_FRAME_HEIGHT, 1080);
         int w = (int)_captureDevice.get(cv::CAP_PROP_FRAME_WIDTH);

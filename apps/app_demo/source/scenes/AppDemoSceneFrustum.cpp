@@ -10,6 +10,7 @@
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
 */
 
+#include "SL.h"
 #include <AppDemoSceneFrustum.h>
 #include <AppCommon.h>
 #include <SLAssetLoader.h>
@@ -92,7 +93,8 @@ void AppDemoSceneFrustum::assemble(SLAssetManager* am, SLSceneView* sv)
     }
 
     SLuint num = (SLuint)(size + size + 1);
-    SL_LOG("Triangles on GPU : %u", res * res * 2 * num * num * num);
+
+    SL_LOG_DEBUG("Triangles on GPU : %u", res * res * 2 * num * num * num);
 
     sv->camera(cam1);
     sv->doWaitOnIdle(false);

@@ -38,7 +38,7 @@
 #include <AppDemoSceneErlebARAventicumCigognier.h>
 #include <AppDemoSceneErlebARAventicumTheater.h>
 #include <AppDemoSceneErlebARAventicumAmphitheater.h>
-#include <AppDemoSceneErlebARChristoffel.h>
+#include <AppDemoSceneErlebARBernChristoffel.h>
 #include <AppDemoSceneErlebARSutz.h>
 #include <AppDemoSceneFigure.h>
 #include <AppDemoSceneFrustum.h>
@@ -206,7 +206,7 @@ static SLScene* createScene(SLSceneID sceneID)
         case SID_Benchmark_ColumnsLOD:
         case SID_Benchmark_ColumnsNoLOD: return new AppDemoSceneLevelOfDetail(sceneID);
         case SID_Benchmark_SkinnedAnimations: return new AppDemoSceneAnimSkinnedMass2();
-        case SID_ErlebAR_BernChristoffel: return new AppDemoSceneErlebARChristoffel();
+        case SID_ErlebAR_BernChristoffel: return new AppDemoSceneErlebARBernChristoffel();
         case SID_ErlebAR_BielBFH: return new AppDemoSceneErlebARBielBFH();
         case SID_ErlebAR_AugustaRauricaTmpTht: return new AppDemoSceneErlebARAugustaTmpTht();
         case SID_ErlebAR_AventicumCigognier: return new AppDemoSceneErlebARAventicumCigognier();

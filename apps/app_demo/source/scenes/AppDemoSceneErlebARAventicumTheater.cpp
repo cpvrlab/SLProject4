@@ -111,6 +111,8 @@ void AppDemoSceneErlebARAventicumTheater::assemble(SLAssetManager* am,
 
     // Let the sun be rotated by time and location
     AppCommon::devLoc.sunLightNode(sunLight);
+    AppCommon::devLoc.calculateSolarAngles(AppCommon::devLoc.originLatLonAlt(),
+                                           std::time(nullptr));
 
     // Rotate to the true geographic rotation
     _theater->rotate(-36.7f, 0, 1, 0, TS_parent);

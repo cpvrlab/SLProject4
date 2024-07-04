@@ -5,7 +5,7 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #include <CVImageGeoTiff.h>
 #include <json.hpp>
@@ -35,7 +35,10 @@ void CVImageGeoTiff::loadGeoTiff(const string& geoTiffFile)
     if (!Utils::fileExists(geoTiffFile))
     {
         msg = "CVImageGeoTiff::loadGeoTiff: File not found: " + geoTiffFile;
-        throw std::runtime_error(msg.c_str());
+        Utils::exitMsg("SLProject",
+                       msg.c_str(),
+                       __LINE__,
+                       __FILE_NAME__);
     }
 
     // check if the GEOTiff json file exists
@@ -47,7 +50,10 @@ void CVImageGeoTiff::loadGeoTiff(const string& geoTiffFile)
         msg = "CVImageGeoTiff::loadGeoTiff: JSON File not found: " + jsonFileName;
         msg += "\nA GEOTiff file must have a JSON file aside with the same name.";
         msg += "\nYou can generate this JSON file with the tool gdalinfo.";
-        throw std::runtime_error(msg.c_str());
+        Utils::exitMsg("SLProject",
+                       msg.c_str(),
+                       __LINE__,
+                       __FILE_NAME__);
     }
 
     // Read the geo tiff image with OpenCV
@@ -55,7 +61,10 @@ void CVImageGeoTiff::loadGeoTiff(const string& geoTiffFile)
                                     cv::IMREAD_LOAD_GDAL | cv::IMREAD_ANYDEPTH);
 
     if (imgGeoTiff.type() != CV_32FC1)
-        throw std::runtime_error("GEOTiff image must be of 32-bit float type.");
+        Utils::exitMsg("SLProject",
+                       "GEOTiff image must be of 32-bit float type.",
+                       __LINE__,
+                       __FILE_NAME__);
 
     // Read the JSON file
     std::ifstream  jsonFile(jsonFileName);
@@ -82,7 +91,10 @@ void CVImageGeoTiff::loadGeoTiff(const string& geoTiffFile)
         msg = "Error reading JSON-File: " + jsonFileName;
         msg += "\nException: ";
         msg += e.what();
-        throw std::runtime_error(msg.c_str());
+        Utils::exitMsg("SLProject",
+                       msg.c_str(),
+                       __LINE__,
+                       __FILE_NAME__);
     }
 
     // Check some correspondences between image file an json file
@@ -93,14 +105,20 @@ void CVImageGeoTiff::loadGeoTiff(const string& geoTiffFile)
         msg += "\nGEOTiff image height: " + to_string(imgGeoTiff.rows);
         msg += "\nJSON Size tag[0]    : " + to_string(size[0]);
         msg += "\nJSON Size tag[1]    : " + to_string(size[1]);
-        throw std::runtime_error(msg.c_str());
+        Utils::exitMsg("SLProject",
+                       msg.c_str(),
+                       __LINE__,
+                       __FILE_NAME__);
     }
 
     if (!Utils::containsString(geocsc, "WGS 84") &&
         !Utils::containsString(geocsc, "WGS_1984"))
     {
         msg = "GeoTiff file seams not have WGS84 coordinates.";
-        throw std::runtime_error(msg.c_str());
+        Utils::exitMsg("SLProject",
+                       msg.c_str(),
+                       __LINE__,
+                       __FILE_NAME__);
     }
 
     _cvMat  = imgGeoTiff.clone();

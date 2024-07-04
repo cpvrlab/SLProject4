@@ -1184,7 +1184,7 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                     if (ImGui::SliderFloat("Hour", &nowF, SRh, SSh, "%.2f"))
                     {
                         lt.tm_hour   = (int)nowF;
-                        lt.tm_min    = (int)((nowF - (int)nowF) * 60.0f);
+                        lt.tm_min    = (int)((nowF - floor(nowF)) * 60.0f);
                         adjustedTime = mktime(&lt);
                         AppCommon::devLoc.calculateSolarAngles(AppCommon::devLoc.originLatLonAlt(),
                                                                adjustedTime);

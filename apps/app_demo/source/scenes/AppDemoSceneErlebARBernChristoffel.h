@@ -1,5 +1,5 @@
 /**
- * \file      AppDemoSceneErlebARChristoffel.h
+ * \file      AppDemoSceneErlebARBernChristoffel.h
  * \brief     Class declaration for an SLScene inherited class
  * \details   For more info about App framework and the scene assembly see: 
  *            https://cpvrlab.github.io/SLProject4/app-framework.html
@@ -17,10 +17,10 @@
 
 //-----------------------------------------------------------------------------
 //! Class for ErlebAR model Christoffel Tower in Bern.
-class AppDemoSceneErlebARChristoffel : public SLScene
+class AppDemoSceneErlebARBernChristoffel : public SLScene
 {
 public:
-    AppDemoSceneErlebARChristoffel();
+    AppDemoSceneErlebARBernChristoffel();
     
     //! All scene specific assets have to be registered for async loading in here.
     /*! @remark All scene sspecific assets have to be loaded async by overriding 

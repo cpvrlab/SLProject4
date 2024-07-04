@@ -223,11 +223,7 @@ SL_sizeOfVector(const T& vector)
 #define SL_GETBIT(VAR, VAL) VAR& VAL
 #define SL_SETBIT(VAR, VAL) VAR |= VAL
 #define SL_DELBIT(VAR, VAL) VAR &= ~VAL
-#define SL_TOGBIT(VAR, VAL) \
-    if (VAR & VAL) \
-        VAR &= ~VAL; \
-    else \
-        VAR |= VAL
+#define SL_TOGBIT(VAR, VAL) if ((VAR) & (VAL)) (VAR) &= ~(VAL); else (VAR) |= VAL
 //-----------------------------------------------------------------------------
 // Prevention for warnings in XCode
 #define UNUSED_PARAMETER(r) ((void)(x))
@@ -235,6 +231,12 @@ SL_sizeOfVector(const T& vector)
 //-----------------------------------------------------------------------------
 // Some debugging and error handling macros
 #define SL_LOG(...) Utils::log("SLProject", __VA_ARGS__)
+#if _DEBUG
+#define SL_LOG_DEBUG(...) Utils::log("SLProject", __VA_ARGS__)
+#else
+#define SL_LOG_DEBUG(...) {}
+#endif
+
 #define SL_EXIT_MSG(message) Utils::exitMsg("SLProject", (message), __LINE__, __FILE__)
 #define SL_WARN_MSG(message) Utils::warnMsg("SLProject", (message), __LINE__, __FILE__)
 //-----------------------------------------------------------------------------

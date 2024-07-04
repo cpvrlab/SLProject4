@@ -6,11 +6,12 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
+#include "SL.h"
 #ifdef SL_BUILD_WITH_ASSIMP
 
-#    include <iomanip>
+#include <cstddef>
 #    include <Utils.h>
 
 #    include <SLAnimation.h>
@@ -1047,7 +1048,7 @@ SLMesh* SLAssimpImporter::loadMesh(SLAssetManager* am, aiMesh* mesh)
         m->I16.clear();
         if (numTriangles)
         {
-            m->I16.resize(numTriangles * 3);
+            m->I16.resize((static_cast<size_t>(numTriangles * 3)));
             for (SLuint i = 0; i < mesh->mNumFaces; ++i)
             {
                 if (mesh->mFaces[i].mNumIndices == 3)
@@ -1060,7 +1061,7 @@ SLMesh* SLAssimpImporter::loadMesh(SLAssetManager* am, aiMesh* mesh)
         }
         else if (numLines)
         {
-            m->I16.resize(numLines * 2);
+            m->I16.resize((size_t)numLines * 2);
             for (SLuint i = 0; i < mesh->mNumFaces; ++i)
             {
                 if (mesh->mFaces[i].mNumIndices == 2)
@@ -1089,7 +1090,7 @@ SLMesh* SLAssimpImporter::loadMesh(SLAssetManager* am, aiMesh* mesh)
         m->I32.clear();
         if (numTriangles)
         {
-            m->I32.resize(numTriangles * 3);
+            m->I32.resize((size_t)numTriangles * 3);
             for (SLuint i = 0; i < mesh->mNumFaces; ++i)
             {
                 if (mesh->mFaces[i].mNumIndices == 3)
@@ -1102,7 +1103,7 @@ SLMesh* SLAssimpImporter::loadMesh(SLAssetManager* am, aiMesh* mesh)
         }
         else if (numLines)
         {
-            m->I32.resize(numLines * 2);
+            m->I32.resize((size_t)numLines * 2);
             for (SLuint i = 0; i < mesh->mNumFaces; ++i)
             {
                 if (mesh->mFaces[i].mNumIndices == 2)
@@ -1114,7 +1115,7 @@ SLMesh* SLAssimpImporter::loadMesh(SLAssetManager* am, aiMesh* mesh)
         }
         else if (numPoints)
         {
-            m->I32.resize(numPoints * 1);
+            m->I32.resize((size_t)numPoints * 1);
             for (SLuint i = 0; i < mesh->mNumFaces; ++i)
             {
                 if (mesh->mFaces[i].mNumIndices == 1)
@@ -1487,11 +1488,9 @@ SLstring SLAssimpImporter::checkFilePath(const SLstring& modelPath,
         return pathFile;
 
     if (showWarning)
-    {
-        SLstring msg = "WARNING: SLAssimpImporter: Texture file not found: \n" +
-                       aiTexFile + "\non model path: " + modelPath + "\n";
-        SL_LOG(msg.c_str());
-    }
+        SL_LOG_DEBUG("**** WARNING ****: SLAssimpImporter: Texture file not found: %s from model %s",
+               aiTexFile.c_str(),
+               modelPath.c_str());
 
     // Return path for texture not found image;
     return texturePath + "TexNotFound.png";

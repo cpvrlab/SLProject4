@@ -95,6 +95,11 @@ void AppDemoSceneErlebARSutz::assemble(SLAssetManager* am, SLSceneView* sv)
     sunLight->doSmoothShadows(true);
     sunLight->castsShadows(false);
 
+    // Let the sun be rotated by time and location
+    AppCommon::devLoc.sunLightNode(sunLight);
+    AppCommon::devLoc.calculateSolarAngles(AppCommon::devLoc.originLatLonAlt(),
+                                           std::time(nullptr));
+
     // Setup the camera
     SLCamera* cam1 = new SLCamera("Camera 1");
     cam1->translation(0, 50, -150);
@@ -108,9 +113,6 @@ void AppDemoSceneErlebARSutz::assemble(SLAssetManager* am, SLSceneView* sv)
 
     // Turn on main video
     CVCapture::instance()->videoType(VT_MAIN);
-
-    // Let the sun be rotated by time and location
-    AppCommon::devLoc.sunLightNode(sunLight);
 
     // Rotate to the true geographic rotation
     // Nothing to do here because the model is north up

@@ -5,8 +5,9 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
+#include "SL.h"
 #include <SLScene.h>
 #include <Utils.h>
 #include <SLKeyframeCamera.h>
@@ -62,8 +63,8 @@ SLScene::~SLScene()
 {
     unInit();
 
-    SL_LOG("Destructor       : ~SLScene");
-    SL_LOG("------------------------------------------------------------------");
+    SL_LOG_DEBUG("Destructor       : ~SLScene");
+    SL_LOG_DEBUG("------------------------------------------------------------------");
 }
 //-----------------------------------------------------------------------------
 /*! The scene init is called before a new scene is assembled.

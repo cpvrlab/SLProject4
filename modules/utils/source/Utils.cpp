@@ -1,6 +1,6 @@
 /**
  * \file:     Utils.cpp
- * \authors   Marcus Hudritsch
+ * \brief     Implementation of various utility functions defined in Utils.h
  * \date      May 2019
  * \authors   Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0
@@ -20,7 +20,6 @@
 #include <utility>
 #include <vector>
 #include <algorithm>
-#include <thread>
 
 #ifndef __EMSCRIPTEN__
 #    include <asio.hpp>

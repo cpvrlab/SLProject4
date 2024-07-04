@@ -28,7 +28,7 @@ CVTrackedWAI::CVTrackedWAI(const string& vocabularyFile)
                    e.what());
         exit(0);
     }
-    SL_LOG("Loaded voc file : %f ms", _timer.elapsedTimeInMilliSec() - startMS);
+    SL_LOG_DEBUG("Loaded voc file  : %f ms", _timer.elapsedTimeInMilliSec() - startMS);
 }
 //-----------------------------------------------------------------------------
 CVTrackedWAI::~CVTrackedWAI()

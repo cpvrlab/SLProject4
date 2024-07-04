@@ -6,7 +6,7 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #ifndef SLDEVICELOCATION_H
 #define SLDEVICELOCATION_H
@@ -93,10 +93,8 @@ public:
                              SLdouble altM,
                              SLfloat  accuracyM);
 
-    SLbool calculateSolarAngles(SLVec3d     locationLatLonAlt,
-                                std::time_t time);
+    SLbool calculateSolarAngles(SLVec3d locationLatLonAlt, std::time_t time);
 
-    //! Converter method: the transferred wgs84 coordinate is converted to ENU frame and returned (does not change SLDeviceLocation)
     SLVec3d convertLatLonAlt2ENU(SLVec3d locLatLonAlt) const;
 
     // Setters
