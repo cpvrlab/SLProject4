@@ -38,7 +38,7 @@ void CVImageGeoTiff::loadGeoTiff(const string& geoTiffFile)
         Utils::exitMsg("SLProject",
                        msg.c_str(),
                        __LINE__,
-                       __FILE_NAME__);
+                       __FILE__);
     }
 
     // check if the GEOTiff json file exists
@@ -53,7 +53,7 @@ void CVImageGeoTiff::loadGeoTiff(const string& geoTiffFile)
         Utils::exitMsg("SLProject",
                        msg.c_str(),
                        __LINE__,
-                       __FILE_NAME__);
+                       __FILE__);
     }
 
     // Read the geo tiff image with OpenCV
@@ -64,7 +64,7 @@ void CVImageGeoTiff::loadGeoTiff(const string& geoTiffFile)
         Utils::exitMsg("SLProject",
                        "GEOTiff image must be of 32-bit float type.",
                        __LINE__,
-                       __FILE_NAME__);
+                       __FILE__);
 
     // Read the JSON file
     std::ifstream  jsonFile(jsonFileName);
@@ -94,7 +94,7 @@ void CVImageGeoTiff::loadGeoTiff(const string& geoTiffFile)
         Utils::exitMsg("SLProject",
                        msg.c_str(),
                        __LINE__,
-                       __FILE_NAME__);
+                       __FILE__);
     }
 
     // Check some correspondences between image file an json file
@@ -108,7 +108,7 @@ void CVImageGeoTiff::loadGeoTiff(const string& geoTiffFile)
         Utils::exitMsg("SLProject",
                        msg.c_str(),
                        __LINE__,
-                       __FILE_NAME__);
+                       __FILE__);
     }
 
     if (!Utils::containsString(geocsc, "WGS 84") &&
@@ -118,7 +118,7 @@ void CVImageGeoTiff::loadGeoTiff(const string& geoTiffFile)
         Utils::exitMsg("SLProject",
                        msg.c_str(),
                        __LINE__,
-                       __FILE_NAME__);
+                       __FILE__);
     }
 
     _cvMat  = imgGeoTiff.clone();
