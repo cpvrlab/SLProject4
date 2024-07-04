@@ -36,6 +36,8 @@ static GLFWwindow* window;                     //!< The global glfw window handl
 static SLint       svIndex;                    //!< Scene view index
 static SLint       scrWidth;                   //!< Window width at start up
 static SLint       scrHeight;                  //!< Window height at start up
+static SLfloat     contentScaleX;              //!< Content scale in X direction
+static SLfloat     contentScaleY;              //!< Content scale in Y direction
 static SLint       dpi            = 142;       //!< Dot per inch resolution of screen
 static SLbool      fixAspectRatio = false;     //!< Flag if wnd aspect ratio should be fixed
 static SLint       startX;                     //!< start position x in pixels
@@ -135,8 +137,11 @@ int App::run(Config configuration)
     glfwSetScrollCallback(window, onMouseWheel);
     glfwSetWindowCloseCallback(window, onClose);
 
-    // get real window size
+    // get real window size in pixels
     glfwGetWindowSize(window, &scrWidth, &scrHeight);
+
+    // get content scaling by OS
+    glfwGetWindowContentScale(window, &contentScaleX, &contentScaleY);
 
     // Set your own physical screen dpi
     SL_LOG("------------------------------------------------------------------");
@@ -145,8 +150,8 @@ int App::run(Config configuration)
            GLFW_VERSION_MAJOR,
            GLFW_VERSION_MINOR,
            GLFW_VERSION_REVISION);
-    SL_LOG("Resolution (DPI) : %d",
-           dpi);
+    SL_LOG("Resolution (DPI) : %d", dpi);
+    SL_LOG("Content Scaling  : %d%%", (SLint)(contentScaleX * 100.0f));
 
     // get executable path
     SLstring projectRoot = SLstring(SL_PROJECT_ROOT);
@@ -179,7 +184,7 @@ int App::run(Config configuration)
                       AppCommon::scene,
                       scrWidth,
                       scrHeight,
-                      dpi,
+                      (SLint)((SLfloat)dpi * contentScaleX),
                       config.startSceneID,
                       reinterpret_cast<void*>(onPaint),
                       nullptr,

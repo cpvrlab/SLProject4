@@ -70,14 +70,6 @@ SLImGui::SLImGui(cbOnImGuiBuild      buildCB,
 
     // load GUI fonts depending on the resolution
     loadFonts(SLImGui::fontPropDots, SLImGui::fontFixedDots);
-
-    // Scale for proportional and fixed size fonts
-    SLfloat dpiScaleProp  = (float)dpi / 120.0f;
-    SLfloat dpiScaleFixed = (float)dpi / 142.0f;
-
-    // Default settings for the first time
-    SLImGui::fontPropDots  = std::max(16.0f * dpiScaleProp, 16.0f);
-    SLImGui::fontFixedDots = std::max(13.0f * dpiScaleFixed, 13.0f);
 }
 //-----------------------------------------------------------------------------
 SLImGui::~SLImGui()

@@ -4589,14 +4589,14 @@ void AppDemoGui::loadConfig(SLint dotsPerInch)
 {
     ImGuiStyle& style               = ImGui::GetStyle();
     SLstring    fullPathAndFilename = AppCommon::configPath +
-                                   AppCommon::name + ".yml";
+                                      AppCommon::name + ".yml";
 
     if (!SLFileStorage::exists(fullPathAndFilename, IOK_config))
     {
         SL_LOG("No config file %s: ", fullPathAndFilename.c_str());
 
         // Scale for proportional and fixed size fonts
-        SLfloat dpiScaleProp  = (float)dotsPerInch / 120.0f;
+        SLfloat dpiScaleProp  = (float)dotsPerInch / 142.0f;
         SLfloat dpiScaleFixed = (float)dotsPerInch / 142.0f;
 
         // Default settings for the first time
