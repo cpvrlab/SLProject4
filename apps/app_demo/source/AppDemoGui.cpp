@@ -588,13 +588,13 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                 SLfloat      avgTriPerVox      = vox > 0.0f ? numRTTria / (vox - voxEmpty) : 0.0f;
                 SLint        numOverdrawnNodes = (int)sv->nodesOverdrawn().size();
                 SLint        numVisibleNodes   = (int)(stats3D.numNodesOpaque + stats3D.numNodesBlended + numOverdrawnNodes);
-                SLint        numGroupPC        = (SLint)((SLfloat)stats3D.numNodesGroup / (SLfloat)stats3D.numNodes * 100.0f);
-                SLint        numLeafPC         = (SLint)((SLfloat)stats3D.numNodesLeaf / (SLfloat)stats3D.numNodes * 100.0f);
-                SLint        numLightsPC       = (SLint)((SLfloat)stats3D.numLights / (SLfloat)stats3D.numNodes * 100.0f);
-                SLint        numOpaquePC       = (SLint)((SLfloat)stats3D.numNodesOpaque / (SLfloat)stats3D.numNodes * 100.0f);
-                SLint        numBlendedPC      = (SLint)((SLfloat)stats3D.numNodesBlended / (SLfloat)stats3D.numNodes * 100.0f);
-                SLint        numOverdrawnPC    = (SLint)((SLfloat)numOverdrawnNodes / (SLfloat)stats3D.numNodes * 100.0f);
-                SLint        numVisiblePC      = (SLint)((SLfloat)numVisibleNodes / (SLfloat)stats3D.numNodes * 100.0f);
+                SLint        numGroupPC        = stats3D.numNodes == 0 ? 0 : (SLint)((SLfloat)stats3D.numNodesGroup / (SLfloat)stats3D.numNodes * 100.0f);
+                SLint        numLeafPC         = stats3D.numNodes == 0 ? 0 : (SLint)((SLfloat)stats3D.numNodesLeaf / (SLfloat)stats3D.numNodes * 100.0f);
+                SLint        numLightsPC       = stats3D.numNodes == 0 ? 0 : (SLint)((SLfloat)stats3D.numLights / (SLfloat)stats3D.numNodes * 100.0f);
+                SLint        numOpaquePC       = stats3D.numNodes == 0 ? 0 : (SLint)((SLfloat)stats3D.numNodesOpaque / (SLfloat)stats3D.numNodes * 100.0f);
+                SLint        numBlendedPC      = stats3D.numNodes == 0 ? 0 : (SLint)((SLfloat)stats3D.numNodesBlended / (SLfloat)stats3D.numNodes * 100.0f);
+                SLint        numOverdrawnPC    = stats3D.numNodes == 0 ? 0 : (SLint)((SLfloat)numOverdrawnNodes / (SLfloat)stats3D.numNodes * 100.0f);
+                SLint        numVisiblePC      = stats3D.numNodes == 0 ? 0 : (SLint)((SLfloat)numVisibleNodes / (SLfloat)stats3D.numNodes * 100.0f);
 
                 // Calculate total size of texture bytes on CPU
                 SLfloat cpuMBTexture = 0;
@@ -606,14 +606,14 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                 SLfloat cpuMBMeshes    = (SLfloat)stats3D.numBytes / 1E6f;
                 SLfloat cpuMBVoxels    = (SLfloat)stats3D.numBytesAccel / 1E6f;
                 SLfloat cpuMBTotal     = cpuMBTexture + cpuMBMeshes + cpuMBVoxels;
-                SLint   cpuMBTexturePC = (SLint)(cpuMBTexture / cpuMBTotal * 100.0f);
-                SLint   cpuMBMeshesPC  = (SLint)(cpuMBMeshes / cpuMBTotal * 100.0f);
-                SLint   cpuMBVoxelsPC  = (SLint)(cpuMBVoxels / cpuMBTotal * 100.0f);
+                SLint   cpuMBTexturePC = std::abs(cpuMBTotal) < 1E-5f ? 0 : (SLint)(cpuMBTexture / cpuMBTotal * 100.0f);
+                SLint   cpuMBMeshesPC  = std::abs(cpuMBTotal) < 1E-5f ? 0 : (SLint)(cpuMBMeshes / cpuMBTotal * 100.0f);
+                SLint   cpuMBVoxelsPC  = std::abs(cpuMBTotal) < 1E-5f ? 0 : (SLint)(cpuMBVoxels / cpuMBTotal * 100.0f);
                 SLfloat gpuMBTexture   = (SLfloat)SLGLTexture::totalNumBytesOnGPU / 1E6f;
                 SLfloat gpuMBVbo       = (SLfloat)SLGLVertexBuffer::totalBufferSize / 1E6f;
                 SLfloat gpuMBTotal     = gpuMBTexture + gpuMBVbo;
-                SLint   gpuMBTexturePC = (SLint)(gpuMBTexture / gpuMBTotal * 100.0f);
-                SLint   gpuMBVboPC     = (SLint)(gpuMBVbo / gpuMBTotal * 100.0f);
+                SLint   gpuMBTexturePC = std::abs(gpuMBTotal) < 1E-5 ? 0 : (SLint)(gpuMBTexture / gpuMBTotal * 100.0f);
+                SLint   gpuMBVboPC     = std::abs(gpuMBTotal) < 1E-5 ? 0 : (SLint)(gpuMBVbo / gpuMBTotal * 100.0f);
 
                 snprintf(m + strlen(m), sizeof(m), "No. of Nodes  :%5d (100%%)\n", stats3D.numNodes);
                 snprintf(m + strlen(m), sizeof(m), "- Group Nodes :%5d (%3d%%)\n", stats3D.numNodesGroup, numGroupPC);
