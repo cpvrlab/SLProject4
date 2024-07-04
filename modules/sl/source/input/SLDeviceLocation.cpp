@@ -278,21 +278,21 @@ SLbool SLDeviceLocation::calculateSolarAngles(SLVec3d     locationLatLonAlt,
     ut.tm_mon++;
     lt.tm_mon++;
 
-    SL_LOG("Universal time   : %02d.%02d.%02d %02d:%02d:%02d",
-           ut.tm_mday,
-           ut.tm_mon,
-           ut.tm_year,
-           ut.tm_hour,
-           ut.tm_min,
-           ut.tm_sec);
-    SL_LOG("Local time       : %02d.%02d.%02d %02d:%02d:%02d",
-           lt.tm_mday,
-           lt.tm_mon,
-           lt.tm_year,
-           lt.tm_hour,
-           lt.tm_min,
-           lt.tm_sec);
-    SL_LOG("Timezone         : %d", lt.tm_hour - ut.tm_hour);
+    SL_LOG_DEBUG("Universal time   : %02d.%02d.%02d %02d:%02d:%02d",
+                 ut.tm_mday,
+                 ut.tm_mon,
+                 ut.tm_year,
+                 ut.tm_hour,
+                 ut.tm_min,
+                 ut.tm_sec);
+    SL_LOG_DEBUG("Local time       : %02d.%02d.%02d %02d:%02d:%02d",
+                 lt.tm_mday,
+                 lt.tm_mon,
+                 lt.tm_year,
+                 lt.tm_hour,
+                 lt.tm_min,
+                 lt.tm_sec);
+    SL_LOG_DEBUG("Timezone         : %d", lt.tm_hour - ut.tm_hour);
 
     spa_data spa; // declare the SPA structure
     SLint    result;
@@ -336,13 +336,13 @@ SLbool SLDeviceLocation::calculateSolarAngles(SLVec3d     locationLatLonAlt,
         SLfloat SSm = (SLfloat)(60.0f * (SSh - (int)(SSh)));
         SLfloat SSs = (SLfloat)(60.0f * (SSm - floor(SSm)));
 
-        SL_LOG("Zenith           : %.6f degrees", _originSolarZenith);
-        SL_LOG("Azimuth          : %.6f degrees", _originSolarAzimuth);
-        SL_LOG("Sunrise          : %02d:%02d:%02d Local Time", (int)(SRh), (int)SRm, (int)SRs);
-        SL_LOG("Sunset           : %02d:%02d:%02d Local Time", (int)(SSh), (int)SSm, (int)SSs);
+        SL_LOG_DEBUG("Zenith           : %.6f degrees", _originSolarZenith);
+        SL_LOG_DEBUG("Azimuth          : %.6f degrees", _originSolarAzimuth);
+        SL_LOG_DEBUG("Sunrise          : %02d:%02d:%02d Local Time", (int)(SRh), (int)SRm, (int)SRs);
+        SL_LOG_DEBUG("Sunset           : %02d:%02d:%02d Local Time", (int)(SSh), (int)SSm, (int)SSs);
     }
     else
-        SL_LOG("SPA Error Code: %d", result);
+        SL_LOG_DEBUG("SPA Error Code: %d", result);
 
     if (_sunLightNode)
     {

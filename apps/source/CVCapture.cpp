@@ -26,6 +26,7 @@ for a good top down information.
 #include <FtpUtils.h>
 #include <AppCommon.h>
 #include <Profiler.h>
+#include <opencv2/core/utils/logger.hpp>
 
 //-----------------------------------------------------------------------------
 CVCapture* CVCapture::_instance = nullptr;
@@ -49,6 +50,9 @@ CVCapture::CVCapture()
     activeCamSizeIndex = -1;
     activeCamera       = nullptr;
     _captureTimesMS.init(60, 0);
+
+    // Silences OpenCV debug logging
+    cv::utils::logging::setLogLevel(cv::utils::logging::LogLevel::LOG_LEVEL_SILENT);
 }
 //-----------------------------------------------------------------------------
 //! Private constructor

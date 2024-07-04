@@ -10,6 +10,7 @@
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
 */
 
+#include "SLLightDirect.h"
 #include <AppDemoSceneRTLens.h>
 #include <AppCommon.h>
 #include <SLAssetLoader.h>
@@ -79,8 +80,9 @@ void AppDemoSceneRTLens::assemble(SLAssetManager* am,
     cam1->devRotLoc(&AppCommon::devRot, &AppCommon::devLoc);
     scene->addChild(cam1);
 
-    SLLightSpot* light1 = new SLLightSpot(am, this, 1, 6, 1, 0.1f);
-    light1->attenuation(0, 0, 1);
+    SLLightDirect* light1 = new SLLightDirect(am, this);
+    light1->translation(1, 1,1);
+    light1->lookAt(0, 0, 0);
     scene->addChild(light1);
 
     SLuint  res  = 20;
