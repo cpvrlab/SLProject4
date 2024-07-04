@@ -20,6 +20,7 @@
 #include <utility>
 #include <vector>
 #include <algorithm>
+#include <thread>
 
 #ifndef __EMSCRIPTEN__
 #    include <asio.hpp>
