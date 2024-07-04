@@ -43,7 +43,7 @@ public:
 
 private:
 #ifdef SL_EMSCRIPTEN
-    static const SLint _size = 10;
+    static const SLint _size = 20;
 #else
     static const SLint _size = 20;
 #endif
