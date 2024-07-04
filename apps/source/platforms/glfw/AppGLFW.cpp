@@ -420,6 +420,9 @@ static void onKey(GLFWwindow* myWindow,
 {
     SLKey key = mapKeyToSLKey(GLFWKey);
 
+    // Do not handle key events if scene is being loaded.
+    if (!AppCommon::scene) return;
+
     if (action == GLFW_PRESS)
     {
         switch (key)

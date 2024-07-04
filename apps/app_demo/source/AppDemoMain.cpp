@@ -233,12 +233,12 @@ static void onBeforeSceneDelete(SLSceneView* sv, SLScene* s)
 //-----------------------------------------------------------------------------
 static void onBeforeSceneLoad(SLSceneView* sv, SLScene* s)
 {
-    AppDemoGui::loadingString = "Loading...";
+    AppDemoGui::loadingString = "Loading ...";
 }
 //-----------------------------------------------------------------------------
 static void onBeforeSceneAssembly(SLSceneView* sv, SLScene* s)
 {
-    AppDemoGui::loadingString = "Assembling...";
+    AppDemoGui::loadingString = "Assembling ...";
 }
 //-----------------------------------------------------------------------------
 static void onAfterSceneAssembly(SLSceneView* sv, SLScene* s)
