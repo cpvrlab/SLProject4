@@ -3,7 +3,7 @@
 <p>
 Welcome to the SLProject. SL stands for Scene Library. It is developed at the 
 <a href="http://www.bfh.ch/en/studies/bachelor/engineering_and_information_technology/information_technology.html">
-Berne University of Applied Sciences (BFH)</a> and is used for student projects in the 
+Bern University of Applied Sciences (BFH)</a> and is used for student projects in the 
 <a href="https://www.cpvrlab.ti.bfh.ch/">cpvrLab</a>. 
 The various applications show what you can learn in three semesters about 3D computer graphics in 
 real time rendering and ray tracing. The framework is built in C++ and OpenGL ES and can be built for Windows, 
@@ -89,5 +89,5 @@ The framework uses beside OpenGL the following external libraries that are also 
 <p>
 Author: marcus.hudritsch@bfh.ch<br>
 Date: June 2024<br>
-Copyright (c): 2002-2023 Marcus Hudritsch, Kirchrain 18, 2572 Sutz, Switzerland
+Copyright (c): 2002-2024 Marcus Hudritsch, Kirchrain 18, 2572 Sutz, Switzerland
 </p>

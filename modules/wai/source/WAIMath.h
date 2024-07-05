@@ -3,9 +3,10 @@
 
 #include <math.h>
 
+//! WAI : Where Am I: Collection of duplicate structs for vectors
 namespace WAI
 {
-
+//-----------------------------------------------------------------------------
 struct V2
 {
     union
@@ -21,7 +22,7 @@ struct V2
         };
     };
 };
-
+//-----------------------------------------------------------------------------
 struct V3
 {
     union
@@ -33,7 +34,7 @@ struct V3
         };
     };
 };
-
+//-----------------------------------------------------------------------------
 inline V3 v3(float x, float y, float z)
 {
     V3 result;
@@ -44,7 +45,7 @@ inline V3 v3(float x, float y, float z)
 
     return result;
 }
-
+//-----------------------------------------------------------------------------
 inline V3 subV3(V3 v1, V3 v2)
 {
     V3 result;
@@ -55,7 +56,7 @@ inline V3 subV3(V3 v1, V3 v2)
 
     return result;
 }
-
+//-----------------------------------------------------------------------------
 struct M3x3
 {
     float e[3][3];
@@ -82,7 +83,7 @@ inline M3x3 identityM3x3()
 
     return result;
 }
-
+//-----------------------------------------------------------------------------
 inline M3x3 multM3x3(M3x3 m1, M3x3 m2)
 {
     M3x3 result = {};
@@ -102,7 +103,7 @@ inline M3x3 multM3x3(M3x3 m1, M3x3 m2)
 
     return result;
 }
-
+//-----------------------------------------------------------------------------
 inline V3 multM3x3V3(M3x3 m, V3 v)
 {
     V3 result = {};
@@ -117,7 +118,7 @@ inline V3 multM3x3V3(M3x3 m, V3 v)
 
     return result;
 }
-
+//-----------------------------------------------------------------------------
 inline M3x3 rotateXM3x3(float theta)
 {
     M3x3 result = identityM3x3();
@@ -135,5 +136,5 @@ struct M4x4
     float e[4][4];
 };
 }
-
+//-----------------------------------------------------------------------------
 #endif

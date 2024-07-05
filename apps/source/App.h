@@ -52,6 +52,7 @@ typedef void (*OnGuiBuildCallback)(SLScene* s, SLSceneView* sv);
 typedef void (*OnGuiLoadConfigCallback)(SLint dotsPerInch);
 typedef void (*OnGuiSaveConfigCallback)();
 
+//! App configuration struct to be passed to the App::run function
 struct Config
 {
     int                           argc                  = 0;

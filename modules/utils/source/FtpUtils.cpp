@@ -20,9 +20,8 @@ using namespace std;
 namespace FtpUtils
 {
 //-----------------------------------------------------------------------------
-//! Uploads the file to the ftp server. checks if the filename already exists and adds a version number
+//! Uploads the file to the ftp server. Checks if the filename already exists and adds a version number
 /*!
- *
  * \param fileDir
  * \param fileName
  * \param ftpHost
@@ -110,7 +109,6 @@ bool uploadFileLatestVersion(const string& fileDir,
 //-----------------------------------------------------------------------------
 //! Download the file from the ftp server which has the latest version and store it as fileName locally
 /*!
- *
  * \param fileDir
  * \param fileName
  * \param ftpHost

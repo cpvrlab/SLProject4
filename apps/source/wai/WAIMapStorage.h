@@ -7,6 +7,7 @@
 #include <fbow.h>
 #include <Utils.h>
 
+//-----------------------------------------------------------------------------
 class WAI_API WAIMapStorage
 {
     struct MapInfo
@@ -99,5 +100,5 @@ public:
     static void           writeCVMatToBinaryFile(FILE* f, const cv::Mat& mat);
     static cv::Mat        loadCVMatFromBinaryStream(uint8_t** data, int rows, int cols, int type);
 };
-
+//-----------------------------------------------------------------------------
 #endif

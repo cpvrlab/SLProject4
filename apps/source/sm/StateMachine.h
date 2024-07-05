@@ -1,3 +1,12 @@
+/**
+ * \file      StateMachinge.h
+ * \brief     State Machine Class Declaration 
+ * \authors   Michael Göttlicher
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ */
+
 #ifndef SM_STATE_MACHINE_H
 #define SM_STATE_MACHINE_H
 
@@ -8,9 +17,9 @@
 
 namespace sm
 {
-
+//-----------------------------------------------------------------------------
 class StateMachine;
-
+//-----------------------------------------------------------------------------
 /// @brief Abstract state base class that all states inherit from.
 class StateBase
 {
@@ -24,9 +33,12 @@ public:
      * \param stateEntry
      * \param stateExit
      */
-    virtual void invokeStateAction(StateMachine* sm, const EventData* data, const bool stateEntry, const bool stateExit) const {};
+    virtual void invokeStateAction(StateMachine*    sm,
+                                   const EventData* data,
+                                   const bool       stateEntry,
+                                   const bool       stateExit) const {};
 };
-
+//-----------------------------------------------------------------------------
 /*!
  * StateAction takes three template arguments: A state machine class,
  * a state function event data type (derived from EventData) and a state machine
@@ -35,11 +47,18 @@ public:
  * \tparam Data
  * \tparam Func
  */
-template<class SM, class Data, void (SM::*Func)(const Data*, const bool, const bool)>
+template<class SM,
+         class Data,
+         void (SM::*Func)(const Data*,
+                          const bool,
+                          const bool)>
 class StateAction : public StateBase
 {
 public:
-    virtual void invokeStateAction(StateMachine* sm, const EventData* data, const bool stateEntry, const bool stateExit) const
+    virtual void invokeStateAction(StateMachine*    sm,
+                                   const EventData* data,
+                                   const bool       stateEntry,
+                                   const bool       stateExit) const
     {
         // Downcast the state machine and event data to the correct derived type
         SM* derivedSM = static_cast<SM*>(sm);
@@ -50,7 +69,7 @@ public:
         (derivedSM->*Func)(derivedData, stateEntry, stateExit);
     }
 };
-
+//-----------------------------------------------------------------------------
 /*!
 - Transfer id of initial state in constructor of StateMachine
 - Define state functions like: void <name>(const sm::EventData* data);
@@ -69,7 +88,11 @@ public:
 
 protected:
     //! register state processing functions from deriving class
-    template<class SM, class Data, void (SM::*Func)(const Data*, const bool, const bool)>
+    template<class SM,
+             class Data,
+             void (SM::*Func)(const Data*,
+                              const bool,
+                              const bool)>
     void registerState(unsigned int stateId)
     {
         assert(_stateActions.find(stateId) == _stateActions.end());
@@ -81,7 +104,7 @@ private:
 
     std::map<unsigned int, sm::StateBase*> _stateActions;
 };
-
+//-----------------------------------------------------------------------------
 } // namespace SM
 
 #endif

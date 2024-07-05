@@ -5,7 +5,7 @@
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
  * \copyright http://opensource.org/licenses/GPL-3.0
-*/
+ */
 
 #include "FileLog.h"
 
@@ -16,6 +16,7 @@
 
 namespace Utils
 {
+//-----------------------------------------------------------------------------
 FileLog::FileLog(std::string logDir, bool forceFlush)
   : _forceFlush(forceFlush)
 {
@@ -32,22 +33,23 @@ FileLog::FileLog(std::string logDir, bool forceFlush)
         Utils::errorMsg("Utils", msg.c_str(), __LINE__, __FILE__);
     }
 }
-
+//-----------------------------------------------------------------------------
 FileLog::~FileLog()
 {
     _logFile.flush();
     _logFile.close();
 }
-
+//-----------------------------------------------------------------------------
 void FileLog::flush()
 {
     _logFile.flush();
 }
-
+//-----------------------------------------------------------------------------
 void FileLog::post(const std::string& message)
 {
     _logFile << message;
     if (_forceFlush)
         _logFile.flush();
 }
+//-----------------------------------------------------------------------------
 };

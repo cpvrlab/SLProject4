@@ -9,6 +9,7 @@
 class SLSceneView;
 class SENSCamera;
 
+//-----------------------------------------------------------------------------
 struct AppDirectories
 {
     std::string writableDir;
@@ -17,8 +18,8 @@ struct AppDirectories
     std::string vocabularyDir;
     std::string logFileDir;
 };
-
-// implements app functionality (e.g. scene description, which camera, how to start and use WAISlam)
+//-----------------------------------------------------------------------------
+//! Implements app functionality (e.g. scene description, which camera, how to start and use WAISlam)
 class WAIApp : public SLInputEventInterface
 {
 public:
@@ -26,7 +27,10 @@ public:
 
     WAIApp();
 
-    void init(int screenWidth, int screenHeight, int screenDpi, AppDirectories directories);
+    void init(int            screenWidth,
+              int            screenHeight,
+              int            screenDpi,
+              AppDirectories directories);
     void initCloseAppCallback(CloseAppCallback cb);
     void initCamera(SENSCamera* camera);
 
@@ -60,5 +64,5 @@ private:
     bool _initSceneGraphDone = false;
     bool _initIntroSceneDone = false;
 };
-
+//-----------------------------------------------------------------------------
 #endif // WAI_APP_TEST_H

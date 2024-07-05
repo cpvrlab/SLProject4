@@ -1,6 +1,6 @@
 /**
  * \file      CVCapture
- * \brief   OpenCV Capture Device
+ * \brief     OpenCV Capture Device
  * \date      Winter 2016
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style

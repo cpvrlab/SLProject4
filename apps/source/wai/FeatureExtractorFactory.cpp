@@ -5,6 +5,7 @@
 
 using namespace ORB_SLAM2;
 
+//-----------------------------------------------------------------------------
 FeatureExtractorFactory::FeatureExtractorFactory()
 {
     _extractorIdToNames.resize(ExtractorType_Last);
@@ -17,8 +18,10 @@ FeatureExtractorFactory::FeatureExtractorFactory()
     _extractorIdToNames[ExtractorType_FAST_BRIEF_3000] = "FAST-BRIEF-3000";
     _extractorIdToNames[ExtractorType_FAST_BRIEF_4000] = "FAST-BRIEF-4000";
 }
-
-std::unique_ptr<KPextractor> FeatureExtractorFactory::make(ExtractorType id, const cv::Size& videoFrameSize, int nLevels)
+//-----------------------------------------------------------------------------
+std::unique_ptr<KPextractor> FeatureExtractorFactory::make(ExtractorType   id,
+                                                           const cv::Size& videoFrameSize,
+                                                           int             nLevels)
 {
     switch (id)
     {
@@ -50,8 +53,10 @@ std::unique_ptr<KPextractor> FeatureExtractorFactory::make(ExtractorType id, con
             return orbExtractor(1000, nLevels);
     }
 }
-
-std::unique_ptr<KPextractor> FeatureExtractorFactory::make(std::string extractorType, const cv::Size& videoFrameSize, int nLevels)
+//-----------------------------------------------------------------------------
+std::unique_ptr<KPextractor> FeatureExtractorFactory::make(std::string     extractorType,
+                                                           const cv::Size& videoFrameSize,
+                                                           int             nLevels)
 {
     std::unique_ptr<KPextractor> result = nullptr;
 
@@ -66,23 +71,32 @@ std::unique_ptr<KPextractor> FeatureExtractorFactory::make(std::string extractor
 
     return result;
 }
-
+//-----------------------------------------------------------------------------
 std::unique_ptr<KPextractor> FeatureExtractorFactory::orbExtractor(int nf, int nLevels)
 {
     float fScaleFactor = 1.2f;
     int   fIniThFAST   = 20;
     int   fMinThFAST   = 7;
-    return std::make_unique<ORB_SLAM2::ORBextractor>(nf, fScaleFactor, nLevels, fIniThFAST, fMinThFAST);
+    return std::make_unique<ORB_SLAM2::ORBextractor>(nf,
+                                                     fScaleFactor,
+                                                     nLevels,
+                                                     fIniThFAST,
+                                                     fMinThFAST);
 }
-
-std::unique_ptr<KPextractor> FeatureExtractorFactory::briefExtractor(int nf, int nLevels)
+//-----------------------------------------------------------------------------
+std::unique_ptr<KPextractor> FeatureExtractorFactory::briefExtractor(int nf,
+                                                                     int nLevels)
 {
     float fScaleFactor = 1.2f;
     int   fIniThFAST   = 20;
     int   fMinThFAST   = 7;
-    return std::make_unique<ORB_SLAM2::BRIEFextractor>(nf, fScaleFactor, nLevels, fIniThFAST, fMinThFAST);
+    return std::make_unique<ORB_SLAM2::BRIEFextractor>(nf,
+                                                       fScaleFactor,
+                                                       nLevels,
+                                                       fIniThFAST,
+                                                       fMinThFAST);
 }
-
+//-----------------------------------------------------------------------------
 #ifndef TARGET_OS_IOS
 std::unique_ptr<KPextractor> FeatureExtractorFactory::glslExtractor(const cv::Size&
                                                                           videoFrameSize,
@@ -103,4 +117,5 @@ std::unique_ptr<KPextractor> FeatureExtractorFactory::glslExtractor(const cv::Si
                                            bigSigma,
                                            smallSigma);
 }
+//-----------------------------------------------------------------------------
 #endif

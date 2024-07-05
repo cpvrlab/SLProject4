@@ -283,7 +283,7 @@ unsigned closestPowerOf2(unsigned num);
 unsigned nextPowerOf2(unsigned num);
 //-----------------------------------------------------------------------------
 // clang-format on
-
+//! Class for holding computer information
 class ComputerInfos
 {
 public:

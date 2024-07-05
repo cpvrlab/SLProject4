@@ -1,3 +1,12 @@
+/**
+ * \file      StateMachinge.cpp
+ * \brief     State Machine Class Implementation
+ * \authors   Michael Göttlicher
+ * \copyright http://opensource.org/licenses/GPL-3.0
+ * \remarks   Please use clangformat to format the code. See more code style on
+ *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
+ */
+
 #include "StateMachine.h"
 #include <sstream>
 
@@ -7,11 +16,12 @@
 
 namespace sm
 {
+//-----------------------------------------------------------------------------
 StateMachine::StateMachine(unsigned int initialStateId)
   : _currentStateId(initialStateId)
 {
 }
-
+//-----------------------------------------------------------------------------
 StateMachine::~StateMachine()
 {
     for (auto it : _stateActions)
@@ -19,7 +29,7 @@ StateMachine::~StateMachine()
         delete it.second;
     }
 };
-
+//-----------------------------------------------------------------------------
 bool StateMachine::update()
 {
     sm::EventData* data            = nullptr;
@@ -34,26 +44,38 @@ bool StateMachine::update()
         unsigned int newState = e->getNewState(_currentStateId);
         data                  = e->getEventData();
 
-        LOG_STATEMACHINE_DEBUG("Event %s received sent by %s", e->name(), e->senderInfo());
+        LOG_STATEMACHINE_DEBUG("Event %s received sent by %s",
+                               e->name(),
+                               e->senderInfo());
 
         if (newState != Event::EVENT_IGNORED)
         {
             if (_currentStateId != newState)
             {
                 stateEntry = true;
-                LOG_STATEMACHINE_DEBUG("State change: %s -> %s", getPrintableState(_currentStateId).c_str(), getPrintableState(newState).c_str());
+                LOG_STATEMACHINE_DEBUG("State change: %s -> %s",
+                                       getPrintableState(_currentStateId).c_str(),
+                                       getPrintableState(newState).c_str());
 
                 // inform old state that we will leave it soon
                 auto itStateAction = _stateActions.find(_currentStateId);
                 if (itStateAction != _stateActions.end())
                 {
-                    itStateAction->second->invokeStateAction(this, data, false, true);
+                    itStateAction->second->invokeStateAction(this,
+                                                             data,
+                                                             false,
+                                                             true);
                 }
                 else
                 {
                     std::stringstream ss;
-                    ss << "You forgot to register state " << getPrintableState(_currentStateId) << "!";
-                    Utils::exitMsg("StateMachine", ss.str().c_str(), __LINE__, __FILE__);
+                    ss << "You forgot to register state "
+                       << getPrintableState(_currentStateId)
+                       << "!";
+                    Utils::exitMsg("StateMachine",
+                                   ss.str().c_str(),
+                                   __LINE__,
+                                   __FILE__);
                 }
 
                 // update state
@@ -62,19 +84,29 @@ bool StateMachine::update()
             auto itStateAction = _stateActions.find(_currentStateId);
             if (itStateAction != _stateActions.end())
             {
-                itStateAction->second->invokeStateAction(this, data, stateEntry, false);
+                itStateAction->second->invokeStateAction(this,
+                                                         data,
+                                                         stateEntry,
+                                                         false);
             }
             else
             {
                 std::stringstream ss;
-                ss << "You forgot to register state " << getPrintableState(_currentStateId) << "!";
-                Utils::exitMsg("StateMachine", ss.str().c_str(), __LINE__, __FILE__);
+                ss << "You forgot to register state "
+                   << getPrintableState(_currentStateId)
+                   << "!";
+                Utils::exitMsg("StateMachine",
+                               ss.str().c_str(),
+                               __LINE__,
+                               __FILE__);
             }
             stateWasUpdated = true;
         }
         else
         {
-            LOG_STATEMACHINE_DEBUG("Event %s ignored in state %s", e->name(), getPrintableState(_currentStateId).c_str());
+            LOG_STATEMACHINE_DEBUG("Event %s ignored in state %s",
+                                   e->name(),
+                                   getPrintableState(_currentStateId).c_str());
         }
 
         delete e;
@@ -88,4 +120,5 @@ bool StateMachine::update()
 
     return true;
 }
+//-----------------------------------------------------------------------------
 }
