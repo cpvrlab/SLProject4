@@ -1,7 +1,7 @@
 /**
  * \file      PBR_BRDFIntegration.frag
- * \brief     GLSL fragment program for generating a BRDF integration map,
-//             which is the second part of the specular integral.
+ * \details   GLSL fragment program for generating a BRDF integration map, 
+ *            which is the second part of the specular integral.
  * \date      April 2018
  * \authors   Carlos Arauz, Marcus Hudritsch, Marino von Wattenwyl
  * \copyright http://opensource.org/licenses/GPL-3.0

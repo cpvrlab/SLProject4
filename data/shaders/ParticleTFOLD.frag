@@ -1,8 +1,8 @@
 /**
  * \file      ParticleTF.frag
- * \brief   Simple GLSL fragment program for particle system updating this
-//  shader is never used because of the transform feedback and the 
-//  rasterization off.
+ * \brief     Simple GLSL fragment program for particle system updating this
+ * \details   This shader is never used because of the transform feedback and 
+ *            the rasterization off.
  * \date      December 2021
  * \authors   Affolter Marc
  * \copyright http://opensource.org/licenses/GPL-3.0

@@ -1,7 +1,7 @@
 /**
  * \file      RefractReflectDisp.frag
- * \brief     GLSL fragment program for refraction- & reflection mapping with
-//             chromatic dispersion
+ * \details   GLSL fragment program for refraction- & reflection mapping with
+ *            chromatic dispersion
  * \date      July 2014
  * \authors   Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0

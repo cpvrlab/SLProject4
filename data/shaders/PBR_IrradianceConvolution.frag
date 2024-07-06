@@ -1,8 +1,7 @@
 /**
  * \file      PBR_IrradianceConvolution.frag
- * \brief     GLSL fragment program to generate an irradiance map by
-//             convoluting of an environment map.
-//  Author:
+ * \details   GLSL fragment program to generate an irradiance map by
+ *            convoluting of an environment map.
  * \date      April 2018
  * \authors   Carlos Arauz, Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0

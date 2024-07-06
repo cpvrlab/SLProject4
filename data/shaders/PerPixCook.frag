@@ -1,8 +1,8 @@
 /**
  * \file      PerPixCook.frag
- * \brief     GLSL fragment shader for Cook-Torrance physical based rendering.
-//             Based on the physically based rendering (PBR) tutorial with GLSL
-//             from Joey de Vries on https://learnopengl.com/#!PBR/Theory
+ * \details   GLSL fragment shader for Cook-Torrance physical based rendering.
+ *            Based on the physically based rendering (PBR) tutorial with GLSL
+ *            from Joey de Vries on https://learnopengl.com/#!PBR/Theory
  * \date      July 2017
  * \authors   Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0

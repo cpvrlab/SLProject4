@@ -1,8 +1,8 @@
 /**
  * \file      PBR_PrefilterRoughness.frag
- * \brief     GLSL fragment program to generate a prefiltered environment map
-//             using convolution, similar to the irradiance convolution map but
-//             taking a roughness value into account.
+ * \details   GLSL fragment program to generate a prefiltered environment map
+              using convolution, similar to the irradiance convolution map but
+              taking a roughness value into account.
  * \date      April 2018
  * \authors   Carlos Arauz. Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0

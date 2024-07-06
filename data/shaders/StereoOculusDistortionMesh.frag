@@ -1,6 +1,6 @@
 /**
  * \file      StereoOculus.frag
- * \brief   Oculus Rift Distortion Shader
+ * \brief     Oculus Rift Distortion Shader
  * \date      November 2013
  * \authors   Marc Wacker, Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0

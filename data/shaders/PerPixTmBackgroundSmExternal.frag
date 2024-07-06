@@ -1,7 +1,7 @@
 /**
  * \file      PerPixTmBackgroundSm.frag
- * \brief     GLSL fragment shader for background texture mapping with
-//             shadow mapping
+ * \detials   GLSL fragment shader for background texture mapping with
+ *            shadow mapping
  * \date      November 2020
  * \authors   Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0

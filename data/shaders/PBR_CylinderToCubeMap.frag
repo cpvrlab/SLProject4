@@ -1,9 +1,9 @@
 /**
  * \file      PBR_CylinderToCubeMap.frag
- * \brief     GLSL fragment program which takes fragment's direction to sample
-//             the equirectangular map as if it is a cube map. Based on the
-//             physically based rendering (PBR) tutorial with GLSL by Joey de
-//             Vries on https://learnopengl.com/PBR/IBL/Diffuse-irradiance
+ * \details   GLSL fragment program which takes fragment's direction to sample
+ *            the equirectangular map as if it is a cube map. Based on the
+ *            physically based rendering (PBR) tutorial with GLSL by Joey de
+ *            Vries on https://learnopengl.com/PBR/IBL/Diffuse-irradiance
  * \authors   Carlos Arauz, Marcus Hudritsch
  * \date      April 2018
  * \copyright http://opensource.org/licenses/GPL-3.0

@@ -1,6 +1,6 @@
 /**
  * \file      PerPixBlinnTmNmEarth.frag
- * \brief   OGLSL parallax bump mapping
+ * \brief     OGLSL parallax bump mapping
  * \date      July 2014
  * \authors   Markus Knecht, Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0

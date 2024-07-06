@@ -1,7 +1,7 @@
 /**
  * \file      PerPixTmBackground.vert
- * \brief     GLSL vertex shader for background texture mapping with
-//             shadow mapping
+ * \details   GLSL vertex shader for background texture mapping with
+ *            shadow mapping
  * \date      November 2020
  * \authors   Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0

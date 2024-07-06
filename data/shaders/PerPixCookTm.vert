@@ -1,8 +1,8 @@
 /**
  * \file      PerPixCookTm.vert
- * \brief     GLSL vertex shader for Cook-Torrance physical based rendering.
-//             Based on the physically based rendering (PBR) tutorial with GLSL
-//             from Joey de Vries on https://learnopengl.com/#!PBR/Theory
+ * \details   GLSL vertex shader for Cook-Torrance physical based rendering.
+ *            Based on the physically based rendering (PBR) tutorial with GLSL
+ *            from Joey de Vries on https://learnopengl.com/#!PBR/Theory
  * \date      July 2014
  * \authors   Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0
