@@ -6,7 +6,7 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #include <WebCamera.h>
 #include <emscripten.h>
@@ -86,7 +86,10 @@ CVMat WebCamera::read()
     EM_ASM({
         let video = document.querySelector("#capture-video");
         let canvas = document.querySelector("#capture-canvas");
-        let ctx = canvas.getContext("2d");
+        
+        // the last parameter canvas_will_read_frequently is set to true
+        // https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently
+        let ctx = canvas.getContext("2d", true, false, "srgb", true);
 
         let width = video.videoWidth;
         let height = video.videoHeight;
