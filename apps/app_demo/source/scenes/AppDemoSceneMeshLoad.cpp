@@ -1,20 +1,21 @@
 /**
  * \file      AppDemoSceneMeshLoad.cpp
  * \brief     Implementation for an SLScene inherited class
- * \details   For more info about App framework and the scene assembly see: 
+ * \details   For more info about App framework and the scene assembly see:
  *            https://cpvrlab.github.io/SLProject4/app-framework.html
  * \date      May 2024
  * \authors   Marcus Hudritsch, Marino von Wattenwyl
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #include <AppDemoSceneMeshLoad.h>
 #include <AppCommon.h>
 #include <SLAssetLoader.h>
 #include <SLLightSpot.h>
 #include <SLRectangle.h>
+#include <SLSkybox.h>
 
 //-----------------------------------------------------------------------------
 AppDemoSceneMeshLoad::AppDemoSceneMeshLoad() : SLScene("Mesh 3D Loader Test")
@@ -29,9 +30,15 @@ AppDemoSceneMeshLoad::AppDemoSceneMeshLoad() : SLScene("Mesh 3D Loader Test")
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneMeshLoad::registerAssetsToLoad(SLAssetLoader& al)
 {
-    al.addNodeToLoad(_mesh3DS,
+    al.addSkyboxToLoad(_skybox,
+                       al.modelPath() +
+                         "GLTF/glTF-Sample-Models/hdris/approaching_storm_4k.hdr",
+                       SLVec2i(512, 512),
+                       "HDR Skybox");
+
+    al.addNodeToLoad(_meshGLTF,
                      AppCommon::modelPath +
-                       "3DS/Halloween/jackolan.3ds");
+                       "GLTF/glTF-Sample-Models/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf");
     al.addNodeToLoad(_meshFBX,
                      AppCommon::modelPath +
                        "FBX/Duck/duck.fbx");
@@ -77,10 +84,16 @@ void AppDemoSceneMeshLoad::assemble(SLAssetManager* am, SLSceneView* sv)
     charAnim->playbackRate(0.8f);
 
     // Scale to so that the AstroBoy is about 2 (meters) high.
-    if (_mesh3DS)
+    if (_meshGLTF)
     {
-        _mesh3DS->scale(0.1f);
-        _mesh3DS->translate(-22.0f, 1.9f, 3.5f, TS_object);
+        _meshGLTF->scale(0.8f);
+        _meshGLTF->translate(-2.4f, 0, -1.5f, TS_object);
+
+        // Update all materials and set their skybox to _skybox
+        _meshGLTF->updateMeshMat([=](SLMaterial* m)
+                                 { m->skybox(_skybox); },
+                                 true);
+        _skybox->exposure(4.0f);
     }
     if (_meshDAE)
     {
@@ -116,6 +129,7 @@ void AppDemoSceneMeshLoad::assemble(SLAssetManager* am, SLSceneView* sv)
 
     SLNode* scene = new SLNode("Scene");
     this->root3D(scene);
+    this->skybox(_skybox);
     scene->addChild(light1);
     scene->addChild(light2);
     scene->addChild(rb);
@@ -123,7 +137,7 @@ void AppDemoSceneMeshLoad::assemble(SLAssetManager* am, SLSceneView* sv)
     scene->addChild(rr);
     scene->addChild(rf);
     scene->addChild(rt);
-    if (_mesh3DS) scene->addChild(_mesh3DS);
+    if (_meshGLTF) scene->addChild(_meshGLTF);
     if (_meshFBX) scene->addChild(_meshFBX);
     if (_meshDAE) scene->addChild(_meshDAE);
     scene->addChild(cam1);
