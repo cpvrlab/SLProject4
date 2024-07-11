@@ -1,14 +1,14 @@
 /**
  * \file      AppDemoSceneSuzanne.cpp
  * \brief     Implementation for an SLScene inherited class
- * \details   For more info about App framework and the scene assembly see: 
+ * \details   For more info about App framework and the scene assembly see:
  *            https://cpvrlab.github.io/SLProject4/app-framework.html
  * \date      May 2024
  * \authors   Marino von Wattenwyl
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #include <AppDemoSceneSuzanne.h>
 #include <SLAssetLoader.h>
@@ -75,31 +75,30 @@ void AppDemoSceneSuzanne::assemble(SLAssetManager* am, SLSceneView* sv)
     if (_environmentMapping)
     {
         SLLight::gamma = 2.0f;
-        light = new SLLightDirect(am, this, 0.1f);
+        light          = new SLLightDirect(am, this, 0.1f);
         light->ambientPower(0.0f);
         light->diffusePower(3.0f);
-        light->attenuation(1, 0, 0);
-        light->translate(0, 0, 0.5);
-        light->lookAt(-1, -1, -1);
     }
     else
     {
         SLLight::gamma = 1.0f;
-        light = new SLLightDirect(am, this, 0.1f);
+        light          = new SLLightDirect(am, this, 0.1f);
         light->ambientPower(0.6f);
         light->diffusePower(0.6f);
-        light->attenuation(1, 0, 0);
-        light->translate(0, 0, 0.5);
-        light->lookAt(1, -1, 0.5);
-        SLAnimation* lightAnim = animManager().createNodeAnimation("LightAnim",
-                                                                   4.0f,
-                                                                   true,
-                                                                   EC_inOutSine,
-                                                                   AL_pingPongLoop);
-        lightAnim->createNodeAnimTrackForRotation(light,
-                                                  -180,
-                                                  SLVec3f(0, 1, 0));
     }
+
+    light->attenuation(1, 0, 0);
+    light->translate(0, 0, 0.5);
+    light->lookAt(1, -1, 0.5);
+    SLAnimation* lightAnim = animManager().createNodeAnimation("LightAnim",
+                                                               4.0f,
+                                                               true,
+                                                               EC_inOutSine,
+                                                               AL_pingPongLoop);
+    lightAnim->createNodeAnimTrackForRotation(light,
+                                              -180,
+                                              SLVec3f(0, 1, 0));
+
     scene->addChild(light);
 
     // Add shadow mapping
