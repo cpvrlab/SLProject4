@@ -27979,7 +27979,7 @@
 							"top": 24,
 							"width": 153,
 							"height": 177,
-							"text": "Application code split in platform independent (C/C++) code (light gray boxes) and platform dependent code (C/C++, Java or Objective C) in dark gray boxes. Supported platforms are: GLFW (desktop OS), Emscripten (Web), iOS and Android."
+							"text": "Application code split in platform independent (C/C++) code (light brown boxes) and platform dependent code (C/C++, Java or Objective C) in dark brown boxes. Supported platforms are: GLFW (desktop OS), Emscripten (Web), iOS and Android."
 						},
 						{
 							"_type": "UMLClassView",
@@ -28008,7 +28008,7 @@
 												"$ref": "AAAAAAFs2JHSOnGRR7w="
 											},
 											"visible": false,
-											"fillColor": "#f6d678",
+											"fillColor": "#daac20",
 											"font": "Arial;13;0",
 											"left": 864,
 											"top": -80,
@@ -28020,7 +28020,7 @@
 											"_parent": {
 												"$ref": "AAAAAAFs2JHSOnGRR7w="
 											},
-											"fillColor": "#f6d678",
+											"fillColor": "#daac20",
 											"font": "Arial;13;1",
 											"left": 445,
 											"top": 31,
@@ -28035,7 +28035,7 @@
 												"$ref": "AAAAAAFs2JHSOnGRR7w="
 											},
 											"visible": false,
-											"fillColor": "#f6d678",
+											"fillColor": "#daac20",
 											"font": "Arial;13;0",
 											"left": 864,
 											"top": -80,
@@ -28050,7 +28050,7 @@
 												"$ref": "AAAAAAFs2JHSOnGRR7w="
 											},
 											"visible": false,
-											"fillColor": "#f6d678",
+											"fillColor": "#daac20",
 											"font": "Arial;13;0",
 											"left": 864,
 											"top": -80,
@@ -28058,7 +28058,7 @@
 											"horizontalAlignment": 1
 										}
 									],
-									"fillColor": "#f6d678",
+									"fillColor": "#daac20",
 									"font": "Arial;13;0",
 									"left": 440,
 									"top": 24,
@@ -28096,7 +28096,7 @@
 											"model": {
 												"$ref": "AAAAAAFs2JQVNKp+XQI="
 											},
-											"fillColor": "#f6d678",
+											"fillColor": "#daac20",
 											"font": "Arial;13;0",
 											"left": 445,
 											"top": 54,
@@ -28106,7 +28106,7 @@
 											"horizontalAlignment": 0
 										}
 									],
-									"fillColor": "#f6d678",
+									"fillColor": "#daac20",
 									"font": "Arial;13;0",
 									"left": 440,
 									"top": 49,
@@ -28132,7 +28132,7 @@
 											"model": {
 												"$ref": "AAAAAAFs2JPjhKSGySk="
 											},
-											"fillColor": "#f6d678",
+											"fillColor": "#daac20",
 											"font": "Arial;13;0",
 											"left": 445,
 											"top": 77,
@@ -28150,7 +28150,7 @@
 											"model": {
 												"$ref": "AAAAAAFs2KUTYyly5Go="
 											},
-											"fillColor": "#f6d678",
+											"fillColor": "#daac20",
 											"font": "Arial;13;0",
 											"left": 445,
 											"top": 92,
@@ -28168,7 +28168,7 @@
 											"model": {
 												"$ref": "AAAAAAFs2JTCB7HVIC4="
 											},
-											"fillColor": "#f6d678",
+											"fillColor": "#daac20",
 											"font": "Arial;13;0",
 											"left": 445,
 											"top": 107,
@@ -28186,7 +28186,7 @@
 											"model": {
 												"$ref": "AAAAAAFs2JUlCbfNDpE="
 											},
-											"fillColor": "#f6d678",
+											"fillColor": "#daac20",
 											"font": "Arial;13;0",
 											"left": 445,
 											"top": 122,
@@ -28204,7 +28204,7 @@
 											"model": {
 												"$ref": "AAAAAAFs4d04ZM9d42Q="
 											},
-											"fillColor": "#f6d678",
+											"fillColor": "#daac20",
 											"font": "Arial;13;0",
 											"left": 445,
 											"top": 137,
@@ -28222,7 +28222,7 @@
 											"model": {
 												"$ref": "AAAAAAFs2JXTn8jGmqs="
 											},
-											"fillColor": "#f6d678",
+											"fillColor": "#daac20",
 											"font": "Arial;13;0",
 											"left": 445,
 											"top": 152,
@@ -28241,7 +28241,7 @@
 												"$ref": "AAAAAAFs2Ka1zkOazmQ="
 											},
 											"visible": false,
-											"fillColor": "#f6d678",
+											"fillColor": "#daac20",
 											"font": "Arial;13;0",
 											"left": 701,
 											"top": 167,
@@ -28251,7 +28251,7 @@
 											"horizontalAlignment": 0
 										}
 									],
-									"fillColor": "#f6d678",
+									"fillColor": "#daac20",
 									"font": "Arial;13;0",
 									"left": 440,
 									"top": 72,
@@ -28268,7 +28268,7 @@
 										"$ref": "AAAAAAFs2JHSOnGOo7U="
 									},
 									"visible": false,
-									"fillColor": "#f6d678",
+									"fillColor": "#daac20",
 									"font": "Arial;13;0",
 									"left": 432,
 									"top": -40,
@@ -28285,7 +28285,7 @@
 										"$ref": "AAAAAAFs2JHSOnGOo7U="
 									},
 									"visible": false,
-									"fillColor": "#f6d678",
+									"fillColor": "#daac20",
 									"font": "Arial;13;0",
 									"left": 432,
 									"top": -40,
@@ -28293,7 +28293,7 @@
 									"height": 10
 								}
 							],
-							"fillColor": "#f6d678",
+							"fillColor": "#daac20",
 							"font": "Arial;13;0",
 							"containerChangeable": true,
 							"left": 440,
@@ -35201,7 +35201,6 @@
 							"propertyLabel": {
 								"$ref": "AAAAAAGRE1Ge9wOL1sY="
 							},
-							"showEndOrder": "hide",
 							"tailRoleNameLabel": {
 								"$ref": "AAAAAAGRE1Ge9wOMnTk="
 							},

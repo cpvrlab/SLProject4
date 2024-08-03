@@ -46,7 +46,6 @@ function(sl_add_app)
         ${SL_PROJECT_ROOT}/apps/source/AppCommon.h
         ${SL_PROJECT_ROOT}/apps/source/SLScene.h
         ${SL_PROJECT_ROOT}/apps/source/SLInterface.h
-        ${SL_PROJECT_ROOT}/apps/source/Scene.h
         ${APP_HEADERS}
     )
 
@@ -54,7 +53,6 @@ function(sl_add_app)
         ${SL_PROJECT_ROOT}/apps/source/CVCapture.cpp
         ${SL_PROJECT_ROOT}/apps/source/AppCommon.cpp
         ${SL_PROJECT_ROOT}/apps/source/SLInterface.cpp
-        ${SL_PROJECT_ROOT}/apps/source/SLProjectScene.cpp
         ${APP_SOURCES}
     )
 

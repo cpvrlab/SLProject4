@@ -3,14 +3,14 @@
  * \brief     The AppCommon class holds the top-level instances of the app-demo
  * \details   For more info on how to create a new app with SLProject see:
  *            https://github.com/cpvrlab/SLProject4/wiki/Creating-a-New-App
- *            For more info about App framework see: 
+ *            For more info about App framework see:
  *            https://cpvrlab.github.io/SLProject4/app-framework.html
  * \date      February 2018
  * \authors   Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #ifndef SLAPPCOMMON_H
 #define SLAPPCOMMON_H
@@ -37,14 +37,14 @@ class SLUiInterface;
 using std::optional;
 
 //-----------------------------------------------------------------------------
-//! Top level class for an SLProject application.
+//! Top level class for the major global instances off an SLProject app.
 /*!
  The AppCommon holds static instances of top-level items such as the asset
  manager, the scene pointer, the vector of all sceneviews, the gui pointer,
  the camera calibration objects and the device rotation and location
  information.<br>
- The static function createApp is called by the C-interface functions 
- slCreateApp and the function deleteApp by slTerminate. At the moment only 
+ The static function createApp is called by the C-interface functions
+ slCreateApp and the function deleteApp by slTerminate. At the moment only
  one scene can be open at the time.
  <br>
  AppCommon holds two static video camera calibrations, one for a main camera
@@ -55,38 +55,39 @@ class AppCommon
 {
 public:
     // Major owned instances of the app
-    static SLInputManager      inputManager; //!< Input events manager
-    static SLAssetManager*     assetManager; //!< asset manager is the owner of all assets
-    static SLAssetLoader*      assetLoader;  //!< responsible for async asset loading
-    static SLScene*            scene;        //!< scene pointer
-    static SLVSceneView        sceneViews;   //!< vector of sceneview pointers
-    static SLUiInterface*      gui;          //!< gui pointer
-    static SLDeviceRotation    devRot;       //!< Mobile device rotation from IMU
-    static SLDeviceLocation    devLoc;       //!< Mobile device location from GPS
-    static optional<SLSceneID> sceneToLoad;  //!< scene id to load at start up
+    static SLInputManager   inputManager; //!< Input events manager
+    static SLAssetManager*  assetManager; //!< asset manager is the owner of all assets
+    static SLAssetLoader*   assetLoader;  //!< Asset-loader for async asset loading
+    static SLScene*         scene;        //!< Pointer to the one and only SLScene instance
+    static SLVSceneView     sceneViews;   //!< Vector of sceneview pointers
+    static SLUiInterface*   gui;          //!< Pointer to the GUI
+    static SLDeviceRotation devRot;       //!< Mobile device rotation from IMU
+    static SLDeviceLocation devLoc;       //!< Mobile device location from GPS
 
     static void createApp(SLstring appName);
     static void registerCoreAssetsLoad();
     static void switchScene(SLSceneView* sv, SLSceneID sceneID);
     static void deleteApp();
 
-    static SLstring name;          //!< Application name
-    static SLstring appTag;        //!< Tag string used in logging
-    static SLstring version;       //!< SLProject version string
-    static SLstring asciiLabel;    //!< SLProject ascii label string
-    static SLstring configuration; //!< Debug or Release configuration
-    static SLstring gitBranch;     //!< Current GIT branch
-    static SLstring gitCommit;     //!< Current GIT commit short hash id
-    static SLstring gitDate;       //!< Current GIT commit date
-    static SLstring exePath;       //!< executable root path
-    static SLstring configPath;    //!< Default path for calibration files
-    static SLstring externalPath;  //!< Default path for external file storage
-    static SLstring dataPath;      //!< Path to data directory (it is set platform dependent)
-    static SLstring shaderPath;    //!< Path to GLSL shader programs
-    static SLstring modelPath;     //!< Path to 3D models
-    static SLstring texturePath;   //!< Path to texture images
-    static SLstring fontPath;      //!< Path to font images
-    static SLstring videoPath;     //!< Path to video files
+    static SLstring            name;          //!< Application name
+    static SLstring            appTag;        //!< Tag string used in logging
+    static SLstring            version;       //!< SLProject version string
+    static SLstring            asciiLabel;    //!< SLProject ascii label string
+    static SLstring            configuration; //!< Debug or Release configuration
+    static SLstring            gitBranch;     //!< Current GIT branch
+    static SLstring            gitCommit;     //!< Current GIT commit short hash id
+    static SLstring            gitDate;       //!< Current GIT commit date
+    static SLstring            exePath;       //!< executable root path
+    static SLstring            configPath;    //!< Default path for calibration files
+    static SLstring            externalPath;  //!< Default path for external file storage
+    static SLstring            dataPath;      //!< Path to data directory (it is set platform dependent)
+    static SLstring            shaderPath;    //!< Path to GLSL shader programs
+    static SLstring            modelPath;     //!< Path to 3D models
+    static SLstring            texturePath;   //!< Path to texture images
+    static SLstring            fontPath;      //!< Path to font images
+    static SLstring            videoPath;     //!< Path to video files
+    static SLSceneID           sceneID;       //!< ID of currently loaded scene
+    static optional<SLSceneID> sceneToLoad;   //!< Scene id to load at start up
 
     // static methods for parallel job processing
     static void   handleParallelJob();
@@ -96,8 +97,6 @@ public:
     static string jobProgressMsg();
     static int    jobProgressNum() { return _jobProgressNum; }
     static int    jobProgressMax() { return _jobProgressMax; }
-
-    static SLSceneID sceneID; //!< ID of last loaded scene
 
     static map<string, string>         deviceParameter;    //!< Generic device parameter
     static deque<function<void(void)>> jobsToBeThreaded;   //!< Queue of functions to be executed in a thread

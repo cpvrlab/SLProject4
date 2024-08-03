@@ -11,6 +11,7 @@
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
  */
+ 
 #include <App.h>
 #include <AppCommon.h>
 #include <SL.h>

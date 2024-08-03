@@ -30,15 +30,15 @@ There are 5 code sections in SLProject:
 
 The following class diagram gives you an overview of the major classes with its important attributes and methods:
 
-- The **gray boxes** on top contain the application code that depend on the OS and do the GUI, the scene assembly and the video processing.
-- The **light blue classes** are the central classes with the top-level instances of SLAssetManager and SLInputManager. The core classes for the scene are SLScene and SLSceneView.
+- The **brown boxes** on top contain the application code that depend on the OS and do the GUI, the scene assembly and the video processing.
+- The **light blue classes** are the central classes with the top-level instances of SLAssetManager and SLInputManager. The core classes for the scene are SLScene and SLSceneView. The UI is redered with SLImGui.
 - The **dark blue classes** are the alternative renderers for ray tracing and path tracing.
 - The **yellow classes** define the materials that are responsible for the visual appearances of the mesh objects.
 - The **green classes** build the scene graph that defines the spacial structure of the visible objects.
 - The **pink classes** define a single triangulated mesh object.
 - The **violet classes** encapsulate all OpenGL vertex array object and buffer objects.
 - The **red classes** build the animation framework.
-- The **orange classes** encapsulate the video, image and AR tracking functionality using OpenCV. CV classes are independent from all SL classes. Only SLGLTexture uses CVImage for its texture images.
+- The **peach classes** to the right encapsulate the video, image and AR tracking functionality using OpenCV. CV classes are independent from all SL classes. Only SLGLTexture uses CVImage for its texture images.
 - The **red classes** build the animation framework.
 - The **white classes** are low level classes for the math. Some of them are within the namespace Utils.
 - The **gray boxes** at the bottom are the external libraries that are used within the frame work.
@@ -48,8 +48,8 @@ The following class diagram gives you an overview of the major classes with its 
 \section app Application Code
 
 The application's code (grey boxes at the top of the diagram) contains the code for the operating system, the scene definition with SLProject library (SL), the video processing using CV-classes and the UI with ImGUI. In all cases we have the most outer shell of the application that handles the window and the OpenGL context creation and passes the events to a thin C-function interface before it is handled by the C++-framework in the library lib-SLProject.
-For more information about application code please read the page about the [App Framework](https://cpvrlab.github.io/SLProject4/app-framework.html).
-The following systems are supported and applications are provided for demonstration:
+
+The following platforms are supported and applications are provided for demonstration:
 
 - **Windows, Linux and macOS** applications use the [GLFW](http://www.glfw.org/)
   C-library for the platform independent window and context creation.
@@ -60,27 +60,16 @@ The following systems are supported and applications are provided for demonstrat
 - **Apple iOS** applications start in Objective-C before it passes the events to the C-interface.
   See the [wiki for build instructions](https://github.com/cpvrlab/SLProject4/wiki/Build-on-MacOS-with-XCode-for-iOS)
   and `apps/source/platforms/ios/example_project` for the project used in demos. 
-- **Web** applications use [Emscripten](https://cpvrlab.github.io/SLProject4/emscripten.html) to compile C++ code to
-  [WebAssembly](https://webassembly.org/). This allows applications to be served by a web server
+- **Web** applications use [Emscripten](https://cpvrlab.github.io/SLProject4/emscripten.html) to compile C++ code to [WebAssembly](https://webassembly.org/). This allows applications to be served by a web server
   and run inside the browser.
 
-For all demo apps (desktop and mobile) we use the [Dear ImGui](https://github.com/ocornut/imgui) library for the UI. 
-The UI for `app-demo` is implemented in AppDemoGui. Dear ImGui is also included in the repository.
-You could in fact use any GUI library on any OS that can render using OpenGL.
-Other alternatives could be e.g. [Qt](https://www.qt.io/), [freeglut](http://freeglut.sourceforge.net/),
-[FLTK](http://www.fltk.org/index.php), [wxWidgets](http://www.wxwidgets.org/),
-[Nana](http://www.nanapro.org/en-us/), or [Juce](http://www.juce.com/). 
-
-SLInterface.h and SLInterface.cpp define the C-Interface of the SLProject library.
-We use a C-interface because this type can be called from any higher level language.
-The SLInterface talks only to the SLInputManager, SLScene and SLSceneView classes.
+For all demo apps (desktop and mobile) we use the [Dear ImGui](https://github.com/ocornut/imgui) library for the UI. The UI for `app-demo` is implemented in AppDemoGui. Dear ImGui is also included in the repository.
 
 For more information about SLProject's app framework, see [this page](#app-framework).
 
 \section central Central Classes
 
 The light blue classes form the center of the SLProject framework:
-
 - SLAssetManager holds the expensive resources such as meshes, materials, textures and shader programs in vectors.
 - SLInputManager collects all user events from the mouse and keyboard as well as from additional input devices such as a LeapMotion or Kinect sensor.
 - SLScene is the top-level class of the framework that represents the scene with
