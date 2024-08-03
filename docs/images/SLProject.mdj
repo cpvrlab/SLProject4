@@ -27968,20 +27968,6 @@
 							}
 						},
 						{
-							"_type": "UMLTextView",
-							"_id": "AAAAAAFs2I/I0mhkeKs=",
-							"_parent": {
-								"$ref": "AAAAAAFF+qBtyKM79qY="
-							},
-							"fontColor": "#ff0000",
-							"font": "Arial;13;0",
-							"left": 104,
-							"top": 24,
-							"width": 153,
-							"height": 177,
-							"text": "Application code split in platform independent (C/C++) code (light brown boxes) and platform dependent code (C/C++, Java or Objective C) in dark brown boxes. Supported platforms are: GLFW (desktop OS), Emscripten (Web), iOS and Android."
-						},
-						{
 							"_type": "UMLClassView",
 							"_id": "AAAAAAFs2JHSOnGQgcE=",
 							"_parent": {
@@ -29284,34 +29270,6 @@
 							"templateParameterCompartment": {
 								"$ref": "AAAAAAFs2+87bJQkBMo="
 							}
-						},
-						{
-							"_type": "UMLTextView",
-							"_id": "AAAAAAFs2/A5NLd8nZo=",
-							"_parent": {
-								"$ref": "AAAAAAFF+qBtyKM79qY="
-							},
-							"fontColor": "#ff0000",
-							"font": "Arial;13;0",
-							"left": 1232,
-							"top": 232,
-							"width": 225,
-							"height": 57,
-							"text": "CV contains classes that use OpenCV for video processing. \nNo SL classes are used."
-						},
-						{
-							"_type": "UMLTextView",
-							"_id": "AAAAAAFs2/F70MeCg2g=",
-							"_parent": {
-								"$ref": "AAAAAAFF+qBtyKM79qY="
-							},
-							"fontColor": "#ff0000",
-							"font": "Arial;13;0",
-							"left": 88,
-							"top": 232,
-							"width": 313,
-							"height": 65,
-							"text": "SL (Scene Library) C++ classes contain the functionality scenegraph management and 3D rendering with OpenGL, ray or path tracing."
 						},
 						{
 							"_type": "UMLTextView",
@@ -31209,36 +31167,6 @@
 							}
 						},
 						{
-							"_type": "UMLTextView",
-							"_id": "AAAAAAFs4d9cGukL494=",
-							"_parent": {
-								"$ref": "AAAAAAFF+qBtyKM79qY="
-							},
-							"lineColor": "#002133",
-							"fontColor": "#ff2b2b",
-							"font": "Arial;13;0",
-							"left": 992,
-							"top": 136,
-							"width": 145,
-							"height": 64,
-							"text": "Inherits from SLSceneView if specific event handling is needed."
-						},
-						{
-							"_type": "UMLTextView",
-							"_id": "AAAAAAFs4e0kVvk2ZVs=",
-							"_parent": {
-								"$ref": "AAAAAAFF+qBtyKM79qY="
-							},
-							"lineColor": "#002133",
-							"fontColor": "#ff2b2b",
-							"font": "Arial;13;0",
-							"left": 1192,
-							"top": 464,
-							"width": 201,
-							"height": 57,
-							"text": "Video capturing for Android and iOS is handled within the toplevel app code."
-						},
-						{
 							"_type": "UMLClassView",
 							"_id": "AAAAAAFs4jY5V1I+2yM=",
 							"_parent": {
@@ -32988,36 +32916,6 @@
 						},
 						{
 							"_type": "UMLTextView",
-							"_id": "AAAAAAFs5zhJir0l+cM=",
-							"_parent": {
-								"$ref": "AAAAAAFF+qBtyKM79qY="
-							},
-							"lineColor": "#002133",
-							"fontColor": "#ff2b2b",
-							"font": "Arial;13;0",
-							"left": 1144,
-							"top": 136,
-							"width": 129,
-							"height": 64,
-							"text": "All UI is rendered with OpenGL with ImGUI once per frame."
-						},
-						{
-							"_type": "UMLTextView",
-							"_id": "AAAAAAFs5zlJ1M72/X4=",
-							"_parent": {
-								"$ref": "AAAAAAFF+qBtyKM79qY="
-							},
-							"lineColor": "#002133",
-							"fontColor": "#ff2b2b",
-							"font": "Arial;13;0",
-							"left": 256,
-							"top": 162,
-							"width": 177,
-							"height": 38,
-							"text": "Top level main() function calls App::run."
-						},
-						{
-							"_type": "UMLTextView",
 							"_id": "AAAAAAFs51PsklFHo1k=",
 							"_parent": {
 								"$ref": "AAAAAAFF+qBtyKM79qY="
@@ -33322,21 +33220,6 @@
 							"templateParameterCompartment": {
 								"$ref": "AAAAAAF+SZre5mxncfo="
 							}
-						},
-						{
-							"_type": "UMLTextView",
-							"_id": "AAAAAAF+SZ55kZGoiX0=",
-							"_parent": {
-								"$ref": "AAAAAAFF+qBtyKM79qY="
-							},
-							"lineColor": "#002133",
-							"fontColor": "#ff2b2b",
-							"font": "Arial;13;0",
-							"left": 856,
-							"top": 160,
-							"width": 129,
-							"height": 38,
-							"text": "Owns top-level instances for apps"
 						},
 						{
 							"_type": "UMLAssociationView",
@@ -34602,66 +34485,6 @@
 							"templateParameterCompartment": {
 								"$ref": "AAAAAAF+SfcaY6pz4X8="
 							}
-						},
-						{
-							"_type": "UMLTextView",
-							"_id": "AAAAAAF+SftzahJqSCY=",
-							"_parent": {
-								"$ref": "AAAAAAFF+qBtyKM79qY="
-							},
-							"lineColor": "#002133",
-							"fontColor": "#ff2b2b",
-							"font": "Arial;13;0",
-							"left": 440,
-							"top": 175,
-							"width": 161,
-							"height": 25,
-							"text": "Platform dependent code."
-						},
-						{
-							"_type": "UMLTextView",
-							"_id": "AAAAAAF+SfyZzx0hrQU=",
-							"_parent": {
-								"$ref": "AAAAAAFF+qBtyKM79qY="
-							},
-							"lineColor": "#002133",
-							"fontColor": "#ff2b2b",
-							"font": "Arial;13;0",
-							"left": 608,
-							"top": 160,
-							"width": 153,
-							"height": 38,
-							"text": "C-Interface for non-C platforms (iOS, Android)"
-						},
-						{
-							"_type": "UMLTextView",
-							"_id": "AAAAAAF+Sf86TzWscu8=",
-							"_parent": {
-								"$ref": "AAAAAAFF+qBtyKM79qY="
-							},
-							"lineColor": "#002133",
-							"fontColor": "#ff2b2b",
-							"font": "Arial;13;0",
-							"left": 248,
-							"top": 696,
-							"width": 185,
-							"height": 25,
-							"text": "Major event handler"
-						},
-						{
-							"_type": "UMLTextView",
-							"_id": "AAAAAAGQT9FP6UCVgu4=",
-							"_parent": {
-								"$ref": "AAAAAAFF+qBtyKM79qY="
-							},
-							"lineColor": "#002133",
-							"fontColor": "#ff2b2b",
-							"font": "Arial;13;0",
-							"left": 1280,
-							"top": 160,
-							"width": 169,
-							"height": 43,
-							"text": "All video code used for tracking."
 						},
 						{
 							"_type": "UMLClassView",
