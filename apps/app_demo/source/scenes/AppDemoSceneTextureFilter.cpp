@@ -31,13 +31,13 @@ void AppDemoSceneTextureFilter::registerAssetsToLoad(SLAssetLoader& al)
     al.addTextureToLoad(_texB,
                         AppCommon::texturePath +
                           "brick0512_C.png",
-                        GL_LINEAR,
-                        GL_LINEAR);
+                        GL_NEAREST,
+                        GL_NEAREST);
     al.addTextureToLoad(_texL,
                         AppCommon::texturePath +
                           "brick0512_C.png",
-                        GL_NEAREST,
-                        GL_NEAREST);
+                        GL_LINEAR,
+                        GL_LINEAR);
     al.addTextureToLoad(_texT,
                         AppCommon::texturePath +
                           "brick0512_C.png",

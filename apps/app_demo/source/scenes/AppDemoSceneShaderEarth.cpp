@@ -22,8 +22,8 @@ AppDemoSceneShaderEarth::AppDemoSceneShaderEarth()
 {
     info("Complex earth shader with 7 textures: day color, night color, "
          "normal, height & gloss map of earth, color & alpha-map of clouds.\n"
-         "Use (SHIFT) & key X to change scale of the parallax mapping\n"
-         "Use (SHIFT) & key O to change offset of the parallax mapping");
+         "Use (SHIFT) & key F2 to change scale of the parallax mapping\n"
+         "Use (SHIFT) & key F3 to change offset of the parallax mapping");
 }
 //-----------------------------------------------------------------------------
 //! All assets the should be loaded in parallel must be registered in here.
@@ -61,14 +61,14 @@ void AppDemoSceneShaderEarth::assemble(SLAssetManager* am, SLSceneView* sv)
                                              0.002f,
                                              0,
                                              1,
-                                             (SLKey)'X');
+                                             (SLKey)K_F2);
     SLGLUniform1f* offset = new SLGLUniform1f(UT_const,
                                               "u_offset",
                                               -0.02f,
                                               0.002f,
                                               -1,
                                               1,
-                                              (SLKey)'O');
+                                              (SLKey)K_F3);
     this->eventHandlers().push_back(scale);
     this->eventHandlers().push_back(offset);
     _sp->addUniform1f(scale);

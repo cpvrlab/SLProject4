@@ -23,7 +23,7 @@ AppDemoSceneShaderWave::AppDemoSceneShaderWave()
 {
 
     info("Vertex Shader with wave displacement. "
-         "Use H-Key to increment (decrement w. shift) the wave height.");
+         "Use F2-Key to increment (decrement w. shift) the wave height.");
 }
 //-----------------------------------------------------------------------------
 //! All assets the should be loaded in parallel must be registered in here.
@@ -52,7 +52,7 @@ void AppDemoSceneShaderWave::assemble(SLAssetManager* am, SLSceneView* sv)
                                            0.05f,
                                            0.0f,
                                            0.5f,
-                                           (SLKey)'H');
+                                           (SLKey)K_F2);
     this->eventHandlers().push_back(u_h);
     _sp->addUniform1f(u_h);
     _sp->addUniform1f(new SLGLUniform1f(UT_inc, "u_t", 0.0f, 0.06f));

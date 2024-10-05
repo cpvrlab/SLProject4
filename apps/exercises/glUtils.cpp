@@ -412,6 +412,7 @@ GLuint glUtils::buildTexture(string textureFile,
     // check max. size
     GLint maxSize = 0;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
+    std::cout << "SLGLTexture::build: Max. texture size: " << maxSize << std::endl;
     if (img.width() > (GLuint)maxSize || img.height() > (GLuint)maxSize)
     {
         std::cout << "SLGLTexture::build: Texture height is too big." << std::endl;
@@ -435,13 +436,13 @@ GLuint glUtils::buildTexture(string textureFile,
 
     // Copy image data to the GPU. The image can be delete afterwards
     glTexImage2D(GL_TEXTURE_2D,         // target texture type 1D, 2D or 3D
-                 0,                     // Base level for mipmapped textures
-                 img.format(),          // internal format: e.g. GL_RGBA, see spec.
-                 (GLsizei)img.width(),  // image width
+                 0,                      // Base level for mipmapped textures
+                 img.format(),  // internal format: e.g. GL_RGBA, see spec.
+                 (GLsizei)img.width(),   // image width
                  (GLsizei)img.height(), // image height
                  0,                     // border pixels: must be 0
                  img.format(),          // data format: e.g. GL_RGBA, see spec.
-                 GL_UNSIGNED_BYTE,      // data type
+                 GL_UNSIGNED_BYTE,        // data type
                  (GLvoid*)img.data());  // image data pointer
 
     // generate the mipmap levels

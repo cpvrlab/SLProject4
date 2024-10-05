@@ -23,6 +23,16 @@ template<class T>
 class SLGLUniform : public SLEventHandler
 {
 public:
+    /**
+     * @brief Constructs a custom uniform variable
+     * @param type Type of uniform variable
+     * @param name Name of uniform variable
+     * @param value Current value 
+     * @param inc Increment value
+     * @param min Minimal value
+     * @param max Maximal value
+     * @param keyInc Key F1-F10 to increment the value decrement with SHIFT key
+     */
     SLGLUniform(SLUniformType type,
                 const SLchar* name,
                 T             value,
@@ -38,6 +48,9 @@ public:
         _inc    = inc;
         _type   = type;
         _keyInc = keyInc;
+
+        if (_keyInc != K_none && !(_keyInc >= K_F1 && _keyInc <= K_F10))
+            SL_EXIT_MSG("Please use keys F1-F10 for uniform variables.");
     }
 
     SLGLUniform(const SLchar*     name,
@@ -111,13 +124,13 @@ public:
                     if (_value < _max)
                     {
                         _value += _inc;
-                        // std::cout << "Uniform: " << _name.c_str() << " = " << _value << std::endl;
+                        SL_LOG("Uniform: %s = %5.4f", _name.c_str(),(float)_value);
                         return true;
                     }
                     else if (_inc == _max) // Toggle between min & max
                     {
                         _value = _min;
-                        // std::cout << "Uniform: " << _name.c_str() << " = " << _value << std::endl;
+                        SL_LOG("Uniform: %s = %5.4f", _name.c_str(),(float)_value);
                         return true;
                     }
                 }
@@ -126,7 +139,7 @@ public:
                     if (_value > _min)
                     {
                         _value -= _inc;
-                        // std::cout << "Uniform: " << _name.c_str() << " = " << _value << std::endl;
+                        SL_LOG("Uniform: %s = %5.4f", _name.c_str(),(float)_value);
                         return true;
                     }
                 }

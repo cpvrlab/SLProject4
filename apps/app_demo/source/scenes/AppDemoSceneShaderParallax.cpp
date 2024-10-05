@@ -21,9 +21,9 @@
 AppDemoSceneShaderParallax::AppDemoSceneShaderParallax()
   : SLScene("Parallax Bump Mapping Test")
 {
-    info("Normal map parallax mapping with a spot and a directional light"
-         "Use X-Key to increment (decrement w. shift) parallax scale."
-         "Use O-Key to increment (decrement w. shift) parallax offset.\n");
+    info("Parallax mapping with a spot. "
+         "Use F2-Key to increment (decrement w. shift) parallax scale."
+         "Use F3-Key to increment (decrement w. shift) parallax offset.\n");
 }
 //-----------------------------------------------------------------------------
 //! All assets the should be loaded in parallel must be registered in here.
@@ -49,14 +49,14 @@ void AppDemoSceneShaderParallax::assemble(SLAssetManager* am, SLSceneView* sv)
                                              0.002f,
                                              0,
                                              1,
-                                             (SLKey)'X');
+                                             (SLKey)K_F2);
     SLGLUniform1f* offset = new SLGLUniform1f(UT_const,
                                               "u_offset",
                                               -0.03f,
                                               0.002f,
                                               -1,
                                               1,
-                                              (SLKey)'O');
+                                              (SLKey)K_F3);
     this->eventHandlers().push_back(scale);
     this->eventHandlers().push_back(offset);
     _sp->addUniform1f(scale);
@@ -88,25 +88,16 @@ void AppDemoSceneShaderParallax::assemble(SLAssetManager* am, SLSceneView* sv)
     light1->translation(0, 0, 5);
     light1->lookAt(0, 0, 0);
 
-    SLLightDirect* light2 = new SLLightDirect(am, this);
-    light2->ambientColor(SLCol4f(0, 0, 0));
-    light2->diffuseColor(SLCol4f(1, 1, 0));
-    light2->specularColor(SLCol4f(1, 1, 0));
-    light2->translation(-5, -5, 5);
-    light2->lookAt(0, 0, 0);
-    light2->attenuation(1, 0, 0);
-
     SLAnimation* anim = this->animManager().createNodeAnimation("light1_anim", 2.0f);
     anim->createNodeAnimTrackForEllipse(light1,
                                         2.0f,
                                         A_x,
                                         2.0f,
-                                        A_Y);
+                                        A_y);
 
     SLNode* scene = new SLNode;
     this->root3D(scene);
     scene->addChild(light1);
-    scene->addChild(light2);
     scene->addChild(new SLNode(new SLRectangle(am,
                                                SLVec2f(-5, -5),
                                                SLVec2f(5, 5),
