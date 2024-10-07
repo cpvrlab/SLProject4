@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - develop
+      - main
 
 jobs:
   deploy:
@@ -46,13 +46,8 @@ jobs:
         name: emscripten_build
         path: ${{ github.workspace }}/emscripten_build
 
-   # - name: Upload
-   #   working-directory: ${{ github.workspace }}/build
-   #   run: |
-   #     sshpass -p "${{ secrets.EMSCRIPTEN_DEPLOY_PASSWORD }}" sftp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${{ secrets.EMSCRIPTEN_DEPLOY_REMOTE }}" << EOF
-   #       put app-demo.html public/www/app-demo.html
-   #       put app-demo.js public/www/app-demo.js
-   #       put app-demo.wasm public/www/app-demo.wasm
-   #       put app-demo.worker.js public/www/app-demo.worker.js
-   #       put app-demo.ww.js public/www/app-demo.ww.js
-   #     EOF
+# Download the artifact from the last run on https://github.com/cpvrlab/SLProject4/actions
+# Unzip the emscripten_build.zip file 
+# Upload the files to the public/www folder of the pallas server
+
+    
