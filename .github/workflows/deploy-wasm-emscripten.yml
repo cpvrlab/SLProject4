@@ -31,13 +31,29 @@ jobs:
     - name: Build
       run: cmake --build ${{ github.workspace }}/build --target app-demo -j $(nproc)
 
-    - name: Upload
-      working-directory: ${{ github.workspace }}/build
+    - name: Create Zip Folder
       run: |
-        sshpass -p "${{ secrets.EMSCRIPTEN_DEPLOY_PASSWORD }}" sftp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${{ secrets.EMSCRIPTEN_DEPLOY_REMOTE }}" << EOF
-          put app-demo.html public/www/app-demo.html
-          put app-demo.js public/www/app-demo.js
-          put app-demo.wasm public/www/app-demo.wasm
-          put app-demo.worker.js public/www/app-demo.worker.js
-          put app-demo.ww.js public/www/app-demo.ww.js
-        EOF
+        mkdir emscripten_build
+        working-directory: ${{ github.workspace }}/build
+        cp app-demo.html ../emscripten_build
+        cp app-demo.js ../emscripten_build
+        cp app-demo.wasm ../emscripten_build
+        cp app-demo.worker.js ../emscripten_build
+        cp app-demo.ww.js ../emscripten_build
+
+    - name: Archive emscripten_build
+      uses: actions/upload-artifact@v3
+      with:
+        name: emscripten_build
+        path: ${{ github.workspace }}/emscripten_build
+
+   # - name: Upload
+   #   working-directory: ${{ github.workspace }}/build
+   #   run: |
+   #     sshpass -p "${{ secrets.EMSCRIPTEN_DEPLOY_PASSWORD }}" sftp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${{ secrets.EMSCRIPTEN_DEPLOY_REMOTE }}" << EOF
+   #       put app-demo.html public/www/app-demo.html
+   #       put app-demo.js public/www/app-demo.js
+   #       put app-demo.wasm public/www/app-demo.wasm
+   #       put app-demo.worker.js public/www/app-demo.worker.js
+   #       put app-demo.ww.js public/www/app-demo.ww.js
+   #     EOF
