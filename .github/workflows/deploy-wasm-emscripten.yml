@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main
+      - develop
 
 jobs:
   deploy:
@@ -39,7 +39,6 @@ jobs:
         cp build/app-demo.js emscripten_build
         cp build/app-demo.wasm emscripten_build
         cp build/app-demo.worker.js emscripten_build
-        cp build/app-demo.ww.js emscripten_build
 
     - name: Archive emscripten_build
       uses: actions/upload-artifact@v3
