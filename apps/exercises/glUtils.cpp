@@ -6,7 +6,7 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #include <CVImage.h> // for image loading
 #include <glUtils.h>
@@ -253,11 +253,19 @@ GLuint glUtils::buildProgram(GLuint vertShaderID,
     return programHandle;
 }
 //-----------------------------------------------------------------------------
-/*! Generates a Vertex Buffer Object (VBO) and copies the data into the
+/**
+ * @brief Generates a Vertex Buffer Object (VBO) and copies the data into the
 buffer on the GPU. The targetTypeGL distincts between GL_ARRAY_BUFFER for
 attribute data and GL_ELEMENT_ARRAY_BUFFER for index data. The usageTypeGL
 distincts between GL_STREAM_DRAW, GL_STATIC_DRAW and GL_DYNAMIC_DRAW.
-*/
+ *
+ * @param vboID Reference to a vertex buffer object ID. If vboID is not zero the vao will be deleted first befor a new one is allocated.
+ * @param dataPointer Pointer to the vertex buffer data
+ * @param numElements No. of elements (vertices, normals, etc.)
+ * @param elementSizeBytes No. of bytes of one element.
+ * @param targetTypeGL GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER
+ * @param usageTypeGL GL_STREAM_DRAW, GL_STATIC_DRAW or GL_DYNAMIC_DRAW
+ */
 void glUtils::buildVBO(GLuint& vboID,
                        void*   dataPointer,
                        GLint   numElements,
@@ -265,6 +273,10 @@ void glUtils::buildVBO(GLuint& vboID,
                        GLuint  targetTypeGL,
                        GLuint  usageTypeGL)
 {
+    assert(dataPointer && "dataPointer is null");
+    assert(numElements && "numElements is null");
+    assert(elementSizeBytes && "elementSizeBytes is null");
+
     // Delete, generates and activates the VBO
     if (vboID) glDeleteBuffers(1, &vboID);
     glGenBuffers(1, &vboID);
@@ -277,7 +289,8 @@ void glUtils::buildVBO(GLuint& vboID,
     glBufferData(targetTypeGL, bufSize, dataPointer, usageTypeGL);
 }
 //-----------------------------------------------------------------------------
-/* Builds the OpenGL Vertex Array Object (VAO) with it associated vertex buffer
+/**
+ * @brief Builds the OpenGL Vertex Array Object (VAO) with it associated vertex buffer
 objects. VAOs where introduces OpenGL 3.0 and reduce the overhead per draw call.
 All vertex attributes (e.g. position, colors, normals, texture coords, etc.)
 are float and are stored in one big VBO.
@@ -288,7 +301,24 @@ We expect the data in following interleaved order:
 - 2 floats for a texture coordinate (optional)
 If one of the optional attributes are not in the vertex array its attribute
 location must be -1.
-*/
+The drawing primitive is not involved in the VAO generation. It is only used in
+the draw call (glDrawElements).
+ *
+ * @param vaoID Reference to a vertex array object ID. If vaoID is not zero the vao will be deleted first befor a new one is allocated.
+ * @param vboIDVertices Reference to a vertex buffer object ID for the vertices. If vboID is not zero the vbo will be deleted first befor a new one is allocated.
+ * @param vboIDIndices Reference to a vertex buffer object ID for the indices. If vboID is not zero the vbo will be deleted first befor a new one is allocated.
+ * @param dataPointerVertices Pointer to the interleaved data array.
+ * @param numVertices No. of vertices
+ * @param sizeVertexBytes No. of bytes for one vertex with all attributes
+ * @param dataPointerIndices Pointer to the index array
+ * @param numIndices No. of indices
+ * @param sizeIndexBytes No. of bytes of one index (e.g. sizeof(GL_UNSIGNED_INT))
+ * @param shaderProgramID Shader program ID (not null) for which the vao will be generated
+ * @param attributePositionLoc Vertex position attribute location (mandatory)
+ * @param attributeColorLoc Vertex color attribute location (-1 if no colors are used)
+ * @param attributeNormalLoc Vertex normal attribute location (-1 if no colors are used)
+ * @param attributeTexCoordLoc Vertex texture coordinate attribute location (-1 if no colors are used)
+ */
 void glUtils::buildVAO(GLuint& vaoID,
                        GLuint& vboIDVertices,
                        GLuint& vboIDIndices,
@@ -436,13 +466,13 @@ GLuint glUtils::buildTexture(string textureFile,
 
     // Copy image data to the GPU. The image can be delete afterwards
     glTexImage2D(GL_TEXTURE_2D,         // target texture type 1D, 2D or 3D
-                 0,                      // Base level for mipmapped textures
-                 img.format(),  // internal format: e.g. GL_RGBA, see spec.
-                 (GLsizei)img.width(),   // image width
+                 0,                     // Base level for mipmapped textures
+                 img.format(),          // internal format: e.g. GL_RGBA, see spec.
+                 (GLsizei)img.width(),  // image width
                  (GLsizei)img.height(), // image height
                  0,                     // border pixels: must be 0
                  img.format(),          // data format: e.g. GL_RGBA, see spec.
-                 GL_UNSIGNED_BYTE,        // data type
+                 GL_UNSIGNED_BYTE,      // data type
                  (GLvoid*)img.data());  // image data pointer
 
     // generate the mipmap levels
