@@ -3,7 +3,7 @@
  * \brief     Minimal OpenCV app for facial landmark detection without dlib
  * \copyright Based on Satya Mallick's Tutorial at https://www.learnopencv.com
  * \date      Authumn 2017
-*/
+ */
 
 #include <opencv2/face.hpp>
 #include <opencv2/opencv.hpp>
@@ -44,11 +44,17 @@ int main()
 
         // Detect faces
         vector<Rect> faces;
-        int          min = (int)(frame.rows * 0.4f); // the bigger min the faster
-        int          max = (int)(frame.rows * 0.8f); // the smaller max the faster
+        int          min = (int)((float)frame.rows * 0.4f); // the bigger min the faster
+        int          max = (int)((float)frame.rows * 0.8f); // the smaller max the faster
         cv::Size     minSize(min, min);
         cv::Size     maxSize(max, max);
-        faceDetector.detectMultiScale(gray, faces, 1.1, 3, 0, minSize, maxSize);
+        faceDetector.detectMultiScale(gray,
+                                      faces,
+                                      1.1,
+                                      3,
+                                      0,
+                                      minSize,
+                                      maxSize);
 
         // Variable for landmarks.
         // Landmarks for one face is a vector of points
@@ -63,9 +69,16 @@ int main()
         {
             for (uint i = 0; i < landmarks.size(); i++)
             {
-                rectangle(frame, faces[i], cv::Scalar(255, 0, 0), 2);
+                rectangle(frame,
+                          faces[i],
+                          cv::Scalar(255, 0, 0),
+                          2);
                 for (auto& j : landmarks[i])
-                    circle(frame, j, 3, cv::Scalar(0, 0, 255), -1);
+                    circle(frame,
+                           j,
+                           3,
+                           cv::Scalar(0, 0, 255),
+                           -1);
             }
         }
 

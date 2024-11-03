@@ -1,8 +1,8 @@
 /**
- * \file      cv13_Snapchat2D.cpp
+ * \file    cv13_Snapchat2D.cpp
  * \brief   Minimal OpenCV app for a 2D Snapchatfilter
-//  Taken from Satya Mallic on: http://www.learnopencv.com
- * \date      Authumn 2017
+            Taken from Satya Mallic on: http://www.learnopencv.com
+ * \date    Authumn 2017
 */
 
 #include <opencv2/face.hpp>
@@ -109,8 +109,8 @@ void warpTriangle(Mat&             img1,
     vector<Point>   tri2CroppedInt;
     for (uint i = 0; i < 3; i++)
     {
-        tri1Cropped.emplace_back(tri1[i].x - rect1.x, tri1[i].y - rect1.y);
-        tri2Cropped.emplace_back(tri2[i].x - rect2.x, tri2[i].y - rect2.y);
+        tri1Cropped.emplace_back(tri1[i].x - (float)rect1.x, tri1[i].y - (float)rect1.y);
+        tri2Cropped.emplace_back(tri2[i].x - (float)rect2.x, tri2[i].y - (float)rect2.y);
 
         // fillConvexPoly needs a vector of int Point and not Point2f
         tri2CroppedInt.emplace_back((int)tri2Cropped[i].x, (int)tri2Cropped[i].y);
@@ -199,8 +199,8 @@ int main()
 
         // Detect faces
         vector<Rect> faces;
-        int          min = (int)(frame.rows * 0.4f); // the bigger min the faster
-        int          max = (int)(frame.rows * 0.8f); // the smaller max the faster
+        int          min = (int)((float)frame.rows * 0.4f); // the bigger min the faster
+        int          max = (int)((float)frame.rows * 0.8f); // the smaller max the faster
         cv::Size     minSize(min, min);
         cv::Size     maxSize(max, max);
         faceDetector.detectMultiScale(gray, faces, 1.1, 3, 0, minSize, maxSize);

@@ -3,7 +3,7 @@
  * \brief     Minimal OpenCV application that morphs two triangular meshes
  * \copyright Based on Satya Mallick's Tutorial at https://www.learnopencv.com
  * \date      Spring 2018
-*/
+ */
 
 #include <iostream>
 #include <opencv2/highgui/highgui.hpp>
@@ -157,10 +157,10 @@ void morphTriangle(Mat&             img1,
     vector<Point2i> tMRectInt; // for fillConvexPoly we need ints
     for (uint i = 0; i < 3; i++)
     {
-        tMRectFlt.push_back(Point2f(tM[i].x - rM.x, tM[i].y - rM.y));
-        tMRectInt.push_back(Point2i((int)(tM[i].x - rM.x), (int)(tM[i].y - rM.y)));
-        t1RectFlt.push_back(Point2f(t1[i].x - r1.x, t1[i].y - r1.y));
-        t2RectFlt.push_back(Point2f(t2[i].x - r2.x, t2[i].y - r2.y));
+        tMRectFlt.push_back(Point2f(tM[i].x - (float)rM.x, tM[i].y - (float)rM.y));
+        tMRectInt.push_back(Point2i((int)(tM[i].x - (float)rM.x), (int)(tM[i].y - (float)rM.y)));
+        t1RectFlt.push_back(Point2f(t1[i].x - (float)r1.x, t1[i].y - (float)r1.y));
+        t2RectFlt.push_back(Point2f(t2[i].x - (float)r2.x, t2[i].y - (float)r2.y));
     }
 
     // Create white triangle mask
@@ -175,8 +175,14 @@ void morphTriangle(Mat&             img1,
     Mat warpImage1 = Mat::zeros(rM.height, rM.width, img1Rect.type());
     Mat warpImage2 = Mat::zeros(rM.height, rM.width, img2Rect.type());
 
-    applyAffineTransform(warpImage1, img1Rect, t1RectFlt, tMRectFlt);
-    applyAffineTransform(warpImage2, img2Rect, t2RectFlt, tMRectFlt);
+    applyAffineTransform(warpImage1,
+                         img1Rect,
+                         t1RectFlt,
+                         tMRectFlt);
+    applyAffineTransform(warpImage2,
+                         img2Rect,
+                         t2RectFlt,
+                         tMRectFlt);
 
     // Alpha blend rectangular patches into new image
     Mat imgRect = (1.0f - alpha) * warpImage1 + alpha * warpImage2;
@@ -185,7 +191,9 @@ void morphTriangle(Mat&             img1,
     multiply(imgRect, mask, imgRect);
 
     // Delete all inside the target triangle
-    multiply(imgM(rM), Scalar(1.0f, 1.0f, 1.0f) - mask, imgM(rM));
+    multiply(imgM(rM),
+             Scalar(1.0f, 1.0f, 1.0f) - mask,
+             imgM(rM));
 
     // Add morphed triangle to target image
     imgM(rM) = imgM(rM) + imgRect;

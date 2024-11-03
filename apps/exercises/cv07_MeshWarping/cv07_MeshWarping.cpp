@@ -4,7 +4,7 @@
  * \copyright Based on Satya Mallick's Tutorial:
  *            https://www.learnopencv.com/warp-one-triangle-to-another-using-opencv-c-python
  * \date      Spring 2018
-*/
+ */
 
 #include <iostream>
 #include <opencv2/highgui/highgui.hpp>
@@ -134,11 +134,14 @@ void warpTriangle(Mat&             img1,
     vector<Point>   tri2CroppedInt;
     for (uint i = 0; i < 3; i++)
     {
-        tri1Cropped.push_back(Point2f(tri1[i].x - rect1.x, tri1[i].y - rect1.y));
-        tri2Cropped.push_back(Point2f(tri2[i].x - rect2.x, tri2[i].y - rect2.y));
+        tri1Cropped.push_back(Point2f(tri1[i].x - (float)rect1.x,
+                                      tri1[i].y - (float)rect1.y));
+        tri2Cropped.push_back(Point2f(tri2[i].x - (float)rect2.x,
+                                      tri2[i].y - (float)rect2.y));
 
         // fillConvexPoly needs a vector of int Point and not Point2f
-        tri2CroppedInt.push_back(Point((int)tri2Cropped[i].x, (int)tri2Cropped[i].y));
+        tri2CroppedInt.push_back(Point((int)tri2Cropped[i].x,
+                                       (int)tri2Cropped[i].y));
     }
 
     // Apply warpImage to small rectangular patches
@@ -149,7 +152,9 @@ void warpTriangle(Mat&             img1,
     Mat warpMat = getAffineTransform(tri1Cropped, tri2Cropped);
 
     // Apply the Affine Transform just found to the src image
-    Mat img2Cropped = Mat::zeros(rect2.height, rect2.width, img1Cropped.type());
+    Mat img2Cropped = Mat::zeros(rect2.height,
+                                 rect2.width,
+                                 img1Cropped.type());
     warpAffine(img1Cropped,
                img2Cropped,
                warpMat,
@@ -159,13 +164,19 @@ void warpTriangle(Mat&             img1,
 
     // Create white triangle mask
     Mat mask = Mat::zeros(rect2.height, rect2.width, CV_32FC3);
-    fillConvexPoly(mask, tri2CroppedInt, Scalar(1.0, 1.0, 1.0), LINE_AA, 0);
+    fillConvexPoly(mask,
+                   tri2CroppedInt,
+                   Scalar(1.0, 1.0, 1.0),
+                   LINE_AA,
+                   0);
 
     // Delete all outside of warped triangle
     multiply(img2Cropped, mask, img2Cropped);
 
     // Delete all inside the target triangle
-    multiply(img2(rect2), Scalar(1.0, 1.0, 1.0) - mask, img2(rect2));
+    multiply(img2(rect2),
+             Scalar(1.0, 1.0, 1.0) - mask,
+             img2(rect2));
 
     // Add warped triangle to target image
     img2(rect2) = img2(rect2) + img2Cropped;
@@ -230,8 +241,8 @@ int main()
     // Keep bounding rectangle around face points
     Size    size     = img_orig.size();
     Rect    rectFace = boundingRect(points);
-    Point2f center(rectFace.x + rectFace.width * 0.5f,
-                   rectFace.y + rectFace.height * 0.5f);
+    Point2f center((float)rectFace.x + (float)rectFace.width * 0.5f,
+                   (float)rectFace.y + (float)rectFace.height * 0.5f);
 
     // Add image border points
     points.push_back(Point2d(0, 0));
@@ -249,12 +260,22 @@ int main()
 
     // Create and draw the Delaunay triangulation
     vector<vector<uint>> triIndexes1;
-    createDelaunay(img1, subdiv, points, true, triIndexes1);
+    createDelaunay(img1,
+                   subdiv,
+                   points,
+                   true,
+                   triIndexes1);
     // drawDelaunay(img1, subdiv, Scalar(255, 255, 255));
 
     // Draw all points red
     for (Point2f p : points)
-        circle(img1, p, 3, Scalar(0, 0, 255), FILLED, LINE_AA, 0);
+        circle(img1,
+               p,
+               3,
+               Scalar(0, 0, 255),
+               FILLED,
+               LINE_AA,
+               0);
 
     // Allocate space for voronoi Diagram
     Mat img_voronoi = Mat::zeros(img1.rows, img1.cols, CV_8UC3);
@@ -285,7 +306,12 @@ int main()
             wPoints[i] = ((points[i] - center) * scale) + center;
 
         // Warp all triangles
-        warpImage(img_orig, imgW, points, wPoints, triIndexes1);
+        warpImage(img_orig,
+                  imgW,
+                  points,
+                  wPoints,
+                  triIndexes1);
+
         imshow("Warped Image", imgW);
 
         // Wait for key to exit loop

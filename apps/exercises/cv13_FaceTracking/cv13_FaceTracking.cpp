@@ -3,13 +3,12 @@
  * \brief     Minimal OpenCV application for face Tracking in video
  * \copyright Based on Satya Mallick's Tutorial at https://www.learnopencv.com
  * \date      Authumn 2017
-*/
+ */
 
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/objdetect.hpp>
 
-#include <iostream>
 #include <stdio.h>
 
 using namespace std;
@@ -46,7 +45,10 @@ void detectFaceAndDisplay(Mat frame)
 
     for (size_t i = 0; i < faces.size(); i++)
     {
-        rectangle(frame, faces[i], Scalar(255, 0, 255), 2);
+        rectangle(frame,
+                  faces[i],
+                  Scalar(255, 0, 255),
+                  2);
 
         Mat               faceROI = frame_gray(faces[i]);
         std::vector<Rect> eyes;
@@ -63,7 +65,10 @@ void detectFaceAndDisplay(Mat frame)
         {
             eyes[j].x += faces[i].x;
             eyes[j].y += faces[i].y;
-            rectangle(frame, eyes[j], Scalar(255, 0, 0), 2);
+            rectangle(frame,
+                      eyes[j],
+                      Scalar(255, 0, 0),
+                      2);
         }
     }
 

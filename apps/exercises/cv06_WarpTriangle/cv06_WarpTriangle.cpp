@@ -3,7 +3,7 @@
  * \brief     Minimal OpenCV application that warps a triangle into another
  * \copyright Based on Satya Mallick's Tutorial at https://www.learnopencv.com
  * \date      Spring 2018
-*/
+ */
 
 #include <opencv2/opencv.hpp>
 #include <stdlib.h>
@@ -27,11 +27,14 @@ void warpTriangle(Mat&             img1,
     vector<Point>   tri2CroppedInt;
     for (uint i = 0; i < 3; i++)
     {
-        tri1Cropped.push_back(Point2f(tri1[i].x - rect1.x, tri1[i].y - rect1.y));
-        tri2Cropped.push_back(Point2f(tri2[i].x - rect2.x, tri2[i].y - rect2.y));
+        tri1Cropped.push_back(Point2f(tri1[i].x - (float)rect1.x,
+                                      tri1[i].y - (float)rect1.y));
+        tri2Cropped.push_back(Point2f(tri2[i].x - (float)rect2.x,
+                                      tri2[i].y - (float)rect2.y));
 
         // fillConvexPoly needs a vector of int Point and not Point2f
-        tri2CroppedInt.push_back(Point((int)tri2Cropped[i].x, (int)tri2Cropped[i].y));
+        tri2CroppedInt.push_back(Point((int)tri2Cropped[i].x,
+                                       (int)tri2Cropped[i].y));
     }
 
     // Apply warpImage to small rectangular patches
@@ -42,7 +45,9 @@ void warpTriangle(Mat&             img1,
     Mat warpMat = getAffineTransform(tri1Cropped, tri2Cropped);
 
     // Apply the Affine Transform just found to the src image
-    Mat img2Cropped = Mat::zeros(rect2.height, rect2.width, img1Cropped.type());
+    Mat img2Cropped = Mat::zeros(rect2.height,
+                                 rect2.width,
+                                 img1Cropped.type());
     warpAffine(img1Cropped,
                img2Cropped,
                warpMat,
@@ -51,14 +56,24 @@ void warpTriangle(Mat&             img1,
                BORDER_REFLECT_101);
 
     // Create white triangle mask
-    Mat mask = Mat::zeros(rect2.height, rect2.width, CV_32FC3);
-    fillConvexPoly(mask, tri2CroppedInt, Scalar(1.0, 1.0, 1.0), LINE_AA, 0);
+    Mat mask = Mat::zeros(rect2.height,
+                          rect2.width,
+                          CV_32FC3);
+    fillConvexPoly(mask,
+                   tri2CroppedInt,
+                   Scalar(1.0, 1.0, 1.0),
+                   LINE_AA,
+                   0);
 
     // Delete all outside of warped triangle
-    multiply(img2Cropped, mask, img2Cropped);
+    multiply(img2Cropped,
+             mask,
+             img2Cropped);
 
     // Delete all inside the target triangle
-    multiply(img2(rect2), Scalar(1.0, 1.0, 1.0) - mask, img2(rect2));
+    multiply(img2(rect2),
+             Scalar(1.0, 1.0, 1.0) - mask,
+             img2(rect2));
 
     // Add warped triangle to target image
     img2(rect2) = img2(rect2) + img2Cropped;
@@ -119,8 +134,18 @@ int main()
     }
 
     // Draw triangles in input and output images
-    polylines(imgIn, triInInt, true, color, 1, LINE_AA);
-    polylines(imgOut, triOutInt, true, color, 1, LINE_AA);
+    polylines(imgIn,
+              triInInt,
+              true,
+              color,
+              1,
+              LINE_AA);
+    polylines(imgOut,
+              triOutInt,
+              true,
+              color,
+              1,
+              LINE_AA);
 
     string title1 = "Input";
     imshow(title1, imgIn);

@@ -3,7 +3,7 @@
  * \brief     Minimal OpenCV app for head pose estimation
  * \copyright Based on Satya Mallick's Tutorial at https://www.learnopencv.com
  * \date      Authumn 2017
-*/
+ */
 
 #include <opencv2/opencv.hpp>
 
@@ -84,7 +84,11 @@ int main()
 
     // Draw red dots on all image points
     for (auto& image_point : image_points)
-        circle(image, image_point, 3, Scalar(0, 0, 255), -1);
+        circle(image,
+               image_point,
+               3,
+               Scalar(0, 0, 255),
+               -1);
 
     // Draw blue nose line
     line(image,

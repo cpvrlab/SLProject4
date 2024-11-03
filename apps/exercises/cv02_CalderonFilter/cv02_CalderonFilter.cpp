@@ -3,9 +3,8 @@
  * \details   Minimal OpenCV app for the Instagram Calderon filter
  * \copyright Based on Satya Mallick's Tutorial at https://www.learnopencv.com
  * \date      Spring 2018
-*/
+ */
 
-#include <math.h>
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
 
