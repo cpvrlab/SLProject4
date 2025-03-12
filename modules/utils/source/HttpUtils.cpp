@@ -76,21 +76,22 @@ int Socket::connectTo(string ip,
         return -1;
     }
 
-    freeaddrinfo(res);
 
     // Set timeout value to 10s
-#    ifndef WINDOWS
+#   ifndef WINDOWS
     struct timeval tv;
     tv.tv_sec  = 15;
     tv.tv_usec = 0;
     setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
-#    endif
+#   endif
 
     if (connect(fd, (struct sockaddr*)&sa, addrlen))
     {
+        freeaddrinfo(res);
         Utils::log("Socket  ", "Error connecting to server.\n");
         return -1;
     }
+    freeaddrinfo(res);
     return 0;
 }
 //-----------------------------------------------------------------------------
@@ -314,6 +315,7 @@ DNSRequest::DNSRequest(string host)
     struct hostent*  h = nullptr;
     struct addrinfo* res = NULL;
     int              ret = getaddrinfo(host.c_str(), NULL, NULL, &res);
+    bool             prefer_ipv4 = true;
 
     if (ret)
     {
@@ -321,6 +323,23 @@ DNSRequest::DNSRequest(string host)
         hostname = "";
         addr     = "";
         return;
+    }
+
+    for (struct addrinfo* p = res; p != NULL; p = p->ai_next) {
+        //If we prefer ipv4 break at first ipv4
+        if (prefer_ipv4) {
+            if (p->ai_family == AF_INET) {
+                res = p;
+                break;
+            }
+        }
+        //else break at first ipv6
+        else {
+            if (p->ai_family == AF_INET6) {
+                res = p;
+                break;
+            }
+        }
     }
 
     if (res->ai_family == AF_INET)
@@ -357,6 +376,8 @@ DNSRequest::DNSRequest(string host)
         hostname = "";
 
     addr = string(s);
+    
+
 }
 //-----------------------------------------------------------------------------
 /*!
@@ -906,7 +927,7 @@ int HttpUtils::length(string url, string user, string pwd)
     HttpUtils::GetRequest req = HttpUtils::GetRequest(url, user, pwd);
     if (req.send() < 0)
         return -1;
-
+    
     return (int)req.contentLength;
 }
 //-----------------------------------------------------------------------------
