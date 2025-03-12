@@ -368,9 +368,9 @@ void SENSCalibration::buildUndistortionMaps()
                                 CV_16SC2, //before we had CV_32FC1 but in all tutorials they use CV_16SC2.. is there a reason?
                                 _undistortMapX,
                                 _undistortMapY);
-    Utils::logDebug("SLProject",
-                    "initUndistortRectifyMap: %fms",
-                    t.elapsedTimeInMilliSec());
+    Utils::log("SLProject",
+              "initUndistortRectifyMap: %fms",
+              t.elapsedTimeInMilliSec());
 
     if (_undistortMapX.empty() || _undistortMapY.empty())
         Utils::exitMsg("SLProject",

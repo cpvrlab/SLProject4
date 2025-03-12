@@ -512,7 +512,7 @@ void SLGLState::getGLError(const char* file,
 
         // Build error string as a concatenation of file, line & error
         string newErr("OpenGL Error in scene: ");
-        newErr += std::to_string(AppCommon::sceneID);
+        //newErr += std::to_string(AppCommon::sceneID);
         newErr += ": file: ";
         newErr += Utils::getFileName(file);
         newErr += ": line:";
