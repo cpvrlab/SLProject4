@@ -16,7 +16,7 @@ set(SL_PROJECT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${SL_PROJECT_ROOT}/cmake/")
 
 # Register general cmake commands (set_policy, source_group_by_path, list_extract)
-include(cmake/CustomCommands.cmake)
+include(cmake/CustomCommands.cmake) 
 
 # The FOLDER properties are needed in Visual Studio and XCode generated projects for nested folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)

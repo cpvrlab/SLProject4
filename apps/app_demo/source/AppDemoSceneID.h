@@ -120,6 +120,7 @@ enum AppDemoSceneID : SLSceneID
     // These scenes are not part of the public data
     SID_ErlebAR_BernChristoffel,
     SID_ErlebAR_BielBFH,
+    SID_ErlebAR_BielCBB,
     SID_ErlebAR_AugustaRauricaTmpTht,
     SID_ErlebAR_AventicumAmphiteatre,
     SID_ErlebAR_AventicumCigognier,
