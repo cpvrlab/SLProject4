@@ -1802,6 +1802,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 SLstring erlebarPath = AppCommon::dataPath + "erleb-AR/models/";
                 SLstring modelBR2    = erlebarPath + "bern/bern-christoffel.gltf";
                 SLstring modelBFH    = erlebarPath + "biel/Biel-BFH-Rolex.gltf";
+                SLstring modelCBB    = erlebarPath + "biel/Biel-CBB-AR.gltf";
                 SLstring modelAR1    = erlebarPath + "augst/augst-thtL1-tmpL2.gltf";
                 SLstring modelAR2    = erlebarPath + "augst/augst-thtL2-tmpL1.gltf";
                 SLstring modelAR3    = erlebarPath + "augst/augst-thtL1L2-tmpL1L2.gltf";
@@ -1815,6 +1816,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                     Utils::fileExists(modelAR3) ||
                     Utils::fileExists(modelAV3) ||
                     Utils::fileExists(modelBR2) ||
+                    Utils::fileExists(modelCBB) ||
                     Utils::fileExists(modelSU1))
                 {
                     if (ImGui::BeginMenu("Erleb-AR"))
@@ -1826,6 +1828,10 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                         if (Utils::fileExists(modelBFH))
                             if (ImGui::MenuItem("Biel: BFH", nullptr, sid == SID_ErlebAR_BielBFH))
                                 AppCommon::sceneToLoad = SID_ErlebAR_BielBFH;
+
+                                if (Utils::fileExists(modelCBB))
+                                    if (ImGui::MenuItem("Biel: CBB", nullptr, sid == SID_ErlebAR_BielCBB))
+                                        AppCommon::sceneToLoad = SID_ErlebAR_BielCBB;
 
                         if (Utils::fileExists(modelAR3))
                             if (ImGui::MenuItem("Augusta Raurica Temple & Theater", nullptr, sid == SID_ErlebAR_AugustaRauricaTmpTht))
