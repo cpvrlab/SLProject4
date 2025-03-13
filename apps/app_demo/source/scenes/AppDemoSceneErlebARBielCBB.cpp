@@ -45,8 +45,9 @@ void AppDemoSceneErlebARBielCBB::registerAssetsToLoad(SLAssetLoader& al)
                         AppCommon::shaderPath + "PerPixTmBackground.frag");
 
     // initialize sensor stuff before loading the geotiff
-    AppCommon::devLoc.originLatLonAlt(47.14271, 7.24337, 488.2);        // Ecke Giosa
-    AppCommon::devLoc.defaultLatLonAlt(47.14260, 7.24310, 488.7 + 1.7); // auf Parkplatz
+    AppCommon::devLoc.originLatLonAlt(47.13052, 7.24122, 433.1);        // Nullpunkt CBB LV95: 2'585'022.31, 1'219'967.25, Alt: 433.1m
+    AppCommon::devLoc.defaultLatLonAlt(47.13092, 7.24106, 437); // Baum
+
     AppCommon::devLoc.locMaxDistanceM(1000.0f);
     AppCommon::devLoc.improveOrigin(false);
     AppCommon::devLoc.useOriginAltitude(true);
@@ -55,10 +56,16 @@ void AppDemoSceneErlebARBielCBB::registerAssetsToLoad(SLAssetLoader& al)
     AppCommon::devRot.zeroYawAtStart(false);
     AppCommon::devRot.offsetMode(ROM_oneFingerX);
 
-    // This loads the DEM file and overwrites the altitude of originLatLonAlt and defaultLatLonAlt
-    al.addGeoTiffToLoad(AppCommon::devLoc,
-                        AppCommon::dataPath +
-                          "erleb-AR/models/biel/DEM_Biel-BFH_WGS84.tif");
+    /* initialize sensor stuff before loading the geotiff
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Baum",
+                                                           47,
+                                                           07,
+                                                           51.48,
+                                                           7,
+                                                           14,
+                                                           28.21,
+                                                           433.1));
+    */
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
@@ -102,21 +109,15 @@ void AppDemoSceneErlebARBielCBB::assemble(SLAssetManager* am, SLSceneView* sv)
     AppCommon::devLoc.calculateSolarAngles(AppCommon::devLoc.originLatLonAlt(),
                                            std::time(nullptr));
 
-    //_cbb->setMeshMat(matVideoBkgd, true);
-
-    // Make terrain a video shine trough
-    // _bfh->findChild<SLNode>("Terrain")->setMeshMat(matVideoBkgd, true);
-
-    /* Make buildings transparent
-    SLNode* buildings = _bfh->findChild<SLNode>("Buildings");
-    SLNode* roofs = _bfh->findChild<SLNode>("Roofs");
-    auto updateTranspFnc = [](SLMaterial* m) {m->kt(0.5f);};
-    buildings->updateMeshMat(updateTranspFnc, true);
-    roofs->updateMeshMat(updateTranspFnc, true);
-
-    // Set ambient on all child nodes
-    _bfh->updateMeshMat([](SLMaterial* m) { m->ambient(SLCol4f(.2f, .2f, .2f)); }, true);
-    */
+    // Make city with hard edges and without shadow mapping
+    SLNode* Umgebung = _cbb->findChild<SLNode>("Umgebung");
+    Umgebung->setMeshMat(matVideoBkgd, true);
+    Umgebung->setDrawBitsRec(SL_DB_WITHEDGES, true);
+    Umgebung->castsShadows(false);
+    
+    // Make underground floor transparent
+    SLNode* Decke0 = _cbb->findChild<SLNode>("Decke0");
+    Decke0->setMeshMat(matVideoBkgd, true);
 
     // Add axis object a world origin
     SLNode* axis = new SLNode(new SLCoordAxis(am), "Axis Node");
@@ -147,6 +148,5 @@ void AppDemoSceneErlebARBielCBB::assemble(SLAssetManager* am, SLSceneView* sv)
 
     sv->doWaitOnIdle(false); // for constant video feed
     sv->camera(cam1);
-    sv->drawBits()->on(SL_DB_ONLYEDGES);
 }
 //-----------------------------------------------------------------------------
