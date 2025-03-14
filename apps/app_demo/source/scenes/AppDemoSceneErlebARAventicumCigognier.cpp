@@ -112,7 +112,7 @@ void AppDemoSceneErlebARAventicumCigognier::assemble(SLAssetManager* am,
     AppCommon::devLoc.calculateSolarAngles(AppCommon::devLoc.originLatLonAlt(),
                                            std::time(nullptr));
 
-    // Rotate to the true geographic rotation
+    // Rotate to the true geographic rotation because the model is not ENU aligned
     _cigognier->rotate(-36.52f, 0, 1, 0, TS_parent);
 
     // Let the video shine through some objects
