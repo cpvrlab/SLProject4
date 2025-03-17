@@ -23,6 +23,7 @@ class SLNode;
 class SLLocation
 {
 public:
+    //! SLLocation contructor with WGS84 position in deg, min. & sec.
     SLLocation(string locName,
                int    degreesLat,
                int    minutesLat,
@@ -40,6 +41,15 @@ public:
                                                         minutesLon,
                                                         secondsLon,
                                                         altitudeM);
+        posWGS84LatLonAlt.set(posWGS84.lat,
+                              posWGS84.lon,
+                              posWGS84.alt);
+    }
+
+    //! SLLocation contructor with decimal pos in WGS84
+    SLLocation(string locName, SLVec3d posWGS84)
+    {
+        name = std::move(locName);
         posWGS84LatLonAlt.set(posWGS84.lat,
                               posWGS84.lon,
                               posWGS84.alt);

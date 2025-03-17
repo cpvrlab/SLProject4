@@ -10,6 +10,7 @@
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
  */
 
+#include "SLVec3.h"
 #include <AppDemoSceneErlebARBielCBB.h>
 #include <CVCapture.h>
 #include <AppCommon.h>
@@ -45,32 +46,17 @@ void AppDemoSceneErlebARBielCBB::registerAssetsToLoad(SLAssetLoader& al)
                         AppCommon::shaderPath + "PerPixTmBackground.frag");
 
     // initialize sensor stuff before loading the geotiff
-    AppCommon::devLoc.originLatLonAlt(47.13052, 7.24122, 433.1);        // Nullpunkt CBB LV95: 2'585'022.31, 1'219'967.25, Alt: 433.1m
-    AppCommon::devLoc.defaultLatLonAlt(47.13092, 7.24106, 433.1 + 1.6); // Ecke BFB
+    // See also locationMapBiel-CBB.yml
+    AppCommon::devLoc.originLatLonAlt(47.130569, 7.2412200, 432.6); // Origin CBB https://s.geo.admin.ch/hd6yp3mxe2sz
+    AppCommon::devLoc.defaultLatLonAlt(47.130922, 7.241056, 432.7); // Ecke BFB: https://s.geo.admin.ch/n9dqad3un9oh
     AppCommon::devLoc.nameLocations().push_back(SLLocation("CBB-Origin",
-                                                           47,
-                                                           07,
-                                                           50.04,
-                                                           7,
-                                                           14,
-                                                           28.33,
-                                                           433.1));
+                                                           SLVec3d(47.130569, 7.2412200, 432.6)));
     AppCommon::devLoc.nameLocations().push_back(SLLocation("Ecke BFB",
-                                                           47,
-                                                           07,
-                                                           51.31,
-                                                           7,
-                                                           14,
-                                                           27.80,
-                                                           433.1));
-    AppCommon::devLoc.nameLocations().push_back(SLLocation("Aarbergstr.11",
-                                                           47,
-                                                           07,
-                                                           47.46,
-                                                           7,
-                                                           14,
-                                                           24.45,
-                                                           433.1));
+                                                           SLVec3d(47.130922, 7.241056, 433.1)));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Aarbergstr.13",
+                                                           SLVec3d(47.129962, 7.240036, 432.7)));
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Ecke Schule für Gestaltung",
+                                                           SLVec3d(47.129410, 7.242807, 432.1)));
 
     AppCommon::devLoc.originLatLonAlt(AppCommon::devLoc.nameLocations()[0].posWGS84LatLonAlt);
     AppCommon::devLoc.activeNamedLocation(1);   // This sets the location 1 as defaultENU
@@ -166,7 +152,7 @@ void AppDemoSceneErlebARBielCBB::assemble(SLAssetManager* am, SLSceneView* sv)
     AppCommon::devLoc.isUsed(false);
     AppCommon::devRot.isUsed(false);
     SLVec3d pos_d = AppCommon::devLoc.defaultENU() - AppCommon::devLoc.originENU();
-    SLVec3f pos_f((SLfloat)pos_d.x, (SLfloat)pos_d.y, (SLfloat)pos_d.z);
+    SLVec3f pos_f((SLfloat)pos_d.x, (SLfloat)pos_d.y + 1.7f, (SLfloat)pos_d.z);
     cam1->translation(pos_f);
     cam1->focalDist(pos_f.length());
     cam1->lookAt(0, cam1->translationWS().y, 0);

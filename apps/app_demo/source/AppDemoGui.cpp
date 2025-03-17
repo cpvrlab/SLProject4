@@ -1321,6 +1321,26 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                     balda_stahl = nullptr;
                     balda_glas  = nullptr;
                 }
+                if (AppCommon::sceneID == SID_ErlebAR_BielCBB)
+                {
+                    ImGui::Begin("Biel Campus Biel/Bienne",
+                                 &showErlebAR,
+                                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNavInputs);
+
+#if defined(SL_OS_MACIOS) || defined(SL_OS_ANDROID)
+                    bool devLocIsUsed = AppCommon::devLoc.isUsed();
+                    if (ImGui::Checkbox("Use GPS Location", &devLocIsUsed))
+                        AppCommon::devLoc.isUsed(true);
+#endif
+                    for (int i = 1; i < AppCommon::devLoc.nameLocations().size(); ++i)
+                    {
+                        bool namedLocIsActive = namedLocIndex == i;
+                        if (ImGui::Checkbox(AppCommon::devLoc.nameLocations()[i].name.c_str(), &namedLocIsActive))
+                            setActiveNamedLocation(i, sv);
+                    }
+
+                    ImGui::End();
+                }
                 if (AppCommon::sceneID == SID_ErlebAR_AugustaRauricaTmpTht)
                 {
                     ImGui::Begin("Augst-Theatre-Temple",
