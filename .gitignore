@@ -65,6 +65,7 @@ intermediate/
 cmake-build*/
 *Snapchat3D/
 .cache/
+__MACOSX
 
 Profile_*
 

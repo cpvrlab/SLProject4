@@ -11,7 +11,7 @@
  */
 
 #include "SLVec3.h"
-#include <AppDemoSceneErlebARBielCBB.h>
+#include "AppDemoSceneErlebARBielCBB.h"
 #include <CVCapture.h>
 #include <AppCommon.h>
 #include <SLAssetLoader.h>
