@@ -9,6 +9,7 @@
  */
 
 #include "SL.h"
+#include <assimp/material.h>
 #ifdef SL_BUILD_WITH_ASSIMP
 
 #include <cstddef>
@@ -830,7 +831,7 @@ SLMaterial* SLAssimpImporter::loadMaterial(SLAssetManager* am,
 
     // get color data
     aiColor3D ambient, diffuse, specular, emissive;
-    SLfloat   shininess, refracti, reflectivity, opacity, roughness = -1, metalness = -1;
+    SLfloat   shininess, refracti, reflectivity, color_transparent, transparencyFactor, opacity, roughness = -1, metalness = -1;
     aiMat->Get(AI_MATKEY_COLOR_AMBIENT, ambient);
     aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
     aiMat->Get(AI_MATKEY_COLOR_SPECULAR, specular);
@@ -839,6 +840,8 @@ SLMaterial* SLAssimpImporter::loadMaterial(SLAssetManager* am,
     aiMat->Get(AI_MATKEY_REFRACTI, refracti);
     aiMat->Get(AI_MATKEY_REFLECTIVITY, reflectivity);
     aiMat->Get(AI_MATKEY_OPACITY, opacity);
+    aiMat->Get(AI_MATKEY_COLOR_TRANSPARENT, color_transparent);
+    aiMat->Get(AI_MATKEY_TRANSPARENCYFACTOR, transparencyFactor);
     aiMat->Get(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_METALLIC_FACTOR, metalness);
     aiMat->Get(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_ROUGHNESS_FACTOR, roughness);
 

@@ -48,15 +48,23 @@ void AppDemoSceneErlebARBielCBB::registerAssetsToLoad(SLAssetLoader& al)
     // initialize sensor stuff before loading the geotiff
     // See also locationMapBiel-CBB.yml
     AppCommon::devLoc.originLatLonAlt(47.130569, 7.2412200, 432.6); // Origin CBB https://s.geo.admin.ch/hd6yp3mxe2sz
-    AppCommon::devLoc.defaultLatLonAlt(47.130922, 7.241056, 432.7); // Ecke BFB: https://s.geo.admin.ch/n9dqad3un9oh
+    AppCommon::devLoc.defaultLatLonAlt(47.130911, 7.241060, 433.0); // Ecke BFB: https://s.geo.admin.ch/q4sl4pv9ptil
     AppCommon::devLoc.nameLocations().push_back(SLLocation("CBB-Origin",
-                                                           SLVec3d(47.130569, 7.2412200, 432.6)));
+                                                           SLVec3d(47.130569, 7.2412200, 432.6))); // https://s.geo.admin.ch/hd6yp3mxe2sz
     AppCommon::devLoc.nameLocations().push_back(SLLocation("Ecke BFB",
-                                                           SLVec3d(47.130922, 7.241056, 433.1)));
+                                                           SLVec3d(47.130922, 7.241056, 433.1))); // https://s.geo.admin.ch/q4sl4pv9ptil
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Seite BFB",
+                                                           SLVec3d(47.131012, 7.241140, 433.1))); // https://s.geo.admin.ch/cugzflafv1nj
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Baum BFB",
+                                                           SLVec3d(47.130964, 7.241163, 433.1))); // https://s.geo.admin.ch/oer6fbzdjahr
     AppCommon::devLoc.nameLocations().push_back(SLLocation("Aarbergstr.13",
-                                                           SLVec3d(47.129962, 7.240036, 432.7)));
+                                                           SLVec3d(47.129964, 7.240038, 432.7))); // https://s.geo.admin.ch/2iqvhce7nv0a
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("Ecke Dr. Schneiterstr.",
+                                                           SLVec3d(47.129740, 7.240179, 432.7))); // https://s.geo.admin.ch/o0al1e7s1a74
     AppCommon::devLoc.nameLocations().push_back(SLLocation("Ecke Schule für Gestaltung",
-                                                           SLVec3d(47.129410, 7.242807, 432.1)));
+                                                           SLVec3d(47.129369, 7.242822, 432.1))); // https://s.geo.admin.ch/4n41dnm2jibi
+    AppCommon::devLoc.nameLocations().push_back(SLLocation("SIPBB, 3. Stock, Project Space",
+                                                           SLVec3d(47.130533, 7.240727, 433.1 + 15.8))); // https://s.geo.admin.ch/8rtmbyxy8hbs
 
     AppCommon::devLoc.originLatLonAlt(AppCommon::devLoc.nameLocations()[0].posWGS84LatLonAlt);
     AppCommon::devLoc.activeNamedLocation(1);   // This sets the location 1 as defaultENU
@@ -72,6 +80,9 @@ void AppDemoSceneErlebARBielCBB::registerAssetsToLoad(SLAssetLoader& al)
 //! After parallel loading of the assets the scene gets assembled in here.
 void AppDemoSceneErlebARBielCBB::assemble(SLAssetManager* am, SLSceneView* sv)
 {
+    gVideoTexture->texType(TT_videoBkgd);
+
+    // Create see through video background material without shadow mapping
     SLMaterial* matVideoBkgd = new SLMaterial(am,
                                               "matVideoBkgd",
                                               gVideoTexture,
@@ -79,6 +90,7 @@ void AppDemoSceneErlebARBielCBB::assemble(SLAssetManager* am, SLSceneView* sv)
                                               nullptr,
                                               nullptr,
                                               _spVideoBackground);
+    matVideoBkgd->reflectionModel(RM_Custom);
 
     // Create see through video background material with shadow mapping
     SLMaterial* matVideoBkgdSM = new SLMaterial(am,
@@ -124,13 +136,14 @@ void AppDemoSceneErlebARBielCBB::assemble(SLAssetManager* am, SLSceneView* sv)
 
     // Make city with hard edges and without shadow mapping
     SLNode* Umgebung = _cbb->findChild<SLNode>("Umgebung");
-    Umgebung->setMeshMat(matVideoBkgd, true);
+    Umgebung->setMeshMat(matVideoBkgdSM, true);
     Umgebung->setDrawBitsRec(SL_DB_WITHEDGES, true);
     Umgebung->castsShadows(false);
 
-    // Make underground floor transparent
-    SLNode* Decke0 = _cbb->findChild<SLNode>("Decke0");
-    Decke0->setMeshMat(matVideoBkgd, true);
+    // Set glas material transparency
+    SLNode* fassade_glas = _cbb->findChild<SLNode>("Fassade_Glas");
+    if (fassade_glas && fassade_glas->mesh() && fassade_glas->mesh()->mat())
+        fassade_glas->mesh()->mat()->kt(0.9f);
 
     // Add axis object a world origin
     SLNode* axis = new SLNode(new SLCoordAxis(am), "Axis Node");

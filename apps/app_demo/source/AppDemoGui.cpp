@@ -1849,9 +1849,9 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                             if (ImGui::MenuItem("Biel: BFH", nullptr, sid == SID_ErlebAR_BielBFH))
                                 AppCommon::sceneToLoad = SID_ErlebAR_BielBFH;
 
-                                if (Utils::fileExists(modelCBB))
-                                    if (ImGui::MenuItem("Biel: CBB", nullptr, sid == SID_ErlebAR_BielCBB))
-                                        AppCommon::sceneToLoad = SID_ErlebAR_BielCBB;
+                        if (Utils::fileExists(modelCBB))
+                            if (ImGui::MenuItem("Biel: CBB", nullptr, sid == SID_ErlebAR_BielCBB))
+                                AppCommon::sceneToLoad = SID_ErlebAR_BielCBB;
 
                         if (Utils::fileExists(modelAR3))
                             if (ImGui::MenuItem("Augusta Raurica Temple & Theater", nullptr, sid == SID_ErlebAR_AugustaRauricaTmpTht))
@@ -4615,7 +4615,7 @@ void AppDemoGui::loadConfig(SLint dotsPerInch)
 {
     ImGuiStyle& style               = ImGui::GetStyle();
     SLstring    fullPathAndFilename = AppCommon::configPath +
-                                      AppCommon::name + ".yml";
+                                   AppCommon::name + ".yml";
 
     if (!SLFileStorage::exists(fullPathAndFilename, IOK_config))
     {
@@ -5021,7 +5021,7 @@ void AppDemoGui::setActiveNamedLocation(int          locIndex,
 
 #if !defined(SL_OS_MACIOS) && !defined(SL_OS_ANDROID)
     SLVec3d   pos_d = AppCommon::devLoc.defaultENU() - AppCommon::devLoc.originENU();
-    SLVec3f   pos_f((SLfloat)pos_d.x, (SLfloat)pos_d.y, (SLfloat)pos_d.z);
+    SLVec3f   pos_f((SLfloat)pos_d.x, (SLfloat)pos_d.y + 1.7f, (SLfloat)pos_d.z);
     SLCamera* cam = sv->camera();
     cam->translation(pos_f);
     SLVec3f camToLookAt = pos_f - lookAtPoint;
