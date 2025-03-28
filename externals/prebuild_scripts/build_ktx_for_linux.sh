@@ -1,6 +1,7 @@
 #!/bin/sh
 #ATTENTION: you have to install libzstd-dev (see: https://github.com/KhronosGroup/KTX-Software/blob/master/BUILDING.md)
-VERSION=v4.0.0-beta7
+#VERSION=v4.0.0-beta7
+VERSION=v4.3.2
 BUILD_D=BUILD_LINUX_DEBUG_"$VERSION"
 BUILD_R=BUILD_LINUX_RELEASE_"$VERSION"
 

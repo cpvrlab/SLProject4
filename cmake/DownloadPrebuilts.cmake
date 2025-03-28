@@ -290,7 +290,8 @@ if ("${SYSTEM_NAME_UPPER}" STREQUAL "LINUX")
     # ktx for Linux    #
     ####################
 
-    set(ktx_VERSION "v4.0.0-beta7")
+    #set(ktx_VERSION "v4.0.0-beta7")
+    set(ktx_VERSION "v4.3.2")
     set(ktx_PREBUILT_DIR "linux_ktx_${ktx_VERSION}")
     set(ktx_DIR "${PREBUILT_PATH}/${ktx_PREBUILT_DIR}")
     
