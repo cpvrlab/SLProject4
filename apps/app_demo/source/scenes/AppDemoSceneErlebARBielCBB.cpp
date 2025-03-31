@@ -38,7 +38,12 @@ void AppDemoSceneErlebARBielCBB::registerAssetsToLoad(SLAssetLoader& al)
                         GL_LINEAR);
 
     al.addNodeToLoad(_cbb,
-                     AppCommon::dataPath + "erleb-AR/models/biel/Biel-CBB-AR.gltf");
+                     AppCommon::dataPath + "erleb-AR/models/biel/Biel-CBB-AR.gltf",
+                     nullptr,
+                     false,
+                     true,
+                     nullptr,
+                     0.5f);
 
     al.addProgramToLoad(_spVideoBackground,
                         AppCommon::shaderPath + "PerPixTmBackground.vert",
