@@ -38,12 +38,23 @@ void AppDemoSceneErlebARBielCBB::registerAssetsToLoad(SLAssetLoader& al)
                         GL_LINEAR);
 
     al.addNodeToLoad(_cbb,
-                     AppCommon::dataPath +
-                       "erleb-AR/models/biel/Biel-CBB-AR.gltf");
+                     AppCommon::dataPath + "erleb-AR/models/biel/Biel-CBB-AR.gltf");
 
     al.addProgramToLoad(_spVideoBackground,
                         AppCommon::shaderPath + "PerPixTmBackground.vert",
                         AppCommon::shaderPath + "PerPixTmBackground.frag");
+
+    // Glass shader for reflections on window
+    al.addTextureToLoad(_cubemap,
+                        AppCommon::dataPath + "erleb-AR/models/biel/Sea1+X1024.jpg",
+                        AppCommon::dataPath + "erleb-AR/models/biel/Sea1-X1024.jpg",
+                        AppCommon::dataPath + "erleb-AR/models/biel/Sea1+Y1024.jpg",
+                        AppCommon::dataPath + "erleb-AR/models/biel/Sea1-Y1024.jpg",
+                        AppCommon::dataPath + "erleb-AR/models/biel/Sea1+Z1024.jpg",
+                        AppCommon::dataPath + "erleb-AR/models/biel/Sea1-Z1024.jpg");
+    al.addProgramToLoad(_spRefr,
+                        AppCommon::shaderPath + "RefractReflect.vert",
+                        AppCommon::shaderPath + "RefractReflect.frag");
 
     // initialize sensor stuff before loading the geotiff
     // See also locationMapBiel-CBB.yml
@@ -120,10 +131,11 @@ void AppDemoSceneErlebARBielCBB::assemble(SLAssetManager* am, SLSceneView* sv)
     sunLight->createsShadows(true);
     sunLight->createShadowMap(-100,
                               150,
-                              SLVec2f(150, 150),
+                              SLVec2f(180, 180),
                               SLVec2i(4096, 4096));
     sunLight->doSmoothShadows(true);
     sunLight->castsShadows(false);
+    sunLight->translate(0, 30.5f, 90);
 
     // Let the sun be rotated by time and location
     AppCommon::devLoc.sunLightNode(sunLight);
@@ -140,10 +152,33 @@ void AppDemoSceneErlebARBielCBB::assemble(SLAssetManager* am, SLSceneView* sv)
     Umgebung->setDrawBitsRec(SL_DB_WITHEDGES, true);
     Umgebung->castsShadows(false);
 
-    // Set glas material transparency
-    SLNode* fassade_glas = _cbb->findChild<SLNode>("Fassade_Glas");
-    if (fassade_glas && fassade_glas->mesh() && fassade_glas->mesh()->mat())
-        fassade_glas->mesh()->mat()->kt(0.9f);
+    // Set glas material w.
+    SLMaterial* matGlas = new SLMaterial(am,
+                                         "Glas",
+                                         SLCol4f::BLACK,
+                                         SLCol4f::BLACK,
+                                         100,
+                                         0.5f,
+                                         0.25f,
+                                         1.5f);
+    matGlas->translucency(1000);
+    matGlas->transmissive(SLCol4f::WHITE);
+    matGlas->addTexture(_cubemap);
+    matGlas->program(_spRefr);
+    _cbb->findChild<SLNode>("Fassade_Glas")->setMeshMat(matGlas, true);
+    _cbb->findChild<SLNode>("Fassade_Glas.001")->setMeshMat(matGlas, true);
+    _cbb->findChild<SLNode>("Fassade_Glas.002")->setMeshMat(matGlas, true);
+    _cbb->findChild<SLNode>("Fassade_Glas.003")->setMeshMat(matGlas, true);
+    _cbb->findChild<SLNode>("Fassade_Glas.004")->setMeshMat(matGlas, true);
+    _cbb->findChild<SLNode>("Fassade_Glas.005")->setMeshMat(matGlas, true);
+    _cbb->findChild<SLNode>("Fassade_Glas.006")->setMeshMat(matGlas, true);
+    _cbb->findChild<SLNode>("Fassade_Glas.007")->setMeshMat(matGlas, true);
+    _cbb->findChild<SLNode>("Fassade_Glas.008")->setMeshMat(matGlas, true);
+    _cbb->findChild<SLNode>("Fassade_Glas.009")->setMeshMat(matGlas, true);
+    _cbb->findChild<SLNode>("Fassade_Glas.010")->setMeshMat(matGlas, true);
+    _cbb->findChild<SLNode>("Fassade_Glas.011")->setMeshMat(matGlas, true);
+    _cbb->findChild<SLNode>("Fassade_Glas.012")->setMeshMat(matGlas, true);
+    _cbb->findChild<SLNode>("Fassade_Glas.013")->setMeshMat(matGlas, true);
 
     // Add axis object a world origin
     SLNode* axis = new SLNode(new SLCoordAxis(am), "Axis Node");

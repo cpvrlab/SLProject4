@@ -43,6 +43,8 @@ public:
 
 private:
     SLNode*      _cbb;
+    SLGLTexture* _cubemap;
+    SLGLProgram* _spRefr;
     SLGLProgram* _spVideoBackground;
 };
 //-----------------------------------------------------------------------------
