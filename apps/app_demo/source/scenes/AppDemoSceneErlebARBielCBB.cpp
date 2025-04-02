@@ -170,7 +170,6 @@ void AppDemoSceneErlebARBielCBB::assemble(SLAssetManager* am, SLSceneView* sv)
     matGlas->transmissive(SLCol4f::WHITE);
     matGlas->addTexture(_cubemap);
     matGlas->program(_spRefr);
-    _cbb->findChild<SLNode>("Fassade_Glas")->setMeshMat(matGlas, true);
     _cbb->findChild<SLNode>("Fassade_Glas.001")->setMeshMat(matGlas, true);
     _cbb->findChild<SLNode>("Fassade_Glas.002")->setMeshMat(matGlas, true);
     _cbb->findChild<SLNode>("Fassade_Glas.003")->setMeshMat(matGlas, true);
