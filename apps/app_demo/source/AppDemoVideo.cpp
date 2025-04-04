@@ -13,6 +13,7 @@
 #include <AppDemoSceneID.h>
 #include <SLScene.h>
 #include <SLSceneView.h>
+#include <CVImage.h>
 #include <CVCapture.h>
 #include <CVTracked.h>
 #include <CVTrackedAruco.h>
@@ -310,12 +311,12 @@ bool onUpdateVideo()
         // copy image to video texture
         if (gVideoTexture)
         {
+            //SL_LOG("glFormat: %s\n", CVImage::formatString(CVCapture::instance()->format).c_str());
+                
             if (ac->calibration.state() == CS_calibrated && ac->showUndistorted())
             {
                 CVMat undistorted;
                 ac->calibration.remap(CVCapture::instance()->lastFrame, undistorted);
-
-                // CVCapture::instance()->gVideoTexture()->copyVideoImage(undistorted.cols,
                 gVideoTexture->copyVideoImage(undistorted.cols,
                                               undistorted.rows,
                                               CVCapture::instance()->format,
@@ -325,7 +326,6 @@ bool onUpdateVideo()
             }
             else
             {
-                // CVCapture::instance()->gVideoTexture()->copyVideoImage(CVCapture::instance()->lastFrame.cols,
                 gVideoTexture->copyVideoImage(CVCapture::instance()->lastFrame.cols,
                                               CVCapture::instance()->lastFrame.rows,
                                               CVCapture::instance()->format,

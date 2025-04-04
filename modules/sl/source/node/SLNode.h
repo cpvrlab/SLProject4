@@ -403,7 +403,7 @@ T* SLNode::findChild(const SLstring& name, SLbool findRecursive)
                 return found;
         }
     }
-    SL_LOG("SLNode::findChild: Nothing found for: %s\n", name.c_str());
+    //SL_LOG("SLNode::findChild: Nothing found for: %s\n", name.c_str());
     return nullptr;
 }
 //-----------------------------------------------------------------------------
