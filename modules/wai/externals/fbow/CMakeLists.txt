@@ -103,22 +103,22 @@ IF(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
        add_definitions(-DUSE_SSE)
     endif()
     if(USE_SSE2)
-       set(VECTORIAL_INSTRUCTIONS "${VECTORIAL_INSTRUCTIONS} -msse2")
-       add_definitions(-DUSE_SSE2)
+       #set(VECTORIAL_INSTRUCTIONS "${VECTORIAL_INSTRUCTIONS} -msse2")
+       #add_definitions(-DUSE_SSE2)
     endif()
     if(USE_SSE3 AND NOT MINGW) # SSE3 should be disabled under MingW because it generates compiler errors
-       set(VECTORIAL_INSTRUCTIONS "${VECTORIAL_INSTRUCTIONS} -msse3")
-       add_definitions(-DUSE_SSE3)
+       #set(VECTORIAL_INSTRUCTIONS "${VECTORIAL_INSTRUCTIONS} -msse3")
+       #add_definitions(-DUSE_SSE3)
     endif()
 
     if(USE_SSE4 AND NOT MINGW) # SSE3 should be disabled under MingW because it generates compiler errors
-       set(VECTORIAL_INSTRUCTIONS "${VECTORIAL_INSTRUCTIONS} -msse4.1")
-       add_definitions(-DUSE_SSE4)
+       #set(VECTORIAL_INSTRUCTIONS "${VECTORIAL_INSTRUCTIONS} -msse4.1")
+       #add_definitions(-DUSE_SSE4)
     endif()
 
     IF(USE_AVX) 
-      set(VECTORIAL_INSTRUCTIONS "${VECTORIAL_INSTRUCTIONS} -mavx")
-     add_definitions(-DUSE_AVX)
+      #set(VECTORIAL_INSTRUCTIONS "${VECTORIAL_INSTRUCTIONS} -mavx")
+      #add_definitions(-DUSE_AVX)
     endif()
 
  if(ENABLE_PROFILING)
