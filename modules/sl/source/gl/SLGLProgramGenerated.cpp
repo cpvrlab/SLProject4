@@ -7,6 +7,7 @@
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
 */
 
+#include "Utils.h"
 #include <SLAssetManager.h>
 #include <SLGLProgramManager.h>
 #include <SLGLProgramGenerated.h>
@@ -2960,8 +2961,8 @@ void SLGLProgramGenerated::addCodeToShader(SLGLShader*   shader,
 
     if (!Utils::dirExists(generatedShaderPath))
     {
-        bool dirCreated = Utils::makeDir(generatedShaderPath);
-        if (!dirCreated)
+        bool dirCreated = Utils::makeDir(generatedShaderPath); // dirCreated is still false on MacOS after creation
+        if (!Utils::dirExists(generatedShaderPath))
             SL_EXIT_MSG("SLGLProgramGenerated::addCodeToShader: Failed to created SLGLProgramManager::configPath/generatedShaders");
     }
 

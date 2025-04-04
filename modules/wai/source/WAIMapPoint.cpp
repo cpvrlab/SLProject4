@@ -55,7 +55,7 @@ WAIMapPoint::WAIMapPoint(int id, const cv::Mat& Pos, bool fixMp)
 //-----------------------------------------------------------------------------
 WAIMapPoint::WAIMapPoint(const cv::Mat& Pos,
                          WAIKeyFrame*   pRefKF)
-  : mnFirstKFid(pRefKF->mnId),
+  : mnFirstKFid((long)pRefKF->mnId),
     /* mnFirstFrame(pRefKF->mnFrameId), */
     nObs(0),
     mnLastFrameSeen(0),
@@ -307,7 +307,7 @@ void WAIMapPoint::IncreaseFound(int n)
 float WAIMapPoint::GetFoundRatio()
 {
     unique_lock<mutex> lock(mMutexFeatures);
-    return static_cast<float>(mnFound) / mnVisible;
+    return static_cast<float>(mnFound) / (float)mnVisible;
 }
 //-----------------------------------------------------------------------------
 void WAIMapPoint::ComputeDistinctiveDescriptors()
@@ -340,8 +340,7 @@ void WAIMapPoint::ComputeDistinctiveDescriptors()
     if (vDescriptors.empty())
         return;
 
-        // Compute distances between them
-#ifdef _WINDOWS
+    // Compute distances between them
     size_t N = vDescriptors.size();
 
     float** Distances = new float*[N];
@@ -358,21 +357,7 @@ void WAIMapPoint::ComputeDistinctiveDescriptors()
             Distances[j][i] = (float)distij;
         }
     }
-#else
-    const size_t N = vDescriptors.size();
 
-    float Distances[N][N];
-    for (size_t i = 0; i < N; i++)
-    {
-        Distances[i][i] = 0;
-        for (size_t j = i + 1; j < N; j++)
-        {
-            int distij      = ORBmatcher::DescriptorDistance(vDescriptors[i], vDescriptors[j]);
-            Distances[i][j] = distij;
-            Distances[j][i] = distij;
-        }
-    }
-#endif
     // Take the descriptor with least median distance to the rest
     int BestMedian = INT_MAX;
     int BestIdx    = 0;
@@ -380,7 +365,7 @@ void WAIMapPoint::ComputeDistinctiveDescriptors()
     {
         vector<int> vDists(Distances[i], Distances[i] + N);
         sort(vDists.begin(), vDists.end());
-        int median = vDists[(uint64_t)(0.5 * (N - 1))];
+        int median = vDists[(uint64_t)(0.5f * (N - 1))];
 
         if (median < BestMedian)
         {
@@ -390,11 +375,9 @@ void WAIMapPoint::ComputeDistinctiveDescriptors()
     }
 
     //free Distances
-#ifdef _WINDOWS
     for (size_t i = 0; i < N; ++i)
         delete Distances[i];
     delete[] Distances;
-#endif
 
     {
         unique_lock<mutex> lock(mMutexFeatures);
