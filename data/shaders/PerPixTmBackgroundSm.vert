@@ -1,5 +1,3 @@
-#version 410
-
 precision highp float;
 
 #define NUM_LIGHTS 1

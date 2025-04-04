@@ -1,5 +1,5 @@
-#version 410
 
+#extension GL_OES_EGL_image_external_essl3
 precision highp float;
 
 #define NUM_LIGHTS 1
@@ -51,7 +51,7 @@ uniform float       u_camBkgdHeight;    // camera background height
 uniform float       u_camBkgdLeft;      // camera background left
 uniform float       u_camBkgdBottom;    // camera background bottom
 uniform vec4        u_matAmbi;                      // ambient color reflection coefficient (ka)
-uniform sampler2D   u_matTextureDiffuse0;           // Diffuse color map
+uniform samplerExternalOES   u_matTextureDiffuse0;           // Diffuse color map
 
 uniform bool        u_matGetsShadows;               // flag if material receives shadows
 uniform sampler2D   u_shadowMap_0;
