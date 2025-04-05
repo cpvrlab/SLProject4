@@ -6,7 +6,7 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
 */
 
-#extension GL_OES_EGL_image_external_essl3 : enable
+#extension GL_OES_EGL_image_external_essl3 : require
 
 precision highp float;
 
@@ -28,6 +28,6 @@ void main()
     if(x < 0.0f || y < 0.0f || x > 1.0f || y > 1.0f)
         o_fragColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
     else
-        o_fragColor = texture(u_matTextureDiffuse0, vec2(x, 1.0f - y));
+        o_fragColor = texture(u_matTextureDiffuse0, vec2(x, y));
 }
 //-----------------------------------------------------------------------------
