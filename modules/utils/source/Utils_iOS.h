@@ -11,6 +11,7 @@
 #define UTILS_IOS_H
 
 #include <string>
+#include <vector>
 //-----------------------------------------------------------------------------
 //! SLFileSystem provides basic filesystem functions
 class Utils_iOS

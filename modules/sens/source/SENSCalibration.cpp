@@ -249,7 +249,7 @@ bool SENSCalibration::save(const std::string& calibDir,
     }
 
     char buf[1024];
-    sprintf(buf,
+    snprintf(buf, sizeof(buf),
             "flags:%s%s%s%s%s%s%s",
             _calibFlags & cv::CALIB_USE_INTRINSIC_GUESS ? " +use_intrinsic_guess" : "",
             _calibFlags & cv::CALIB_FIX_ASPECT_RATIO ? " +fix_aspectRatio" : "",

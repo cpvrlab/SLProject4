@@ -54,7 +54,7 @@ void BaseMultiEdge<D, E>::linearizeOplus(JacobianWorkspace& jacobianWorkspace)
   for (size_t i = 0; i < _vertices.size(); ++i) {
     OptimizableGraph::Vertex* v = static_cast<OptimizableGraph::Vertex*>(_vertices[i]);
     assert(v->dimension() >= 0);
-    new (&_jacobianOplus[i]) JacobianType(jacobianWorkspace.workspaceForVertex(i), D, v->dimension());
+    new (&_jacobianOplus[i]) JacobianType(jacobianWorkspace.workspaceForVertex((int)i), D, v->dimension());
   }
   linearizeOplus();
 }
@@ -199,7 +199,7 @@ void BaseMultiEdge<D, E>::computeQuadraticForm(const InformationType& omega, con
         bool jstatus = !(to->fixed());
         if (jstatus) {
           const JacobianType& B = _jacobianOplus[j];
-          int idx = internal::computeUpperTriangleIndex(i, j);
+          int idx = (int)internal::computeUpperTriangleIndex((int)i, j);
           assert(idx < (int)_hessian.size());
           HessianHelper& hhelper = _hessian[idx];
           if (hhelper.transposed) { // we have to write to the block as transposed

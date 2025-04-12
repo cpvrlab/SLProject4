@@ -212,7 +212,7 @@ namespace g2o {
     for (size_t i=0; i<M->_blockCols.size(); ++i){
       for (typename SparseBlockMatrix<MatrixFactorType>::IntBlockMap::const_iterator it=M->_blockCols[i].begin(); it!=M->_blockCols[i].end(); ++it){
         // look for a non-zero block in a row of column it
-        int colM=i;
+        int colM=(int)i;
         const typename SparseBlockMatrix<MatrixFactorType>::SparseMatrixBlock *b=it->second;
         typename SparseBlockMatrix<MatrixType>::IntBlockMap::const_iterator rbt=_blockCols[it->first].begin();
         while(rbt!=_blockCols[it->first].end()){
