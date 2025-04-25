@@ -33,10 +33,14 @@ file(GLOB SOURCES
         source/CVTrackedFaces.h
         source/CVTrackedFeatures.cpp
         source/CVTrackedFeatures.h
-        source/CVTrackedMediaPipeHands.cpp
-        source/CVTrackedMediaPipeHands.h
         source/CVTypedefs.h
         source/CVTypes.h)
+
+if (SL_BUILD_WITH_MEDIAPIPE)
+    set(SOURCES ${SOURCES}
+            source/CVTrackedMediaPipeHands.cpp
+            source/CVTrackedMediaPipeHands.h)
+endif ()
 
 if (SL_BUILD_WAI)
     set(SOURCES ${SOURCES}

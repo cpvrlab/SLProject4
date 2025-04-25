@@ -32,7 +32,8 @@ AppDemoSceneVideoTrackMediapipe::AppDemoSceneVideoTrackMediapipe()
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneVideoTrackMediapipe::registerAssetsToLoad(SLAssetLoader& al)
 {
-#ifdef SL_BUILD_WITH_MEDIAPIPE
+#if not defined(SL_OS_MACIOS)
+    #ifdef SL_BUILD_WITH_MEDIAPIPE
     // Create video texture on global pointer updated in AppDemoVideo
     al.addTextureToLoad(gVideoTexture,
                         AppCommon::texturePath +
@@ -45,6 +46,7 @@ void AppDemoSceneVideoTrackMediapipe::registerAssetsToLoad(SLAssetLoader& al)
         gVideoTracker = new CVTrackedMediaPipeHands(AppCommon::dataPath);
         gVideoTracker->drawDetection(true);
     });
+    #endif
 #endif
 }
 //-----------------------------------------------------------------------------

@@ -21,6 +21,8 @@ sl_add_app(
     INCLUDE_DIRECTORIES
     "source/"
     "source/scenes/"
+    
+    set(SL_BUILD_WITH_MEDIAPIPE OFF)
 
     # On Android, set the path to the `app` directory
     ANDROID_APP_DIR "${SL_PROJECT_ROOT}/apps/source/platforms/android/example_project/app"

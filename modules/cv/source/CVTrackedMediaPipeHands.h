@@ -7,12 +7,12 @@
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
 */
 
-#ifdef SL_BUILD_WITH_MEDIAPIPE
-#    ifndef CVTRACKEDMEDIAPIPEHANDS_H
-#        define CVTRACKEDMEDIAPIPEHANDS_H
-
-#        include <CVTracked.h>
-#        include <mediapipe.h>
+#if not defined(SL_OS_MACIOS)
+#   ifdef SL_BUILD_WITH_MEDIAPIPE
+#       ifndef CVTRACKEDMEDIAPIPEHANDS_H
+#           define CVTRACKEDMEDIAPIPEHANDS_H
+#           include <CVTracked.h>
+#           include <mediapipe.h>
 
 //-----------------------------------------------------------------------------
 //! MediaPipe hand tracking class derived from CVTracked
@@ -51,5 +51,6 @@ private:
 };
 //-----------------------------------------------------------------------------
 
-#    endif // CVTRACKEDMEDIAPIPEHANDS_H
-#endif     // SL_BUILD_WITH_MEDIAPIPE
+#       endif // CVTRACKEDMEDIAPIPEHANDS_H
+#   endif     // SL_BUILD_WITH_MEDIAPIPE
+#endif     // SL_PLATFROM_IOS
