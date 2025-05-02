@@ -36,7 +36,8 @@ AppDemoSceneVideoTrackAruco::AppDemoSceneVideoTrackAruco(SLSceneID sid)
         info("Hold the Aruco board dictionary 0 into the field of view of "
              "the main camera. You can find the Aruco markers in the file "
              "data/Calibrations. If not all markers are tracked you may have "
-             "the mirror the video horizontally.");
+             "the mirror the video horizontally. If the box is not placed precisely,"
+             "you may set the use Preferences > Video Sensor > Calibration > Undistort Image");
     }
     else
     {
@@ -44,7 +45,8 @@ AppDemoSceneVideoTrackAruco::AppDemoSceneVideoTrackAruco(SLSceneID sid)
         info("Hold the Aruco board dictionary 0 into the field of view of "
              "the secondary camera. You can find the Aruco markers in the file "
              "data/Calibrations. If not all markers are tracked you may have "
-             "the mirror the video horizontally.");
+             "the mirror the video horizontally. If the box is not placed precisely,"
+             "you may set the use Preferences > Video Sensor > Calibration > Undistort Image");
     }
 }
 //-----------------------------------------------------------------------------
