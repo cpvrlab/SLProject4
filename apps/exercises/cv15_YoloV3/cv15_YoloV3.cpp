@@ -3,12 +3,10 @@
  * \brief     Object Detection with YOLO V3 and OpenCV
  * \copyright Based on Satya Mallick's Tutorial at https://www.learnopencv.com
  * \date      December 2021
-*/
+ */
 
 #include <fstream>
-#include <sstream>
 #include <iostream>
-
 #include <opencv2/dnn.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
@@ -114,12 +112,18 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
         float* data = (float*)outs[i].data;
         for (int j = 0; j < outs[i].rows; ++j, data += outs[i].cols)
         {
-            Mat    scores = outs[i].row(j).colRange(5, outs[i].cols);
+            Mat    scores = outs[i].row(j).colRange(5,
+                                                 outs[i].cols);
             Point  classIdPoint;
             double confidence;
 
             // Get the value and location of the maximum score
-            minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
+            minMaxLoc(scores,
+                      0,
+                      &confidence,
+                      0,
+                      &classIdPoint);
+
             if (confidence > confThreshold)
             {
                 int centerX = (int)(data[0] * frame.cols);
@@ -178,14 +182,17 @@ int main(int argc, char** argv)
     string modelWeights       = projectRoot + "/data/opencv/yolov3/yolov3.weights";
     if (!fileExists(modelWeights))
     {
-        cout << "Please download first the Yolo V3 model weights from" << endl;
-        cout << "https://pjreddie.com/media/files/yolov3.weights" << endl;
+        cout << "***************************************************************" << endl;
+        cout << "Please download first the Yolo V3 model cnf & weights pair from" << endl;
+        cout << "https://pjreddie.com/darknet/yolo/" << endl;
         cout << "into /data/opencv/yolov3/" << endl;
+        cout << "***************************************************************" << endl;
         exit(1);
     }
 
     // Load the network
-    dnn::Net net = dnn::readNetFromDarknet(modelConfiguration, modelWeights);
+    dnn::Net net = dnn::readNetFromDarknet(modelConfiguration,
+                                           modelWeights);
 
     if (device == "cpu")
     {
@@ -291,12 +298,19 @@ int main(int argc, char** argv)
         // Remove the bounding boxes with low confidence
         postprocess(frame, outs);
 
-        // Put efficiency information. The function getPerfProfile returns the overall time for inference(t) and the timings for each of the layers(in layersTimes)
+        // Put efficiency information.
+        // The function getPerfProfile returns the overall time for inference(t)
+        // and the timings for each of the layers(in layersTimes)
         vector<double> layersTimes;
         double         freq  = getTickFrequency() / 1000;
         double         t     = net.getPerfProfile(layersTimes) / freq;
         string         label = format("Inference time for a frame : %.2f ms", t);
-        putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255));
+        putText(frame,
+                label,
+                Point(0, 15),
+                FONT_HERSHEY_SIMPLEX,
+                0.5,
+                Scalar(0, 0, 255));
 
         // Write the frame with the detection boxes
         Mat detectedFrame;
