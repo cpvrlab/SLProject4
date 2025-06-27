@@ -7,7 +7,7 @@
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
 */
 
-#if not defined(SL_OS_MACIOS)
+#ifndef SL_OS_MACIOS
 #   ifdef SL_BUILD_WITH_MEDIAPIPE
 #       ifndef CVTRACKEDMEDIAPIPEHANDS_H
 #           define CVTRACKEDMEDIAPIPEHANDS_H

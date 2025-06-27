@@ -32,7 +32,7 @@ AppDemoSceneVideoTrackMediapipe::AppDemoSceneVideoTrackMediapipe()
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoSceneVideoTrackMediapipe::registerAssetsToLoad(SLAssetLoader& al)
 {
-#if not defined(SL_OS_MACIOS)
+#ifndef SL_OS_MACIOS
     #ifdef SL_BUILD_WITH_MEDIAPIPE
     // Create video texture on global pointer updated in AppDemoVideo
     al.addTextureToLoad(gVideoTexture,
