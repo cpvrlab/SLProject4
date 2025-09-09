@@ -10,9 +10,11 @@
 
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <chrono>
 
 using namespace cv;
 using namespace std;
+using namespace std::chrono;
 
 int main()
 {
@@ -41,6 +43,7 @@ int main()
     ////////////////////////////////
 
     // Do the operation new_img(i,j) = contrast * img(i,j) + brightness pixel wise
+    auto start = high_resolution_clock::now();
     Mat img1 = Mat::zeros(img.size(), img.type());
     for (int y = 0; y < img.rows; y++)
     {
@@ -53,6 +56,9 @@ int main()
             }
         }
     }
+    auto end = high_resolution_clock::now();
+    duration<double> elapsed = end - start;
+    printf("Elapsed time with Method 1: %f sec.\n", elapsed.count());
     string title1 = "img1.at<Vec3b>(y,x)[c] = contrast*(img.at<Vec3b>(y,x)[c]) + brightness";
     imshow(title1, img1);
     setWindowProperty(title1, WND_PROP_TOPMOST, 1);
@@ -60,9 +66,13 @@ int main()
     ////////////////////////////////////
     // Method 2: Do it with convertTo //
     ////////////////////////////////////
-
+    
+    start = high_resolution_clock::now();
     Mat img2 = Mat::zeros(img.size(), img.type());
     img.convertTo(img2, -1, contrast, brightness);
+    end = high_resolution_clock::now();
+    elapsed = end - start;
+    printf("Elapsed time with Method 2: %f sec.\n", elapsed.count());
     string title2 = "img.convertTo(img2, -1, contrast, brightness);";
     imshow(title2, img2);
     setWindowProperty(title2, WND_PROP_TOPMOST, 1);
@@ -71,7 +81,11 @@ int main()
     // Method 3: Using overloaded operators //
     //////////////////////////////////////////
 
-    Mat    img3   = contrast * img + brightness;
+    start = high_resolution_clock::now();
+    Mat img3   = contrast * img + brightness;
+    end = high_resolution_clock::now();
+    elapsed = end - start;
+    printf("Elapsed time with Method 3: %f sec.\n", elapsed.count());
     string title3 = "img3 = contrast * img + brightness";
     imshow(title3, img3);
     setWindowProperty(title3, WND_PROP_TOPMOST, 1);
