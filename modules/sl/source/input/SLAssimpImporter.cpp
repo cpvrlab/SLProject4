@@ -58,16 +58,17 @@ typedef std::map<SLfloat, SLImportKeyframe> KeyframeMap;
 //-----------------------------------------------------------------------------
 /* Get the correct translation out of the keyframes map for a given time
 this function interpolates linearly if no value is present in the map.
-@note    this function does not wrap around to interpolate. if there is no
-         translation key to the right of the passed in time then this function will take
-         the last known value on the left!
+@note    this function does not wrap around to interpolate. If there is no
+         translation key to the right of the passed in time then this function 
+         will take the last known value on the left!
 */
 SLVec3f getTranslation(SLfloat time, const KeyframeMap& keyframes)
 {
     KeyframeMap::const_iterator it = keyframes.find(time);
     aiVector3D                  result(0, 0, 0); // return 0 position of nothing was found
 
-    // If the timestamp passed in doesnt exist then something in the loading of the kfs went wrong
+    // If the timestamp passed in doesnt exist then something in the loading 
+    // of the kfs went wrong.
     // @todo this should throw an exception and not kill the app
     assert(it != keyframes.end() && "A KeyframeMap was passed in with an illegal timestamp.");
 
@@ -129,8 +130,8 @@ SLVec3f getTranslation(SLfloat time, const KeyframeMap& keyframes)
     this function interpolates linearly if no value is present in the map.
 
     @note    this function does not wrap around to interpolate. if there is no
-             scaling key to the right of the passed in time then this function will take
-             the last known value on the left!
+             scaling key to the right of the passed in time then this function 
+             will take the last known value on the left!
 */
 SLVec3f getScaling(SLfloat time, const KeyframeMap& keyframes)
 {
@@ -313,7 +314,8 @@ SLNode* SLAssimpImporter::load(SLAnimManager&     aniMan,                 //!< R
 
     if (!scene)
     {
-        SLstring msg = "Failed to load file: " + pathAndFile + "\n" + ai.GetErrorString() + "\n";
+        SLstring msg = "Failed to load file: " + pathAndFile + "\n" + 
+                        ai.GetErrorString() + "\n";
         SL_WARN_MSG(msg.c_str());
         return nullptr;
     }
@@ -826,7 +828,7 @@ SLMaterial* SLAssimpImporter::loadMaterial(SLAssetManager* am,
 
     // get color data
     aiColor3D ambient, diffuse, specular, emissive;
-    SLfloat   shininess, refracti, reflectivity, color_transparent, transparencyFactor, opacity, roughness = -1, metalness = -1;
+    SLfloat   shininess, refracti, reflectivity, transparencyFactor, opacity, roughness = -1, metalness = -1;
     aiMat->Get(AI_MATKEY_COLOR_AMBIENT, ambient);
     aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
     aiMat->Get(AI_MATKEY_COLOR_SPECULAR, specular);
@@ -835,7 +837,6 @@ SLMaterial* SLAssimpImporter::loadMaterial(SLAssetManager* am,
     aiMat->Get(AI_MATKEY_REFRACTI, refracti);
     aiMat->Get(AI_MATKEY_REFLECTIVITY, reflectivity);
     aiMat->Get(AI_MATKEY_OPACITY, opacity);
-    aiMat->Get(AI_MATKEY_COLOR_TRANSPARENT, color_transparent);
     aiMat->Get(AI_MATKEY_TRANSPARENCYFACTOR, transparencyFactor);
     aiMat->Get(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_METALLIC_FACTOR, metalness);
     aiMat->Get(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_ROUGHNESS_FACTOR, roughness);

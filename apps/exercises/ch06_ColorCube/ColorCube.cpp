@@ -7,7 +7,6 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
  */
 
-#include "glcorearb.h"
 #include <GL/gl3w.h>    // OpenGL headers
 #include <GLFW/glfw3.h> // GLFW GUI library
 #include <SLMat4.h>     // 4x4 matrix class
