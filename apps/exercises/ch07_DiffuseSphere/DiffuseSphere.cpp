@@ -74,8 +74,6 @@ static GLint lightSpotDirVSLoc; //!< uniform location for light direction in vie
 static GLint lightDiffuseLoc;   //!< uniform location for diffuse light intensity
 static GLint matDiffuseLoc;     //!< uniform location for diffuse light reflection
 
-static const SLfloat PI = 3.14159265358979f;
-
 //-----------------------------------------------------------------------------
 /*!
  * Build the vertex and index data for a box and sends it to the GPU
