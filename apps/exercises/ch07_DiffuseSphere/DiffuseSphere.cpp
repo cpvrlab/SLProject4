@@ -2,7 +2,7 @@
  * \file      DiffuseSphere.cpp
  * \details   Core profile OpenGL application with diffuse lighted sphere with
  *            GLFW as the OS GUI interface (http://www.glfw.org/).
- * \date      December 2015 (HS15)
+ * \date      December 2025 (HS25)
  * \authors   Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0
  */
@@ -12,6 +12,7 @@
 #include <SLMat4.h>     // 4x4 matrix class
 #include <SLVec3.h>     // 3D vector class
 #include <glUtils.h>    // Basics for OpenGL shaders, buffers & textures
+#include <Utils.h>      // Provides math constants (PI, HALFPI) and string utils
 
 //-----------------------------------------------------------------------------
 //! Struct definition for vertex attributes position and normal
