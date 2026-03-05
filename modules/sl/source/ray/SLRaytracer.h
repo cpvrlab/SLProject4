@@ -5,7 +5,7 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #ifndef SLRAYTRACER_H
 #define SLRAYTRACER_H
@@ -51,9 +51,10 @@ SLRaytracer implements the methods render, eyeToPixel, trace and shade for
 classic Whitted style Ray Tracing. This class is a friend class of SLScene and
 can access via the pointer _s all members of SLScene. The scene traversal for
 the ray intersection tests is done within the intersection method of all nodes.
+The result is written into an image of an SLGLTexture and that then is rendered
+with OpenGL in a orthographic projection.
 */
 class SLRaytracer : public SLGLTexture
-  , public SLEventHandler
 {
 public:
     SLRaytracer();
@@ -133,7 +134,7 @@ public:
 
 protected:
     function<void(bool, SLuint)> renderSlicesAsync;
-    function<void(bool, SLuint)> sampleAAPixelsAsync; 
+    function<void(bool, SLuint)> sampleAAPixelsAsync;
 
     SLSceneView* _sv;               //!< Parent sceneview
     SLRTState    _state;            //!< RT state;
@@ -147,14 +148,14 @@ protected:
     SLfloat      _renderSec;        //!< Rendering time in seconds
     AvgFloat     _raysPerMS;        //!< Averaged rays per ms
 
-    SLfloat  _pxSize;               //!< Pixel size
-    SLVec3f  _eye;                  //!< Camera position
-    SLVec3f  _la, _lu, _lr;         //!< Camera lookat, lookup, lookright
-    SLVec3f  _bl;                   //!< Bottom left vector
-    SLint    _nextLine;             //!< next line index to render RT in a thread
-    SLVPixel _aaPixels;             //!< Vector for antialiasing pixels
-    SLfloat  _gamma;                //!< gamma correction value
-    SLfloat  _oneOverGamma;         //!< one over gamma correction value
+    SLfloat  _pxSize;       //!< Pixel size
+    SLVec3f  _eye;          //!< Camera position
+    SLVec3f  _la, _lu, _lr; //!< Camera lookat, lookup, lookright
+    SLVec3f  _bl;           //!< Bottom left vector
+    SLint    _nextLine;     //!< next line index to render RT in a thread
+    SLVPixel _aaPixels;     //!< Vector for antialiasing pixels
+    SLfloat  _gamma;        //!< gamma correction value
+    SLfloat  _oneOverGamma; //!< one over gamma correction value
 
     // variables for distributed ray tracing
     SLfloat _aaThreshold; //!< threshold for anti aliasing

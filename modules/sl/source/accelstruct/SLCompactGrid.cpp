@@ -140,7 +140,7 @@ void SLCompactGrid::build(SLVec3f minV, SLVec3f maxV)
         return;
     }
 
-    float f        = cbrtf(DENSITY * _numTriangles / volume);
+    float f        = cbrtf(DENSITY * (float)_numTriangles / volume);
     _voxelSize.x   = size.x / ceil(size.x * f);
     _voxelSize.y   = size.y / ceil(size.y * f);
     _voxelSize.z   = size.z / ceil(size.z * f);

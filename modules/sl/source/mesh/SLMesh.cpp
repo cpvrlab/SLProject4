@@ -5,7 +5,7 @@
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #include <SLCompactGrid.h>
 #include <SLNode.h>
@@ -38,10 +38,10 @@ using std::set;
  * @details Meshes can be used in multiple nodes (SLNode). Meshes can belong
  * therefore to the global assets such as meshes (SLMesh), materials
  * (SLMaterial), textures (SLGLTexture) and shader programs (SLGLProgram).\n
- * It is important that during instantiation NO OpenGL functions (gl*) 
- * get called because this constructor will be most probably called in a parallel 
- * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble 
- * function. All objects that get rendered have to do their OpenGL initialization 
+ * It is important that during instantiation NO OpenGL functions (gl*)
+ * get called because this constructor will be most probably called in a parallel
+ * thread from within an SLScene::registerAssetsToLoad or SLScene::assemble
+ * function. All objects that get rendered have to do their OpenGL initialization
  * when they are used the first time during rendering in the main thread.
  * @param assetMgr Pointer to a global asset manager. If passed the asset
  * manager is the owner of the instance and will do the deallocation. If a
