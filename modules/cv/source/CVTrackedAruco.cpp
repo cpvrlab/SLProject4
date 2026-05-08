@@ -5,7 +5,7 @@
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
  * \authors   Marcus Hudritsch, Michael Goettlicher, Marino von Wattenwyl
  * \copyright http://opensource.org/licenses/GPL-3.0
-*/
+ */
 
 /*
 The OpenCV library version 3.4 or above with extra module must be present.
@@ -101,7 +101,8 @@ bool CVTrackedAruco::trackAll(CVMat          imageGray,
                              _params.arucoParams,
                              rejected);
 #else
-    cv::aruco::ArucoDetector detector(_params.dictionary, _params.arucoParams);
+    cv::aruco::ArucoDetector detector(_params.dictionary,
+                                      _params.arucoParams);
     detector.detectMarkers(croppedImageGray,
                            corners,
                            arucoIDs,
@@ -175,9 +176,10 @@ into an image.
 @param numMarkersY NO. of markers in y-direction
 @param markerEdgeM Length of one marker in meters
 @param markerSepaM Separation between markers in meters
-@param imgName Image filename inklusive format extension
+@param imgName Image filename inclusive format extension
 @param dpi Dots per inch (default 256)
-@param showImage Shows image in window (default false)
+@param showImage Shows image in window (
+default false)
 */
 void CVTrackedAruco::drawArucoMarkerBoard(int           dictionaryId,
                                           int           numMarkersX,
