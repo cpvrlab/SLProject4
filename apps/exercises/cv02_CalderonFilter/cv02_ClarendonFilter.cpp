@@ -1,6 +1,6 @@
 /**
- * \file      cv02_CalderonFilter.cpp
- * \details   Minimal OpenCV app for the Instagram Calderon filter
+ * \file      cv02_ClarendonFilter.cpp
+ * \details   Minimal OpenCV app for the Instagram Clarendon filter
  * \copyright Based on Satya Mallick's Tutorial at https://www.learnopencv.com
  * \date      Spring 2018
  */
