@@ -36,6 +36,7 @@ data/opencv/*
 data/videos/*
 data/screenshots/*
 data/slam-maps/*
+docs/script/*
 externals/g2o/BUILD*
 externals/g2o/INSTALL*
 externals/g2o/bin
