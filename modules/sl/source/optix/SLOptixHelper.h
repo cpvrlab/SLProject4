@@ -1,12 +1,22 @@
 /**
  * \file      SLOptixHelper.h
- * \authors   Nic Dorner
+ * \brief     Error checking macros and helpers for the OptiX ray tracer
+ * \details   Everything in this header is compiled only when SL_HAS_OPTIX is
+ *            defined, which the build sets when SL_BUILD_WITH_OPTIX is ON
+ *            (OFF by default). SL_HAS_OPTIX is not in the Doxyfile PREDEFINED
+ *            list either, so none of these symbols appear in the generated
+ *            documentation — read the header itself.
+ *
+ *            The OPTIX_CHECK, OPTIX_CHECK_LOG, CUDA_CHECK and CUDA_SYNC_CHECK
+ *            macros wrap a call, compare its result against the success code
+ *            and throw an SLOptixException carrying the file and line on
+ *            failure. They are adapted from NVIDIA's OptiX sutil samples.
  * \date      October 2019
  * \authors   Nic Dorner
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
-*/
+ */
 
 #ifdef SL_HAS_OPTIX
 #    ifndef SLOPTIXHELPER_H
@@ -96,20 +106,26 @@ using namespace std::chrono;
     }
 //------------------------------------------------------------------------------
 // clang-format on
+//! Exception thrown by the OPTIX_CHECK and CUDA_CHECK macros on failure
 class SLOptixException : public std::runtime_error
 {
 public:
+    //! Constructs the exception from a ready-made message
     SLOptixException(const char* msg)
       : std::runtime_error(msg)
     {
     }
 
+    //! Constructs the exception from an OptiX result code and a message
+    /*! The result code is expanded to its OptiX error name and prefixed to
+    the message, so the thrown what() reads "ERROR_NAME: message". */
     SLOptixException(OptixResult res, const char* msg)
       : std::runtime_error(createMessage(res, msg).c_str())
     {
     }
 
 private:
+    //! Prefixes msg with the OptiX error name belonging to res
     string createMessage(OptixResult res, const char* msg)
     {
         std::ostringstream os;
@@ -118,13 +134,19 @@ private:
     }
 };
 //------------------------------------------------------------------------------
-// Get PTX string from File
+//! Reads a compiled PTX module from file, for handing to the OptiX pipeline
+/*! \param filename Name of the CUDA C input file whose PTX is read
+    \param log      Optional pointer to a compiler log string; no output when
+                    *log is NULL
+    \return The PTX source as a string */
 string getPtxStringFromFile(
   string       filename,    // Cuda C input file name
   const char** log = NULL); // (Optional) pointer to compiler log string. If *log == NULL there is no output.
 //------------------------------------------------------------------------------
+//! Converts an SLVec4f into the CUDA float4 the device code expects
 float4 make_float4(const SLVec4f& f);
 //------------------------------------------------------------------------------
+//! Converts an SLVec3f into the CUDA float3 the device code expects
 float3 make_float3(const SLVec3f& f);
 //------------------------------------------------------------------------------
 #    endif // SLOPTIXHELPER_H

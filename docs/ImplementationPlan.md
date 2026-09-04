@@ -104,21 +104,51 @@ Fixed:
 - Two typos in passing: "redered" → "rendered", "for the the scenegraph" → "for
   the scenegraph".
 
-### 6. Document the SL headers that have no Doxygen at all — **open**
-Nine headers in `modules/sl/source` carry neither a `//!` brief nor a `/*! */`
-block, so they appear in the generated docs as bare, unexplained symbols.
-Coverage elsewhere is good — 1770 `//!` briefs across 189 files, and 73 of 104
-headers carry a file or class brief — which makes these stand out:
+### 6. Document the SL headers that have no Doxygen at all — **done**
+Coverage in `modules/sl/source` is now 104 of 104 headers.
 
-- `SL.h`
-- `mesh/SLSphere.h`
-- `mesh/SLCircle.h`
-- `input/SLAssimpIOSystem.h`
-- `input/SLInputEventInterface.h`
-- `optix/SLOptixHelper.h`
-- `gl/SLGLFbo.h`
-- `gl/SLGLOVRWorkaround.h`
-- `node/SLHorizonNode.h`
+The original list of nine was wrong. It came from a grep for `//!` and `/*!`
+only, which missed the `/** @brief */` style also used in this codebase, and a
+second bug — a `///[^/]` pattern that matched separator rules like `//////`
+because `[^/]` also matches the newline. Three of the nine were already
+documented and needed nothing: `mesh/SLSphere.h`, `mesh/SLCircle.h` and
+`gl/SLGLOVRWorkaround.h`. The six that genuinely lacked any symbol
+documentation were `SL.h`, `gl/SLGLFbo.h`, `input/SLAssimpIOSystem.h`,
+`input/SLInputEventInterface.h`, `node/SLHorizonNode.h` and
+`optix/SLOptixHelper.h`.
+
+Each change was verified to be comment-only by stripping comments from the old
+and new versions and diffing the result, and the `sl` library was rebuilt.
+
+Doxygen configuration shaped what was worth writing: `SKIP_FUNCTION_MACROS` is
+on, so function-like macros such as `SL_LOG` and `SL_GETBIT` never render, and
+the `SL_OS_*` defines sit in conditional branches the documentation build does
+not take. For `SL.h` the effort therefore went into the file-level block and
+the typedefs, which do render.
+
+Documentation defects fixed in passing:
+- `input/SLAssimpIOSystem.h` declared `\file SLAssimpIOStream.h`, the wrong
+  filename, which attaches its documentation to a file that does not exist.
+- `node/SLHorizonNode.h` and `optix/SLOptixHelper.h` each carried `\authors`
+  twice.
+
+Code defects found while reading, documented in place but deliberately not
+changed, since they are code rather than documentation:
+- `SLGLFbo::attachment` is declared but never assigned or read anywhere, so it
+  is dead and uninitialised. Marked `\deprecated`.
+- `gl/SLGLFbo.h` is not self-contained: it uses `GL_NEAREST`, `GL_RGB16F` and
+  friends while including only `<SL.h>`. It compiles only because
+  `SLGLFbo.cpp` includes `SLGLState.h` first.
+- `UNUSED_PARAMETER` in `SL.h` names its parameter `r` but casts `x`, so any
+  use fails to compile. It has no callers.
+- `SL_TOGBIT` expands to a bare `if`/`else` and mis-binds inside an unbraced
+  `if`.
+
+Open sub-item: `optix/SLOptixHelper.h` lives inside `#ifdef SL_HAS_OPTIX`,
+which is not in the Doxyfile `PREDEFINED` list, so none of it reaches the
+documentation site. Adding it there would publish the OptiX classes. To be
+decided together with the OptiX build itself, which needs a Windows/NVIDIA
+machine to verify.
 
 ### 7. Finish the ClarendonFilter rename — **done**
 An earlier commit renamed the exercise source and its `CMakeLists.txt` from the
