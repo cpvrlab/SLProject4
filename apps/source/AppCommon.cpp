@@ -41,11 +41,11 @@ SLstring                 AppCommon::name    = "SLProjectApp";
 SLstring                 AppCommon::appTag  = "SLProject";
 SLstring                 AppCommon::version = "4.3.000"; // 4.9.2026
 
-//! ASCII Label: https://patorjk.com/software/taag/#p=display&f=Small%20Slant&t=SLProject%204.2
+//! ASCII Label: https://patorjk.com/software/taag/#p=display&f=Small%20Slant&t=SLProject%204.3
 SLstring AppCommon::asciiLabel = R"(
-   ______   ___             _         __    ____   ___ 
-  / __/ /  / _ \_______    (_)__ ____/ /_  / / /  |_  |
- _\ \/ /__/ ___/ __/ _ \  / / -_) __/ __/ /_  _/ / __/ 
+   ______   ___             _         __    ____   ____
+  / __/ /  / _ \_______    (_)__ ____/ /_  / / /  |_  /
+ _\ \/ /__/ ___/ __/ _ \  / / -_) __/ __/ /_  _/ _/_ < 
 /___/____/_/  /_/  \___/_/ /\__/\__/\__/   /_/(_)____/ 
                       |___/  
 )";
