@@ -954,11 +954,12 @@ INPUT                  = ../modules/sl/source \
                          ../modules/wai/source \
                          ../modules/utils/source \
                          ../modules/math/source \
+                         ../modules/sens/source \
                          ../apps/app_demo \
                          ../apps/app_node \
                          ../apps/app_minimal \
                          ../apps/source \
-                         ../apps/app_demo_webgpu \
+                         ../apps/app_webgpu \
                          pages/SLProject.md \
                          pages/Introduction.md \
                          pages/AppFramework.md \

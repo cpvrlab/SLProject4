@@ -99,7 +99,7 @@ int main()
     imshow(title1, image);
     setWindowProperty(title1, WND_PROP_TOPMOST, 1);
 
-    string title2 = "Calderon Image";
+    string title2 = "Clarendon Image";
     imshow(title2, output);
     setWindowProperty(title2, WND_PROP_TOPMOST, 1);
 
