@@ -31,7 +31,7 @@ There are 5 code sections in SLProject:
 The following class diagram gives you an overview of the major classes with its important attributes and methods:
 
 - The **brown boxes** on top contain the application code that depend on the OS and do the GUI, the scene assembly and the video processing.
-- The **light blue classes** are the central classes with the top-level instances of SLAssetManager and SLInputManager. The core classes for the scene are SLScene and SLSceneView. The UI is redered with SLImGui.
+- The **light blue classes** are the central classes with the top-level instances of SLAssetManager and SLInputManager. The core classes for the scene are SLScene and SLSceneView. The UI is rendered with SLImGui.
 - The **dark blue classes** are the alternative renderers for ray tracing and path tracing.
 - The **yellow classes** define the materials that are responsible for the visual appearances of the mesh objects.
 - The **green classes** build the scene graph that defines the spacial structure of the visible objects.
@@ -39,7 +39,6 @@ The following class diagram gives you an overview of the major classes with its 
 - The **violet classes** encapsulate all OpenGL vertex array object and buffer objects.
 - The **red classes** build the animation framework.
 - The **peach classes** to the right encapsulate the video, image and AR tracking functionality using OpenCV. CV classes are independent from all SL classes. Only SLGLTexture uses CVImage for its texture images.
-- The **red classes** build the animation framework.
 - The **white classes** are low level classes for the math. Some of them are within the namespace Utils.
 - The **gray boxes** at the bottom are the external libraries that are used within the frame work.
 
@@ -47,7 +46,7 @@ The following class diagram gives you an overview of the major classes with its 
 
 \section app Application Code
 
-The application's code (grey boxes at the top of the diagram) contains the code for the operating system, the scene definition with SLProject library (SL), the video processing using CV-classes and the UI with ImGUI. In all cases we have the most outer shell of the application that handles the window and the OpenGL context creation and passes the events to a thin C-function interface before it is handled by the C++-framework in the library lib-SLProject.
+The application's code (brown boxes at the top of the diagram) contains the code for the operating system, the scene definition with SLProject library (SL), the video processing using CV-classes and the UI with ImGUI. In all cases we have the most outer shell of the application that handles the window and the OpenGL context creation and passes the events to a thin C-function interface before it is handled by the C++-framework in the library lib-SLProject.
 
 The following platforms are supported and applications are provided for demonstration:
 
@@ -81,7 +80,7 @@ The light blue classes form the center of the SLProject framework:
 
 \section node Scenegraph Classes
 
-SLNode is the major building block for the the scenegraph structure (green classes)
+SLNode is the major building block for the scenegraph structure (green classes)
 and can have 0-N children nodes and 0-N triangle meshes.
 A node can be transformed (translated, rotated and scaled) in 3D-space.
 
@@ -159,7 +158,7 @@ The red animation classes provide the functionality for simple node animations o
 
 \section imageprocessing Image and Video Processing Classes
 
-The orange classes provide the functionality for video and image processing using the OpenCV framework. 
+The peach classes provide the functionality for video and image processing using the OpenCV framework. 
 The SLProject framework can now process the images from attached live video cameras. This works via OpenCV 
 on desktop OS as well as on iOS and Android. The live video image is constantly fed into an OpenGL texture 
 that can be used as a texture on an objects material or as the scenes background. With the live video in the background you can create augmented reality (AR) applications. Examples can be found in the demo application under Load Scene > Using Video > Track Chessboard or Track AruCo. 
@@ -175,5 +174,5 @@ that can be used as a texture on an objects material or as the scenes background
   In addition we include the enhanced ORB feature detector developed by [Raul Mur](https://github.com/raulmur/ORB_SLAM2).
 
 Authors: marcus.hudritsch@bfh.ch \
-Date: Juli 2024 \
-Copyright (c): 2002-2024 Marcus Hudritsch, Kirchrain 18, 2572 Sutz, Switzerland
+Date: September 2026 \
+Copyright (c): 2002-2026 Marcus Hudritsch, Kirchrain 18, 2572 Sutz, Switzerland

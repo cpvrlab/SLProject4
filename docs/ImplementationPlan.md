@@ -72,13 +72,37 @@ still serves `data.zip` (594 MB) and the prebuilt libraries over an HTTP → HTT
 redirect, and the default build depends on it. Only the documentation that used
 to live there has moved to GitHub Pages.
 
-### 5. Correct the text errors in `Introduction.md` — **open**
-- The bullet "The **red classes** build the animation framework" appears twice
-  in the class-diagram legend.
-- The CV classes are called *peach* in the legend but *orange* in their own
-  section heading; pick one.
-- The page footers still read "Juli 2024" / "June 2024"; refresh them, or drop
-  the dates so they cannot go stale again.
+### 5. Correct the text errors in `Introduction.md` — **done**
+The colour legend was checked against the actual diagram rather than corrected
+by eye: each group's fill was read out of `docs/images/SLProject_UML_min.svg`
+by locating the class name and taking the enclosing box fill. The legend at the
+top of the page proved correct in every case, so the prose was aligned to it.
+
+| Group | Fill in the SVG | Legend term |
+|---|---|---|
+| App code (`AppCommon`) | `#f6d678` | brown |
+| Central (`SLAssetManager`) | `#d8f2ff` | light blue |
+| Renderers (`SLRaytracer`) | `#82abff` | dark blue |
+| Materials (`SLMaterial`) | `#ffff91` | yellow |
+| Scene graph (`SLNode`) | `#d1ffa3` | green |
+| Mesh (`SLMesh`) | `#ffd8ff` | pink |
+| Vertex arrays (`SLGLVertexArray`) | `#d6adff` | violet |
+| Animation (`SLAnimation`) | `#ffd8d8` | red |
+| CV (`CVCapture`) | `#ffd6ad` | peach |
+
+Fixed:
+- Removed the duplicated "The **red classes** build the animation framework"
+  bullet from the legend.
+- The CV section called them *orange* while the legend says *peach*; both
+  describe `#ffd6ad`, so the section now follows the legend.
+- The Application Code section called the app boxes *grey*, which collides with
+  the grey used for the external libraries at the bottom. `#f6d678` is the
+  brown of the legend, so that is what it now says.
+- Refreshed the footer to September 2026 and the copyright to 2002-2026. The
+  same stale footer on the mainpage `SLProject.md` (June 2024) was refreshed
+  too, since it is the identical defect on the site's front page.
+- Two typos in passing: "redered" → "rendered", "for the the scenegraph" → "for
+  the scenegraph".
 
 ### 6. Document the SL headers that have no Doxygen at all — **open**
 Nine headers in `modules/sl/source` carry neither a `//!` brief nor a `/*! */`
