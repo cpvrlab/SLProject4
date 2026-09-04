@@ -45,16 +45,32 @@ the steps for generating the documentation locally were written down: a bare
 `doxygen-awesome-css` clone and the images have to be copied into `html/`
 afterwards. That clone is now git-ignored.
 
-### 4. Bring build instructions into the repository — **open**
-Build instructions exist only in the GitHub wiki, so a downloaded ZIP or a
-shallow clone contains no path from source to binary.
-- Add a `BUILD.md` at the repository root covering the prerequisites and the
-  CMake invocation for each platform.
-- Keep the wiki as the long-form reference and link to it, rather than
-  duplicating it wholesale.
-- Mention the `SL_DOWNLOAD_DATA` / `SL_DOWNLOAD_PREBUILTS` options explicitly:
-  configuring with them `OFF` on a clean tree produces confusing
-  missing-header errors rather than a clear message.
+### 4. Bring build instructions into the repository — **done**
+Build instructions existed only in the GitHub wiki, so a downloaded ZIP or a
+shallow clone contained no path from source to binary. Added `BUILD.md` at the
+repository root and linked it from `README.md`.
+
+It is written from the repository rather than copied from the wiki, because
+duplicating eleven pages guarantees the two drift apart. Facts were verified
+against the source, which caught several stale wiki claims that were therefore
+not carried over:
+- The macOS page states CMake ≥ 3.3; the top-level `CMakeLists.txt` requires
+  **3.15**.
+- Many wiki pages link to `cpvrlab/SLProject` (the pre-4 repository name).
+- The Emscripten page links to the retired `pallas.ti.bfh.ch` docs host, which
+  point 3 replaced with `cpvrlab.github.io/SLProject4`.
+- The Emscripten page says to install the *latest* emsdk; CI pins **3.1.60**,
+  which is what `BUILD.md` documents.
+
+`BUILD.md` adds material the wiki does not have: the full `SL_*` option table
+with defaults and the per-platform overrides applied in `CMakeLists.txt`, and a
+troubleshooting section covering the confusing missing-header failure that
+`-DSL_DOWNLOAD_PREBUILTS=OFF` produces on a clean tree.
+
+Note for future reference: `pallas.ti.bfh.ch` is **not** retired as a host. It
+still serves `data.zip` (594 MB) and the prebuilt libraries over an HTTP → HTTPS
+redirect, and the default build depends on it. Only the documentation that used
+to live there has moved to GitHub Pages.
 
 ### 5. Correct the text errors in `Introduction.md` — **open**
 - The bullet "The **red classes** build the animation framework" appears twice

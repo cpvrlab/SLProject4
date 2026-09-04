@@ -27,5 +27,5 @@ For people with an aversion to the command line, a GIT GUI tool, such as the [Gi
 git checkout develop
 ```
 
-For detailed build instructions see the [SLProject4 wiki](https://github.com/cpvrlab/SLProject4/wiki).
+For build instructions see [BUILD.md](BUILD.md), which covers all supported platforms from clone to running binary. The [SLProject4 wiki](https://github.com/cpvrlab/SLProject4/wiki) has additional IDE-specific guides (CLion, QtCreator, VS Code, Visual Studio).
 For detailed framework information see the [HTML documentation](https://cpvrlab.github.io/SLProject4/).
