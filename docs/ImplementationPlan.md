@@ -193,8 +193,3 @@ Follow-ups still open from this point:
   on the deprecated Node 16; only `deploy-pages.yml` is on v4.
 - Nothing has compiled on macOS since October 2025, so genuine breakage may be
   hiding behind the queue timeout. The first green `macos-15` run is the proof.
-
-### Version bookkeeping
-The ASCII banner in `AppCommon.cpp` still reads *SLProject 4.2* and has to be
-regenerated for 4.3 — it is figlet "Small Slant" art, reproducible at the URL in
-the comment above it.
