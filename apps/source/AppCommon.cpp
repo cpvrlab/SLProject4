@@ -39,7 +39,7 @@ SLDeviceLocation         AppCommon::devLoc;
 std::optional<SLSceneID> AppCommon::sceneToLoad;
 SLstring                 AppCommon::name    = "SLProjectApp";
 SLstring                 AppCommon::appTag  = "SLProject";
-SLstring                 AppCommon::version = "4.2.001"; // 7.10.2024
+SLstring                 AppCommon::version = "4.3.000"; // 4.9.2026
 
 //! ASCII Label: https://patorjk.com/software/taag/#p=display&f=Small%20Slant&t=SLProject%204.2
 SLstring AppCommon::asciiLabel = R"(
