@@ -4,9 +4,16 @@ This plan tracks the work agreed per release. Each version section lists its
 points with the current state, so an open item can be picked up without
 re-deriving the context behind it.
 
+## Versioning
+
 The version string lives in `apps/source/AppCommon.cpp` (`AppCommon::version`)
 and is the single source of truth — it is what the **About** dialog displays.
-Every other version site is synced to it by hand:
+
+**It is kept in accordance with this plan**: the major and minor components name
+the release section below, and the patch component is the number of points that
+section contains. Version 4.3.008 therefore means the eight points of the
+*Version 4.3* section. Adding a ninth point means bumping the version to
+4.3.009 and syncing every site in the table below at the same time.
 
 | Site | Purpose |
 |---|---|
@@ -16,9 +23,13 @@ Every other version site is synced to it by hand:
 | `apps/.../android/example_project/app/build.gradle` | Android `versionName` |
 | `apps/.../android/example_project/.../AndroidManifest.xml` | Android `versionName` |
 
+The ASCII banner in `AppCommon.cpp` carries the major and minor version too and
+has to be regenerated on a minor bump; the generator URL is in the comment
+above it.
+
 ---
 
-## **Version 4.3.000**
+## **Version 4.3.008**
 
 Documentation, packaging and CI clean-up following a full review of the
 repository. Points 1–7 come from that review; point 8 was found while
