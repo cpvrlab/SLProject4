@@ -50,7 +50,7 @@ void AppDemoSceneRTMuttenzerBox::registerAssetsToLoad(SLAssetLoader& al)
 void AppDemoSceneRTMuttenzerBox::assemble(SLAssetManager* am,
                                           SLSceneView*    sv)
 {
-    SLCol4f lightEmisRGB(7.0f, 7.0f, 7.0f);
+    SLCol4f lightEmisRGB(10.0f, 10.0f, 10.0f);
     SLCol4f grayRGB(0.75f, 0.75f, 0.75f);
     SLCol4f redRGB(0.75f, 0.25f, 0.25f);
     SLCol4f blueRGB(0.25f, 0.25f, 0.75f);
