@@ -38,7 +38,7 @@ Documentation, packaging and CI clean-up following a full review of the
 repository, plus a path tracer correctness pass. Points 1–7 come from that
 review; point 8 was found while investigating the two red build badges; points
 9–15 are unrelated to it and come from investigating the fireflies that the
-path tracer leaves in the Muttenzer Box. Points 12 to 15 are still open.
+path tracer leaves in the Muttenzer Box. Points 13 to 15 are still open.
 
 ### ✅ 1. Add the missing LICENSE file
 Every source-file header and the Doxygen mainpage assert GPL-3.0, but the
@@ -346,26 +346,63 @@ all five measured regions, at both light settings.
 
 The work this point leaves open is carried as points 12 to 15.
 
-### 12. Multiple importance sampling between light and BSDF sampling
-The speckle that survives at 100 spp is the caustic paths: a diffuse bounce
-into the mirror or the glass sphere and from there to the light. Next event
-estimation cannot reach them, because the specular bounce in the middle has no
-direction that can be aimed at the light. They arrive instead through BSDF
-sampling, with a value of `Le` (currently 10) against a background of about
-0.2, so each one is an outlier of roughly fifty times the pixel value.
+### ✅ 12. Multiple Importance Sampling (MIS) between light and BSDF sampling
+`shade()` samples the light directly, and the cosine weighted scattering in
+`trace()` reaches it by chance. Both are unbiased estimates of the same paths,
+so the renderer has to do something about the overlap. It used to do it with
+the boolean `em` argument of `trace()`: after a diffuse bounce a light hit
+counted zero, after a specular bounce it counted in full. Correct, but crude —
+it discards every light hit the scattering finds, however good a sample it was.
 
-Point 11 gave `SLPathtracer::shade` a well defined pdf, which is the
-prerequisite: MIS needs both strategies to have one. Weighting them with the
-power heuristic makes the light hits and the NEE result two weighted estimates
-of the same quantity instead of two unrelated ones, and the tail collapses. The
-`em` flag in `trace()` — currently a hard on/off that decides whether a path is
-allowed to see the light at all — is replaced by the MIS weight.
+`em` is replaced by the solid angle density with which the previous vertex
+generated the ray, or by the sentinel `PDF_NO_MIS` for the primary ray and for
+specular and transmissive bounces, which next event estimation cannot generate
+at all. Where both strategies can produce a path, each estimate is weighted
+with the power heuristic (beta = 2) so that the path is counted exactly once.
 
-The ceiling would gain most. It sits at `pT = 1.19` with the light plane at
-1.18 and the light facing down, so `cosLight <= 0` and it receives no direct
-light at all: every one of its samples is a multi-bounce path. It is the
-noisiest region of the image, at roughly double the residual of every other
-surface.
+Verified against a quadrature of the same integral, at the Muttenzer floor
+centre:
+
+| estimator | result |
+|---|---|
+| ground truth (quadrature) | 0.252686 |
+| light sampling only | 0.252686 |
+| BSDF sampling only | 0.254314 |
+| both, unweighted | 0.505435 |
+| both, MIS weighted | **0.252688** |
+
+**What it does not do — contrary to what this point claimed before it was
+implemented — is remove the fireflies.** Those come from the path
+wall → diffuse scatter → mirror or glass sphere → light. The middle vertex is
+specular, so there is no light sampling strategy there to weight against and
+the MIS weight is necessarily 1: that path is untouched. Written from the light
+side it is L-S-D-E, an ordinary caustic, and no amount of importance sampling
+from the eye lets a unidirectional path tracer sample it well. The practical
+lever against it is point 15; the principled one is a caustic capable method
+such as photon mapping.
+
+What MIS does buy is robustness where a surface is close to a large light, the
+regime in which uniform area sampling has high variance and the scattering is
+the better strategy. Standard deviation of the direct light estimate at a point
+below the 1.0 x 0.65 light:
+
+| distance to the light | light sampling only | MIS |
+|---|---|---|
+| 2.43 (the floor centre) | 0.007 | 0.007 |
+| 1.00 | 0.174 | 0.181 |
+| 0.40 | 2.242 | 1.772 |
+| 0.15 | 11.280 | 3.062 |
+
+Everything in the Muttenzer Box is a unit or more from the light, so it changes
+nothing there, and two renders confirm that: at 100 spp the mean linear
+radiance of the five measured regions moves by at most 0.16% with no consistent
+sign, and the noise is unchanged (far wall MAD 1.70 either way). That the mean
+does not move is the result that matters, since MIS is only correct if it is
+unbiased.
+
+It is kept because it costs nothing — the scatter ray is traced either way, and
+samples that used to be discarded now contribute their weighted share — and
+because any scene with a large or nearby area light needs it.
 
 ### 13. Replace the fixed maximum depth with Russian roulette
 **Russian roulette is not the same thing as Monte Carlo**, and the two are easy
@@ -467,5 +504,6 @@ menu next to the sample count, so that the bias is a choice rather than a
 surprise. Two constraints:
 - It has to clamp the **sample**, never the running mean. Clamping the mean is
   the defect that point 9 removed, and it both froze fireflies and ate energy.
-- It should be revisited once point 12 lands, since MIS may make it unnecessary
-  at usable sample counts.
+- It is now the main lever against the remaining fireflies. Point 12 was
+  expected to reduce them and measurably does not, so nothing else on this list
+  will make the clamp unnecessary short of a caustic capable method.

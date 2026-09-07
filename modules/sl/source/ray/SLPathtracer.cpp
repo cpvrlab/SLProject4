@@ -21,6 +21,54 @@
 extern SLfloat rnd01();
 
 //-----------------------------------------------------------------------------
+//! Sentinel pdf for SLPathtracer::trace
+/*! Handed down for rays that next event estimation cannot generate: the
+primary ray, and every specular or transmissive bounce. A light source reached
+by such a ray contributes its full emission, because shade() never produced a
+competing estimate of the same path. */
+static const SLfloat PDF_NO_MIS = -1.0f;
+//-----------------------------------------------------------------------------
+//! Power heuristic (beta = 2) weight of the strategy whose density is pdfThis
+/*! Two strategies that can both generate the same path each return an unbiased
+estimate of it, so simply adding them would count the path twice. Weighting
+them with w(pdfThis) + w(pdfOther) = 1 counts it exactly once, and the power
+heuristic puts nearly all of that weight on whichever strategy had the higher
+density for this particular path, which is the one with the lower variance
+here. Written as 1/(1+r^2) rather than a^2/(a^2+b^2) so that a very large
+density cannot overflow. */
+static SLfloat misWeight(SLfloat pdfThis, SLfloat pdfOther)
+{
+    if (pdfThis <= 0.0f) return 0.0f;
+
+    SLfloat ratio = pdfOther / pdfThis;
+    return 1.0f / (1.0f + ratio * ratio);
+}
+//-----------------------------------------------------------------------------
+//! Solid angle density with which shade() would have sampled this light hit
+/*! Returns 0 if the hit surface is not a light that shade() samples over its
+area. shade() draws a point uniformly on the rectangle, so the density over the
+area is 1/area; the conversion to a density over solid angle, as seen from the
+shaded point, is the usual dist^2 / (cosLight * area). */
+static SLfloat lightPdfMC(SLRay* ray)
+{
+    if (!ray->hitNode || typeid(*ray->hitNode) != typeid(SLLightRect))
+        return 0.0f;
+
+    auto* rect = (SLLightRect*)ray->hitNode;
+    if (!rect->isOn()) return 0.0f;
+
+    // SLRay::setDir does not normalise, so do not assume a unit direction
+    SLVec3f dir(ray->dir);
+    dir.normalize();
+
+    // spotDirWS is the normal of the rectangle, as in shade()
+    SLfloat cosLight = -dir.dot(rect->spotDirWS());
+    if (cosLight <= 0.0f) return 0.0f;
+
+    return (ray->length * ray->length) / (cosLight * rect->area());
+}
+
+//-----------------------------------------------------------------------------
 SLPathtracer::SLPathtracer()
 {
     name("PathTracer");
@@ -145,7 +193,7 @@ void SLPathtracer::renderSlices(const bool isMainThread,
                               &primaryRay);
 
                 ///////////////////////////////////
-                color += trace(&primaryRay, false);
+                color += trace(&primaryRay, PDF_NO_MIS);
                 ///////////////////////////////////
 
                 // Add the raw linear radiance of this sample to the running sum.
@@ -193,7 +241,7 @@ void SLPathtracer::renderSlices(const bool isMainThread,
 /*!
 Recursively traces ray in scene.
 */
-SLCol4f SLPathtracer::trace(SLRay* ray, SLbool em)
+SLCol4f SLPathtracer::trace(SLRay* ray, SLfloat bsdfPdf)
 {
     // The radiance gathered at this hit point. It must start at BLACK. It used
     // to start at ray->backgroundColor, which added the background to EVERY
@@ -237,13 +285,39 @@ SLCol4f SLPathtracer::trace(SLRay* ray, SLbool em)
     SLCol4f objectEmission = mat->emissive();
     SLfloat maxEmission    = objectEmission.maxXYZ();
 
-    // stop recursion if light source is hit
+    // End of recursion: a light source is hit
     if (maxEmission > 0)
     {
-        if (ray->depth == 1)
+        // The primary ray, or a specular or transmissive bounce. shade() only
+        // ever samples from a diffuse surface, so it cannot have produced a
+        // competing estimate of this path and the emission counts in full.
+        // This also covers the camera looking straight at the light.
+        if (bsdfPdf < 0.0f)
             return mat->emissive() * absorption;
-        else
-            return mat->emissive() * absorption * em;
+
+        SLfloat lightPdf = lightPdfMC(ray);
+
+        if (lightPdf <= 0.0f)
+        {
+            // Emissive, but not a light that shade() samples over an area. If
+            // it is a light node at all, shade() samples it as a point or
+            // directional delta light, whose direction the scattering can
+            // never reproduce, so counting it here as well would count it
+            // twice. SLLightSpot::hitRec and SLLightDirect::hitRec currently
+            // reject every ray that is not primary, so this cannot be reached;
+            // the test keeps the invariant here rather than resting on those
+            // two overrides. Anything else is an ordinary emissive mesh that
+            // shade() ignores, so it counts in full.
+            if (dynamic_cast<SLLight*>(ray->hitNode) != nullptr)
+                return SLCol4f::BLACK;
+
+            return mat->emissive() * absorption;
+        }
+
+        // Both shade() and the scattering can generate this path. Weight the
+        // two estimates with the power heuristic; shade() applies the
+        // complementary weight, so together they count the path exactly once.
+        return mat->emissive() * absorption * misWeight(bsdfPdf, lightPdf);
     }
 
     // add absorption to base color from Participating Media
@@ -266,8 +340,19 @@ SLCol4f SLPathtracer::trace(SLRay* ray, SLbool em)
             SLRay scatter;
             ray->diffuseMC(&scatter);
 
+            // diffuseMC draws the direction from the cosine distribution, so
+            // its solid angle density is cos(theta)/PI. It is handed down so
+            // that a light hit further along the path can be weighted against
+            // the light sampling that shade() just did at this same vertex.
+            // With the direct illumination switched off shade() never runs,
+            // so there is nothing to weight against and the hit counts fully.
+            SLfloat scatterPdf = PDF_NO_MIS;
+            if (_calcDirect)
+                scatterPdf = std::max(scatter.dir.dot(ray->hitNormal), 0.0f) *
+                             Utils::ONEOVERPI;
+
             // material emission, material diffuse and recursive indirect illumination
-            finalColor += (trace(&scatter, false) & objectColor) * scaleBy;
+            finalColor += (trace(&scatter, scatterPdf) & objectColor) * scaleBy;
         }
     }
     else if (ray->hitMatIsReflective())
@@ -289,7 +374,7 @@ SLCol4f SLPathtracer::trace(SLRay* ray, SLbool em)
 
         // shininess contribution * recursive indirect illumination and matrial base color
         finalColor += ((mat->shininess() + 2.0f) / (mat->shininess() + 1.0f) *
-                       (trace(&reflected, true) & objectColor)) *
+                       (trace(&reflected, PDF_NO_MIS) & objectColor)) *
                       scaleBy;
     }
     else if (ray->hitMatIsTransparent())
@@ -349,7 +434,7 @@ SLCol4f SLPathtracer::trace(SLRay* ray, SLbool em)
             // scatter toward transmissive direction
             finalColor += ((mat->translucency() + 2.0f) /
                            (mat->translucency() + 1.0f) *
-                           (trace(&refracted, true) & objectColor) *
+                           (trace(&refracted, PDF_NO_MIS) & objectColor) *
                            refractionProbability) *
                           scaleBy;
         else
@@ -361,7 +446,7 @@ SLCol4f SLPathtracer::trace(SLRay* ray, SLbool em)
             // shininess contribution * recursive indirect illumination and material basecolor
             finalColor += ((mat->shininess() + 2.0f) /
                            (mat->shininess() + 1.0f) *
-                           (trace(&scattered, true) & objectColor) *
+                           (trace(&scattered, PDF_NO_MIS) & objectColor) *
                            reflectionProbability) *
                           scaleBy;
         }
@@ -439,9 +524,24 @@ SLCol4f SLPathtracer::shade(SLRay* ray, SLCol4f* mat)
             // Geometric term of the area formulation
             SLfloat geometry = cosSurface * cosLight / distSqr;
 
+            // The cosine weighted scattering in trace() can generate this same
+            // path, so weight the two estimates against each other; trace()
+            // applies the complementary weight. With the indirect
+            // illumination switched off the scattering never runs and this
+            // estimate carries the path alone.
+            SLfloat weight = 1.0f;
+            if (_calcIndirect)
+            {
+                // The same conversion of 1/area into a solid angle density
+                // that lightPdfMC does for the hit coming the other way
+                SLfloat lightPdf = distSqr / (cosLight * rect->area());
+                SLfloat bsdfPdf  = cosSurface * Utils::ONEOVERPI;
+                weight           = misWeight(lightPdf, bsdfPdf);
+            }
+
             // albedo * brdf(1/PI) * Le * G / pdf, with pdf = 1/area
             color += (*mat & light->diffuse()) *
-                     (Utils::ONEOVERPI * geometry * rect->area());
+                     (Utils::ONEOVERPI * geometry * rect->area() * weight);
         }
         else
         {

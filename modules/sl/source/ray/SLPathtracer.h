@@ -25,7 +25,12 @@ public:
     void    renderSlices(bool   isMainThread,
                          SLint  currentSample,
                          SLuint threadNum);
-    SLCol4f trace(SLRay* ray, SLbool em);
+    //! Traces one ray. bsdfPdf is the solid angle density with which the
+    /*! scattering at the previous vertex produced this ray, or the negative
+    sentinel PDF_NO_MIS if next event estimation cannot generate the same
+    path (the primary ray, and every specular or transmissive bounce). It is
+    what lets a light hit be weighted against the light sampling in shade(). */
+    SLCol4f trace(SLRay* ray, SLfloat bsdfPdf);
     SLCol4f shade(SLRay* ray, SLCol4f* mat);
     void    saveImage();
 
