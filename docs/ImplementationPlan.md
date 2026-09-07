@@ -14,9 +14,9 @@ and is the single source of truth — it is what the **About** dialog displays.
 
 **It is kept in accordance with this plan**: the major and minor components name
 the release section below, and the patch component is the number of points that
-section contains. Version 4.3.015 therefore means the fifteen points of the
-*Version 4.3* section. Adding a sixteenth point means bumping the version to
-4.3.016 and syncing every site in the table below at the same time.
+section contains. Version 4.3.016 therefore means the sixteen points of the
+*Version 4.3* section. Adding a seventeenth point means bumping the version to
+4.3.017 and syncing every site in the table below at the same time.
 
 | Site | Purpose |
 |---|---|
@@ -32,13 +32,14 @@ above it.
 
 ---
 
-## **Version 4.3.015**
+## **Version 4.3.016**
 
 Documentation, packaging and CI clean-up following a full review of the
 repository, plus a path tracer correctness pass. Points 1–7 come from that
 review; point 8 was found while investigating the two red build badges; points
-9–15 are unrelated to it and come from investigating the fireflies that the
-path tracer leaves in the Muttenzer Box. Point 14 is still open.
+9–16 are unrelated to it and come from investigating the fireflies that the
+path tracer leaves in the Muttenzer Box. Point 16 was found while
+reading the Timing panel during point 13. Point 14 is still open.
 
 ### ✅ 1. Add the missing LICENSE file
 Every source-file header and the Doxygen mainpage assert GPL-3.0, but the
@@ -588,3 +589,46 @@ counts it is actually run at, and Off is one click away. Nothing else on this
 list will make the clamp unnecessary short of a caustic capable method such as
 photon mapping: point 12 was expected to reduce these fireflies and measurably
 does not, because the middle vertex of the path is specular.
+
+### ✅ 16. Fix the *Rays per ms* figure in the Timing panel
+`SLRaytracer` initialised its throughput counter as `_raysPerMS.init(60, 0.0f)`
+— a moving average over 60 slots, all starting at zero — but `set()` is called
+exactly **once per completed render**, at all three call sites. `average()`
+always divides by the full window, so after *k* renders the panel showed *k*/60
+of the truth and only became correct after sixty of them:
+
+| render | true rays/ms | displayed | implied k |
+|---|---|---|---|
+| before point 13, 1000 spp | 3136 | 154 | 2.9 |
+| after point 13, 1000 spp | 3156 | 106 | 2.0 |
+| point 15 at clamp 3, 100 spp | 3011 | 726 | 14.5 |
+
+The *k* is simply how many times render had been pressed since the app started,
+which defeats the figure's purpose entirely: it is meant to compare the multi
+core throughput of different machines and architectures, and two people
+benchmarking the same hardware would get different answers depending on how
+often they had rendered.
+
+It also produced a false conclusion during point 13: the panel appeared to show
+throughput falling from 154 to 106 when Russian roulette went in, suggesting a
+30% slowdown. The real throughput was 3136 against 3156, i.e. unchanged, and
+the extra 16% of wall clock time was entirely the 17% of extra rays that
+roulette traces on purpose.
+
+Fixed by initialising the window to 1, which takes the "shortcut for no
+averaging" branch of `Utils::Averaged::set` and reports the last completed
+render exactly. The other users of `AvgFloat` — the frame, cull, shadow map and
+draw timers of `SLSceneView` and `SLScene` — are set every frame and fill their
+window within a second, so their averaging is appropriate and untouched.
+
+Two properties of the figure are documented at `raysPerMS()` rather than
+changed, because they are inherent to measuring a whole render:
+- The window update that the main thread performs every 500ms falls inside the
+  timed region. It costs about 0.1%, since the other worker threads keep
+  tracing through the redraw.
+- `SLPathtracer::render` joins every worker thread after each sample pass, so a
+  1000 spp render crosses a thread barrier a thousand times, and the slice queue
+  takes a mutex per 4 pixel column. The cost of both grows with core count, so
+  the figure understates a many core machine. It describes this renderer on this
+  machine rather than raw ray throughput; timing a single sample pass with the
+  window update disabled would be the cleaner benchmark.

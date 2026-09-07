@@ -125,6 +125,11 @@ public:
     SLfloat       oneOverGamma() const { return _oneOverGamma; }
     SLfloat       resolutionFactor() const { return _resolutionFactor; }
     SLint         resolutionFactorPC() const { return (SLint)(_resolutionFactor * 100.0f + 0.00001f); }
+    //! Rays per ms of the last completed render, for comparing machines
+    /*! Measured over the whole render, so it includes the window updates that
+    the main thread does every 500ms and the thread barrier at the end of every
+    sample pass. Both are small, but it means the figure describes this renderer
+    on this machine rather than raw ray throughput. */
     SLfloat       raysPerMS() { return _raysPerMS.average(); }
 
     // Render target image
@@ -146,7 +151,7 @@ protected:
     SLbool       _doFresnel;        //!< Flag for Fresnel reflection
     SLint        _progressPC;       //!< progress in %
     SLfloat      _renderSec;        //!< Rendering time in seconds
-    AvgFloat     _raysPerMS;        //!< Averaged rays per ms
+    AvgFloat     _raysPerMS;        //!< Rays per ms of the last completed render
 
     SLfloat  _pxSize;       //!< Pixel size
     SLVec3f  _eye;          //!< Camera position

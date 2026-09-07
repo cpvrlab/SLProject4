@@ -33,7 +33,15 @@ SLRaytracer::SLRaytracer()
     _aaSamples        = 3;
     _resolutionFactor = 0.5f;
     gamma(1.0f);
-    _raysPerMS.init(60, 0.0f);
+    // A window of 1, i.e. no averaging. Unlike the frame, cull and draw timers
+    // of SLSceneView, which are set every frame and fill their window within a
+    // second, this is set exactly once per completed render. With a window of
+    // 60 the reported value was the sum of the renders done so far divided by
+    // 60, so it showed k/60 of the truth after k renders and only became
+    // correct after 60 of them. That made it useless for its actual purpose,
+    // comparing the multi core throughput of different machines: the number
+    // depended on how often the user had pressed render since starting the app.
+    _raysPerMS.init(1, 0.0f);
 
     // set texture properties
     _min_filter   = GL_NEAREST;
