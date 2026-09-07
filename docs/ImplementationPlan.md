@@ -4,6 +4,9 @@ This plan tracks the work agreed per release. Each version section lists its
 points with the current state, so an open item can be picked up without
 re-deriving the context behind it.
 
+A point marked ✅ is finished. Work that is still open is either a point without
+that marker or a follow-up listed under the point that uncovered it.
+
 ## Versioning
 
 The version string lives in `apps/source/AppCommon.cpp` (`AppCommon::version`)
@@ -11,9 +14,9 @@ and is the single source of truth — it is what the **About** dialog displays.
 
 **It is kept in accordance with this plan**: the major and minor components name
 the release section below, and the patch component is the number of points that
-section contains. Version 4.3.008 therefore means the eight points of the
-*Version 4.3* section. Adding a ninth point means bumping the version to
-4.3.009 and syncing every site in the table below at the same time.
+section contains. Version 4.3.015 therefore means the fifteen points of the
+*Version 4.3* section. Adding a sixteenth point means bumping the version to
+4.3.016 and syncing every site in the table below at the same time.
 
 | Site | Purpose |
 |---|---|
@@ -29,26 +32,28 @@ above it.
 
 ---
 
-## **Version 4.3.008**
+## **Version 4.3.015**
 
 Documentation, packaging and CI clean-up following a full review of the
-repository. Points 1–7 come from that review; point 8 was found while
-investigating the two red build badges.
+repository, plus a path tracer correctness pass. Points 1–7 come from that
+review; point 8 was found while investigating the two red build badges; points
+9–15 are unrelated to it and come from investigating the fireflies that the
+path tracer leaves in the Muttenzer Box. Points 12 to 15 are still open.
 
-### 1. Add the missing LICENSE file — **done**
+### ✅ 1. Add the missing LICENSE file
 Every source-file header and the Doxygen mainpage assert GPL-3.0, but the
 licence text itself was never in the repository, so a clone carried no
 enforceable licence. Added the canonical GPL-3.0 text at the repository root,
 copied from the vendored `externals/eigen/COPYING.GPL` (identical MD5 to
 `externals/libigl/LICENSE.GPL`, so it is the unmodified FSF text).
 
-### 2. Fix the Doxyfile input paths — **done**
+### ✅ 2. Fix the Doxyfile input paths
 `INPUT` listed `../apps/app_demo_webgpu`, which does not exist — the folder is
 `apps/app_webgpu` — and `modules/sens/source` was missing entirely, so the
 sensor module never appeared in the generated HTML. Both corrected; all 30
 `INPUT` entries now resolve.
 
-### 3. Correct the documentation URL — **done**
+### ✅ 3. Correct the documentation URL
 `docs/README.md` still linked to the retired `pallas.ti.bfh.ch` site while the
 top-level `README.md` pointed at `cpvrlab.github.io/SLProject4`. Repointed, and
 the steps for generating the documentation locally were written down: a bare
@@ -56,7 +61,7 @@ the steps for generating the documentation locally were written down: a bare
 `doxygen-awesome-css` clone and the images have to be copied into `html/`
 afterwards. That clone is now git-ignored.
 
-### 4. Bring build instructions into the repository — **done**
+### ✅ 4. Bring build instructions into the repository
 Build instructions existed only in the GitHub wiki, so a downloaded ZIP or a
 shallow clone contained no path from source to binary. Added `BUILD.md` at the
 repository root and linked it from `README.md`.
@@ -83,7 +88,7 @@ still serves `data.zip` (594 MB) and the prebuilt libraries over an HTTP → HTT
 redirect, and the default build depends on it. Only the documentation that used
 to live there has moved to GitHub Pages.
 
-### 5. Correct the text errors in `Introduction.md` — **done**
+### ✅ 5. Correct the text errors in `Introduction.md`
 The colour legend was checked against the actual diagram rather than corrected
 by eye: each group's fill was read out of `docs/images/SLProject_UML_min.svg`
 by locating the class name and taking the enclosing box fill. The legend at the
@@ -115,7 +120,7 @@ Fixed:
 - Two typos in passing: "redered" → "rendered", "for the the scenegraph" → "for
   the scenegraph".
 
-### 6. Document the SL headers that have no Doxygen at all — **done**
+### ✅ 6. Document the SL headers that have no Doxygen at all
 Coverage in `modules/sl/source` is now 104 of 104 headers.
 
 The original list of nine was wrong. It came from a grep for `//!` and `/*!`
@@ -161,14 +166,14 @@ documentation site. Adding it there would publish the OptiX classes. To be
 decided together with the OptiX build itself, which needs a Windows/NVIDIA
 machine to verify.
 
-### 7. Finish the ClarendonFilter rename — **done**
+### ✅ 7. Finish the ClarendonFilter rename
 An earlier commit renamed the exercise source and its `CMakeLists.txt` from the
 misspelled *Calderon* to the correct *Clarendon*, but left the enclosing folder,
 the `add_subdirectory()` call and the second `imshow` window title behind.
 All three corrected; `grep -r Calderon` over the repository now matches nothing
 outside this plan, and the `cv02_ClarendonFilter` target configures and builds.
 
-### 8. Repair the GitHub Actions macOS builds — **done**
+### ✅ 8. Repair the GitHub Actions macOS builds
 Both macOS workflows targeted `runs-on: macos-13`, a runner image GitHub has
 retired. The jobs never started: they queued for exactly 24 hours and were
 auto-cancelled with zero steps executed, which GitHub renders as a red
@@ -193,3 +198,274 @@ Follow-ups still open from this point:
   on the deprecated Node 16; only `deploy-pages.yml` is on v4.
 - Nothing has compiled on macOS since October 2025, so genuine breakage may be
   hiding behind the queue timeout. The first green `macos-15` run is the proof.
+
+### ✅ 9. Fix the path tracer's 8 bit accumulation buffer
+`SLPathtracer` kept its progressive mean in `_images[1]`, a `CVImage` of format
+`PF_rgb`, i.e. **8 bit per channel**. Every sample read that image back,
+blended, clamped and wrote it again, so the running mean was rounded to 1/255
+in linear space once per sample.
+
+The update is `a_k = a_(k-1) + (x_k - a_(k-1)) / k`. As soon as `|x - a| / k`
+falls below half a quantisation step — that is, as soon as `k > 510 * |x - a|`
+— the write rounds back to the value already stored and the pixel **freezes**.
+Simulating one bright sample (8.0) on a pixel whose true value is 0.235 shows
+it exactly, in display levels:
+
+| accumulator | k=10 | k=25 | k=50 | k=100 | k=200 | k=400 |
+|---|---|---|---|---|---|---|
+| float | 180 | 153 | 143 | 138 | 135 | **133** |
+| 8 bit | 180 | 154 | 147 | 147 | 147 | **147** |
+
+with 132 as the converged target. That is why the fireflies averaged out but
+not enough: the renderer stopped converging at roughly sample 30 to 50 no
+matter what *Samples/pix* was set to. Because the ratchet is one sided —
+outliers freeze high and nothing freezes low — the image also grew brighter the
+longer it rendered.
+
+The mean is now accumulated unclamped in `vector<SLCol4f> _radianceSum` and
+divided by the sample number for the display only. The clamp to [0,1] moved
+from the running mean to the display copy; clamping the mean itself discarded
+energy permanently and was the second source of the brightening.
+
+Measured on the Muttenzer Box, noise taken as the median absolute residual
+against a local 7x7 median so that the walls' brightness gradient does not
+count as noise:
+
+| region | 10 → 100 spp before | after | ideal |
+|---|---|---|---|
+| far wall | 1.92x | 2.33x | 3.16x |
+| red wall | 1.66x | 2.01x | 3.16x |
+| blue wall | 1.66x | 2.80x | 3.16x |
+| floor | 2.10x | 2.51x | 3.16x |
+
+and the sample-count brightening is gone: the far wall median went 129 → 135
+from 10 to 100 spp before and 129 → 130 after; the blue wall 86 → 91 before and
+86 → 87 after.
+
+Two latent defects were found while replacing the buffer and are fixed with it:
+- `_images[1]` was allocated at `_sv->viewportW/H()` while `_images[0]` is
+  scaled by `_resolutionFactor`, so the accumulator had the wrong size whenever
+  that factor was not 1. It went unnoticed because `CVImage::getPixeli` wraps
+  the coordinates with a modulo.
+- The 4px slice loop always ran `minX + 4` columns and relied on
+  `setPixeliRGB` clamping `x` internally. That merely double-wrote the last
+  column into an image, but indexes past the end of a raw buffer on any width
+  that is not a multiple of 4. The loop is now cut off at the image width.
+
+### ✅ 10. Make the shared random number generator thread safe
+`rnd01()` in `modules/sl/source/ray/SLRay.cpp` returned values from a single
+global `std::mt19937` bound with `std::bind` at namespace scope, under a
+comment reading "So far they work perfectly with CPP11 multithreading". They do
+not: `SLPathtracer::render` calls it concurrently from every worker thread, so
+the engine's 624 word state and its position index are read and written without
+synchronisation. That is a data race and therefore undefined behaviour, and in
+practice the racing threads hand each other torn and repeated values, which
+correlates samples the estimator assumes to be independent.
+
+Each thread now has its own `thread_local` engine, seeded from the current time
+mixed with a shared `std::atomic` counter so that threads created within the
+same second still get different sequences.
+
+This one cannot be isolated in the measurements of point 9 — per pixel variance
+was never dominated by it — so it is fixed on its own terms rather than for a
+measured gain. It affects `SLRaytracer` and `SLLightRect` sampling as well as
+the path tracer.
+
+### ✅ 11. Give the path tracer a real area light estimator
+`SLPathtracer::shade` estimated the direct light of a rectangular light with
+the Blinn-Phong rasteriser model rather than with an estimator of the area
+light integral. It took the direction, the distance and both cosines at the
+light **centre** while `SLLightRect::shadowTestMC` tested the visibility at a
+**random point**, and it replaced the geometric term by the OpenGL attenuation
+and the spot cone exponent. The light area was missing altogether.
+
+An earlier reading of this code claimed the light cosine was missing too. It is
+not. With `spotCutOffDEG(90)` and `spotExponent(1.0)` the spot term
+`pow(max(-L · spotDirWS, 0), 1)` happens to equal cos(theta_light), because
+`SLLightRect::spotDirWS` is the rectangle's normal. That is a coincidence of
+this scene's settings and not a property of the estimator: `spotExponent(2)`
+would silently turn it into a different emitter.
+
+The consequence was not only a wrong absolute brightness. It put the direct
+illumination on a different scale than the emissive material of the light mesh,
+which paths see when they reach the light through the mirror or the glass
+sphere, so the two estimates of the same illumination disagreed.
+
+A rect light is now sampled uniformly over its surface (pdf = 1/area) and
+estimated with
+
+    Lo = albedo/PI * Le * cosSurface * cosLight / dist^2 * area
+
+with every quantity taken at the sampled point. `SLLightRect::samplePointMC()`
+and `area()` are new, and `shadowTestMC` uses the sampler instead of
+duplicating it. Point and directional lights have no area and keep the classic
+attenuation and spot cone model.
+
+The formula was verified by deterministic quadrature against the two limits it
+has to satisfy — a large overhead emitter must give `albedo * Le`, a small one
+must give the point light result:
+
+| case | quadrature | expected |
+|---|---|---|
+| 20 x 20 light at height 1 | 0.99189 | 0.99010 |
+| 200 x 200 light at height 1 | 0.99992 | 0.99990 |
+| 0.01 x 0.01 light at height 1 | 3.183e-05 | 3.183e-05 |
+
+Measured on the Muttenzer Box at 100 spp, median luminance:
+
+| region | before | after | ratio |
+|---|---|---|---|
+| far wall | 131 | 107 | 0.817 |
+| red wall | 102 | 84 | 0.824 |
+| blue wall | 87 | 72 | 0.828 |
+| floor | 136 | 111 | 0.816 |
+
+That is 0.639 in linear against 0.625 predicted from the missing area factor
+(1/0.65 = 1.54); the small remainder is the difference between the light centre
+and the sampled point. `lightEmisRGB` in `AppDemoSceneRTMuttenzerBox.cpp` was
+raised from 7 to 10, which brings the apparent brightness back to within 3 to 4
+percent of the old look. 11.0 would match it exactly, but the scene is not
+calibrated against anything physical, so the value is a matter of taste; what
+matters is that the emission now scales the light mesh and the direct
+illumination together. Note that it also scales `SLLight::globalAmbient`, which
+only the GL rasteriser uses — the path tracer ignores it.
+
+Two further defects fixed in the same pass:
+- `trace()` seeded `finalColor` with `ray->backgroundColor`, which added the
+  background to every surface at every bounce and compounded down the path. It
+  stayed invisible only because this scene has a black background and no
+  skybox. The escape and the max depth cases are now separate, and an escaping
+  ray returns the environment radiance instead of black.
+- `shade()` declared `diffuseColor` outside the light loop and assigned it only
+  when the light was visible, while the accumulation ran unconditionally. With
+  two or more lights, a shadowed light re-added the previous light's
+  contribution.
+
+With points 9 to 11 in place, fireflies at 1000 spp sit at 0.00% of pixels in
+all five measured regions, at both light settings.
+
+The work this point leaves open is carried as points 12 to 15.
+
+### 12. Multiple importance sampling between light and BSDF sampling
+The speckle that survives at 100 spp is the caustic paths: a diffuse bounce
+into the mirror or the glass sphere and from there to the light. Next event
+estimation cannot reach them, because the specular bounce in the middle has no
+direction that can be aimed at the light. They arrive instead through BSDF
+sampling, with a value of `Le` (currently 10) against a background of about
+0.2, so each one is an outlier of roughly fifty times the pixel value.
+
+Point 11 gave `SLPathtracer::shade` a well defined pdf, which is the
+prerequisite: MIS needs both strategies to have one. Weighting them with the
+power heuristic makes the light hits and the NEE result two weighted estimates
+of the same quantity instead of two unrelated ones, and the tail collapses. The
+`em` flag in `trace()` — currently a hard on/off that decides whether a path is
+allowed to see the light at all — is replaced by the MIS weight.
+
+The ceiling would gain most. It sits at `pT = 1.19` with the light plane at
+1.18 and the light facing down, so `cosLight <= 0` and it receives no direct
+light at all: every one of its samples is a multi-bounce path. It is the
+noisiest region of the image, at roughly double the residual of every other
+surface.
+
+### 13. Replace the fixed maximum depth with Russian roulette
+**Russian roulette is not the same thing as Monte Carlo**, and the two are easy
+to conflate because both are random. Monte Carlo is the estimator itself: to
+evaluate an integral that has no closed form, draw samples `x` from a density
+`p` and average `f(x)/p(x)`. That is what the entire path tracer is. Russian
+roulette is a technique used *inside* such an estimator, and it answers a
+different question — how do you terminate an unbounded recursion without making
+the answer wrong?
+
+The rendering equation recurses without end: light bounces between the walls of
+the box forever, each bounce carrying less energy than the last. No renderer
+can trace an infinite path, so it has to stop somewhere. There are two ways.
+
+**A hard cut-off**, which is what `SLPathtracer::trace` does today:
+
+    if (ray->depth > maxDepth())
+        return SLCol4f::BLACK;
+
+Every path is killed after a fixed number of bounces and the light that would
+have arrived along longer paths is discarded. This is **biased**: no matter how
+many samples are averaged, the estimator converges to something darker than the
+true solution, because every sample is missing the same energy. More samples
+cannot fix it — this is the one kind of error that a longer render does not
+reduce.
+
+**Russian roulette**, which removes that bias. At each bounce, kill the path
+with probability `q` and return zero; otherwise continue and divide the result
+by `1 - q`. The expectation is unchanged:
+
+    E = q * 0 + (1 - q) * L / (1 - q) = L
+
+Paths still terminate in finite time, since the chance of surviving `n` bounces
+falls off geometrically. But the estimator's *mean* is still the full infinite
+sum: nothing is thrown away, and instead the rare surviving long path is scaled
+up to stand in for all the long paths that were killed. The price is variance;
+the gain is that no work is spent on paths that can no longer deliver energy.
+
+The survival probability is normally taken from the path throughput, the
+running product of the albedos along the path. Setting `1 - q` to roughly the
+largest component of that throughput lets dark paths die quickly while bright
+ones live on, so samples are spent in proportion to the energy still available.
+Roulette is usually only switched on after the first few bounces, which are
+cheap and always worth taking.
+
+This matters more here than it might seem. `maxDepth` is fixed at **5** and is
+not reachable from the UI at all: all thirteen `startPathtracing` call sites in
+`SLSceneView.cpp` and `AppDemoGui.cpp` pass the literal 5. For a closed box the
+interreflected energy is the geometric series `1 + rho + rho^2 + ...`, so
+cutting it after `N` terms discards a fraction `rho^N`. With the cream walls at
+albedo 0.75 that is `0.75^5`, roughly a quarter of the interreflection missing;
+the coloured walls lose less. That is a closed-box estimate rather than a
+measurement, but it is the right order of magnitude, and it is part of why the
+box reads flatter than the same scene in Blender even now that the direct light
+is correct.
+
+Documentation defect to fix with this point: the comment above
+`SLRay::diffuseMC` in `modules/sl/source/ray/SLRay.cpp` reads "This is only
+used for photonmapping(russian roulette)". Both halves are wrong.
+`SLPathtracer::trace` is its only caller in the repository, and cosine
+distributed scattering is importance sampling, not Russian roulette — precisely
+the conflation this point is about.
+
+### 14. Fix the glossy material path
+Dormant in the Muttenzer Box, because `SLMaterial::PERFECT` is 1000 and both
+spheres sit exactly at 1000 (`refl` shininess 1000, `refr` translucency 1000),
+so `reflectMC` and `refractMC` are never called there. It affects any material
+below that limit:
+- The Phong estimator weight `(shininess + 2) / (shininess + 1)` is missing its
+  `cos(theta)` factor. For lobe sampling with `pdf = (n+1)/(2*PI) * cos^n(alpha)`
+  the correct weight is `rho * (n+2)/(n+1) * cos(theta)`, so glossy reflection
+  is currently too bright by `1/cos(theta)` and blows up at grazing angles.
+- `reflectMC` returns a bool reporting that the sampled direction ended up below
+  the surface horizon. `SLPathtracer::trace` ignores it and traces the ray
+  anyway.
+- The rotation axis `(0,0,1) x dir` degenerates to a zero vector when the lobe
+  axis is near ±z. `SLVec3::normalize` guards with `if (L > 0)`, so the result
+  is an unnormalised zero vector rather than a NaN, but the rotation matrix
+  built from it is meaningless and the ray leaves in an arbitrary direction.
+  `acos(dir.z)` can also produce a NaN for `|dir.z| > 1` after rounding.
+- The transparent branch multiplies a *perfect* mirror ray by
+  `(shininess + 2) / (shininess + 1)`, a normalisation that belongs only with
+  lobe sampling. For the glass sphere's shininess of 100 that is a 1% energy
+  gain per bounce.
+
+Noted while reading, unrelated to the above but in the same files:
+`modules/sl/source/ray/SLRayMC.{h,cpp}` are a duplicate of `SLRay` that no
+`CMakeLists.txt` builds and nothing references. They carry their own stale copy
+of the `diffuseMC` comment from point 13. They should be deleted or explained.
+
+### 15. Offer a per sample radiance clamp
+A clamp on the radiance of a single sample, e.g. `color.clampMinMax(0, 10)`
+directly after `trace()` in `renderSlices`, removes the residual fireflies at
+once. It is what most production renderers ship, and it is biased by
+construction: it darkens exactly the bright caustic paths it is aimed at.
+
+It is therefore worth having as an explicit, off-by-default option in the PT
+menu next to the sample count, so that the bias is a choice rather than a
+surprise. Two constraints:
+- It has to clamp the **sample**, never the running mean. Clamping the mean is
+  the defect that point 9 removed, and it both froze fireflies and ate energy.
+- It should be revisited once point 12 lands, since MIS may make it unnecessary
+  at usable sample counts.
