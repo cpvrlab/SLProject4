@@ -80,9 +80,15 @@ public:
     void samples(SLVec2i samples);
     void samplesXY(SLint x, SLint y);
 
+    //! Returns a uniformly distributed random point on the rectangle in WS
+    SLVec3f samplePointMC();
+
     // Getters
     SLfloat width() const { return _width; }
     SLfloat height() const { return _height; }
+
+    //! Area of the light rectangle, needed by the path tracers area estimator
+    SLfloat area() const { return _width * _height; }
 
     // Overrides
     SLCol4f ambient() override { return _ambientColor * _ambientPower; }

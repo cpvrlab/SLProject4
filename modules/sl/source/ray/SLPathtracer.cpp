@@ -9,6 +9,7 @@
  */
 
 #include <algorithm>
+#include <typeinfo>
 
 #include <SLCamera.h>
 #include <SLLightRect.h>
@@ -194,7 +195,11 @@ Recursively traces ray in scene.
 */
 SLCol4f SLPathtracer::trace(SLRay* ray, SLbool em)
 {
-    SLCol4f finalColor(ray->backgroundColor);
+    // The radiance gathered at this hit point. It must start at BLACK. It used
+    // to start at ray->backgroundColor, which added the background to EVERY
+    // surface at EVERY bounce and therefore compounded down the path. That
+    // stayed invisible in scenes with a black background and no skybox only.
+    SLCol4f finalColor(SLCol4f::BLACK);
 
     // Participating Media init
     SLfloat absorption = 1.0f; // used to calculate absorption along the ray
@@ -204,8 +209,15 @@ SLCol4f SLPathtracer::trace(SLRay* ray, SLbool em)
     SLNode* root = _sv->s()->root3D();
     if (root) root->hitRec(ray);
 
-    // end of recursion - no object hit OR max depth reached
-    if (ray->length >= FLT_MAX || ray->depth > maxDepth())
+    // End of recursion: the ray escaped the scene, so it gathers the radiance
+    // of the environment (skybox or camera background). This is the only place
+    // where the background may contribute.
+    if (ray->length >= FLT_MAX)
+        return ray->backgroundColor;
+
+    // End of recursion: the path is cut off at the max depth and gathers
+    // nothing more. This is a bias that a russian roulette would avoid.
+    if (ray->depth > maxDepth())
         return SLCol4f::BLACK;
 
     // hit material
@@ -359,59 +371,110 @@ SLCol4f SLPathtracer::trace(SLRay* ray, SLbool em)
 }
 //-----------------------------------------------------------------------------
 /*!
-Calculates direct illumination for intersection point of ray
+Calculates the direct illumination at the hit point of the ray by sampling the
+light sources explicitly (next event estimation).
+
+A rectangular light is an AREA light and is estimated with a Monte Carlo area
+estimator: one point is sampled uniformly on the rectangle (pdf = 1/area) and
+the radiance reflected towards the ray is
+
+    Lo = albedo/PI * Le * cosSurface * cosLight / dist^2 * area
+
+with the direction, the distance and both cosines taken at the SAMPLED point.
+
+The previous version took all of them at the light CENTRE while it tested the
+visibility at a random point, and it replaced the geometric term by the OpenGL
+attenuation and the spot cone exponent. That is the Blinn-Phong rasteriser
+model, not an estimator of the area light integral. It missed the area factor
+completely, which made the direct light 1/area too bright (1.54x for the
+1.0 x 0.65 light of the Muttenzer Box), and it broke down for surfaces close to
+a large light. Above all it put the direct illumination on a different scale
+than the emissive material of the light mesh that the paths see when they hit
+the light through the mirror or the glass sphere, so the two estimates of the
+same illumination did not agree.
+
+All other light types are point or directional (delta) lights without any area.
+For those the classic attenuation and spot cone model is kept.
 */
 SLCol4f SLPathtracer::shade(SLRay* ray, SLCol4f* mat)
 {
-    SLCol4f color        = SLCol4f::BLACK;
-    SLCol4f diffuseColor = SLCol4f::BLACK;
-    SLVec3f L, N;
-    SLfloat lightDist, LdN, df, spotEffect, lighted;
+    SLCol4f color  = SLCol4f::BLACK;
+    SLNode* root3D = _sv->s()->root3D();
+    SLVec3f N(ray->hitNormal);
 
     // loop over light sources in scene
     for (auto* light : _sv->s()->lights())
     {
-        if (light && light->isOn())
-        {
-            N.set(ray->hitNormal);
-            L.sub(light->positionWS().vec3(), ray->hitPoint);
-            lightDist = L.length();
-            L /= lightDist;
-            LdN = L.dot(N);
+        if (!light || !light->isOn()) continue;
 
-            // check shadow ray if hit point is towards the light
-            lighted = (SLfloat)((LdN > 0) ? light->shadowTestMC(ray,
-                                                                L,
-                                                                lightDist,
-                                                                _sv->s()->root3D())
-                                          : 0);
+        if (typeid(*light) == typeid(SLLightRect))
+        {
+            ///////////////////////////////////////////////////////
+            // Area light: Monte Carlo estimate over its surface  //
+            ///////////////////////////////////////////////////////
+
+            auto* rect = (SLLightRect*)light;
+
+            // One uniformly distributed sample point on the light (pdf=1/area)
+            SLVec3f toLight(rect->samplePointMC() - ray->hitPoint);
+            SLfloat distSqr = toLight.lengthSqr();
+            if (distSqr < FLT_EPSILON) continue;
+            SLfloat dist = sqrt(distSqr);
+            toLight /= dist;
+
+            // Cosine at the shaded surface and at the sampled light point.
+            // spotDirWS is the normal of the light rectangle.
+            SLfloat cosSurface = toLight.dot(N);
+            SLfloat cosLight   = -toLight.dot(rect->spotDirWS());
+
+            // Sample is below the surface or behind the (one sided) light
+            if (cosSurface <= 0.0f || cosLight <= 0.0f) continue;
+
+            // Visibility of the sampled point. The light mesh itself does not
+            // block, see SLLightRect::hitRec which ignores shadow rays.
+            SLRay shadowRay(dist, toLight, ray);
+            root3D->hitRec(&shadowRay);
+            if (shadowRay.length < dist) continue;
+
+            // Geometric term of the area formulation
+            SLfloat geometry = cosSurface * cosLight / distSqr;
+
+            // albedo * brdf(1/PI) * Le * G / pdf, with pdf = 1/area
+            color += (*mat & light->diffuse()) *
+                     (Utils::ONEOVERPI * geometry * rect->area());
+        }
+        else
+        {
+            ///////////////////////////////////////////////////////
+            // Point or directional light: no area, classic model //
+            ///////////////////////////////////////////////////////
+
+            SLVec3f L(light->positionWS().vec3() - ray->hitPoint);
+            SLfloat lightDist = L.length();
+            L /= lightDist;
+            SLfloat LdN = L.dot(N);
+
+            // hit point faces away from the light
+            if (LdN <= 0.0f) continue;
+
+            SLfloat lighted = light->shadowTestMC(ray, L, lightDist, root3D);
+            if (lighted <= 0.0f) continue;
 
             // calculate spot effect if light is a spotlight
-            if (lighted > 0.0f && light->spotCutOffDEG() < 180.0f)
+            SLfloat spotEffect = 1.0f;
+            if (light->spotCutOffDEG() < 180.0f)
             {
                 SLfloat LdS = std::max(-L.dot(light->spotDirWS()), 0.0f);
 
                 // check if point is in spot cone
-                if (LdS > light->spotCosCut())
-                {
-                    spotEffect = pow(LdS, (SLfloat)light->spotExponent());
-                }
-                else
-                {
-                    lighted    = 0.0f;
-                    spotEffect = 0.0f;
-                }
-            }
-            else
-                spotEffect = 1.0f;
+                if (LdS <= light->spotCosCut()) continue;
 
-            if (lighted > 0.0f)
-            {
-                df = std::max(LdN, 0.0f); // diffuse factor
-
-                // material color * light emission * LdN * brdf(1/pi) * lighted(for soft shadows)
-                diffuseColor = (*mat & (light->diffuse() * df) * Utils::ONEOVERPI * lighted);
+                spotEffect = pow(LdS, (SLfloat)light->spotExponent());
             }
+
+            // material color * light emission * LdN * brdf(1/pi) * lighted
+            SLCol4f diffuseColor = (*mat & (light->diffuse() * LdN)) *
+                                   (Utils::ONEOVERPI * lighted);
 
             color += light->attenuation(lightDist) * spotEffect * diffuseColor;
         }

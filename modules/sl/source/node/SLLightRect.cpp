@@ -260,16 +260,8 @@ SLfloat SLLightRect::shadowTestMC(SLRay*         ray,       // ray of hit point
                                   const SLfloat  lightDist, // distance to light
                                   SLNode*        root3D)
 {
-    SLfloat rndX = rnd01();
-    SLfloat rndY = rnd01();
-
-    // Sample point in object space
-    SLVec3f spOS(SLVec3f(rndX * _width - _width * 0.5f,
-                         rndY * _height - _height * 0.5f,
-                         0.0f));
-
-    // Sample point in world space
-    SLVec3f spWS(updateAndGetWM().multVec(spOS) - ray->hitPoint);
+    // Vector from the hit point to a random sample point on the light
+    SLVec3f spWS(samplePointMC() - ray->hitPoint);
 
     SLfloat spDistWS = spWS.length();
     spWS.normalize();
@@ -278,6 +270,24 @@ SLfloat SLLightRect::shadowTestMC(SLRay*         ray,       // ray of hit point
     root3D->hitRec(&shadowRay);
 
     return (shadowRay.length < spDistWS) ? 0.0f : 1.0f;
+}
+//-----------------------------------------------------------------------------
+/*!
+SLLightRect::samplePointMC returns a uniformly distributed random point on the
+light rectangle in world space. Uniform over the AREA means that the point has
+the constant probability density 1/area, which is exactly what the Monte Carlo
+area estimator of the direct illumination in SLPathtracer::shade expects. Any
+other distribution would need its own pdf in that estimator.
+*/
+SLVec3f SLLightRect::samplePointMC()
+{
+    // Sample point in object space
+    SLVec3f spOS(rnd01() * _width - _halfWidth,
+                 rnd01() * _height - _halfHeight,
+                 0.0f);
+
+    // Sample point in world space
+    return updateAndGetWM().multVec(spOS);
 }
 //-----------------------------------------------------------------------------
 /*! Creates an fixed sized standard shadow map for a rectangular light.
