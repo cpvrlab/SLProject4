@@ -41,16 +41,22 @@ SLbool SLPathtracer::render(SLSceneView* sv)
     initStats(0); // init statistics
     prepareImage();
 
-    // Set second image for render update to the same size
+    // Drop the 8 bit accumulation image that older versions kept here.
+    // The path tracer needs only _images[0], which holds the clamped and
+    // gamma corrected image for the display. The progressive mean itself is
+    // accumulated in _radianceSum (see SLPathtracer.h).
     while (_images.size() > 1)
     {
         delete _images[_images.size() - 1];
         _images.pop_back();
     }
-    _images.push_back(new CVImage(_sv->viewportW(),
-                                  _sv->viewportH(),
-                                  PF_rgb,
-                                  "Pathtracer"));
+
+    // Allocate and clear the high precision accumulation buffer. Its size is
+    // taken from _images[0] and not from the viewport, because prepareImage
+    // scales the image with _resolutionFactor.
+    _radianceSum.assign((size_t)_images[0]->width() *
+                          (size_t)_images[0]->height(),
+                        SLCol4f::BLACK);
     // Measure time
     double t1 = GlobalTimer::timeS();
 
@@ -108,7 +114,10 @@ void SLPathtracer::renderSlices(const bool isMainThread,
     // Time points
     double t1 = 0;
 
-    while (_nextLine < (SLint)_images[0]->width())
+    const SLint imgW = (SLint)_images[0]->width();
+    const SLint imgH = (SLint)_images[0]->height();
+
+    while (_nextLine < imgW)
     {
         // The next section must be protected
         // Making _nextLine an atomic was not sufficient.
@@ -117,9 +126,14 @@ void SLPathtracer::renderSlices(const bool isMainThread,
         _nextLine += 4;
         _mutex.unlock();
 
-        for (SLint x = minX; x < minX + 4; ++x)
+        // The image width is not necessarily a multiple of the slice width of
+        // 4px, so the last slice has to be cut off. Without this the loop below
+        // would index past the end of _radianceSum.
+        SLint maxX = std::min(minX + 4, imgW);
+
+        for (SLint x = minX; x < maxX; ++x)
         {
-            for (SLuint y = 0; y < _images[0]->height(); ++y)
+            for (SLint y = 0; y < imgH; ++y)
             {
                 SLCol4f color(SLCol4f::BLACK);
 
@@ -133,39 +147,28 @@ void SLPathtracer::renderSlices(const bool isMainThread,
                 color += trace(&primaryRay, false);
                 ///////////////////////////////////
 
-                // weight old and new color for continuous rendering
-                SLCol4f oldColor;
-                if (currentSample > 1)
-                {
-                    CVVec4f c4f = _images[1]->getPixeli(x, (SLint)y);
-                    oldColor.set(c4f[0], c4f[1], c4f[2], c4f[3]);
+                // Add the raw linear radiance of this sample to the running sum.
+                // Nothing is clamped or quantised here on purpose: the estimator
+                // only converges with 1/sqrt(N) if every sample keeps its full
+                // value and its full precision. The correction that one sample
+                // applies to the mean shrinks with 1/currentSample, so rounding
+                // the mean to 8 bit (as the old _images[1] did) would freeze
+                // bright outliers (fireflies) at a wrong value forever.
+                SLCol4f& radianceSum = _radianceSum[(size_t)y * (size_t)imgW +
+                                                    (size_t)x];
+                radianceSum += color;
 
-                    // weight old color (examp. 3/4, 4/5, 5/6)
-                    oldColor /= (SLfloat)currentSample;
-                    oldColor *= (SLfloat)(currentSample - 1);
+                // The mean of all samples taken so far for this pixel
+                color = radianceSum / (SLfloat)currentSample;
 
-                    // weight new color (examp. 1/4, 1/5, 1/6)
-                    color /= (SLfloat)currentSample;
-
-                    // bring them together (examp. 4/4, 5/5, 6/6)
-                    color += oldColor;
-                }
-
+                // From here on the color is for the display only: clamp it into
+                // the displayable range and apply the gamma correction.
                 color.clampMinMax(0.0f, 1.0f);
-
-                // save image without gamma
-                _images[1]->setPixeliRGB(x,
-                                         (SLint)y,
-                                         CVVec4f(color.r,
-                                                 color.g,
-                                                 color.b,
-                                                 color.a));
-
                 color.gammaCorrect(_oneOverGamma);
 
                 // image to render
                 _images[0]->setPixeliRGB(x,
-                                         (SLint)y,
+                                         y,
                                          CVVec4f(color.r,
                                                  color.g,
                                                  color.b,

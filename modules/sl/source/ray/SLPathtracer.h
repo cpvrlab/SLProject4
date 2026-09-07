@@ -42,6 +42,19 @@ private:
 
     SLbool _calcDirect;   //!< flag to calculate direct illumination
     SLbool _calcIndirect; //!< flag to calculate indirect illumination
+
+    //! Linear, unclamped sum of all radiance samples taken so far per pixel
+    /*! The progressive mean of a path tracer must never be kept in an 8 bit
+    image. Rounding the running mean to 1/255 after every sample stops the
+    convergence as soon as the correction of one sample, which is
+    |sample - mean| / sampleNo, falls below half a quantisation step, i.e. as
+    soon as sampleNo > 510 * |sample - mean|. A bright outlier (a firefly) then
+    freezes at a wrong value and never averages out again, no matter how many
+    samples are rendered. That is why this buffer holds the raw sum in full
+    float precision and is divided by the sample number for the display only.
+    Its size is _images[0]->width() * _images[0]->height() and it is indexed
+    with y * width + x. */
+    vector<SLCol4f> _radianceSum;
 };
 //-----------------------------------------------------------------------------
 #endif

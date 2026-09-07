@@ -7,6 +7,10 @@
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
 */
 
+#include <atomic>
+#include <ctime>
+#include <random>
+
 #include <SLRay.h>
 #include <SLSceneView.h>
 #include <SLSkybox.h>
@@ -29,14 +33,30 @@ SLint   SLRay::maxDepthReached  = 0;
 SLfloat SLRay::avgDepth         = 0;
 
 //-----------------------------------------------------------------------------
-/*! Global uniform random number generator for numbers between 0 and 1 that are
-used in SLRay, SLLightRect and SLPathtracer. So far they work perfectly with
-CPP11 multithreading.
+/*! Uniform random number generator for numbers between 0 and 1 that is used in
+SLRay, SLLightRect and SLPathtracer.
+\remarks The engine state is thread_local and must stay that way. The ray
+tracer and the path tracer call rnd01 concurrently from all worker threads (see
+SLPathtracer::render). A single shared std::mt19937 would be a data race on its
+624 word state plus its position index. That is undefined behaviour, and in
+practice the racing threads hand each other torn and repeated values, so their
+samples are no longer independent and the noise no longer averages out with
+1/sqrt(N).
+Each thread seeds its own engine from the current time mixed with a shared
+atomic counter, so that threads created within the same second still get
+different sequences.
 */
-auto random01 = bind(std::uniform_real_distribution<SLfloat>(0.0, 1.0),
-                     std::mt19937((SLuint)time(nullptr)));
+SLfloat rnd01()
+{
+    static std::atomic<SLuint> seedCounter{0};
 
-SLfloat rnd01() { return random01(); }
+    thread_local std::mt19937 engine((SLuint)std::time(nullptr) * 2654435761u +
+                                     seedCounter.fetch_add(1u) * 40503u + 1u);
+
+    thread_local std::uniform_real_distribution<SLfloat> dist(0.0f, 1.0f);
+
+    return dist(engine);
+}
 //-----------------------------------------------------------------------------
 /*!
 SLRay::SLRay default constructor
