@@ -38,7 +38,7 @@ Documentation, packaging and CI clean-up following a full review of the
 repository, plus a path tracer correctness pass. Points 1–7 come from that
 review; point 8 was found while investigating the two red build badges; points
 9–15 are unrelated to it and come from investigating the fireflies that the
-path tracer leaves in the Muttenzer Box. Points 13 to 15 are still open.
+path tracer leaves in the Muttenzer Box. Point 14 is still open.
 
 ### ✅ 1. Add the missing LICENSE file
 Every source-file header and the Doxygen mainpage assert GPL-3.0, but the
@@ -404,7 +404,7 @@ It is kept because it costs nothing — the scatter ray is traced either way, an
 samples that used to be discarded now contribute their weighted share — and
 because any scene with a large or nearby area light needs it.
 
-### 13. Replace the fixed maximum depth with Russian roulette
+### ✅ 13. Replace the fixed maximum depth with Russian roulette
 **Russian roulette is not the same thing as Monte Carlo**, and the two are easy
 to conflate because both are random. Monte Carlo is the estimator itself: to
 evaluate an integral that has no closed form, draw samples `x` from a density
@@ -466,6 +466,57 @@ used for photonmapping(russian roulette)". Both halves are wrong.
 distributed scattering is importance sampling, not Russian roulette — precisely
 the conflation this point is about.
 
+**Implemented.** The survival probability is the albedo, so the 1/survival of a
+survivor cancels that bounce's attenuation exactly and the colour of a surface
+decides how likely a path is to continue rather than how much it is dimmed.
+Roulette applies to the continuation only; the next event estimate at each
+vertex is terminal and always taken. `maxDepth` went from 5 to 32 at all
+thirteen `startPathtracing` call sites and is now only a safety net, because a
+surface with an albedo of 1 — the mirror's specular and the glass's
+transmissive are both white — can never be terminated by roulette.
+
+Verified on a model of the interreflection series (albedo 0.75, exact 4.0): the
+old hard cut at 5 returned 3.0508, i.e. **76.3% of the answer**; roulette
+returns 4.0007. Measured on the scene at 100 spp, the recovered light appears
+exactly where the theory says it should, in proportion to how much of a
+region's light is indirect:
+
+| region | brightening | implied indirect fraction |
+|---|---|---|
+| ceiling (receives no direct light at all) | x1.324 | 100% |
+| blue wall | x1.080 | 26% |
+| far wall | x1.075 | 24% |
+| red wall | x1.063 | 20% |
+| floor | x1.050 | 16% |
+
+Cost: 410M rays in 130.8s before, 479M in 151.9s after, i.e. **+17% rays and
++16% time**, matching the modelled path length of 6 -> 7. (The *Rays per ms*
+figure in the Timing panel appeared to fall from 154 to 106, which is wrong:
+the actual throughput is 3136 vs 3156 rays/ms. `_raysPerMS` is an averaging
+accumulator that the path tracer writes once per render, so it mixes in the
+interactive GL frames that trace no rays. Worth fixing separately.)
+
+Two things were tried while tuning and reverted, recorded so they are not tried
+again:
+
+- **`RR_START_DEPTH` 3 -> 8.** A model of the roulette tail alone predicted a
+  fourfold drop in standard deviation. On the real scene it made the ceiling
+  *worse* (median absolute residual 3.77 -> 4.05 at 100 spp) for 1.7x the path
+  length. The model measured the wrong thing: the noise there was never the
+  roulette tail. Kept at 3.
+- **Moving the light down from y = 1.18 to 1.10.** This did find the real cause
+  of the ceiling noise. The light rectangle hangs 0.01 below the ceiling at
+  `pT = 1.19`, so a ceiling point directly above it is sealed into a slot: only
+  **0.07%** of its cosine weighted hemisphere escapes, and all of its indirect
+  light arrives through that one rare direction carrying the full radiance of
+  the room. At y = 1.10 the gap is 0.09 and 5.15% escapes, 77 times more often,
+  and that patch went from the worst converging region in the image (ratio
+  1.76x from 10 to 100 spp) to an ordinary one (2.17x, the same as the floor).
+  But it also exposes the black back face of the one sided light and the 9cm of
+  ceiling it shadows, which reads as a hole above the lamp. A 13% noise gain in
+  one patch was not worth that, so the light stays at 1.18 and point 15 deals
+  with the region instead.
+
 ### 14. Fix the glossy material path
 Dormant in the Muttenzer Box, because `SLMaterial::PERFECT` is 1000 and both
 spheres sit exactly at 1000 (`refl` shininess 1000, `refr` translucency 1000),
@@ -493,17 +544,47 @@ Noted while reading, unrelated to the above but in the same files:
 `CMakeLists.txt` builds and nothing references. They carry their own stale copy
 of the `diffuseMC` comment from point 13. They should be deleted or explained.
 
-### 15. Offer a per sample radiance clamp
+### ✅ 15. Offer a per sample radiance clamp
 A clamp on the radiance of a single sample, e.g. `color.clampMinMax(0, 10)`
 directly after `trace()` in `renderSlices`, removes the residual fireflies at
 once. It is what most production renderers ship, and it is biased by
 construction: it darkens exactly the bright caustic paths it is aimed at.
 
-It is therefore worth having as an explicit, off-by-default option in the PT
-menu next to the sample count, so that the bias is a choice rather than a
-surprise. Two constraints:
-- It has to clamp the **sample**, never the running mean. Clamping the mean is
-  the defect that point 9 removed, and it both froze fireflies and ate energy.
-- It is now the main lever against the remaining fireflies. Point 12 was
-  expected to reduce them and measurably does not, so nothing else on this list
-  will make the clamp unnecessary short of a caustic capable method.
+**Implemented** as `SLPathtracer::_sampleClamp`, exposed in the PT menu as
+*Firefly Clamp* with Off / 10 / 5 / 3. It caps the brightest channel and scales
+the other two with it, so a clamped sample loses energy but keeps its colour;
+clamping each channel on its own would shift the hue of everything it touches.
+It caps the **sample**, never the running mean — clamping the mean is the
+defect point 9 removed, and it froze fireflies instead of averaging them.
+
+Measured at 100 spp. Fireflies, as the percentage of pixels more than 20
+display levels above their local median:
+
+| region | off | 30 | 10 | 3 |
+|---|---|---|---|---|
+| far wall | 4.35% | 4.75% | 4.08% | **0.02%** |
+| floor | 2.10% | 1.92% | 1.82% | **0.01%** |
+| ceiling away from the light | 7.76% | 6.31% | 6.70% | **0.24%** |
+| ceiling below the light | 12.47% | 12.70% | 10.97% | **1.46%** |
+| caustic under the glass | 9.58% | 9.13% | 8.99% | **4.59%** |
+| mirror sphere | 3.78% | 2.70% | 2.60% | **0.06%** |
+
+The fireflies of this scene sit **between 3 and 10**, not above it: moderate
+and frequent rather than extreme and rare. 30 does nothing at all and 10 barely
+helps, which is why the menu offers 10 / 5 / 3 and not the 30 first guessed.
+
+What a limit of 3 costs, as mean linear radiance against no clamp: floor 0.977,
+far wall 0.959, mirror sphere 0.955, ceiling away from the light 0.947, ceiling
+below the light 0.849, **caustic under the glass 0.695**. The bias lands where
+it should, on the feature that was carrying its energy in rare bright samples.
+The caustic being a third too dark is the price of the clean image.
+
+The bulk noise barely moves (far wall median absolute residual 2.23 -> 2.00):
+this is purely a tail operation and does not make the estimator converge
+faster. It costs no time (15.12s vs 15.65s at 100 spp).
+
+The default is 3, because that is what makes the renderer usable at the sample
+counts it is actually run at, and Off is one click away. Nothing else on this
+list will make the clamp unnecessary short of a caustic capable method such as
+photon mapping: point 12 was expected to reduce these fireflies and measurably
+does not, because the middle vertex of the path is specular.

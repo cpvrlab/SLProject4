@@ -1677,7 +1677,7 @@ SLbool SLSceneView::onKeyPress(SLKey key, SLKey mod)
     if (key==K_space) {_s->stopAnimations(!_s->stopAnimations()); return true;}
 
     if (key=='R') {startRaytracing(5);}
-    if (key=='P') {startPathtracing(5, 10);}
+    if (key=='P') {startPathtracing(32, 10);}
 #ifdef SL_HAS_OPTIX
     if (key=='R' && mod==K_shift) {startOptixRaytracing(5);}
     if (key=='P' && mod==K_shift) {startOptixPathtracing(5, 100);}

@@ -131,6 +131,10 @@ public:
     SLstring windowTitle();
     void     printStats() { _stats3D.print(); }
     void     startRaytracing(SLint maxDepth);
+    //! Starts the path tracer. maxDepth is only a safety net against an
+    /*! endless specular chain: since SLPathtracer uses Russian roulette, the
+    length of a path is decided by the albedo of the surfaces it meets and
+    virtually no path reaches this cap. */
     void     startPathtracing(SLint maxDepth, SLint samples);
     void     setViewportFromRatio(const SLVec2i&  vpRatio,
                                   SLViewportAlign vpAlignment,

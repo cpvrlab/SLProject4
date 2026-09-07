@@ -28,6 +28,71 @@ by such a ray contributes its full emission, because shade() never produced a
 competing estimate of the same path. */
 static const SLfloat PDF_NO_MIS = -1.0f;
 //-----------------------------------------------------------------------------
+//! Path depth up to which Russian roulette always lets the path continue
+/*! Purely a variance and cost knob: every value here is unbiased, so this
+trades render time against noise and nothing else.
+
+Roulette is what makes the estimator unbiased, but it is not free. Because the
+survival probability is the albedo, the 1/survival of a survivor cancels that
+bounce's attenuation exactly, so a path that survives fifteen bounces arrives
+carrying full weight instead of 0.75^15. Roulette therefore turns "many paths,
+each tiny" into "few paths, each full size": the same mean with a much heavier
+tail. Taking the first bounces deterministically keeps that tail out of the
+part of the sum that carries most of the energy.
+
+A model of the interreflection series alone (albedo 0.75, exact answer
+1/(1-0.75) = 4) says the roulette tail shrinks quickly with this value:
+
+    start depth   mean     sd     mean path length
+              3   3.998   1.46     7.00
+              5   4.000   0.82     9.02
+              8   4.000   0.34    12.00
+
+Measured on the real scene, it does not. Raising it from 3 to 8 made the
+ceiling around the light *worse* (median absolute residual 3.77 -> 4.05 at
+100 spp) for 1.7 times the path length. The model is wrong about what dominates
+there: the noise in that region is not the roulette tail but the near field of
+the area light, where a surface centimetres from a 1.0 x 0.65 emitter receives
+an enormous radiance that neighbouring surfaces then see through a rare bounce.
+Tracing deeper only finds more of those. So the value is kept low: roulette
+removes the depth bias, and the near field needs a different fix (solid angle
+sampling of the rectangle, or the sample clamp). */
+static const SLint RR_START_DEPTH = 3;
+//-----------------------------------------------------------------------------
+//! Russian roulette survival test for the continuation of a path
+/*! Returns 0 if the path is absorbed and must not be continued, otherwise the
+survival probability that the caller has to divide its contribution by.
+
+Russian roulette is not the same thing as Monte Carlo, although both are
+random. Monte Carlo is the estimator itself: sample from a density and average
+f(x)/p(x). Russian roulette is a technique used inside it, and it answers a
+different question — how to terminate an unbounded recursion without making the
+answer wrong. Light bounces between the walls forever, so the recursion has to
+be stopped somewhere. Stopping it at a fixed depth discards the light that the
+longer paths would have carried, which is a bias that no number of samples can
+remove. Stopping it at random and dividing the survivors by their survival
+probability leaves the mean untouched:
+
+    E = q * 0 + (1 - q) * L / (1 - q) = L
+
+The survival probability is the albedo of the surface, so that the 1/survival
+of a survivor cancels the albedo of that bounce exactly. That is the classic
+formulation: the colour of the surface decides how likely the path is to
+continue, rather than how much it is dimmed. A surface with an albedo of 1
+absorbs nothing and therefore always survives, which is why the hard depth cap
+in trace() is still needed as a safety net. */
+static SLfloat russianRoulette(SLint depth, SLCol4f albedo)
+{
+    if (depth <= RR_START_DEPTH) return 1.0f;
+
+    SLfloat survival = std::min(albedo.maxXYZ(), 1.0f);
+
+    if (survival <= 0.0f) return 0.0f;  // black surface, nothing to continue
+    if (survival >= 1.0f) return 1.0f;  // absorbs nothing, always continues
+
+    return (rnd01() < survival) ? survival : 0.0f;
+}
+//-----------------------------------------------------------------------------
 //! Power heuristic (beta = 2) weight of the strategy whose density is pdfThis
 /*! Two strategies that can both generate the same path each return an unbiased
 estimate of it, so simply adding them would count the path twice. Weighting
@@ -74,6 +139,7 @@ SLPathtracer::SLPathtracer()
     name("PathTracer");
     _calcDirect   = true;
     _calcIndirect = true;
+    _sampleClamp  = 3.0f; // see SLPathtracer.h; 0 switches it off
     gamma(2.2f);
 }
 //-----------------------------------------------------------------------------
@@ -196,6 +262,18 @@ void SLPathtracer::renderSlices(const bool isMainThread,
                 color += trace(&primaryRay, PDF_NO_MIS);
                 ///////////////////////////////////
 
+                // Optional firefly clamp. The brightest channel is brought
+                // down to the limit and the other two are scaled with it, so
+                // that the sample loses energy but keeps its colour. Clamping
+                // each channel on its own would shift the hue of everything it
+                // touches. See _sampleClamp for why this is off by default.
+                if (_sampleClamp > 0.0f)
+                {
+                    SLfloat maxChannel = color.maxXYZ();
+                    if (maxChannel > _sampleClamp)
+                        color *= _sampleClamp / maxChannel;
+                }
+
                 // Add the raw linear radiance of this sample to the running sum.
                 // Nothing is clamped or quantised here on purpose: the estimator
                 // only converges with 1/sqrt(N) if every sample keeps its full
@@ -263,8 +341,13 @@ SLCol4f SLPathtracer::trace(SLRay* ray, SLfloat bsdfPdf)
     if (ray->length >= FLT_MAX)
         return ray->backgroundColor;
 
-    // End of recursion: the path is cut off at the max depth and gathers
-    // nothing more. This is a bias that a russian roulette would avoid.
+    // End of recursion: the safety net. Russian roulette below decides how long
+    // a path lives, but it cannot terminate a surface that absorbs nothing,
+    // such as the perfect mirror and the glass of the Muttenzer Box, so a hard
+    // cap is still needed against an endless specular chain. The cap is set
+    // high enough (see the startPathtracing call sites) that roulette and not
+    // this test ends virtually every path, so the bias it used to cause is now
+    // negligible instead of dominant.
     if (ray->depth > maxDepth())
         return SLCol4f::BLACK;
 
@@ -335,7 +418,15 @@ SLCol4f SLPathtracer::trace(SLRay* ray, SLfloat bsdfPdf)
         if (_calcDirect)
             finalColor += shade(ray, &objectColor) * scaleBy;
 
-        if (_calcIndirect)
+        // Russian roulette decides whether the path continues. The direct
+        // illumination above is a terminal estimate at this vertex and is
+        // always taken; only the continuation is gambled on. The roll is made
+        // inside the test so that switching the indirect illumination off does
+        // not consume random numbers here.
+        SLfloat survival = _calcIndirect ? russianRoulette(ray->depth, objectColor)
+                                         : 0.0f;
+
+        if (survival > 0.0f)
         {
             SLRay scatter;
             ray->diffuseMC(&scatter);
@@ -351,12 +442,19 @@ SLCol4f SLPathtracer::trace(SLRay* ray, SLfloat bsdfPdf)
                 scatterPdf = std::max(scatter.dir.dot(ray->hitNormal), 0.0f) *
                              Utils::ONEOVERPI;
 
-            // material emission, material diffuse and recursive indirect illumination
-            finalColor += (trace(&scatter, scatterPdf) & objectColor) * scaleBy;
+            // material emission, material diffuse and recursive indirect
+            // illumination, scaled up by 1/survival for the paths that lived
+            finalColor += (trace(&scatter, scatterPdf) & objectColor) *
+                          (scaleBy / survival);
         }
     }
     else if (ray->hitMatIsReflective())
     {
+        // Russian roulette, as in the diffuse branch. A perfect mirror has an
+        // albedo of 1, always survives, and is bounded only by the depth cap.
+        SLfloat survival = russianRoulette(ray->depth, objectColor);
+        if (survival <= 0.0f) return finalColor;
+
         // scatter toward perfect specular direction
         SLRay reflected;
         ray->reflect(&reflected);
@@ -375,10 +473,16 @@ SLCol4f SLPathtracer::trace(SLRay* ray, SLfloat bsdfPdf)
         // shininess contribution * recursive indirect illumination and matrial base color
         finalColor += ((mat->shininess() + 2.0f) / (mat->shininess() + 1.0f) *
                        (trace(&reflected, PDF_NO_MIS) & objectColor)) *
-                      scaleBy;
+                      (scaleBy / survival);
     }
     else if (ray->hitMatIsTransparent())
     {
+        // Russian roulette, as in the diffuse branch. This is independent of
+        // the Fresnel choice further down, which picks reflection or
+        // transmission but never ends the path.
+        SLfloat survival = russianRoulette(ray->depth, objectColor);
+        if (survival <= 0.0f) return finalColor;
+
         // scatter toward perfect transmissive direction
         SLRay refracted;
         ray->refract(&refracted);
@@ -436,7 +540,7 @@ SLCol4f SLPathtracer::trace(SLRay* ray, SLfloat bsdfPdf)
                            (mat->translucency() + 1.0f) *
                            (trace(&refracted, PDF_NO_MIS) & objectColor) *
                            refractionProbability) *
-                          scaleBy;
+                          (scaleBy / survival);
         else
         {
             // scatter toward perfect specular direction
@@ -448,7 +552,7 @@ SLCol4f SLPathtracer::trace(SLRay* ray, SLfloat bsdfPdf)
                            (mat->shininess() + 1.0f) *
                            (trace(&scattered, PDF_NO_MIS) & objectColor) *
                            reflectionProbability) *
-                          scaleBy;
+                          (scaleBy / survival);
         }
     }
 

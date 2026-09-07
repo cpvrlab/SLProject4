@@ -37,16 +37,46 @@ public:
     // Setters
     void calcDirect(SLbool di) { _calcDirect = di; }
     void calcIndirect(SLbool ii) { _calcIndirect = ii; }
+    void sampleClamp(SLfloat max) { _sampleClamp = max; }
 
     // Getters
-    SLbool calcDirect() const { return _calcDirect; }
-    SLbool calcIndirect() const { return _calcIndirect; }
+    SLbool  calcDirect() const { return _calcDirect; }
+    SLbool  calcIndirect() const { return _calcIndirect; }
+    SLfloat sampleClamp() const { return _sampleClamp; }
 
 private:
     function<void(bool, int, SLuint)> renderSlicesPTAsync;
 
     SLbool _calcDirect;   //!< flag to calculate direct illumination
     SLbool _calcIndirect; //!< flag to calculate indirect illumination
+
+    //! Upper limit on the radiance of a single sample, 0 to switch it off
+    /*! A firefly is a path that carries far more energy than the pixel it lands
+    in, most often a caustic: light that reaches a diffuse surface through the
+    mirror or the glass sphere. The estimator is right about it, but such a path
+    is found so seldom that the average is still visibly lumpy after a thousand
+    samples. Capping what one sample may contribute removes it at once.
+
+    This is a deliberate bias, and the only one left in the renderer: it
+    discards the part of a caustic above the limit and makes it darker than it
+    is. Measured on the Muttenzer Box at 100 spp, against no clamp:
+
+      limit   fireflies, far wall      mean radiance of the caustic
+        off                 4.35%                             1.000
+         30                 4.75%                             0.985
+         10                 4.08%                             0.938
+          3                 0.02%                             0.695
+
+    The fireflies of this scene sit between 3 and 10, so 30 does nothing and 10
+    barely helps. 3 removes them almost entirely and costs 2 to 5% on ordinary
+    surfaces, 15% on the ceiling below the light and 30% on the caustic under
+    the glass sphere. That is the trade, and it is why this is a menu item that
+    can be switched off rather than a constant.
+
+    Note that it caps the SAMPLE and never the running mean. Clamping the mean
+    is the defect that the float accumulation buffer removed: it froze the
+    fireflies at a wrong value instead of averaging them away. */
+    SLfloat _sampleClamp;
 
     //! Linear, unclamped sum of all radiance samples taken so far per pixel
     /*! The progressive mean of a path tracer must never be kept in an 8 bit

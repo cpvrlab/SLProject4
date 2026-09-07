@@ -2349,7 +2349,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 sv->startRaytracing(5);
 
             if (ImGui::MenuItem("Path Tracing", "P", rType == RT_pt))
-                sv->startPathtracing(5, 10);
+                sv->startPathtracing(32, 10);
 
 #ifdef SL_HAS_OPTIX
             if (ImGui::MenuItem("Ray Tracing with OptiX", "Shift-R", rType == RT_optix_rt))
@@ -2579,17 +2579,17 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                     if (ImGui::MenuItem("1.00", nullptr, pt->resolutionFactorPC() == 100))
                     {
                         pt->resolutionFactor(1.0f);
-                        sv->startPathtracing(5, pt->aaSamples());
+                        sv->startPathtracing(32, pt->aaSamples());
                     }
                     if (ImGui::MenuItem("0.50", nullptr, pt->resolutionFactorPC() == 50))
                     {
                         pt->resolutionFactor(0.5f);
-                        sv->startPathtracing(5, pt->aaSamples());
+                        sv->startPathtracing(32, pt->aaSamples());
                     }
                     if (ImGui::MenuItem("0.25", nullptr, pt->resolutionFactorPC() == 25))
                     {
                         pt->resolutionFactor(0.25f);
-                        sv->startPathtracing(5, pt->aaSamples());
+                        sv->startPathtracing(32, pt->aaSamples());
                     }
 
                     ImGui::EndMenu();
@@ -2597,11 +2597,42 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
 
                 if (ImGui::BeginMenu("NO. of Samples"))
                 {
-                    if (ImGui::MenuItem("1", nullptr, pt->aaSamples() == 1)) sv->startPathtracing(5, 1);
-                    if (ImGui::MenuItem("10", nullptr, pt->aaSamples() == 10)) sv->startPathtracing(5, 10);
-                    if (ImGui::MenuItem("100", nullptr, pt->aaSamples() == 100)) sv->startPathtracing(5, 100);
-                    if (ImGui::MenuItem("1000", nullptr, pt->aaSamples() == 1000)) sv->startPathtracing(5, 1000);
-                    if (ImGui::MenuItem("10000", nullptr, pt->aaSamples() == 10000)) sv->startPathtracing(5, 10000);
+                    if (ImGui::MenuItem("1", nullptr, pt->aaSamples() == 1)) sv->startPathtracing(32, 1);
+                    if (ImGui::MenuItem("10", nullptr, pt->aaSamples() == 10)) sv->startPathtracing(32, 10);
+                    if (ImGui::MenuItem("100", nullptr, pt->aaSamples() == 100)) sv->startPathtracing(32, 100);
+                    if (ImGui::MenuItem("1000", nullptr, pt->aaSamples() == 1000)) sv->startPathtracing(32, 1000);
+                    if (ImGui::MenuItem("10000", nullptr, pt->aaSamples() == 10000)) sv->startPathtracing(32, 10000);
+
+                    ImGui::EndMenu();
+                }
+
+                if (ImGui::BeginMenu("Firefly Clamp"))
+                {
+                    // Caps what a single sample may contribute. This is the
+                    // only deliberate bias in the path tracer: it darkens the
+                    // caustics it removes. The values bracket where the
+                    // fireflies of this scene actually are, between 3 and 10;
+                    // a limit of 30 was measured to do nothing at all.
+                    if (ImGui::MenuItem("Off (unbiased)", nullptr, pt->sampleClamp() == 0.0f))
+                    {
+                        pt->sampleClamp(0.0f);
+                        sv->startPathtracing(32, pt->aaSamples());
+                    }
+                    if (ImGui::MenuItem("10", nullptr, pt->sampleClamp() == 10.0f))
+                    {
+                        pt->sampleClamp(10.0f);
+                        sv->startPathtracing(32, pt->aaSamples());
+                    }
+                    if (ImGui::MenuItem("5", nullptr, pt->sampleClamp() == 5.0f))
+                    {
+                        pt->sampleClamp(5.0f);
+                        sv->startPathtracing(32, pt->aaSamples());
+                    }
+                    if (ImGui::MenuItem("3", nullptr, pt->sampleClamp() == 3.0f))
+                    {
+                        pt->sampleClamp(3.0f);
+                        sv->startPathtracing(32, pt->aaSamples());
+                    }
 
                     ImGui::EndMenu();
                 }
@@ -2609,13 +2640,13 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 if (ImGui::MenuItem("Direct illumination", nullptr, pt->calcDirect()))
                 {
                     pt->calcDirect(!pt->calcDirect());
-                    sv->startPathtracing(5, 10);
+                    sv->startPathtracing(32, 10);
                 }
 
                 if (ImGui::MenuItem("Indirect illumination", nullptr, pt->calcIndirect()))
                 {
                     pt->calcIndirect(!pt->calcIndirect());
-                    sv->startPathtracing(5, 10);
+                    sv->startPathtracing(32, 10);
                 }
 
                 if (ImGui::MenuItem("Save Rendered Image"))
@@ -2626,7 +2657,7 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 if (ImGui::SliderFloat("Gamma", &gamma, 0.1f, 3.0f, "%.1f"))
                 {
                     pt->gamma(gamma);
-                    sv->startPathtracing(5, 1);
+                    sv->startPathtracing(32, 1);
                 }
                 ImGui::PopItemWidth();
 
