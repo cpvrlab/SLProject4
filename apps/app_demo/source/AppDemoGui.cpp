@@ -514,15 +514,15 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                     snprintf(m + strlen(m), sizeof(m), "Rays per ms:%0.0f\n", rt->raysPerMS());
                     snprintf(m + strlen(m), sizeof(m), "AA Pixels  :%d (%d%%)\n", SLRay::subsampledPixels, (int)((float)SLRay::subsampledPixels / (float)rayPrimaries * 100.0f));
                     snprintf(m + strlen(m), sizeof(m), "Threads    :%d\n", rt->numThreads());
-                    snprintf(m + strlen(m), sizeof(m), "----------------------------\n");
-                    snprintf(m + strlen(m), sizeof(m), "Total rays :%9d (%3d%%)\n", rayTotal, 100);
-                    snprintf(m + strlen(m), sizeof(m), "  Primary  :%9d (%3d%%)\n", rayPrimaries, (int)((float)rayPrimaries / (float)rayTotal * 100.0f));
-                    snprintf(m + strlen(m), sizeof(m), "  Reflected:%9d (%3d%%)\n", SLRay::reflectedRays, (int)((float)SLRay::reflectedRays / (float)rayTotal * 100.0f));
-                    snprintf(m + strlen(m), sizeof(m), "  Refracted:%9d (%3d%%)\n", SLRay::refractedRays, (int)((float)SLRay::refractedRays / (float)rayTotal * 100.0f));
-                    snprintf(m + strlen(m), sizeof(m), "  TIR      :%9d (%3d%%)\n", SLRay::tirRays, (int)((float)SLRay::tirRays / (float)rayTotal * 100.0f));
-                    snprintf(m + strlen(m), sizeof(m), "  Shadow   :%9d (%3d%%)\n", SLRay::shadowRays, (int)((float)SLRay::shadowRays / (float)rayTotal * 100.0f));
-                    snprintf(m + strlen(m), sizeof(m), "  AA       :%9d (%3d%%)\n", SLRay::subsampledRays, (int)((float)SLRay::subsampledRays / (float)rayTotal * 100.0f));
-                    snprintf(m + strlen(m), sizeof(m), "----------------------------\n");
+                    snprintf(m + strlen(m), sizeof(m), "-----------------------------\n");
+                    snprintf(m + strlen(m), sizeof(m), "Total rays :%10u (%3d%%)\n", rayTotal, 100);
+                    snprintf(m + strlen(m), sizeof(m), "  Primary  :%10u (%3d%%)\n", rayPrimaries, (int)((float)rayPrimaries / (float)rayTotal * 100.0f));
+                    snprintf(m + strlen(m), sizeof(m), "  Reflected:%10u (%3d%%)\n", SLRay::reflectedRays, (int)((float)SLRay::reflectedRays / (float)rayTotal * 100.0f));
+                    snprintf(m + strlen(m), sizeof(m), "  Refracted:%10u (%3d%%)\n", SLRay::refractedRays, (int)((float)SLRay::refractedRays / (float)rayTotal * 100.0f));
+                    snprintf(m + strlen(m), sizeof(m), "  TIR      :%10u (%3d%%)\n", SLRay::tirRays, (int)((float)SLRay::tirRays / (float)rayTotal * 100.0f));
+                    snprintf(m + strlen(m), sizeof(m), "  Shadow   :%10u (%3d%%)\n", SLRay::shadowRays, (int)((float)SLRay::shadowRays / (float)rayTotal * 100.0f));
+                    snprintf(m + strlen(m), sizeof(m), "  AA       :%10u (%3d%%)\n", SLRay::subsampledRays, (int)((float)SLRay::subsampledRays / (float)rayTotal * 100.0f));
+                    snprintf(m + strlen(m), sizeof(m), "-----------------------------\n");
                     snprintf(m + strlen(m), sizeof(m), "Max. depth :%u\n", SLRay::maxDepthReached);
                     snprintf(m + strlen(m), sizeof(m), "Avg. depth :%0.3f\n", SLRay::avgDepth / (float)rayPrimaries);
                 }
@@ -551,21 +551,30 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                     SLint         ptHeight = (SLint)((float)sv->viewportH() * pt->resolutionFactor());
                     SLuint        rayTotal = SLRay::totalNumRays();
 
-                    snprintf(m + strlen(m), sizeof(m), "Renderer   :Path Tracer\n");
-                    snprintf(m + strlen(m), sizeof(m), "Progress   :%3d%%\n", pt->progressPC());
-                    snprintf(m + strlen(m), sizeof(m), "Frame size :%d x %d\n", ptWidth, ptHeight);
-                    snprintf(m + strlen(m), sizeof(m), "FPS        :%0.2f\n", 1.0f / pt->renderSec());
-                    snprintf(m + strlen(m), sizeof(m), "Frame Time :%0.2f sec.\n", pt->renderSec());
-                    snprintf(m + strlen(m), sizeof(m), "Rays per ms:%0.0f\n", pt->raysPerMS());
-                    snprintf(m + strlen(m), sizeof(m), "Samples/pix:%d\n", pt->aaSamples());
-                    snprintf(m + strlen(m), sizeof(m), "Threads    :%d\n", pt->numThreads());
-                    snprintf(m + strlen(m), sizeof(m), "---------------------------\n");
-                    snprintf(m + strlen(m), sizeof(m), "Total rays :%8d (%3d%%)\n", rayTotal, 100);
-                    snprintf(m + strlen(m), sizeof(m), "  Reflected:%8d (%3d%%)\n", SLRay::reflectedRays, (int)((float)SLRay::reflectedRays / (float)rayTotal * 100.0f));
-                    snprintf(m + strlen(m), sizeof(m), "  Refracted:%8d (%3d%%)\n", SLRay::refractedRays, (int)((float)SLRay::refractedRays / (float)rayTotal * 100.0f));
-                    snprintf(m + strlen(m), sizeof(m), "  TIR      :%8d\n", SLRay::tirRays);
-                    snprintf(m + strlen(m), sizeof(m), "  Shadow   :%8d (%3d%%)\n", SLRay::shadowRays, (int)((float)SLRay::shadowRays / (float)rayTotal * 100.0f));
-                    snprintf(m + strlen(m), sizeof(m), "---------------------------\n");
+                    // The sample clamp is a float, but is only ever set to the
+                    // whole numbers of the Firefly Clamp menu, and 0 means off.
+                    SLchar clamp[16];
+                    if (pt->sampleClamp() > 0.0f)
+                        snprintf(clamp, sizeof(clamp), "%g", pt->sampleClamp());
+                    else
+                        snprintf(clamp, sizeof(clamp), "Off");
+
+                    snprintf(m + strlen(m), sizeof(m), "Renderer     :Path Tracer\n");
+                    snprintf(m + strlen(m), sizeof(m), "Progress     :%3d%%\n", pt->progressPC());
+                    snprintf(m + strlen(m), sizeof(m), "Frame size   :%d x %d\n", ptWidth, ptHeight);
+                    snprintf(m + strlen(m), sizeof(m), "FPS          :%0.2f\n", 1.0f / pt->renderSec());
+                    snprintf(m + strlen(m), sizeof(m), "Frame Time   :%0.2f sec.\n", pt->renderSec());
+                    snprintf(m + strlen(m), sizeof(m), "Rays per ms  :%0.0f\n", pt->raysPerMS());
+                    snprintf(m + strlen(m), sizeof(m), "Firefly Clamp:%s\n", clamp);
+                    snprintf(m + strlen(m), sizeof(m), "Samples/pix  :%d\n", pt->aaSamples());
+                    snprintf(m + strlen(m), sizeof(m), "Threads      :%d\n", pt->numThreads());
+                    snprintf(m + strlen(m), sizeof(m), "-------------------------------\n");
+                    snprintf(m + strlen(m), sizeof(m), "Total rays   :%10u (%3d%%)\n", rayTotal, 100);
+                    snprintf(m + strlen(m), sizeof(m), "  Reflected  :%10u (%3d%%)\n", SLRay::reflectedRays, (int)((float)SLRay::reflectedRays / (float)rayTotal * 100.0f));
+                    snprintf(m + strlen(m), sizeof(m), "  Refracted  :%10u (%3d%%)\n", SLRay::refractedRays, (int)((float)SLRay::refractedRays / (float)rayTotal * 100.0f));
+                    snprintf(m + strlen(m), sizeof(m), "  TIR        :%10u\n", SLRay::tirRays);
+                    snprintf(m + strlen(m), sizeof(m), "  Shadow     :%10u (%3d%%)\n", SLRay::shadowRays, (int)((float)SLRay::shadowRays / (float)rayTotal * 100.0f));
+                    snprintf(m + strlen(m), sizeof(m), "-------------------------------\n");
                 }
 
                 ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
