@@ -1,8 +1,7 @@
 /**
  * \file      SLPathtracer.cpp
- * \authors   Thomas Schneiter
  * \date      July 2014
- * \authors   Marcus Hudritsch
+ * \authors   Thomas Schneiter, Marcus Hudritsch
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
@@ -140,6 +139,8 @@ SLPathtracer::SLPathtracer()
     _calcDirect   = true;
     _calcIndirect = true;
     _sampleClamp  = 3.0f; // see SLPathtracer.h; 0 switches it off
+    _noiseRSE     = 0.0f;
+    _noiseRSE999  = 0.0f;
     gamma(2.2f);
 }
 //-----------------------------------------------------------------------------
@@ -169,9 +170,16 @@ SLbool SLPathtracer::render(SLSceneView* sv)
     // Allocate and clear the high precision accumulation buffer. Its size is
     // taken from _images[0] and not from the viewport, because prepareImage
     // scales the image with _resolutionFactor.
-    _radianceSum.assign((size_t)_images[0]->width() *
-                          (size_t)_images[0]->height(),
-                        SLCol4f::BLACK);
+    const size_t numPixels = (size_t)_images[0]->width() *
+                             (size_t)_images[0]->height();
+    _radianceSum.assign(numPixels, SLCol4f::BLACK);
+
+    // The two moments the noise figure is computed from. See computeNoise.
+    _lumSum.assign(numPixels, 0.0);
+    _lumSumSq.assign(numPixels, 0.0);
+    _noiseRSE    = 0.0f;
+    _noiseRSE999 = 0.0f;
+
     // Measure time
     double t1 = GlobalTimer::timeS();
 
@@ -205,6 +213,7 @@ SLbool SLPathtracer::render(SLSceneView* sv)
     _renderSec = GlobalTimer::timeS() - (SLfloat)t1;
     _raysPerMS.set((float)SLRay::totalNumRays() / _renderSec / 1000.0f);
     _progressPC = 100;
+    computeNoise();
 
     SL_LOG("\nTime to render image: %6.3fsec", _renderSec);
 
@@ -281,9 +290,25 @@ void SLPathtracer::renderSlices(const bool isMainThread,
                 // applies to the mean shrinks with 1/currentSample, so rounding
                 // the mean to 8 bit (as the old _images[1] did) would freeze
                 // bright outliers (fireflies) at a wrong value forever.
-                SLCol4f& radianceSum = _radianceSum[(size_t)y * (size_t)imgW +
-                                                    (size_t)x];
+                const size_t pixel = (size_t)y * (size_t)imgW + (size_t)x;
+
+                SLCol4f& radianceSum = _radianceSum[pixel];
                 radianceSum += color;
+
+                // The same sample as a single number, for the noise figure of
+                // computeNoise. It is taken here and not from _images[0],
+                // because that image is clamped to [0,1] and gamma corrected
+                // for the display, which flattens every firefly to white and
+                // destroys exactly the signal being measured. Rec. 709
+                // luminance, matching the linear primaries the renderer works
+                // in. When _sampleClamp is on the sample arriving here is
+                // already clamped, so the figure describes the noise of the
+                // clamped estimator, which is the image actually produced.
+                const SLdouble lum = 0.2126 * (SLdouble)color.r +
+                                     0.7152 * (SLdouble)color.g +
+                                     0.0722 * (SLdouble)color.b;
+                _lumSum[pixel] += lum;
+                _lumSumSq[pixel] += lum * lum;
 
                 // The mean of all samples taken so far for this pixel
                 color = radianceSum / (SLfloat)currentSample;
@@ -685,6 +710,83 @@ SLCol4f SLPathtracer::shade(SLRay* ray, SLCol4f* mat)
     }
 
     return color;
+}
+//-----------------------------------------------------------------------------
+/*!
+Turns the two luminance moments that renderSlices accumulated into the noise
+figures of the Timing panel. Called once, after the last sample pass.
+
+For a pixel that received N samples with luminances x_i, from the sums
+
+    S1 = sum(x_i)  and  S2 = sum(x_i^2)
+
+the variance of one sample and the standard error of the pixel, which is the
+mean of those samples, are
+
+    s^2 = (S2 - S1^2 / N) / (N - 1)
+    SE  = sqrt(s^2 / N)
+
+SE is in the units of the pixel, so it is divided by the pixel to give a
+relative standard error that can be compared between scenes, exposures and
+resolutions. noiseRSE is the mean of that over the image, noiseRSE999 the
+99.9th percentile, which is the figure fireflies move.
+
+A Monte Carlo estimator converges with 1/sqrt(N), so noiseRSE has to fall by
+half when the samples per pixel are quadrupled. That makes it a check on the
+estimators in trace() and shade() as much as a readout: if it does not halve,
+something upstream is wrong.
+*/
+void SLPathtracer::computeNoise()
+{
+    const size_t numPixels = _lumSum.size();
+
+    // The variance of a sample needs at least two samples to exist.
+    if (numPixels == 0 || _aaSamples < 2)
+    {
+        _noiseRSE    = 0.0f;
+        _noiseRSE999 = 0.0f;
+        return;
+    }
+
+    const SLdouble n = (SLdouble)_aaSamples;
+
+    // Keeps a black pixel, where mu is 0 and no number of samples is going to
+    // change that, from dividing by zero.
+    const SLdouble eps = 1e-3;
+
+    vector<SLfloat> rse(numPixels);
+    SLdouble        sum = 0.0;
+
+    for (size_t i = 0; i < numPixels; ++i)
+    {
+        const SLdouble s1 = _lumSum[i];
+        const SLdouble s2 = _lumSumSq[i];
+        const SLdouble mu = s1 / n;
+
+        SLdouble variance = (s2 - s1 * s1 / n) / (n - 1.0);
+
+        // A pixel that got the same value every time, a background pixel for
+        // instance, has a true variance of 0 and the subtraction above can land
+        // just below it. Without this the sqrt would return a NaN.
+        if (variance < 0.0)
+            variance = 0.0;
+
+        rse[i] = (SLfloat)(sqrt(variance / n) / (mu + eps));
+        sum += (SLdouble)rse[i];
+    }
+
+    _noiseRSE = (SLfloat)(sum / (SLdouble)numPixels);
+
+    // nth_element partitions around the wanted rank instead of sorting the
+    // whole image, which is O(numPixels) rather than O(numPixels log numPixels)
+    // and is all a percentile needs.
+    size_t k = (size_t)(0.999 * (SLdouble)numPixels);
+    if (k >= numPixels)
+        k = numPixels - 1;
+    std::nth_element(rse.begin(),
+                     rse.begin() + (std::ptrdiff_t)k,
+                     rse.end());
+    _noiseRSE999 = rse[k];
 }
 //-----------------------------------------------------------------------------
 //! Saves the current PT image as PNG image

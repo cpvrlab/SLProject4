@@ -14,9 +14,9 @@ and is the single source of truth — it is what the **About** dialog displays.
 
 **It is kept in accordance with this plan**: the major and minor components name
 the release section below, and the patch component is the number of points that
-section contains. Version 4.3.016 therefore means the sixteen points of the
-*Version 4.3* section. Adding a seventeenth point means bumping the version to
-4.3.017 and syncing every site in the table below at the same time.
+section contains. Version 4.3.017 therefore means the seventeen points of the
+*Version 4.3* section. Adding an eighteenth point means bumping the version to
+4.3.018 and syncing every site in the table below at the same time.
 
 | Site | Purpose |
 |---|---|
@@ -32,14 +32,16 @@ above it.
 
 ---
 
-## **Version 4.3.016**
+## **Version 4.3.017**
 
 Documentation, packaging and CI clean-up following a full review of the
 repository, plus a path tracer correctness pass. Points 1–7 come from that
 review; point 8 was found while investigating the two red build badges; points
-9–16 are unrelated to it and come from investigating the fireflies that the
+9–17 are unrelated to it and come from investigating the fireflies that the
 path tracer leaves in the Muttenzer Box. Point 16 was found while
-reading the Timing panel during point 13. Point 14 is still open.
+reading the Timing panel during point 13, and point 17 follows from it: having
+fixed what the panel says about speed, it should say something about noise too.
+Point 14 is still open.
 
 ### ✅ 1. Add the missing LICENSE file
 Every source-file header and the Doxygen mainpage assert GPL-3.0, but the
@@ -632,3 +634,114 @@ changed, because they are inherent to measuring a whole render:
   the figure understates a many core machine. It describes this renderer on this
   machine rather than raw ray throughput; timing a single sample pass with the
   window update disabled would be the cleaner benchmark.
+
+### ✅ 17. Report a noise figure in the Timing panel
+The panel measures only speed. Every variance reduction point above — the area
+light estimator of 11, the MIS of 12, the Russian roulette of 13, the clamp of
+15 — was judged by looking at the image, which is why point 13 could appear to
+be a 30% slowdown for most of its development. A number for the noise makes
+those judgements repeatable, and it can be had without a reference image and
+without tracing a single extra ray.
+
+**The estimator.** `_radianceSum` already holds, per pixel, the sum of the
+linear radiance of every sample taken. Adding a second buffer with the sum of
+the *squares* gives the variance for one multiply-add per sample. With `n` the
+sample count (`_aaSamples`, the same for every pixel, as the path tracer does
+no adaptive sampling) and `x_i` the luminance of sample `i`:
+
+    S1    = sum(x_i)                    <- _radianceSum, already there
+    S2    = sum(x_i^2)                  <- the new buffer
+
+    mu    = S1 / n                      the pixel value, as displayed
+    s^2   = (S2 - S1^2 / n) / (n - 1)   variance of a single sample
+    var   = s^2 / n                     variance of the pixel estimate mu
+    SE    = sqrt(s^2 / n)               standard error of the pixel
+
+`SE` is how far the pixel is expected to sit from its converged value, in the
+same units as the pixel. Dividing by the pixel itself makes it dimensionless
+and therefore comparable between scenes, exposures and resolutions:
+
+    RSE_p    = sqrt(s_p^2 / n) / (mu_p + eps)      eps = 1e-3
+    noiseRSE = (1/N) * sum over all N pixels of RSE_p
+
+The `eps` keeps black pixels, where `mu` is 0 and no amount of sampling will
+change it, from dividing by zero.
+
+**The self check.** A Monte Carlo estimator converges with `1/sqrt(n)`, so
+`noiseRSE` must fall by half when the samples per pixel are quadrupled. If it
+does not, the estimator is wrong, not the scene — which makes this figure a
+regression test on points 11 to 13 as much as a readout.
+
+**The figure to actually compare, which is not the noise.** Noise alone ranks
+techniques wrongly as soon as they change what a sample costs, and Russian
+roulette does exactly that: point 13 traces 17% more rays per sample on
+purpose. The measure that accounts for it is the Monte Carlo efficiency, the
+inverse of variance times time:
+
+    efficiency = 1 / (noiseRSE^2 * renderSec)
+
+This is the right figure because it does not depend on the sample count. The
+variance of the mean falls as `1/n` and the render time grows as `n`, so their
+product is constant in `n` and two runs at different samples per pixel can be
+compared directly. A change is worth keeping if it raises this number, whatever
+it did to the noise or to the speed taken on their own.
+
+**Fireflies need a percentile, not a mean.** A firefly is a few pixels out of
+230400, so it barely moves `noiseRSE`. The figure that moves is the 99.9th
+percentile of `RSE_p`, which at 640x360 is the worst 230 pixels or so. That is
+the number that should have been watched while point 15 was tuned.
+
+The percentile has a floor that follows from its own definition, and it was
+measured on synthetic fireflies at 640x360 and 1000 spp, the outliers 3000
+times an ordinary sample:
+
+    firefly pixels   noiseRSE   noiseRSE999
+            0.010%    0.00320       0.00338
+            0.100%    0.00370       0.00342   <- still an ordinary pixel
+            0.200%    0.00421       0.60547
+            1.000%    0.00848       0.75006
+            5.000%    0.02910       0.75061
+
+Reporting the pixel at rank 99.9% means it cannot see a firefly population
+smaller than 0.1% of the image: below that the rank lands on an ordinary pixel
+and the figure reads clean. That is the right threshold here, since the
+fireflies of the Muttenzer Box cover about 4% of the far wall by the table in
+point 15, but a scene with rarer ones would need a higher percentile.
+
+**The limit of all of the above: variance is not error.** `noiseRSE` measures
+how far the image is from where *this* estimator converges, not how far it is
+from the truth, and the clamp of point 15 is deliberately biased. Variance
+falls monotonically as the clamp tightens, all the way to a perfectly
+noise-free black image at a clamp of 0, so `noiseRSE` will always claim that
+more clamping is better and will never once report the caustic energy that the
+clamp destroys. Ranking clamp settings needs an error against a reference
+instead — the Muttenzer Box at clamp `Off` at a very high sample count, stored
+once:
+
+    relMSE = (1/N) * sum over p of (I_p - ref_p)^2 / (ref_p^2 + eps)   eps = 0.01
+
+The `ref^2` in the denominator is what stops the bright ceiling light from
+dominating the sum, which is the reason plain MSE and PSNR are poor measures
+for a high dynamic range render. `relMSE` counts the noise the clamp removes
+and the dimming it causes in one number, so it is the only one of these that
+can say the clamp went too far.
+
+**Notes for the implementation.**
+- The samples must be taken from the raw linear radiance, next to the existing
+  `radianceSum += color` in `SLPathtracer::renderSlices`. Measuring `_images[0]`
+  instead would be meaningless: that buffer is clamped to [0,1] and gamma
+  corrected for the display, so every firefly in it is flattened to white and
+  the signal being measured is gone.
+- When the clamp of point 15 is on, the samples reaching the sum are already
+  clamped, so the figure describes the noise of the clamped estimator. That is
+  the correct behaviour: it is the image the renderer actually produces.
+- The two sums are `double` even though `_radianceSum` is `float`, because the
+  variance is the small difference of two large sums, `S2 - S1*S1/N`. In a quiet
+  region those agree to several digits and a float would leave almost none of
+  the result; a firefly attacks the same sum from the other end, since 1e4
+  squared is 1e8 and an ordinary 1e-4 added to that is lost. Double carries both
+  ends and costs 16 bytes per pixel, 3.7 MB at 640x480. Welford's online update
+  was the alternative and would also have worked.
+- Cost is one buffer the size of the image and one multiply-add per sample. No
+  extra rays, and nothing in the estimator changes, so the rendered image is
+  bit-identical with the figure switched on.

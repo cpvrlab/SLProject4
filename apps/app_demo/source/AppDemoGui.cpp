@@ -565,6 +565,9 @@ void AppDemoGui::build(SLScene* s, SLSceneView* sv)
                     snprintf(m + strlen(m), sizeof(m), "FPS          :%0.2f\n", 1.0f / pt->renderSec());
                     snprintf(m + strlen(m), sizeof(m), "Frame Time   :%0.2f sec.\n", pt->renderSec());
                     snprintf(m + strlen(m), sizeof(m), "Rays per ms  :%0.0f\n", pt->raysPerMS());
+                    snprintf(m + strlen(m), sizeof(m), "Noise RSE    :%0.4f\n", pt->noiseRSE());
+                    snprintf(m + strlen(m), sizeof(m), "Noise p99.9  :%0.4f\n", pt->noiseRSE999());
+                    snprintf(m + strlen(m), sizeof(m), "Efficiency   :%0.2f\n", pt->efficiency());
                     snprintf(m + strlen(m), sizeof(m), "Firefly Clamp:%s\n", clamp);
                     snprintf(m + strlen(m), sizeof(m), "Samples/pix  :%d\n", pt->aaSamples());
                     snprintf(m + strlen(m), sizeof(m), "Threads      :%d\n", pt->numThreads());

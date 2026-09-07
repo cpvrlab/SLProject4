@@ -33,6 +33,7 @@ public:
     SLCol4f trace(SLRay* ray, SLfloat bsdfPdf);
     SLCol4f shade(SLRay* ray, SLCol4f* mat);
     void    saveImage();
+    void    computeNoise();
 
     // Setters
     void calcDirect(SLbool di) { _calcDirect = di; }
@@ -43,6 +44,49 @@ public:
     SLbool  calcDirect() const { return _calcDirect; }
     SLbool  calcIndirect() const { return _calcIndirect; }
     SLfloat sampleClamp() const { return _sampleClamp; }
+
+    //! Mean relative standard error of the pixels of the last render
+    /*! How far the average pixel is expected to sit from the value this
+    estimator converges to, as a fraction of the pixel itself. It is a measure
+    of the noise only: it says nothing about the bias that sampleClamp adds,
+    and it falls monotonically as the clamp tightens. See computeNoise. */
+    SLfloat noiseRSE() const { return _noiseRSE; }
+
+    //! Relative standard error of the noisiest 0.1% of the pixels
+    /*! The figure to watch for fireflies. A firefly covers a handful of pixels
+    out of hundreds of thousands, so it barely moves noiseRSE, but it dominates
+    this one.
+
+    It has a floor that comes straight from its definition: it reports the pixel
+    at rank 99.9%, so it only moves once the fireflies reach more than 0.1% of
+    the image. Measured on synthetic fireflies at 640x360 and 1000 spp, with the
+    outliers 3000 times an ordinary sample:
+
+      firefly pixels   noiseRSE   noiseRSE999
+              0.010%    0.00320       0.00338
+              0.100%    0.00370       0.00342     still an ordinary pixel
+              0.200%    0.00421       0.60547
+              5.000%    0.02910       0.75061
+
+    Below that threshold this figure reads as if the image were clean and only
+    noiseRSE moves, by very little. It is the right figure for the Muttenzer
+    Box, whose fireflies cover about 4% of the far wall (see _sampleClamp), but
+    a scene with rarer ones needs a higher percentile or the maximum. */
+    SLfloat noiseRSE999() const { return _noiseRSE999; }
+
+    //! Monte Carlo efficiency, the inverse of variance times time
+    /*! The figure to compare two renderers or two settings with, because it is
+    the only one that stays fair when a change alters what a sample costs, as
+    Russian roulette does. It does not depend on the sample count: the variance
+    of a pixel falls as 1/N while the render time grows as N, so their product
+    is constant in N and two renders at different samples per pixel can be
+    compared directly. Higher is better. */
+    SLfloat efficiency() const
+    {
+        return _noiseRSE > 0.0f && _renderSec > 0.0f
+                 ? 1.0f / (_noiseRSE * _noiseRSE * _renderSec)
+                 : 0.0f;
+    }
 
 private:
     function<void(bool, int, SLuint)> renderSlicesPTAsync;
@@ -90,6 +134,26 @@ private:
     Its size is _images[0]->width() * _images[0]->height() and it is indexed
     with y * width + x. */
     vector<SLCol4f> _radianceSum;
+
+    //! Sum and sum of squares of the luminance of every sample, per pixel
+    /*! The two moments that the variance of a pixel is computed from, in
+    computeNoise. Luminance rather than colour, because the noise of a pixel is
+    one number and not three, and it is linear, so summing the luminance of the
+    samples and taking the luminance of _radianceSum come to the same thing.
+
+    They are double and not float, although _radianceSum is float, because the
+    variance is the small difference of two large sums, S2 - S1*S1/N. In a quiet
+    region those two agree to several digits and a float would leave almost none
+    of the result. A firefly makes it worse from the other side: 1e4 squared is
+    1e8, and adding an ordinary 1e-4 to that is lost entirely in float. Double
+    carries both ends. The cost is 16 bytes per pixel, 3.7 MB at 640x480.
+
+    Indexed like _radianceSum, with y * width + x. */
+    vector<SLdouble> _lumSum;
+    vector<SLdouble> _lumSumSq;
+
+    SLfloat _noiseRSE;    //!< mean relative standard error, see noiseRSE()
+    SLfloat _noiseRSE999; //!< the same for the worst 0.1%, see noiseRSE999()
 };
 //-----------------------------------------------------------------------------
 #endif
