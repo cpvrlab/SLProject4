@@ -1285,13 +1285,32 @@ std::string ComputerInfos::get()
         default: arch = "???";
     }
 
-    // Windows OS version
-    OSVERSIONINFO osInfo;
-    ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
-    osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-    GetVersionEx(&osInfo);
+    // Windows OS version. GetVersionEx is deprecated since Windows 8.1 and
+    // reports 6.2 for anything newer unless the app ships a compatibility
+    // manifest, which none of our apps do. RtlGetVersion is not subject to
+    // that shimming. It is resolved dynamically to avoid a DDK dependency.
+    RTL_OSVERSIONINFOW osInfo;
+    ZeroMemory(&osInfo, sizeof(osInfo));
+    osInfo.dwOSVersionInfoSize = sizeof(osInfo);
+
+    typedef LONG(WINAPI * RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
+    if (HMODULE ntdll = GetModuleHandleW(L"ntdll.dll"))
+    {
+        auto rtlGetVersion = (RtlGetVersionPtr)GetProcAddress(ntdll,
+                                                              "RtlGetVersion");
+        if (rtlGetVersion)
+            rtlGetVersion(&osInfo);
+    }
+
+    // The build number is included because Windows 10 and 11 both report 10.0
+    // and only the build (>= 22000 is Windows 11) tells them apart.
     char osVersion[50];
-    sprintf(osVersion, "%lu.%lu", osInfo.dwMajorVersion, osInfo.dwMinorVersion);
+    snprintf(osVersion,
+             sizeof(osVersion),
+             "%lu.%lu.%lu",
+             osInfo.dwMajorVersion,
+             osInfo.dwMinorVersion,
+             osInfo.dwBuildNumber);
     osVer = string(osVersion);
 
     brand = "BRAND?";
