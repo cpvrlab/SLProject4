@@ -503,9 +503,17 @@ void SLAssimpImporter::findJoints(const aiScene* scene)
             if (it != _jointOffsets.end())
                 continue;
 
-            // add the offset matrix to our offset matrix map
+            // Add the offset matrix to our offset matrix map. setMatrix copies
+            // the 16 floats one by one. A memcpy onto an SLMat4f is undefined
+            // behaviour, because the user provided copy constructor and
+            // assignment operator of SLMat4 make it not TriviallyCopyable, and
+            // clang-tidy reports it as bugprone-undefined-memory-manipulation.
+            // It did work, the only member being T _m[16], but it would have
+            // started reading past the end of Assimp's aiMatrix4x4 the day
+            // anyone gave SLMat4 a second member, and gone wrong far from here.
+            // Assimp stores row major and SLMat4 column major, hence transpose.
             SLMat4f offsetMat;
-            memcpy(&offsetMat, &mesh->mBones[j]->mOffsetMatrix, sizeof(SLMat4f));
+            offsetMat.setMatrix((const SLfloat*)&mesh->mBones[j]->mOffsetMatrix);
             offsetMat.transpose();
             _jointOffsets[name] = offsetMat;
 
@@ -648,7 +656,7 @@ void SLAssimpImporter::loadSkeleton(SLAnimManager& animManager, SLJoint* parent,
     // set the current node transform as the initial state
     /*
     SLMat4f om;
-    memcpy(&om, &node->mTransformation, sizeof(SLMat4f));
+    om.setMatrix((const SLfloat*)&node->mTransformation);
     om.transpose();
     joint->om(om);
     joint->setInitialState();
