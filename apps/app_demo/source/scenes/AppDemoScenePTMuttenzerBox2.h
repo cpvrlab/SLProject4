@@ -16,7 +16,7 @@
 #include <SLScene.h>
 
 //-----------------------------------------------------------------------------
-//! Class for the Muttenzer Box path tracing scene with glossy materials
+//! Class for the Muttenzer Box path tracing scene with soft gloss materials
 /*! The same box and the same two spheres as AppDemoScenePTMuttenzerBox, with
 one difference: the shininess of the mirror sphere and both the translucency
 and the shininess of the glass sphere are 100 instead of SLMaterial::PERFECT

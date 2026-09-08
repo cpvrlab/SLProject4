@@ -32,7 +32,6 @@ AppDemoScenePTMuttenzerBox2::AppDemoScenePTMuttenzerBox2()
 //! All assets the should be loaded in parallel must be registered in here.
 void AppDemoScenePTMuttenzerBox2::registerAssetsToLoad(SLAssetLoader& al)
 {
-
     al.addTextureToLoad(_tex1,
                         AppCommon::texturePath + "MuttenzerBox+X0512_C.png",
                         AppCommon::texturePath + "MuttenzerBox-X0512_C.png",
@@ -85,7 +84,7 @@ void AppDemoScenePTMuttenzerBox2::assemble(SLAssetManager* am,
     // refraction and, since point 19, a blurred surface reflection.
     const SLfloat glossiness = 100.0f;
 
-    // Material for the glossy mirror sphere
+    // Material for the soft gloss mirror sphere
     SLMaterial* refl = new SLMaterial(am,
                                       "refl",
                                       blackRGB,

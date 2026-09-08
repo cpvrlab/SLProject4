@@ -43,8 +43,8 @@ reading the Timing panel during point 13, and point 17 follows from it: having
 fixed what the panel says about speed, it should say something about noise too.
 Point 18 belongs to none of these: it is the OptiX build, which point 6 deferred
 for want of a Windows machine with an NVidia card. Point 19 closes what point 14
-left open — the demo had no glossy material anywhere, so the code that point
-fixed was never executed by the application — and adding one immediately found a
+left open — the demo had no material with a soft specular lobe anywhere, so the
+code that point fixed was never executed by the application — and adding one immediately found a
 defect that the quadrature there could not. All nineteen points are closed.
 
 ### ✅ 1. Add the missing LICENSE file
@@ -1059,13 +1059,21 @@ them.
   measurement of the kind points 9 to 17 use. Only that it builds, runs, and
   renders.
 
-### ✅ 19. A glossy scene, and rough dielectrics that are rough on both sides
+### ✅ 19. A soft lobe scene, and rough dielectrics that are rough on both sides
 Point 14 could only verify its lobe sampling against a quadrature of the same
 integral, because no scene in the demo had a `shininess` or a `translucency`
 below `SLMaterial::PERFECT` and therefore nothing in the application ever called
 `reflectMC` or `refractMC`. This point adds the scene that exercises them, and
 adding it exposed a defect within minutes that the quadrature could not have
 found.
+
+A word on the vocabulary, because the menu and this text look like they
+contradict each other. *Gloss* is *Glanz*: a surface with much of it is a sharp
+mirror, and the menu accordingly calls the original scene **Muttenzer Box
+Glossy** and the new one **Muttenzer Box Soft**. English computer graphics uses
+*glossy* for the opposite end, the imperfect lobe between mirror and diffuse,
+which is the sense point 14's title carries. This point says **soft** for the
+wide lobe throughout, since that word means the same thing in both languages.
 
 **The scene.** `AppDemoScenePTMuttenzerBox2` (`SID_PTMuttenzerBox2`, under
 *Renderer > Path Tracing*) is the Muttenzer Box with the same two spheres in the
@@ -1132,8 +1140,8 @@ the reason point 14 gives.
 
 **The old scene.** The glass of `AppDemoScenePTMuttenzerBox` had a shininess of
 100 — a value that did nothing as long as the branch reflected as a perfect
-mirror, and that would now have turned the reference scene's clear glass glossy
-behind our backs. It is raised to `PERFECT`, which is what that scene has always
+mirror, and that would now have softened the reflection of the reference
+scene's clear glass behind our backs. It is raised to `PERFECT`, which is what that scene has always
 depicted. Nothing else there reads it: the material's specular colour is black,
 so the classic ray tracer's Blinn-Phong term is zero, and `RefractReflect.frag`
 has no specular term at all.
@@ -1152,9 +1160,9 @@ number on it, which is point 14's open item and not resolved here.
   than from one shared microfacet normal, so at grazing angles they describe
   surfaces that disagree with each other. Energy is not conserved between the
   two the way a real rough dielectric conserves it.
-- **MIS does not cover the glossy lobes.** Point 12 weights light sampling
+- **MIS does not cover the soft lobes.** Point 12 weights light sampling
   against BSDF sampling on the diffuse branch only. A wide lobe that finds the
-  area light by chance is still pure BSDF sampling, which is why the glossy
+  area light by chance is still pure BSDF sampling, which is why the soft
   spheres are grainier than the perfect ones at equal sample count — clearly so
   at the exponent of 20 in the render above.
 - **The Fresnel reflection is tinted by the transmissive color.**
