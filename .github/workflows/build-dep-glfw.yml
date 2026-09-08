@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: apt update
       run: sudo apt-get update
@@ -21,7 +21,7 @@ jobs:
       run: ./build_glfw_for_linux.sh 3.3.2
 
     - name: Archive prebuilt glfw
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: prebuilt-glfw-linux
         path: ${{ github.workspace }}/externals/prebuilt/linux_glfw_3.3.2

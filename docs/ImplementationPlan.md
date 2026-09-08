@@ -32,7 +32,7 @@ above it.
 
 ---
 
-## **Version 4.3.019**
+## **Version 4.3.020**
 
 Documentation, packaging and CI clean-up following a full review of the
 repository, plus a path tracer correctness pass. Points 1–7 come from that
@@ -45,7 +45,9 @@ Point 18 belongs to none of these: it is the OptiX build, which point 6 deferred
 for want of a Windows machine with an NVidia card. Point 19 closes what point 14
 left open — the demo had no material with a soft specular lobe anywhere, so the
 code that point fixed was never executed by the application — and adding one immediately found a
-defect that the quadrature there could not. All nineteen points are closed.
+defect that the quadrature there could not. Point 20 is CI upkeep: GitHub
+retired the artifact action the workflows uploaded with. All twenty points are
+closed.
 
 ### ✅ 1. Add the missing LICENSE file
 Every source-file header and the Doxygen mainpage assert GPL-3.0, but the
@@ -1179,3 +1181,39 @@ number on it, which is point 14's open item and not resolved here.
   the transmissive one — small, but it changes what every transparent material
   reflects, so it is a point of its own and not a footnote to this one.
 - As always, none of this touches `modules/sl/source/optix/`; see point 18.
+
+### ✅ 20. Move the CI workflows off the retired artifact action v3
+Every run of *Deploy Emscripten* since 30 January 2025 has failed before it
+could upload anything, with GitHub's own message rather than a build error:
+
+> This request has been automatically failed because it uses a deprecated
+> version of `actions/upload-artifact: v3`.
+
+The artifact backend behind v3 was switched off on that date, so the failure is
+not a warning that can be lived with — GitHub fails the run outright. The build
+itself was fine; only the last step was.
+
+`actions/upload-artifact` is bumped from `@v3` to `@v4` in all six workflows
+that use it, not just the one that was noticed: `deploy-wasm-emscripten.yml`,
+and the five `build-dep-*.yml` workflows that publish the prebuilt libraries,
+which would have failed the same way the next time a dependency is rebuilt.
+`actions/checkout` goes from `@v3` to `@v4` in the same pass — it runs on the
+retired Node 16 and today only warns, but it is heading the same way.
+
+Two v4 behaviour changes were checked against this repository: artifact names
+must be unique within a run, and all thirteen upload steps have distinct names
+(`prebuilt-g2o-windows`, `prebuilt-g2o-linux`, and so on); and v4 artifacts are
+immutable, which matters only if a workflow uploaded twice into one name, and
+none does. `deploy-pages.yml` already used `actions/upload-pages-artifact@v3`,
+a different action that is current at v3, and is untouched.
+
+**Deployment stays manual, deliberately.** The workflow builds the WebAssembly
+app and leaves it as a downloadable artifact; it does not copy it to the pallas
+server. The data folder with the textures and models is far too large to carry
+through GitHub, so the server copy is made by hand — download `emscripten_build`
+from the run on the Actions page, unzip it, and upload the files to
+`public/www`. The comment at the foot of the workflow says so; this point does
+not change that.
+
+No behavioural change to any code in the repository: this is CI configuration
+only.
