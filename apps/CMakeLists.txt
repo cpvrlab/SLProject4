@@ -353,8 +353,6 @@ function(sl_add_app)
         ${DEFAULT_LINKER_OPTIONS}
         ${PlatformLinkLibs}
         sl
-        sl_external
-        sl_utils
         ${OpenCV_LIBS}
     )
 endfunction()

@@ -13,8 +13,6 @@ sl_add_exercise(Geom
     ${SL_PROJECT_ROOT}/data/shaders/Geom.frag
     ${SL_PROJECT_ROOT}/data/shaders/Geom.geom
     LIBRARIES
-    sl_external
-    sl_utils
     sl_cv
     ${glfw_LIBS}
     )

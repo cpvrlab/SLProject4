@@ -12,9 +12,6 @@ sl_add_exercise(ch09_TextureMapping
     ${SL_PROJECT_ROOT}/data/shaders/ADSTex.frag
     ${SL_PROJECT_ROOT}/data/shaders/ADSTex.vert
     LIBRARIES
-    sl_utils
-    sl_external
     sl_cv
-    sl_math
     ${glfw_LIBS}
     )

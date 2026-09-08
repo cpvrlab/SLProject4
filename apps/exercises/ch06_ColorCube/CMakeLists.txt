@@ -12,8 +12,6 @@ sl_add_exercise(ch06_ColorCube
     ${SL_PROJECT_ROOT}/data/shaders/ColorAttribute.vert
     ${SL_PROJECT_ROOT}/data/shaders/Color.frag
     LIBRARIES
-    sl_utils
-    sl_external
     sl_cv
     ${glfw_LIBS}
     )

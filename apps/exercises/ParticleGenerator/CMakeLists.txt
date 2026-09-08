@@ -17,8 +17,6 @@ sl_add_exercise(ParticleGenerator
     ${SL_PROJECT_ROOT}/data/shaders/ColorAttribute.vert
     ${SL_PROJECT_ROOT}/data/shaders/Color.frag
     LIBRARIES
-    sl_external
-    sl_utils
     sl_cv
     ${glfw_LIBS}
     )

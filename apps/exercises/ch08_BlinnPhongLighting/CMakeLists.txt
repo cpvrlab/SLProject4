@@ -12,8 +12,6 @@ sl_add_exercise(ch08_BlinnPhongLighting
     ${SL_PROJECT_ROOT}/data/shaders/ch08_BlinnPhongLighting.frag
     ${SL_PROJECT_ROOT}/data/shaders/ch08_BlinnPhongLighting.vert
     LIBRARIES
-    sl_external
-    sl_utils
     sl_cv
     ${glfw_LIBS}
     )

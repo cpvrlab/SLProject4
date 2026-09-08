@@ -64,7 +64,7 @@ endif ()
 
 add_executable(${TARGET} AppDemoWebGPU.cpp ${TARGET_SPECIFIC_SOURCES})
 set_property(TARGET ${TARGET} PROPERTY FOLDER "apps")
-target_link_libraries(${TARGET} PRIVATE wgpu sl_cv sl_math ${glfw_LIBS})
+target_link_libraries(${TARGET} PRIVATE wgpu sl_cv ${glfw_LIBS})
 
 if (SYSTEM_NAME_UPPER MATCHES "LINUX")
     target_link_libraries(${TARGET} PRIVATE "X11")

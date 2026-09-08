@@ -71,9 +71,6 @@ sl_add_exercise(${target}
     ${CMAKE_CURRENT_SOURCE_DIR}/VulkanRenderer.cpp
     SHADERS
     LIBRARIES
-    sl_math
-    sl_external
-    sl_utils
     sl_cv
     ${glfw_LIBS}
     ${vk_LIBS}

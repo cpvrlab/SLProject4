@@ -12,8 +12,6 @@ sl_add_exercise(ch07_DiffuseCube
     ${SL_PROJECT_ROOT}/data/shaders/Diffuse.frag
     ${SL_PROJECT_ROOT}/data/shaders/Diffuse.vert
     LIBRARIES
-    sl_utils
-    sl_external
     sl_cv
     ${glfw_LIBS}
     )
