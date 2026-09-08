@@ -622,17 +622,43 @@ SLCol4f SLPathtracer::trace(SLRay* ray, SLfloat bsdfPdf)
         }
         else
         {
-            // scatter toward perfect specular direction. This is a mirror ray
-            // and not a lobe sample, so it carries no lobe weight: it used to
-            // be multiplied by (shininess + 2) / (shininess + 1), which is the
-            // normalisation of the Phong lobe estimator and belongs only where
-            // a direction was drawn from that lobe. For the shininess of 100
-            // of the Muttenzer Box glass that was a 1% energy gain per bounce.
+            // scatter toward perfect specular direction
             SLRay scattered;
             ray->reflect(&scattered);
 
-            // recursive indirect illumination and material base color
-            finalColor += ((trace(&scattered, PDF_NO_MIS) & objectColor) *
+            // Scatter around the perfect specular direction if the surface is
+            // not perfectly smooth, exactly as the reflective branch above
+            // does. A rough dielectric is rough on both sides of the interface
+            // -- the same microscopic slopes that spread the transmitted lobe
+            // spread the Fresnel reflected one -- so frosted glass whose
+            // transmission is blurred but whose surface still mirrors its
+            // surroundings sharply looks wrong. The width of the two lobes is
+            // controlled separately here: shininess for this reflection and
+            // translucency for the transmission above, so a material can still
+            // be given a polished surface over a diffusing interior by leaving
+            // its shininess at PERFECT.
+            //
+            // The lobe weight is the normalisation of the Phong lobe
+            // estimator and belongs only where a direction was actually drawn
+            // from that lobe, which is why a perfect surface still carries
+            // no weight at all: multiplying a mirror ray by
+            // (shininess + 2) / (shininess + 1) used to add 1% of energy per
+            // bounce at the shininess of 100 of the Muttenzer Box glass.
+            SLfloat reflLobeWeight = 1.0f;
+            if (mat->shininess() < SLMaterial::PERFECT)
+            {
+                if (!ray->reflectMC(&scattered,
+                                    SLRay::lobeToWorld(scattered.dir)))
+                    return finalColor; // sample below the horizon, see reflectMC
+
+                reflLobeWeight = phongLobeWeight(mat->shininess(),
+                                                 scattered.dir,
+                                                 ray->hitNormal);
+            }
+
+            // lobe weight * recursive indirect illumination and material base color
+            finalColor += (reflLobeWeight *
+                           (trace(&scattered, PDF_NO_MIS) & objectColor) *
                            reflectionProbability) *
                           (scaleBy / survival);
         }

@@ -90,11 +90,13 @@ enum AppDemoSceneID : SLSceneID
     SID_VideoSensorAR,
     SID_VideoTrackWAI,
 
-    SID_RTMuttenzerBox,
     SID_RTSpheres,
     SID_RTSoftShadows,
     SID_RTDoF,
     SID_RTLens,
+
+    SID_PTMuttenzerBox,
+    SID_PTMuttenzerBox2,
 
     SID_ParticleSystem_Simple,
     SID_ParticleSystem_DustStorm,

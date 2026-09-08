@@ -32,7 +32,7 @@ above it.
 
 ---
 
-## **Version 4.3.018**
+## **Version 4.3.019**
 
 Documentation, packaging and CI clean-up following a full review of the
 repository, plus a path tracer correctness pass. Points 1–7 come from that
@@ -42,8 +42,10 @@ path tracer leaves in the Muttenzer Box. Point 16 was found while
 reading the Timing panel during point 13, and point 17 follows from it: having
 fixed what the panel says about speed, it should say something about noise too.
 Point 18 belongs to none of these: it is the OptiX build, which point 6 deferred
-for want of a Windows machine with an NVidia card. All eighteen points are
-closed.
+for want of a Windows machine with an NVidia card. Point 19 closes what point 14
+left open — the demo had no glossy material anywhere, so the code that point
+fixed was never executed by the application — and adding one immediately found a
+defect that the quadrature there could not. All nineteen points are closed.
 
 ### ✅ 1. Add the missing LICENSE file
 Every source-file header and the Doxygen mainpage assert GPL-3.0, but the
@@ -653,7 +655,7 @@ shininess or translucency below `PERFECT`, so nothing in the application calls
 `reflectMC` or `refractMC` at all, and there is no headless render harness to
 measure one with. A glossy scene would be worth adding, and is the natural
 place to check that the falloff now looks right rather than only integrating
-right. Also, the Phong lobe is still sampled around the *mirror* direction and
+right. *Added in point 19, which found a defect the quadrature could not see.* Also, the Phong lobe is still sampled around the *mirror* direction and
 clipped at the horizon rather than being a proper microfacet model, so up to
 half the samples at a grazing angle are still discarded — correct, but wasteful.
 And as always, none of this touches `modules/sl/source/optix/`; see point 18.
@@ -1057,3 +1059,115 @@ them.
   measurement of the kind points 9 to 17 use. Only that it builds, runs, and
   renders.
 
+### ✅ 19. A glossy scene, and rough dielectrics that are rough on both sides
+Point 14 could only verify its lobe sampling against a quadrature of the same
+integral, because no scene in the demo had a `shininess` or a `translucency`
+below `SLMaterial::PERFECT` and therefore nothing in the application ever called
+`reflectMC` or `refractMC`. This point adds the scene that exercises them, and
+adding it exposed a defect within minutes that the quadrature could not have
+found.
+
+**The scene.** `AppDemoScenePTMuttenzerBox2` (`SID_PTMuttenzerBox2`, under
+*Renderer > Path Tracing*) is the Muttenzer Box with the same two spheres in the
+same places, and exactly one thing changed:
+
+| sphere | material | original | here |
+|---|---|---|---|
+| mirror | reflective, specular white | `shininess` 1000 (`PERFECT`) | `shininess` 100 |
+| glass | refractive, `kt` 0.95, `kn` 1.5 | `translucency` 1000, `shininess` unused | `translucency` and `shininess` 100 |
+| glass | transmissive color | white | red, `(1.0, 0.2, 0.2)` |
+
+Keeping everything else — the geometry, the walls, the area light, the camera —
+identical to the original is what makes the pair useful: the two scenes can be
+rendered side by side and every difference in the image is the lobe. A first
+version of the scene had two rows of three spheres sweeping the exponent over
+1000/100/20, which is how the defect below was found; it is reduced to this
+because the comparison against the original is worth more than the sweep. The
+OpenGL preview and the classic ray tracer draw this scene exactly like the
+original; only the path tracer separates them, which is the point of it.
+
+The red transmissive color is there for the caustic. It is the factor the path
+tracer applies to everything the sphere transmits, so the bright patch the glass
+throws onto the floor comes out red, and the caustic is the one feature of this
+scene that is neither a lobe nor a shadow — a light path that only exists
+because the glass focuses it. Green and blue are 0.2 and not 0: a channel at
+zero is opaque to that channel and the caustic would carry no shading in it at
+all. Worth knowing when looking for it: the per sample clamp of point 15
+defaults to 3.0, and a caustic sample is exactly the kind of rare high energy
+sample it clips, so the caustic is dimmer than the estimator says it is until
+*Renderer > Path Tracer > Firefly Clamp* is set to *Off (unbiased)*, at the
+price of the fireflies coming back.
+
+Two presentation fixes came with it: `SID_RTMuttenzerBox` is renamed
+`SID_PTMuttenzerBox`, since the scene it names is a path tracing scene, and it
+is dropped from the *Ray Tracing* menu, where it was listed a second time under
+the wrong renderer group.
+
+**The defect it exposed.** In the transmissive branch of `SLPathtracer::trace`,
+Schlick's term picks either transmission or reflection. The transmission drew
+its direction from the Phong lobe of the material's `translucency`; the
+reflection called `SLRay::reflect` and traced *that mirror ray*, whatever the
+`shininess` was. So on a transparent material the shininess was dead: it
+controlled nothing, at the one place where a material's own reflection lobe
+should apply. The first render of the scene, in its
+three-per-row form, showed it plainly: at 1000 spp the three glass spheres
+carried the identical razor sharp image of the light rectangle although their
+interiors were frosted visibly apart.
+
+Point 14's quadrature could not see this. It checks the weight of a sample that
+was drawn from the lobe; it cannot check whether the branch draws one at all.
+That is the general shape of the gap this point closes, and the reason the
+scene was worth adding rather than another integral.
+
+**Fixed.** The Fresnel reflection now goes through `reflectMC` with
+`SLRay::lobeToWorld` and is weighted by `phongLobeWeight` whenever the shininess
+is below `PERFECT`, with the horizon test honoured — exactly what the reflective
+branch has done since point 14. A rough dielectric is rough on both sides of the
+interface: the same microscopic slopes that spread the transmitted lobe spread
+the reflected one. The two widths stay independently controllable, `shininess`
+for the reflection and `translucency` for the transmission, so a polished shell
+over a diffusing interior is still expressible by leaving the shininess at
+`PERFECT`. The perfect case is untouched and still carries no lobe weight, for
+the reason point 14 gives.
+
+**The old scene.** The glass of `AppDemoScenePTMuttenzerBox` had a shininess of
+100 — a value that did nothing as long as the branch reflected as a perfect
+mirror, and that would now have turned the reference scene's clear glass glossy
+behind our backs. It is raised to `PERFECT`, which is what that scene has always
+depicted. Nothing else there reads it: the material's specular colour is black,
+so the classic ray tracer's Blinn-Phong term is zero, and `RefractReflect.frag`
+has no specular term at all.
+
+**Verified in the image.** 1000 spp at 640x360, 159 s, firefly clamp 3: the
+mirror sphere reflects the box blurred instead of sharply, the glass sphere is
+frosted, and it lays a distinctly red caustic on the floor beside itself. The
+sharp mirrored quad of the light rectangle that the defect above left on the
+glass is gone. Visual only — there is still no headless render harness to put a
+number on it, which is point 14's open item and not resolved here.
+
+**Left open.**
+- **This is not a microfacet model.** The lobe is still Phong around the mirror
+  or refraction direction and clipped at the horizon, with no shadowing-masking
+  term, and the reflected and transmitted lobes are drawn independently rather
+  than from one shared microfacet normal, so at grazing angles they describe
+  surfaces that disagree with each other. Energy is not conserved between the
+  two the way a real rough dielectric conserves it.
+- **MIS does not cover the glossy lobes.** Point 12 weights light sampling
+  against BSDF sampling on the diffuse branch only. A wide lobe that finds the
+  area light by chance is still pure BSDF sampling, which is why the glossy
+  spheres are grainier than the perfect ones at equal sample count — clearly so
+  at the exponent of 20 in the render above.
+- **The Fresnel reflection is tinted by the transmissive color.**
+  `SLPathtracer::trace` sets its `objectColor` once per branch, and on the
+  transmissive branch that is `mat->transmissive()` — which then multiplies the
+  reflected contribution as well as the transmitted one. For a dielectric this
+  is wrong: the reflection at a glass surface is uncolored, and the color of
+  glass comes from the absorption along the path *through* it. It was invisible
+  while every transmissive material in the demo was white, and the red sphere of
+  this scene is what makes it visible: in the render above the highlight on the
+  red sphere is red, where a glass sphere under a white light should show a
+  white one. The fix is to weight the reflected
+  contribution with white, or with a separate specular color, rather than with
+  the transmissive one — small, but it changes what every transparent material
+  reflects, so it is a point of its own and not a footnote to this one.
+- As always, none of this touches `modules/sl/source/optix/`; see point 18.

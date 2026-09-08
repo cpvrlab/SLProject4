@@ -1791,8 +1791,6 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 {
                     if (ImGui::MenuItem("Spheres", nullptr, sid == SID_RTSpheres))
                         AppCommon::sceneToLoad = SID_RTSpheres;
-                    if (ImGui::MenuItem("Muttenzer Box", nullptr, sid == SID_RTMuttenzerBox))
-                        AppCommon::sceneToLoad = SID_RTMuttenzerBox;
                     if (ImGui::MenuItem("Soft Shadows", nullptr, sid == SID_RTSoftShadows))
                         AppCommon::sceneToLoad = SID_RTSoftShadows;
                     if (ImGui::MenuItem("Depth of Field", nullptr, sid == SID_RTDoF))
@@ -1805,8 +1803,10 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
 
                 if (ImGui::BeginMenu("Path Tracing"))
                 {
-                    if (ImGui::MenuItem("Muttenzer Box", nullptr, sid == SID_RTMuttenzerBox))
-                        AppCommon::sceneToLoad = SID_RTMuttenzerBox;
+                    if (ImGui::MenuItem("Muttenzer Box Glossy", nullptr, sid == SID_PTMuttenzerBox))
+                        AppCommon::sceneToLoad = SID_PTMuttenzerBox;
+                    if (ImGui::MenuItem("Muttenzer Box Soft", nullptr, sid == SID_PTMuttenzerBox2))
+                        AppCommon::sceneToLoad = SID_PTMuttenzerBox2;
 
                     ImGui::EndMenu();
                 }

@@ -1,16 +1,16 @@
 /**
- * \file      AppDemoScenePTMuttenzerBox.cpp
+ * \file      AppDemoScenePTMuttenzerBox2.cpp
  * \brief     Implementation for an SLScene inherited class
  * \details   For more info about App framework and the scene assembly see:
  *            https://cpvrlab.github.io/SLProject4/app-framework.html
- * \date      May 2024
+ * \date      September 2025
  * \authors   Marcus Hudritsch, Marino von Wattenwyl
  * \copyright http://opensource.org/licenses/GPL-3.0
  * \remarks   Please use clangformat to format the code. See more code style on
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
  */
 
-#include <AppDemoScenePTMuttenzerBox.h>
+#include <AppDemoScenePTMuttenzerBox2.h>
 #include <AppCommon.h>
 #include <SLAssetLoader.h>
 #include <SLLightRect.h>
@@ -18,16 +18,19 @@
 #include <SLSphere.h>
 
 //-----------------------------------------------------------------------------
-AppDemoScenePTMuttenzerBox::AppDemoScenePTMuttenzerBox()
-  : SLScene("Muttenzer Box Path Tracing")
+AppDemoScenePTMuttenzerBox2::AppDemoScenePTMuttenzerBox2()
+  : SLScene("Muttenzer Box Path Tracing with soft gloss materials")
 {
-    info("Muttenzer Box with environment mapped reflective sphere and "
-         "transparent refractive glass sphere. Try path tracing for real "
-         "reflections and soft shadows.");
+    info("Muttenzer Box with a soft gloss instead of a perfect mirror sphere and "
+         "a frosted red instead of a clear glass sphere: both exponents are "
+         "100 and not 1000, and the transmissive color is red, so the caustic "
+         "under the glass sphere is red. Only the path tracer shows this; the "
+         "OpenGL preview and the ray tracer render this exactly like the "
+         "original Muttenzer Box.");
 }
 //-----------------------------------------------------------------------------
 //! All assets the should be loaded in parallel must be registered in here.
-void AppDemoScenePTMuttenzerBox::registerAssetsToLoad(SLAssetLoader& al)
+void AppDemoScenePTMuttenzerBox2::registerAssetsToLoad(SLAssetLoader& al)
 {
 
     al.addTextureToLoad(_tex1,
@@ -47,8 +50,8 @@ void AppDemoScenePTMuttenzerBox::registerAssetsToLoad(SLAssetLoader& al)
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
-void AppDemoScenePTMuttenzerBox::assemble(SLAssetManager* am,
-                                          SLSceneView*    sv)
+void AppDemoScenePTMuttenzerBox2::assemble(SLAssetManager* am,
+                                           SLSceneView*    sv)
 {
     SLCol4f lightEmisRGB(10.0f, 10.0f, 10.0f);
     SLCol4f grayRGB(0.75f, 0.75f, 0.75f);
@@ -73,32 +76,57 @@ void AppDemoScenePTMuttenzerBox::assemble(SLAssetManager* am,
                                       SLCol4f::BLACK,
                                       0);
 
-    // Material for mirror sphere
+    // The only difference to AppDemoScenePTMuttenzerBox: both exponents are
+    // 100 instead of SLMaterial::PERFECT (1000). At PERFECT the path tracer
+    // takes the perfect specular resp. transmissive direction and samples no
+    // lobe at all; below it the direction is drawn from the Phong lobe of that
+    // exponent, which is wider the smaller the exponent is. So the mirror
+    // sphere gets a blurred reflection and the glass sphere both a blurred
+    // refraction and, since point 19, a blurred surface reflection.
+    const SLfloat glossiness = 100.0f;
+
+    // Material for the glossy mirror sphere
     SLMaterial* refl = new SLMaterial(am,
                                       "refl",
                                       blackRGB,
                                       SLCol4f::WHITE,
-                                      1000,
+                                      glossiness,
                                       1.0f);
     refl->addTexture(_tex1);
     refl->program(_spRefl);
 
-    // Material for glass sphere. The shininess is the width of the Fresnel
-    // reflection lobe of the path tracer and has to stay at PERFECT for the
-    // clear glass of this scene; it used to be 100, which had no effect while
-    // the transmissive branch reflected as a perfect mirror regardless. It is
-    // unused everywhere else here, because the specular color is black and
-    // RefractReflect.frag has no specular term at all.
+    // Material for the frosted glass sphere. The specular color has to stay
+    // black, otherwise SLRay::hitMatIsReflective would match first and the
+    // transmissive branch would never run. Both exponents get the same value,
+    // because a rough dielectric is rough on both sides of the interface: the
+    // translucency widens the transmitted lobe and the shininess the Fresnel
+    // reflected one. With the shininess left at PERFECT the sphere would still
+    // mirror the light rectangle as a razor sharp quad while its transmission
+    // is frosted.
     SLMaterial* refr = new SLMaterial(am,
                                       "refr",
                                       blackRGB,
                                       blackRGB,
-                                      SLMaterial::PERFECT,
+                                      glossiness,
                                       0.05f,
                                       0.95f,
                                       1.5f);
-    refr->translucency(1000);
-    refr->transmissive(SLCol4f::WHITE);
+    refr->translucency(glossiness);
+
+    // The transmissive color is what the path tracer multiplies the light
+    // passing through the sphere by, so a red one turns the glass into a red
+    // filter and its caustic on the floor red with it. Green and blue are not
+    // set to zero: a channel at 0 is opaque to that channel, and the caustic
+    // would then be a pure red with no shading left in it at all.
+    //
+    // Note that the same color also tints the Fresnel reflection at the
+    // surface, because SLPathtracer::trace uses the transmissive color as the
+    // object color of the whole transmissive branch. For a dielectric that is
+    // wrong -- the reflection off glass is uncolored, the color comes from the
+    // absorption on the way through -- so the mirrored image of the light
+    // rectangle on this sphere will come out red as well. See the note in
+    // point 19 of docs/ImplementationPlan.md.
+    refr->transmissive(SLCol4f(1.0f, 0.2f, 0.2f));
     refr->addTexture(_tex1);
     refr->program(_spRefr);
 
