@@ -25,9 +25,19 @@ class SLOptix
 public:
     // Public global static Optix objects
     static void               createStreamAndContext();
+    static void               createStreamAndContextOrThrow();
     static OptixDeviceContext context;
     static CUstream           stream;
     static string             exePath;
+
+    //! True only once a device context exists, i.e. OptiX can really be used
+    /*! Compiling with OptiX says nothing about whether this machine can run it.
+    The implementation lives in the display driver and the kernels are compiled
+    for the actual GPU when they are loaded, so both the driver and the card
+    hold a veto that no build setting can predict. Everything that starts an
+    OptiX render has to ask this first; it stays false when the context, or
+    later a module or a scene, could not be built. */
+    static bool available;
 };
 //-----------------------------------------------------------------------------
 #    endif // SLOPTIX_H

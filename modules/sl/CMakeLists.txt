@@ -32,8 +32,20 @@ else ()
     endif ()
     if (SL_BUILD_WITH_OPTIX)
         if ("${SYSTEM_NAME_UPPER}" STREQUAL "WINDOWS" OR "${SYSTEM_NAME_UPPER}" STREQUAL "LINUX")
-            message(STATUS "[OptiX] For Optix you have to install the latest CUDA Toolkit ")
-            message(STATUS "[OptiX] and the latest Optix SDK from NVidia.")
+            # A warning and not a fatal error: the rest of the project builds
+            # perfectly well without OptiX, and stopping the configuration would
+            # leave a student who merely ticked the box unable to build at all.
+            # It must be loud, though, because the build otherwise succeeds and
+            # silently produces a binary whose OptiX menu entries stay greyed
+            # out, which looks like a bug in the program rather than a missing
+            # toolkit.
+            message(WARNING
+                    "[OptiX] SL_BUILD_WITH_OPTIX is ON but the environment variable "
+                    "CUDA_PATH is not set, so the OptiX renderers will NOT be built "
+                    "and their menu entries stay disabled. Install the NVidia CUDA "
+                    "Toolkit and configure again. The OptiX headers themselves are "
+                    "already in externals/lib-optix, so there is nothing else to "
+                    "download.")
             message(STATUS "----------------------------------------------------------------")
         else ()
             message(STATUS "[OptiX] Optix is so far only available on Windows or Linux")
@@ -287,11 +299,82 @@ endif ()
 if (DEFINED ENV{CUDA_PATH} AND SL_BUILD_WITH_OPTIX)
     message("Has-Optics: " "${OptiX_INCLUDE}")
 
+    # The CUDA architecture that the OptiX kernels are compiled for. This was
+    # hard coded to sm_60 (Pascal), which recent toolkits reject outright --
+    # CUDA 13 answers "nvcc fatal : Unsupported gpu architecture 'sm_60'" and
+    # accepts compute_75 and up only -- so the OptiX build stopped working on
+    # every up to date machine and stayed broken.
+    #
+    # The default is the LOWEST architecture the toolkit still supports, not the
+    # newest, because these kernels are compiled to PTX rather than to machine
+    # code. The display driver compiles that PTX for the card it actually finds
+    # when the program runs, and PTX is forward compatible: sm_75 runs on
+    # Turing, Ampere, Ada, Blackwell and whatever follows, whereas sm_89 would
+    # fail on any card older than an RTX 40. One default therefore serves every
+    # student's machine. Raise it only to use instructions a newer architecture
+    # adds; there is no speed to be won here, since the driver optimises for the
+    # real card either way.
+    set(SL_OPTIX_CUDA_ARCH "sm_75" CACHE STRING
+            "CUDA architecture of the OptiX kernels: sm_75 runs on every RTX card")
+
     list(FIND CUDA_NVCC_FLAGS "-arch" index)
     if (index EQUAL -1)
-        list(APPEND CUDA_NVCC_FLAGS -arch sm_60)
+        list(APPEND CUDA_NVCC_FLAGS -arch ${SL_OPTIX_CUDA_ARCH})
         set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} CACHE STRING "Semi-colon delimit multiple arguments." FORCE)
     endif ()
+
+    # nvcc compiles the .cu files with a host compiler, and on Windows it accepts
+    # only MSVC's cl.exe: handed anything else it stops with "nvcc fatal : Host
+    # compiler targets unsupported OS", which names neither the flag nor the
+    # compiler at fault. FindCUDA defaults CUDA_HOST_COMPILER to CMAKE_C_COMPILER,
+    # so every configuration that does not already use MSVC -- clang-cl, for
+    # instance -- fails on the first .cu file. cl.exe is not on the PATH outside a
+    # Visual Studio developer prompt, so find_program cannot see it either, and
+    # vswhere is the supported way to locate an installation.
+    if (WIN32 AND NOT SL_OPTIX_CUDA_HOST_COMPILER AND NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        find_program(SL_VSWHERE
+                NAMES vswhere
+                PATHS "$ENV{ProgramFiles\(x86\)}/Microsoft Visual Studio/Installer"
+                NO_DEFAULT_PATH)
+
+        if (SL_VSWHERE)
+            execute_process(
+                    COMMAND "${SL_VSWHERE}" -latest -products *
+                    -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64
+                    -property installationPath
+                    OUTPUT_VARIABLE SL_VS_PATH
+                    OUTPUT_STRIP_TRAILING_WHITESPACE
+                    ERROR_QUIET)
+
+            # Newest toolset first, so a machine with several keeps the latest.
+            file(GLOB SL_MSVC_DIRS "${SL_VS_PATH}/VC/Tools/MSVC/*")
+            list(SORT SL_MSVC_DIRS)
+            list(REVERSE SL_MSVC_DIRS)
+            foreach (dir ${SL_MSVC_DIRS})
+                if (EXISTS "${dir}/bin/Hostx64/x64/cl.exe")
+                    set(SL_OPTIX_CUDA_HOST_COMPILER "${dir}/bin/Hostx64/x64/cl.exe"
+                            CACHE FILEPATH "MSVC cl.exe that nvcc uses as its host compiler" FORCE)
+                    break()
+                endif ()
+            endforeach ()
+        endif ()
+
+        if (NOT SL_OPTIX_CUDA_HOST_COMPILER)
+            message(FATAL_ERROR
+                    "[OptiX] nvcc needs MSVC's cl.exe as its host compiler and none was "
+                    "found. Install the Visual Studio C++ build tools, or set "
+                    "SL_OPTIX_CUDA_HOST_COMPILER to the full path of cl.exe, or turn "
+                    "SL_BUILD_WITH_OPTIX off.")
+        endif ()
+    endif ()
+
+    if (SL_OPTIX_CUDA_HOST_COMPILER)
+        message(STATUS "[OptiX] nvcc host compiler: ${SL_OPTIX_CUDA_HOST_COMPILER}")
+        set(CUDA_HOST_COMPILER "${SL_OPTIX_CUDA_HOST_COMPILER}"
+                CACHE FILEPATH "Host side compiler used by NVCC" FORCE)
+    endif ()
+
+    message(STATUS "[OptiX] CUDA architecture: ${SL_OPTIX_CUDA_ARCH}")
     set(flag "--use_fast_math")
     list(FIND CUDA_NVCC_FLAGS ${flag} index)
     if (index EQUAL -1)
@@ -400,9 +483,6 @@ target_link_libraries(${target}
 
         PUBLIC
         ${PlatformLinkLibs}
-        ${CUDA_LIBRARIES}
-        #${CUDA_CUDA_LIBRARY}
-        ${optix_LIBRARY}
         ${assimp_LIBS}
         sl_math
         sl_cv
@@ -412,6 +492,26 @@ target_link_libraries(${target}
         INTERFACE
 
         )
+
+# OptiX needs the CUDA DRIVER API (cuda.lib, CUDA_CUDA_LIBRARY) and not only the
+# runtime (cudart, CUDA_LIBRARIES): SLOptix.cpp and SLOptixRaytracer.cpp are
+# written against cuCtxCreate, cuMemAlloc and friends, and
+# optixDeviceContextCreate takes a CUcontext that only the driver API can
+# produce. OptiX itself contributes no import library -- optix_stubs.h resolves
+# its entry points from the display driver at runtime, which is why optixInit()
+# is where an unsupported driver shows up -- so there is nothing else to add.
+#
+# The guard repeats the condition of the find_package block at the top of this
+# file so that the two cannot drift apart. Without CUDA these variables are
+# never defined and used to expand to nothing, which is why they sat in the list
+# above unguarded and unnoticed; ${optix_LIBRARY} was there too and is dropped,
+# since nothing in the project ever set it.
+if (DEFINED ENV{CUDA_PATH} AND SL_BUILD_WITH_OPTIX)
+    target_link_libraries(${target}
+            PUBLIC
+            ${CUDA_LIBRARIES}
+            ${CUDA_CUDA_LIBRARY})
+endif ()
 
 
 if (DEFINED ENV{CUDA_PATH} AND SL_BUILD_WITH_OPTIX)

@@ -32,7 +32,7 @@ above it.
 
 ---
 
-## **Version 4.3.017**
+## **Version 4.3.018**
 
 Documentation, packaging and CI clean-up following a full review of the
 repository, plus a path tracer correctness pass. Points 1–7 come from that
@@ -41,7 +41,8 @@ review; point 8 was found while investigating the two red build badges; points
 path tracer leaves in the Muttenzer Box. Point 16 was found while
 reading the Timing panel during point 13, and point 17 follows from it: having
 fixed what the panel says about speed, it should say something about noise too.
-Point 14 is still open.
+Point 18 belongs to none of these: it is the OptiX build, which point 6 deferred
+for want of a Windows machine with an NVidia card. Point 14 is still open.
 
 ### ✅ 1. Add the missing LICENSE file
 Every source-file header and the Doxygen mainpage assert GPL-3.0, but the
@@ -745,3 +746,204 @@ can say the clamp went too far.
 - Cost is one buffer the size of the image and one multiply-add per sample. No
   extra rays, and nothing in the estimator changes, so the rendered image is
   bit-identical with the figure switched on.
+
+### ✅ 18. Fixes for the Windows/OptiX build
+The OptiX renderers had not built for years. `SL_BUILD_WITH_OPTIX` is `OFF` by
+default, so nobody met the breakage; turning it on died on the first `.cu` file.
+Point 6 deferred the OptiX question for want of a Windows machine with an NVidia
+card, and this point is what that machine answered.
+
+**Nothing was wrong with the OptiX code.** Every blocker was CUDA toolkit drift
+or a line somebody had commented out. The 2019 vintage OptiX 7.0 host code
+compiled against the current headers untouched, and the one risk that could not
+be settled by reading — whether a 2025 driver still serves an OptiX 7.0 ABI —
+turned out fine.
+
+Verified on an RTX 4090 (compute capability 8.9), driver 591.86, CUDA 13.0.88,
+CMake 4.0.3, clang-cl 20.1.2 and MSVC 14.44.35207. The vendored headers in
+`externals/lib-optix/include` are OptiX 7.0.0, ABI 22. A standalone probe
+confirmed the driver still serves it:
+
+    OPTIX_VERSION = 70000 (ABI 22)     cuInit              = 0
+    CUDA_VERSION  = 13000              cuCtxCreate         = 0
+    devices       = 1 (RTX 4090)       optixInit           = 0  (Success)
+                                       deviceContextCreate = 0  (Success)
+
+That test is worth keeping in mind rather than assuming: OptiX ships no import
+library at all. The implementation lives in the display driver and
+`optix_stubs.h` pulls the entry points out of it with `GetProcAddress`, so the
+ABI is a promise NVidia keeps, not something this repository controls. If a
+future driver drops ABI 22, the remedy is newer vendored headers.
+
+#### The four build blockers
+
+**`-arch sm_60` was hard coded.** CUDA 13 answers `nvcc fatal : Unsupported gpu
+architecture 'sm_60'` and accepts `compute_75` and up only, so this alone
+stopped every build on an up to date toolkit. It is now the cache variable
+`SL_OPTIX_CUDA_ARCH`, editable from the CMake GUI.
+
+Its default is `sm_75`, the *lowest* architecture the toolkit still supports and
+not the newest, which is the opposite of the obvious choice and the reason to
+record it here. These kernels are compiled to PTX, and the display driver
+compiles that PTX for the card it finds when the program runs. PTX is forward
+compatible, so `sm_75` runs on Turing, Ampere, Ada, Blackwell and whatever
+follows, while an `sm_89` default would fail on any card older than an RTX 40.
+One default therefore serves every student machine, and there is no speed in it
+either way, since the driver optimises for the real card regardless.
+
+**`cuCtxCreate` grew a fourth argument.** CUDA 13 points the macro at
+`cuCtxCreate_v4`, which takes a `CUctxCreateParams*` this code does not use.
+`SLOptix.cpp` passes `nullptr` for it under a `CUDA_VERSION >= 13000` guard, so
+the declared minimum of CUDA 10 still compiles.
+
+**The CUDA driver API was not linked.** `modules/sl/CMakeLists.txt` had
+`#${CUDA_CUDA_LIBRARY}` commented out, which is `cuda.lib`. `CUDA_LIBRARIES`
+next to it is the *runtime*, `cudart`; the `cu*` functions that `SLOptix.cpp`
+and `SLOptixRaytracer.cpp` are written against live in the driver API, and
+`optixDeviceContextCreate` takes a `CUcontext` that only the driver API can
+produce. The result was eighteen undefined symbols at link time.
+
+It is restored and moved inside a guard repeating the condition of the
+`find_package` block at the top of the file, so that no CUDA is linked unless
+OptiX was asked for. It sat outside any guard before, and worked only because
+the variables are undefined when OptiX is off and CMake expands an undefined
+variable to nothing. `${optix_LIBRARY}` was dropped from the same list: nothing
+in the project has ever set it, and OptiX has no library to link in any case.
+
+**nvcc rejected the host compiler.** `CUDA_HOST_COMPILER` defaults to
+`CMAKE_C_COMPILER`, so a clang-cl configuration hands nvcc clang-cl, and nvcc
+stops with `nvcc fatal : Host compiler targets unsupported OS` — a message that
+names neither the flag nor the compiler at fault. nvcc wants MSVC's `cl.exe`,
+which is not on the `PATH` outside a developer prompt, so `find_program` cannot
+see it either. The OptiX block now locates the latest Visual Studio with
+`vswhere` and sets `CUDA_HOST_COMPILER` to its `Hostx64/x64/cl.exe`, with
+`SL_OPTIX_CUDA_HOST_COMPILER` as the manual override. Configurations that
+already use MSVC skip the whole thing, since FindCUDA's default is then correct.
+
+#### What a student needs
+
+The distinction that matters for teaching: **the OptiX SDK is never needed**, on
+any machine. The headers are in the repository and the implementation is in the
+driver. The old configure message told students to download it, and that advice
+is now gone.
+
+| | Needed for | Why |
+|---|---|---|
+| NVidia driver | running | provides `nvcuda.dll` and OptiX itself |
+| CUDA Toolkit | **building only** | `nvcc` for the PTX, `cuda.lib`, and it sets `CUDA_PATH` |
+| MSVC C++ tools | **building only** | nvcc's host compiler |
+| OptiX SDK | never | vendored in `externals/lib-optix` |
+
+A *built* binary needs only the driver: `CUDA_USE_STATIC_CUDA_RUNTIME` is on, so
+`cudart` is linked statically and `nvcuda.dll` is the only CUDA DLL referenced.
+It is relocatable as long as the PTX travels with it, since `SLOptixHelper.cpp`
+looks for the files at `<exe>/../modules/sl/` — a zip of `Release/` plus
+`modules/sl/*.ptx` is self contained.
+
+A student who enables the flag without the toolkit gets a `CMake Warning` naming
+`CUDA_PATH` and saying the menu entries will stay disabled, and the
+configuration continues so the rest of the project still builds. Without MSVC
+the configuration stops with a `CMake Error` naming `SL_OPTIX_CUDA_HOST_COMPILER`
+and the alternatives. Both messages were verified by provoking them.
+
+#### Two defects in the renderers themselves
+
+**The OptiX path tracer rendered one frame and froze.** `render()` ended with
+`_state = rtFinished` and nothing ever set it back: `SLSceneView` returns a
+renderer to `rtReady` on mouse up and mouse wheel, but only the CPU `_raytracer`
+and `_pathtracer`, never the OptiX pair. It is `rtReady` now, so the image
+follows the camera.
+
+Note what this exposes about its sibling. The OptiX *ray* tracer appears to
+update live by design, and does not: `_doDistributed` defaults to true,
+`renderDistrib()` never assigns `_state` at all, and so it is left at the
+`rtReady` of the constructor and re-renders every frame by accident.
+`renderClassic()` next to it *does* set `rtBusy` and never clears it, so
+switching distributed off would freeze the ray tracer exactly as the path tracer
+was frozen. That is left open below.
+
+**The path tracer's gamma was hard coded and wrong.** The kernel applied
+`pow(c, 0.5)`, a gamma of 2.0, while the CPU `SLPathtracer` corrects with its
+settable `gamma()` property whose default is 2.2. `ortParams` had no gamma field
+at all, so the value could not reach the GPU and the Gamma slider could not
+affect the image. The field exists now, `SLOptixPathtracer` sets `gamma(2.2)` in
+its constructor as the CPU one does, and `updateScene` uploads it every frame.
+The difference it was costing, in display levels:
+
+| linear | `pow(c,0.5)` | `pow(c,1/2.2)` | levels lost |
+|---|---|---|---|
+| 0.50 | 180.3 | 186.1 | 5.8 |
+| 0.25 | 127.5 | 135.8 | 8.3 |
+| 0.10 | 80.6 | 89.5 | 8.9 |
+| 0.05 | 57.0 | 65.3 | 8.3 |
+
+Real, but small: this is not why the OptiX path tracer looks dark. See the
+`max_depth` item below, which is worth roughly a quarter of the light.
+
+#### An OptiX failure no longer takes the application down
+
+`OPTIX_CHECK` and `CUDA_CHECK` throw `SLOptixException`, and **nothing in the
+project caught it**. `SLSceneView::init` called `setupOptix` on both renderers
+with no `try`, so any OptiX failure was an unhandled exception that killed the
+process before the first window appeared.
+
+This is not hypothetical, and it is the case a configure time check can never
+cover: whether OptiX works is decided by the driver and the card, not by the
+build. A student with a GTX 10 series card gets a build that cannot run, because
+CUDA 13 cannot generate anything below `compute_75` while OptiX itself would
+still support the card. A student with an old driver fails at `optixInit`.
+
+There is now `SLOptix::available`, false until a device context exists.
+`createStreamAndContext` delegates to `createStreamAndContextOrThrow` and
+catches, so every caller is covered rather than the single call site in
+`AppCommon.cpp`; `SLSceneView::init` catches around `setupOptix`; and both
+`startOptix*` functions check the flag and catch around `setupScene`. The two
+menu entries take the flag as ImGui's `enabled` argument and grey out exactly as
+they do in a build without OptiX, with the reason in the log. `_renderType` is
+now assigned only after `setupScene` succeeds, so a failure leaves the OpenGL
+view standing instead of selecting a renderer that cannot draw.
+
+Not verified at runtime: there is no old card or old driver here to provoke it
+with. Renaming one of the generated `.ptx` files exercises the identical catch,
+since `getPtxStringFromFile` throws on a missing file.
+
+#### Deliberately not fixed
+
+The OptiX renderers are a separate implementation from the CPU ones and have
+received none of points 9 to 15. Bringing them up to date is real work and it is
+not started here; these are recorded so the next reader does not rediscover
+them.
+
+- **The OptiX path tracer still cuts hard at `max_depth`**, and every call site
+  passes 5 — the same literal and the same defect that point 13 removed from the
+  CPU path tracer, where the hard cut returned 76.3% of the answer and its
+  removal brightened the ceiling by 1.32x. Roughly a quarter of the
+  interreflected light is missing, and it is bias, so no sample count fixes it.
+  This, and not the gamma above, is why the OptiX path tracer looks dark.
+- **The OptiX ray tracer has no Fresnel term.** There is no `fresnel` or
+  `schlick` anywhere on the OptiX side, while the CPU ray tracer has
+  `_doFresnel = true` by default. The reflection ray is weighted by a flat `kr`
+  at every angle, and the Muttenzer glass sphere has `kr = 0.05`. For `kn = 1.5`
+  Schlick gives R0 = 0.04 at normal incidence, so head on the flat value is very
+  nearly right, but reflectance climbs to roughly 40% at 80 degrees and 90% at
+  89. The bright rim and the mirrored highlight that make a glass ball read as
+  glass are simply absent. About ten lines in `SLOptixRaytracerShading.cu`.
+- **`OPTIX_CHECK` is commented out** around the path tracer's `optixLaunch`,
+  under a `Todo: Bugfix needed for Optix needs some work for newer shader
+  models`. A failing launch there is silent and leaves a stale buffer. The ray
+  tracer's check is intact.
+- **`SLOptixRaytracer::renderClassic` sets `rtBusy` and never clears it**, so
+  the OptiX ray tracer would freeze after one frame if `doDistributed` were ever
+  switched off. Dormant only because the default is true.
+- **The OptiX path tracer menu has no Gamma slider**, so the 2.2 from the
+  constructor is now correct but not adjustable. Three lines of ImGui.
+- **`find_package(CUDA)` is removed in CMake 4.** It still works under policy
+  CMP0146 with a deprecation warning, but the whole PTX pipeline —
+  `cuda_compile_ptx`, `cuda_include_directories` — comes from that module and
+  will need rewriting to `enable_language(CUDA)`. `SLOptixHelper.cpp` hard codes
+  the string `cuda_compile_ptx_1_generated_` when locating PTX at runtime, which
+  is a FindCUDA implementation detail, so the two have to move together.
+- **The OptiX build was not compared against the CPU renderers** on any
+  measurement of the kind points 9 to 17 use. Only that it builds, runs, and
+  renders.
+

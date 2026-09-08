@@ -21,6 +21,11 @@
 SLOptixPathtracer::SLOptixPathtracer()
 {
     name("OptiX path tracer");
+
+    // As the CPU SLPathtracer does. Without this the inherited value is the
+    // gamma(1.0) of SLRaytracer, which is right for a ray tracer and leaves a
+    // path traced image uncorrected.
+    gamma(2.2f);
 }
 //-----------------------------------------------------------------------------
 SLOptixPathtracer::~SLOptixPathtracer()
@@ -169,7 +174,8 @@ void SLOptixPathtracer::updateScene(SLSceneView* sv)
     rayGenSbtRecord.data = cameraData;
     _rayGenClassicBuffer.upload(&rayGenSbtRecord);
 
-    _params.seed = (SLuint)time(nullptr);
+    _params.seed         = (SLuint)time(nullptr);
+    _params.oneOverGamma = _oneOverGamma;
 
     _paramsBuffer.upload(&_params);
 }
@@ -234,7 +240,21 @@ SLbool SLOptixPathtracer::render()
 
     _denoiserMS = (SLfloat)(GlobalTimer::timeMS() - t2);
 
-    _state = rtFinished;
+    // Ready and not finished, so that draw3DOptixPT() renders again on the next
+    // frame and the image follows the camera. rtFinished froze it after a single
+    // render: nothing ever resets an OptiX renderer, because the mouse handlers
+    // of SLSceneView reset only the CPU _raytracer and _pathtracer. The OptiX
+    // ray tracer looks like it updates by design, but only because
+    // SLOptixRaytracer::renderDistrib never assigns _state at all and so leaves
+    // it at the rtReady of the constructor.
+    //
+    // Note that leaving this assignment out altogether would freeze the image
+    // even harder, since render() sets _state to rtBusy on entry and the guard
+    // in draw3DOptixPT() only ever renders in the rtReady state.
+    //
+    // The cost is one full render of _samples samples per displayed frame,
+    // which is comfortable at 10 and sluggish at 1000.
+    _state = rtReady;
     return true;
 }
 //-----------------------------------------------------------------------------

@@ -14,6 +14,9 @@
 #include <SLLight.h>
 #include <SLSceneView.h>
 #include <SLSkybox.h>
+#ifdef SL_HAS_OPTIX
+#    include <SLOptix.h>
+#endif
 #include <SLFileStorage.h>
 #include <GlobalTimer.h>
 #include <SLInputManager.h>
@@ -397,8 +400,26 @@ void SLSceneView::onInitialize()
     _isFirstFrame = true;
 
 #ifdef SL_HAS_OPTIX
-    _optixRaytracer.setupOptix();
-    _optixPathtracer.setupOptix();
+    // Only worth attempting if SLOptix::createStreamAndContext got a context.
+    // Building the modules compiles the PTX for this GPU, which fails on a card
+    // older than the SL_OPTIX_CUDA_ARCH the kernels were built for -- something
+    // no configure time check can see. It must not take the application down.
+    if (SLOptix::available)
+    {
+        try
+        {
+            _optixRaytracer.setupOptix();
+            _optixPathtracer.setupOptix();
+        }
+        catch (std::exception& e)
+        {
+            SLOptix::available = false;
+            SL_LOG("**** OptiX renderers disabled ****");
+            SL_LOG("%s", e.what());
+            SL_LOG("The GPU is most likely older than the SL_OPTIX_CUDA_ARCH the");
+            SL_LOG("kernels were compiled for. Everything else keeps working.");
+        }
+    }
 #endif
 
     // init 3D scene with initial depth 1
@@ -1970,10 +1991,30 @@ SLbool SLSceneView::draw3DPT()
 #ifdef SL_HAS_OPTIX
 void SLSceneView::startOptixRaytracing(SLint maxDepth)
 {
-    _renderType  = RT_optix_rt;
+    // The menu entry is greyed out when OptiX is unavailable, but the Shift-R
+    // shortcut reaches this directly.
+    if (!SLOptix::available) return;
+
     _stopOptixRT = false;
     _optixRaytracer.maxDepth(maxDepth);
-    _optixRaytracer.setupScene(this, s()->assetManager());
+
+    // setupScene builds the acceleration structures and the shader binding
+    // table on the device and can fail for the same reasons setupOptix can.
+    // _renderType is switched only once it has succeeded, so a failure leaves
+    // the OpenGL view standing instead of selecting a renderer that cannot draw.
+    try
+    {
+        _optixRaytracer.setupScene(this, s()->assetManager());
+    }
+    catch (std::exception& e)
+    {
+        SLOptix::available = false;
+        SL_LOG("**** OptiX ray tracing failed, renderer disabled ****");
+        SL_LOG("%s", e.what());
+        return;
+    }
+
+    _renderType = RT_optix_rt;
 }
 //-----------------------------------------------------------------------------
 SLbool SLSceneView::draw3DOptixRT()
@@ -2008,11 +2049,26 @@ SLbool SLSceneView::draw3DOptixRT()
 //-----------------------------------------------------------------------------
 void SLSceneView::startOptixPathtracing(SLint maxDepth, SLint samples)
 {
-    _renderType  = RT_optix_pt;
+    // As in startOptixRaytracing above.
+    if (!SLOptix::available) return;
+
     _stopOptixPT = false;
     _optixPathtracer.maxDepth(maxDepth);
     _optixPathtracer.samples(samples);
-    _optixPathtracer.setupScene(this, s()->assetManager());
+
+    try
+    {
+        _optixPathtracer.setupScene(this, s()->assetManager());
+    }
+    catch (std::exception& e)
+    {
+        SLOptix::available = false;
+        SL_LOG("**** OptiX path tracing failed, renderer disabled ****");
+        SL_LOG("%s", e.what());
+        return;
+    }
+
+    _renderType = RT_optix_pt;
 }
 //-----------------------------------------------------------------------------
 SLbool SLSceneView::draw3DOptixPT()

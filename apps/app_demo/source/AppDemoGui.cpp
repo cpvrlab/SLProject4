@@ -18,6 +18,9 @@
 #include <CVImage.h>
 #include <CVTrackedFeatures.h>
 #include <SLAssetManager.h>
+#ifdef SL_HAS_OPTIX
+#    include <SLOptix.h>
+#endif
 #include <SLAnimPlayback.h>
 #include <SLGLDepthBuffer.h>
 #include <SLGLProgramManager.h>
@@ -2364,10 +2367,20 @@ void AppDemoGui::buildMenuBar(SLScene* s, SLSceneView* sv)
                 sv->startPathtracing(32, 10);
 
 #ifdef SL_HAS_OPTIX
-            if (ImGui::MenuItem("Ray Tracing with OptiX", "Shift-R", rType == RT_optix_rt))
+            // Built with OptiX, but usable only if the driver and the GPU
+            // actually produced a context and the kernels loaded. Greyed out
+            // otherwise, which is exactly what a build without OptiX shows, so
+            // the reason is in the log rather than in a dead menu entry.
+            if (ImGui::MenuItem("Ray Tracing with OptiX",
+                                "Shift-R",
+                                rType == RT_optix_rt,
+                                SLOptix::available))
                 sv->startOptixRaytracing(5);
 
-            if (ImGui::MenuItem("Path Tracing with OptiX", "Shift-P", rType == RT_optix_pt))
+            if (ImGui::MenuItem("Path Tracing with OptiX",
+                                "Shift-P",
+                                rType == RT_optix_pt,
+                                SLOptix::available))
                 sv->startOptixPathtracing(5, 10);
 #else
             ImGui::MenuItem("Ray Tracing with OptiX", nullptr, false, false);

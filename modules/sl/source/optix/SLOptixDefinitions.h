@@ -65,6 +65,15 @@ struct ortParams
     int   max_depth;
     float scene_epsilon;
 
+    //! 1/gamma of the renderer, applied to the image by the raygen program.
+    /*! The path tracer kernel used to hard code 0.5, i.e. a gamma of 2.0, while
+    the CPU SLPathtracer corrects with the settable gamma() property whose
+    default is 2.2. The two therefore disagreed by 6 to 9 display levels and the
+    Gamma slider could not reach the OptiX image at all. It sits outside the
+    union below because that union overlays the ray tracer's fields with the
+    path tracer's, and this one belongs to both. */
+    float oneOverGamma;
+
     OptixTraversableHandle handle;
 
     union
