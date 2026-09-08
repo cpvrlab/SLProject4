@@ -19,7 +19,7 @@
 
 //-----------------------------------------------------------------------------
 AppDemoScenePTMuttenzerBox::AppDemoScenePTMuttenzerBox()
-  : SLScene("Muttenzer Box Ray Tracing")
+  : SLScene("Muttenzer Box Path Tracing")
 {
     info("Muttenzer Box with environment mapped reflective sphere and "
          "transparent refractive glass sphere. Try path tracing for real "
