@@ -42,7 +42,8 @@ path tracer leaves in the Muttenzer Box. Point 16 was found while
 reading the Timing panel during point 13, and point 17 follows from it: having
 fixed what the panel says about speed, it should say something about noise too.
 Point 18 belongs to none of these: it is the OptiX build, which point 6 deferred
-for want of a Windows machine with an NVidia card. Point 14 is still open.
+for want of a Windows machine with an NVidia card. All eighteen points are
+closed.
 
 ### ✅ 1. Add the missing LICENSE file
 Every source-file header and the Doxygen mainpage assert GPL-3.0, but the
@@ -521,7 +522,7 @@ again:
   one patch was not worth that, so the light stays at 1.18 and point 15 deals
   with the region instead.
 
-### 14. Fix the glossy material path
+### ✅ 14. Fix the glossy material path
 Dormant in the Muttenzer Box, because `SLMaterial::PERFECT` is 1000 and both
 spheres sit exactly at 1000 (`refl` shininess 1000, `refr` translucency 1000),
 so `reflectMC` and `refractMC` are never called there. It affects any material
@@ -547,6 +548,115 @@ Noted while reading, unrelated to the above but in the same files:
 `modules/sl/source/ray/SLRayMC.{h,cpp}` are a duplicate of `SLRay` that no
 `CMakeLists.txt` builds and nothing references. They carry their own stale copy
 of the `diffuseMC` comment from point 13. They should be deleted or explained.
+
+**Implemented.** All four, plus the two places where the same defect appears
+symmetrically and the list above had only named one half of it.
+
+**The weight.** `SLPathtracer::phongLobeWeight` now returns
+`(n+2)/(n+1) * |cos(theta)|`, and the caller multiplies it by the material
+colour. The absolute value is needed because `SLMesh::preShade` does not flip
+the hit normal towards the ray, so a back face hit — every ray leaving the
+inside of the glass — has a negative cosine for the same geometry. Verified
+against a quadrature of the same integral, uniform incident radiance and unit
+albedo, `phi` being the angle between the surface normal and the lobe axis:
+
+| n | phi | quadrature | old weight | new weight |
+|---|---|---|---|---|
+| 5 | 0° | 1.000000 | 1.17x | 1.00007 |
+| 5 | 45° | 0.710393 | 1.64x | 0.99988 |
+| 5 | 80° | 0.269291 | 4.33x | 1.00001 |
+| 5 | 89° | 0.178621 | **6.53x** | 0.99999 |
+| 20 | 45° | 0.707110 | 1.48x | 0.99995 |
+| 20 | 89° | 0.097093 | **10.79x** | 0.99940 |
+| 100 | 45° | 0.707106 | 1.43x | 1.00005 |
+| 100 | 80° | 0.175233 | 5.76x | 1.00026 |
+| 100 | 89° | 0.049125 | **20.56x** | 0.99978 |
+
+The old weight is the same constant everywhere, because it had no geometry in
+it at all: it is `(n+2)/(n+1)` whatever the surface is doing. The error is
+therefore not a subtle bias but a shape error — a glossy surface got no
+falloff towards grazing, which is precisely where a highlight is supposed to
+die out, and the sharper the lobe the worse it was.
+
+**The horizon.** `reflectMC`'s return value is now honoured, and `refractMC`
+returns the same thing rather than `void`. The test is a comparison of *signs*
+against the perfect direction, not the old "points along the normal": that is
+what makes it work for a back face hit and for total internal reflection, where
+`SLRay::refract` hands back a direction on the incident side. How much was
+being traced and fully weighted despite carrying no energy:
+
+| n | phi | lobe samples below the horizon |
+|---|---|---|
+| 5 | 45° | 2.5% |
+| 5 | 80° | 34.1% |
+| 5 | 89° | 48.3% |
+| 20 | 80° | 21.4% |
+| 20 | 89° | 46.8% |
+| 100 | 89° | 43.1% |
+
+Near half the rays at a grazing angle. They cost a full trace each and their
+radiance was added at full weight, so this was both the waste and part of the
+overbrightness above.
+
+**The rotation matrix.** Replaced everywhere by `SLRay::lobeToWorld`, which
+returns an orthonormal basis with the lobe axis as its third column, built with
+the branchless construction of Duff et al., *Building an Orthonormal Basis,
+Revisited* (JCGT 6(1), 2017). No cross product, no `acos`, no tolerance to tune.
+`diffuseMC` had the identical construction and gets it too.
+
+Two corrections to what this point claimed before it was implemented. **The ray
+does not leave in an arbitrary direction.** At exactly ±z the degenerate matrix
+is `diag(cos a, cos a, cos a)`, i.e. the identity at `+z` and `-I` at `-z`, and
+`-I` maps the `+z` lobe correctly onto `-z` for a distribution that is
+azimuthally symmetric — so both poles happen to work. What actually fails is
+the approach to them, and in `float`: for an axis 1e-4 off `+z`, `dir.z` rounds
+to exactly 1, `acos` returns 0 and the lobe is snapped back onto the pole, an
+axis error equal to the full 1e-4 offset. The new construction is exact there.
+Worst error over 200'000 uniform random axes, old vs new: axis 6.2e-7 vs
+1.5e-7, orthonormality 8.3e-7 vs 2.4e-7.
+
+**The NaN, on the other hand, is real and worse than described.** `reflect` and
+`refract` do not renormalise their result, so `dir.z` can round above 1;
+`acos(1.0000001f)` is a NaN, the whole rotation matrix becomes NaN and the
+scattered direction comes out `(nan, 0.2, nan)`. That poisons the pixel, and no
+number of samples averages a NaN away. Confirmed by direct construction.
+
+**The perfect mirror.** The `(shininess + 2) / (shininess + 1)` on the
+transparent branch's Fresnel reflection is gone, and so is the one on the
+reflective branch, which had the same defect for the same reason: the factor
+normalises a lobe estimator and there is no lobe when the direction was not
+drawn from one. This is the one part of the point that is *not* dormant in the
+Muttenzer Box. Exactly, per interaction with a sphere:
+
+| path | factor removed |
+|---|---|
+| glass sphere, Fresnel reflection (shininess 100) | 102/101 = **1.00990** |
+| glass sphere, transmission (translucency 1000) | 1002/1001 = 1.00100 |
+| mirror sphere, reflection (shininess 1000) | 1002/1001 = 1.00100 |
+
+so the two spheres were gaining a few tenths of a percent to about a percent of
+energy per bounce off them. Sub-percent on the image and well under the noise
+at any sample count this is run at, but it was energy created from nothing and
+it compounded along a specular chain.
+
+`modules/sl/source/ray/SLRayMC.{h,cpp}` are deleted. Nothing in the repository
+referenced them and no `CMakeLists.txt` built them, so nothing can regress; the
+`diffuseMC` comment that point 13 corrected in `SLRay.cpp` survived in this
+copy only because the copy was invisible to every build. The comment in
+`SLRay.cpp` is now rewritten to say what cosine distributed scattering actually
+is and to name Russian roulette as the *unrelated* technique it was confused
+with.
+
+**Left open.** The lobe sampling itself is still only verified against
+quadrature and not in an image: no scene in the demo has a material with a
+shininess or translucency below `PERFECT`, so nothing in the application calls
+`reflectMC` or `refractMC` at all, and there is no headless render harness to
+measure one with. A glossy scene would be worth adding, and is the natural
+place to check that the falloff now looks right rather than only integrating
+right. Also, the Phong lobe is still sampled around the *mirror* direction and
+clipped at the horizon rather than being a proper microfacet model, so up to
+half the samples at a grazing angle are still discarded — correct, but wasteful.
+And as always, none of this touches `modules/sl/source/optix/`; see point 18.
 
 ### ✅ 15. Offer a per sample radiance clamp
 A clamp on the radiance of a single sample, e.g. `color.clampMinMax(0, 10)`

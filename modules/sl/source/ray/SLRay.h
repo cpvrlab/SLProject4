@@ -58,9 +58,12 @@ public:
     void reflect(SLRay* reflected) const;
     void refract(SLRay* refracted);
     bool reflectMC(SLRay* reflected, const SLMat3f& rotMat) const;
-    void refractMC(SLRay* refracted, const SLMat3f& rotMat) const;
+    bool refractMC(SLRay* refracted, const SLMat3f& rotMat) const;
     void diffuseMC(SLRay* scattered) const;
     void print() const;
+
+    //! Rotation matrix that maps a sample drawn around +z onto lobeAxis
+    static SLMat3f lobeToWorld(const SLVec3f& lobeAxis);
 
     // Helper methods
     inline void   setDir(const SLVec3f& Dir);

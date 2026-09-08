@@ -8,6 +8,7 @@
 */
 
 #include <atomic>
+#include <cmath>
 #include <ctime>
 #include <random>
 
@@ -341,19 +342,82 @@ void SLRay::refract(SLRay* refracted)
 }
 //-----------------------------------------------------------------------------
 /*!
+SLRay::lobeToWorld returns the rotation matrix that maps a direction sampled
+around the +z axis onto lobeAxis. Its columns are an orthonormal basis whose
+third vector is lobeAxis, so that rotMat * v = v.x*t + v.y*b + v.z*lobeAxis.
+
+This replaces the axis-angle construction that the scattering functions used to
+do themselves:
+
+    SLVec3f rotAxis((SLVec3f(0,0,1) ^ dir).normalize());
+    rotMat.rotation(acos(dir.z) * 180 * ONEOVERPI, rotAxis);
+
+which fails exactly where it is used most. The cross product is
+(-dir.y, dir.x, 0) and its length is the sine of the angle, so it vanishes for
+a lobe axis along +-z. SLVec3::normalize guards with if (L > 0) and therefore
+returns the zero vector rather than a NaN, and the matrix built from a zero
+axis is diag(cos a, cos a, cos a) - a uniform scale, not a rotation. It happens
+to be usable at exactly +-z (identity and -I, and -I is fine for an
+azimuthally symmetric lobe) but the axis loses its precision continuously as
+the lobe approaches either pole, and acos(dir.z) additionally returns a NaN as
+soon as rounding pushes |dir.z| past 1. In the Muttenzer Box the box is axis
+aligned and the front and back walls face +-z, so this is the common case and
+not a corner one.
+
+The basis is the branchless construction of Duff et al., "Building an
+Orthonormal Basis, Revisited", JCGT 6(1), 2017. It is exact and orthonormal for
+every unit vector including both poles, needs no trigonometry, and has no
+branch on a tolerance that has to be tuned.
+*/
+SLMat3f SLRay::lobeToWorld(const SLVec3f& lobeAxis)
+{
+    SLVec3f n(lobeAxis);
+    n.normalize();
+
+    SLfloat sign = std::copysign(1.0f, n.z);
+    SLfloat a    = -1.0f / (sign + n.z);
+    SLfloat b    = n.x * n.y * a;
+
+    SLVec3f t(1.0f + sign * n.x * n.x * a, sign * b, -sign * n.x);
+    SLVec3f u(b, sign + n.y * n.y * a, -n.y);
+
+    // The SLMat3 constructor takes the components in row order and stores them
+    // column wise, so this sets the columns to t, u and n.
+    return SLMat3f(t.x, u.x, n.x, t.y, u.y, n.y, t.z, u.z, n.z);
+}
+//-----------------------------------------------------------------------------
+/*!
 SLRay::reflectMC scatters a ray around perfect specular direction according to
 shininess (for higher shininess the ray is less scattered). This is used for
 path tracing and distributed ray tracing as well as for photon scattering.
 The direction is calculated according to MCCABE. The created direction is
 along z-axis and then transformed to lie along specular direction with
-rotationMatrix rotMat. The rotation matrix must be precalculated (stays the
-same for each ray sample, needs to be be calculated only once)
+rotationMatrix rotMat, which SLRay::lobeToWorld builds from the perfect
+specular direction. The rotation matrix must be precalculated (stays the same
+for each ray sample, needs to be calculated only once).
+
+reflected->dir must hold the perfect specular direction on entry, i.e. the
+caller must have run SLRay::reflect first, because it is the reference against
+which the sampled direction is tested.
+
+\return false if the sample landed on the far side of the surface. The Phong
+lobe is a cone around the mirror direction and is not clipped to the
+hemisphere, so a wide lobe at a grazing angle puts part of its samples below
+the horizon. The normalised Phong BRDF is zero there, so such a sample carries
+no energy and the caller must not trace it. Note that the test is a comparison
+of signs and not "points along the normal": SLMesh::preShade does not flip the
+hit normal towards the ray, so a back face hit has a perfect specular direction
+with a negative dot product and every sample around it would otherwise be
+rejected.
 */
 bool SLRay::reflectMC(SLRay* reflected, const SLMat3f& rotMat) const
 {
     SLfloat eta1, eta2;
     SLVec3f randVec;
     SLfloat shininess = hitMesh->mat()->shininess();
+
+    // The side of the surface the perfect specular direction leaves on
+    SLfloat perfectCos = hitNormal.dot(reflected->dir);
 
     // scatter within specular lobe
     eta1       = rnd01();
@@ -387,8 +451,9 @@ bool SLRay::reflectMC(SLRay* reflected, const SLMat3f& rotMat) const
     else
         reflected->backgroundColor = backgroundColor;
 
-    // true if in direction of normal
-    return (hitNormal * reflected->dir >= 0.0f);
+    // true if the sample stayed on the same side of the surface as the
+    // perfect specular direction it was scattered around
+    return (perfectCos * hitNormal.dot(reflected->dir) > 0.0f);
 }
 //-----------------------------------------------------------------------------
 /*!
@@ -397,15 +462,27 @@ to translucency (for higher translucency the ray is less scattered).
 This is used for path tracing and distributed ray tracing as well as for photon
 scattering. The direction is calculated the same as with specular scattering
 (see reflectMC). The created direction is along z-axis and then transformed to
-lie along transmissive direction with rotationMatrix rotMat. The rotation
+lie along transmissive direction with rotationMatrix rotMat, which
+SLRay::lobeToWorld builds from the perfect transmissive direction. The rotation
 matrix must be precalculated (stays the same for each ray sample, needs to be
-be calculated only once)
+calculated only once).
+
+refracted->dir must hold the perfect transmissive direction on entry, i.e. the
+caller must have run SLRay::refract first.
+
+\return false if the sample landed on the near side of the surface, for the
+same reason as in reflectMC. Testing against the sign of the perfect direction
+rather than against the normal is what makes this work for total internal
+reflection too, where SLRay::refract returns a direction on the incident side.
 */
-void SLRay::refractMC(SLRay* refracted, const SLMat3f& rotMat) const
+bool SLRay::refractMC(SLRay* refracted, const SLMat3f& rotMat) const
 {
     SLfloat eta1, eta2;
     SLVec3f randVec;
     SLfloat translucency = hitMesh->mat()->translucency();
+
+    // The side of the surface the perfect transmissive direction leaves on
+    SLfloat perfectCos = hitNormal.dot(refracted->dir);
 
     // scatter within transmissive lobe
     eta1       = rnd01();
@@ -438,13 +515,29 @@ void SLRay::refractMC(SLRay* refracted, const SLMat3f& rotMat) const
         refracted->backgroundColor = sv->s()->skybox()->colorAtDir(refracted->dir);
     else
         refracted->backgroundColor = backgroundColor;
+
+    // true if the sample stayed on the same side of the surface as the
+    // perfect transmissive direction it was scattered around
+    return (perfectCos * hitNormal.dot(refracted->dir) > 0.0f);
 }
 //-----------------------------------------------------------------------------
 /*!
-SLRay::diffuseMC scatters a ray around hit normal (cosine distribution).
-This is only used for photonmapping(russian roulette).
-The random direction lies around z-Axis and is then transformed by a rotation
-matrix to lie along the normal. The direction is calculated according to MCCABE
+SLRay::diffuseMC scatters a ray around the hit normal with a cosine
+distribution, which is the importance sampling of the Lambertian BRDF: the
+density is cos(theta)/PI, so it cancels the cosine of the rendering equation
+and every sample carries the same weight. SLPathtracer::trace is its only
+caller in this repository.
+
+The random direction lies around the z-Axis and is then transformed by a
+rotation matrix to lie along the normal. The direction is calculated according
+to MCCABE.
+
+\remarks The comment here used to read "This is only used for
+photonmapping(russian roulette)". Both halves were wrong. Cosine distributed
+scattering is importance sampling and has nothing to do with Russian roulette,
+which is the unrelated technique that terminates the recursion in
+SLPathtracer::trace (see plan point 13), and there is no photon mapper in this
+repository.
 */
 void SLRay::diffuseMC(SLRay* scattered) const
 {
@@ -461,11 +554,9 @@ void SLRay::diffuseMC(SLRay* scattered) const
     scattered->srcMesh = hitMesh;
     scattered->type    = REFLECTED;
 
-    // calculate rotation matrix
-    SLMat3f rotMat;
-    SLVec3f rotAxis((SLVec3f(0.0, 0.0, 1.0) ^ scattered->dir).normalize());
-    SLfloat rotAngle = acos(scattered->dir.z); // z*scattered.dir()
-    rotMat.rotation(rotAngle * 180.0f * Utils::ONEOVERPI, rotAxis);
+    // Rotation matrix that takes the +z lobe onto the hit normal. See
+    // SLRay::lobeToWorld for why this is not built from an axis and an angle.
+    SLMat3f rotMat = lobeToWorld(scattered->dir);
 
     // cosine distribution
     eta1     = rnd01();

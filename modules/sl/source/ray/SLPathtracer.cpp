@@ -8,6 +8,7 @@
  */
 
 #include <algorithm>
+#include <cmath>
 #include <typeinfo>
 
 #include <SLCamera.h>
@@ -90,6 +91,53 @@ static SLfloat russianRoulette(SLint depth, SLCol4f albedo)
     if (survival >= 1.0f) return 1.0f;  // absorbs nothing, always continues
 
     return (rnd01() < survival) ? survival : 0.0f;
+}
+//-----------------------------------------------------------------------------
+//! Weight of one sample drawn from the Phong lobe of the given exponent
+/*! SLRay::reflectMC and SLRay::refractMC draw a direction from the Phong lobe
+
+    p(w) = (n + 1) / (2 * PI) * cos^n(alpha)
+
+where alpha is the angle to the perfect specular or transmissive direction and
+n is the shininess or the translucency. The matching normalised Phong BSDF is
+
+    f(w) = rho * (n + 2) / (2 * PI) * cos^n(alpha)
+
+and the Monte Carlo estimator of the rendering equation weights the incoming
+radiance by f * cos(theta) / p, with theta the angle to the SURFACE NORMAL and
+not to the lobe axis. The cos^n(alpha) and the 2*PI cancel and what is left is
+
+    rho * (n + 2) / (n + 1) * cos(theta)
+
+The colour rho is applied by the caller as the material's specular or
+transmissive colour, so this returns the scalar part.
+
+The cos(theta) is what was missing: the code applied only (n+2)/(n+1), so every
+glossy sample was too bright by 1/cos(theta). That is a factor of 1 straight
+along the normal and unbounded at the horizon, which is the direction a wide
+lobe on a grazing surface samples most often, so the error showed up as a
+bright rim exactly where a glossy highlight is supposed to fall off.
+
+For a perfect mirror the caller applies no weight at all rather than calling
+this: (n+2)/(n+1) is the normalisation of the lobe estimator and there is no
+lobe to normalise when the direction was not drawn from one. At the PERFECT
+limit of 1000 that factor is 1.001, so it was silently adding a tenth of a
+percent of energy per specular bounce.
+
+\param exponent  shininess for reflection, translucency for transmission
+\param sampleDir sampled direction, already known to be on the right side
+\param normal    the surface normal at the hit point */
+static SLfloat phongLobeWeight(SLfloat        exponent,
+                               const SLVec3f& sampleDir,
+                               const SLVec3f& normal)
+{
+    // The absolute value, because SLMesh::preShade does not flip the hit
+    // normal towards the ray: on a back face hit both the normal and the
+    // sampled direction sit on the other side and the cosine comes out
+    // negative although the geometry is the same.
+    SLfloat cosTheta = std::abs(sampleDir.dot(normal));
+
+    return (exponent + 2.0f) / (exponent + 1.0f) * cosTheta;
 }
 //-----------------------------------------------------------------------------
 //! Power heuristic (beta = 2) weight of the strategy whose density is pdfThis
@@ -485,19 +533,19 @@ SLCol4f SLPathtracer::trace(SLRay* ray, SLfloat bsdfPdf)
         ray->reflect(&reflected);
 
         // scatter around perfect reflected direction only if material not perfect
+        SLfloat lobeWeight = 1.0f;
         if (mat->shininess() < SLMaterial::PERFECT)
         {
-            // rotation matrix for glossy
-            SLMat3f rotMat;
-            SLVec3f rotAxis((SLVec3f(0.0f, 0.0f, 1.0f) ^ reflected.dir).normalize());
-            SLfloat rotAngle = acos(reflected.dir.z);
-            rotMat.rotation(rotAngle * 180.0f * Utils::ONEOVERPI, rotAxis);
-            ray->reflectMC(&reflected, rotMat);
+            if (!ray->reflectMC(&reflected, SLRay::lobeToWorld(reflected.dir)))
+                return finalColor; // sample below the horizon, see reflectMC
+
+            lobeWeight = phongLobeWeight(mat->shininess(),
+                                         reflected.dir,
+                                         ray->hitNormal);
         }
 
-        // shininess contribution * recursive indirect illumination and matrial base color
-        finalColor += ((mat->shininess() + 2.0f) / (mat->shininess() + 1.0f) *
-                       (trace(&reflected, PDF_NO_MIS) & objectColor)) *
+        // lobe weight * recursive indirect illumination and material base color
+        finalColor += (lobeWeight * (trace(&reflected, PDF_NO_MIS) & objectColor)) *
                       (scaleBy / survival);
     }
     else if (ray->hitMatIsTransparent())
@@ -548,34 +596,43 @@ SLCol4f SLPathtracer::trace(SLRay* ray, SLfloat bsdfPdf)
         SLfloat refractionProbability = (1.0f - schlick) / (1.0f - P);
 
         // scatter around perfect transmissive direction only if material not perfect
+        SLfloat lobeWeight     = 1.0f;
+        SLbool  refractIsValid = true;
         if (mat->translucency() < SLMaterial::PERFECT)
         {
-            // rotation matrix for translucency
-            SLMat3f rotMat;
-            SLVec3f rotAxis((SLVec3f(0.0f, 0.0f, 1.0f) ^ refracted.dir).normalize());
-            SLfloat rotAngle = acos(refracted.dir.z);
-            rotMat.rotation((SLfloat)(rotAngle * 180.0f * Utils::ONEOVERPI), rotAxis);
-            ray->refractMC(&refracted, rotMat);
+            refractIsValid = ray->refractMC(&refracted,
+                                            SLRay::lobeToWorld(refracted.dir));
+
+            if (refractIsValid)
+                lobeWeight = phongLobeWeight(mat->translucency(),
+                                             refracted.dir,
+                                             ray->hitNormal);
         }
 
         // probability of reflection
         if (rnd01() > (0.25f + 0.5f * schlick))
-            // scatter toward transmissive direction
-            finalColor += ((mat->translucency() + 2.0f) /
-                           (mat->translucency() + 1.0f) *
-                           (trace(&refracted, PDF_NO_MIS) & objectColor) *
-                           refractionProbability) *
-                          (scaleBy / survival);
+        {
+            // scatter toward transmissive direction. A sample that came back
+            // out on the incident side carries no energy, see refractMC.
+            if (refractIsValid)
+                finalColor += (lobeWeight *
+                               (trace(&refracted, PDF_NO_MIS) & objectColor) *
+                               refractionProbability) *
+                              (scaleBy / survival);
+        }
         else
         {
-            // scatter toward perfect specular direction
+            // scatter toward perfect specular direction. This is a mirror ray
+            // and not a lobe sample, so it carries no lobe weight: it used to
+            // be multiplied by (shininess + 2) / (shininess + 1), which is the
+            // normalisation of the Phong lobe estimator and belongs only where
+            // a direction was drawn from that lobe. For the shininess of 100
+            // of the Muttenzer Box glass that was a 1% energy gain per bounce.
             SLRay scattered;
             ray->reflect(&scattered);
 
-            // shininess contribution * recursive indirect illumination and material basecolor
-            finalColor += ((mat->shininess() + 2.0f) /
-                           (mat->shininess() + 1.0f) *
-                           (trace(&scattered, PDF_NO_MIS) & objectColor) *
+            // recursive indirect illumination and material base color
+            finalColor += ((trace(&scattered, PDF_NO_MIS) & objectColor) *
                            reflectionProbability) *
                           (scaleBy / survival);
         }
