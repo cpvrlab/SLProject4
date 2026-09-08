@@ -9,6 +9,39 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (APPLE)
     set(CMAKE_MACOSX_RPATH OFF)
+
+    # Pin the macOS SDK so that it reaches compile_commands.json.
+    #
+    # Homebrew's clang has no macOS SDK path built in. It gets one from the
+    # driver config file /opt/homebrew/etc/clang/<triple>.cfg, which holds a
+    # bare "-isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk".
+    # Only the compiler driver reads that file, so the build works while CMake
+    # never sees an -isysroot and never writes one into the compile database.
+    # Every libTooling consumer - clang-tidy, clangd - then runs with no
+    # sysroot at all, fails to find pthread.h and wchar.h, and drowns in tens
+    # of thousands of errors from inside libc++ before reaching a line of
+    # project code. That looks like the tool being broken and is not.
+    #
+    # Asking xcrun and putting the answer in the cache fixes both consumers at
+    # once and additionally makes the compiler and the analysis agree on one
+    # SDK, which the config file alone does not guarantee: xcrun reports the
+    # Xcode SDK where one is installed, the config file names the Command Line
+    # Tools one, and they can be different versions.
+    #
+    # Skipped when the sysroot is already set, so -DCMAKE_OSX_SYSROOT still
+    # wins, and skipped for iOS, which passes CMAKE_SYSTEM_NAME on the command
+    # line (see scripts/generate_xcode_project_ios.sh) and needs its own SDK.
+    if (NOT CMAKE_OSX_SYSROOT AND
+        (NOT CMAKE_SYSTEM_NAME OR CMAKE_SYSTEM_NAME STREQUAL "Darwin"))
+        execute_process(COMMAND xcrun --show-sdk-path
+                        OUTPUT_VARIABLE SL_MACOS_SDK_PATH
+                        OUTPUT_STRIP_TRAILING_WHITESPACE
+                        ERROR_QUIET)
+        if (SL_MACOS_SDK_PATH AND IS_DIRECTORY "${SL_MACOS_SDK_PATH}")
+            set(CMAKE_OSX_SYSROOT "${SL_MACOS_SDK_PATH}" CACHE STRING
+                "macOS SDK, pinned so that it reaches compile_commands.json" FORCE)
+        endif ()
+    endif ()
 endif (APPLE)
 
 set(SL_PROJECT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")

@@ -58,9 +58,9 @@
 #include <AppDemoSceneParticleSimple.h>
 #include <AppDemoSceneParticleSun.h>
 #include <AppDemoScenePointClouds.h>
+#include <AppDemoScenePTMuttenzerBox.h>
 #include <AppDemoSceneRevolver.h>
 #include <AppDemoSceneRTDoF.h>
-#include <AppDemoSceneRTMuttenzerBox.h>
 #include <AppDemoSceneRTLens.h>
 #include <AppDemoSceneRTSpheres.h>
 #include <AppDemoSceneRobot.h>
@@ -197,7 +197,7 @@ static SLScene* createScene(SLSceneID sceneID)
         case SID_ParticleSystem_Many: return new AppDemoSceneParticleMany();
         case SID_RTSpheres:
         case SID_RTSoftShadows: return new AppDemoSceneRTSpheres(sceneID);
-        case SID_RTMuttenzerBox: return new AppDemoSceneRTMuttenzerBox();
+        case SID_RTMuttenzerBox: return new AppDemoScenePTMuttenzerBox();
         case SID_RTDoF: return new AppDemoSceneRTDoF();
         case SID_RTLens: return new AppDemoSceneRTLens();
         case SID_Benchmark_JansUniverse: return new AppDemoSceneJansUniverse();

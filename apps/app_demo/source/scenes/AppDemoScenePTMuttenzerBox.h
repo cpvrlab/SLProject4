@@ -1,5 +1,5 @@
 /**
- * \file      AppDemoSceneRTMuttenzerBox.h
+ * \file      AppDemoScenePTMuttenzerBox.h
  * \brief     Class declaration for an SLScene inherited class
  * \details   For more info about App framework and the scene assembly see: 
  *            https://cpvrlab.github.io/SLProject4/app-framework.html
@@ -17,10 +17,10 @@
 
 //-----------------------------------------------------------------------------
 //! Class for the Muttenzer Box ray tracing scene
-class AppDemoSceneRTMuttenzerBox : public SLScene
+class AppDemoScenePTMuttenzerBox : public SLScene
 {
 public:
-    AppDemoSceneRTMuttenzerBox();
+    AppDemoScenePTMuttenzerBox();
     
     //! All scene specific assets have to be registered for async loading in here.
     /*! @remark All scene sspecific assets have to be loaded async by overriding 

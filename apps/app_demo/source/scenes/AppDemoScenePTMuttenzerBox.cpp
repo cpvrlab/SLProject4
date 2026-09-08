@@ -1,5 +1,5 @@
 /**
- * \file      AppDemoSceneRTMuttenzerBox.cpp
+ * \file      AppDemoScenePTMuttenzerBox.cpp
  * \brief     Implementation for an SLScene inherited class
  * \details   For more info about App framework and the scene assembly see:
  *            https://cpvrlab.github.io/SLProject4/app-framework.html
@@ -10,7 +10,7 @@
  *            https://github.com/cpvrlab/SLProject4/wiki/SLProject-Coding-Style
  */
 
-#include <AppDemoSceneRTMuttenzerBox.h>
+#include <AppDemoScenePTMuttenzerBox.h>
 #include <AppCommon.h>
 #include <SLAssetLoader.h>
 #include <SLLightRect.h>
@@ -18,16 +18,16 @@
 #include <SLSphere.h>
 
 //-----------------------------------------------------------------------------
-AppDemoSceneRTMuttenzerBox::AppDemoSceneRTMuttenzerBox()
+AppDemoScenePTMuttenzerBox::AppDemoScenePTMuttenzerBox()
   : SLScene("Muttenzer Box Ray Tracing")
 {
     info("Muttenzer Box with environment mapped reflective sphere and "
-         "transparent refractive glass sphere. Try ray tracing for real "
+         "transparent refractive glass sphere. Try path tracing for real "
          "reflections and soft shadows.");
 }
 //-----------------------------------------------------------------------------
 //! All assets the should be loaded in parallel must be registered in here.
-void AppDemoSceneRTMuttenzerBox::registerAssetsToLoad(SLAssetLoader& al)
+void AppDemoScenePTMuttenzerBox::registerAssetsToLoad(SLAssetLoader& al)
 {
 
     al.addTextureToLoad(_tex1,
@@ -47,7 +47,7 @@ void AppDemoSceneRTMuttenzerBox::registerAssetsToLoad(SLAssetLoader& al)
 }
 //-----------------------------------------------------------------------------
 //! After parallel loading of the assets the scene gets assembled in here.
-void AppDemoSceneRTMuttenzerBox::assemble(SLAssetManager* am,
+void AppDemoScenePTMuttenzerBox::assemble(SLAssetManager* am,
                                           SLSceneView*    sv)
 {
     SLCol4f lightEmisRGB(10.0f, 10.0f, 10.0f);

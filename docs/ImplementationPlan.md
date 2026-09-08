@@ -327,7 +327,7 @@ Measured on the Muttenzer Box at 100 spp, median luminance:
 
 That is 0.639 in linear against 0.625 predicted from the missing area factor
 (1/0.65 = 1.54); the small remainder is the difference between the light centre
-and the sampled point. `lightEmisRGB` in `AppDemoSceneRTMuttenzerBox.cpp` was
+and the sampled point. `lightEmisRGB` in `AppDemoScenePTMuttenzerBox.cpp` was
 raised from 7 to 10, which brings the apparent brightness back to within 3 to 4
 percent of the old look. 11.0 would match it exactly, but the scene is not
 calibrated against anything physical, so the value is a matter of taste; what
