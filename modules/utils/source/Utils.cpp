@@ -323,7 +323,6 @@ string formatString(string fmt_str, ...)
     int final_n = 0;
     int n       = ((int)fmt_str.size()) * 2;
 
-    string                  str;
     std::unique_ptr<char[]> formatted;
     va_list                 ap;
     while (true)
@@ -828,8 +827,6 @@ bool makeDirRecurse(std::string path)
     std::string delimiter = "/";
 
     size_t      pos = 0;
-    std::string token;
-
     std::string createdPath;
 
     while ((pos = path.find(delimiter)) != std::string::npos)
@@ -1296,8 +1293,8 @@ std::string ComputerInfos::get()
     typedef LONG(WINAPI * RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
     if (HMODULE ntdll = GetModuleHandleW(L"ntdll.dll"))
     {
-        auto rtlGetVersion = (RtlGetVersionPtr)GetProcAddress(ntdll,
-                                                              "RtlGetVersion");
+        auto rtlGetVersion = reinterpret_cast<RtlGetVersionPtr>(
+          GetProcAddress(ntdll, "RtlGetVersion"));
         if (rtlGetVersion)
             rtlGetVersion(&osInfo);
     }
