@@ -290,7 +290,7 @@ class HelloCube:
 
         # model transform: rotate the coordinate system increasingly
         self.model_matrix.identity()
-        self.rot_angle += 0.1
+        self.rot_angle += 1.0
         self.model_matrix.rotate(self.rot_angle, 0, 1, 0)
         self.model_matrix.scale(2, 2, 2)
 
