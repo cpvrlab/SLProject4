@@ -1,5 +1,5 @@
 ###############################################################################
-# File:       ch09_TextureMapping.py
+# File:       TextureMapping.py
 # Purpose:    Minimal core profile OpenGL application for ambient-diffuse-
 #             specular lighting shaders with textures.
 #             Python/tkinter equivalent of the C++ exercise in
@@ -648,8 +648,9 @@ class TextureMapping:
         """Mouse button down & release event handler starts and ends mouse rotation"""
         if event.num not in (1, 2, 3):
             return
-        # On macOS the right mouse button is button 2, elsewhere it is 3
-        right = 2 if sys.platform == "darwin" else 3
+        # The right mouse button is button 3. Only on macOS with Tk 8.6 it
+        # is button 2, so there we accept both.
+        right = (2, 3) if sys.platform == "darwin" else (3,)
 
         self.mouse_left_down = (event.type == tk.EventType.ButtonPress)
         if self.mouse_left_down:
@@ -657,7 +658,7 @@ class TextureMapping:
             self.start_y = event.y
 
             # Renders only the lines of a polygon during mouse moves
-            if event.num == right:
+            if event.num in right:
                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
         else:
             self.rot_x += self.delta_x
@@ -666,7 +667,7 @@ class TextureMapping:
             self.delta_y = 0
 
             # Renders filled polygons
-            if event.num == right:
+            if event.num in right:
                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
     def on_mouse_move(self, event):
