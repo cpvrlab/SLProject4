@@ -74,7 +74,7 @@ All are `ON` unless noted. Pass them at configure time, e.g.
 | `SL_DOWNLOAD_DATA` | ON | Download the runtime data archive |
 | `SL_DOWNLOAD_PREBUILTS` | ON | Download prebuilt third-party libraries |
 | `SL_BUILD_APPS` | ON | Build the sample applications |
-| `SL_BUILD_EXERCISES` | ON | Build the course exercises under `apps/exercises` |
+| `SL_BUILD_EXERCISES` | ON | Build the remaining exercises under `apps/exercises` (the course exercises moved to the BFH exercises repository, see `apps/exercises/README.md`) |
 | `SL_BUILD_WAI` | ON | Build the WAI (Where-Am-I) SLAM module |
 | `SL_BUILD_WEBGPU_DEMO` | ON | Build the WebGPU demo |
 | `SL_BUILD_VULKAN_APPS` | **OFF** | Build the Vulkan sample apps |

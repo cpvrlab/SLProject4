@@ -86,7 +86,7 @@ in `modules/sl/cuda/`. Point 18 lists what is knowingly missing.
 | `modules/math`, `modules/utils` | `SLMat*`/`SLVec*`, logging, IO |
 | `modules/cv`, `modules/sens`, `modules/wai` | computer vision, sensors, SLAM |
 | `apps/app_demo` | the main demo application and its scenes |
-| `apps/exercises` | teaching exercises |
+| `apps/exercises` | remaining exercises; the course exercises moved to the BFH exercises repository |
 | `externals/`, `modules/*/externals` | third-party code — do not reformat |
 
 Renderers: `modules/sl/source/ray/` holds `SLRaytracer` and `SLPathtracer` (CPU);
