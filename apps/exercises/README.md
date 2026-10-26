@@ -10,12 +10,14 @@ named after the chapters of the CPVR scripts:
 | SLProject4 (removed)               | exercises-repo                                  |
 |------------------------------------|-------------------------------------------------|
 | ch03_Bresenham_Net                 | exercises/cg/py/cg03_Bresenham.py (Python port) |
+| ch04_HelloCube_Net                 | exercises/cg/py/cg04_HelloCube.py (Python port) |
 | ch04_HelloCube_Python              | exercises/cg/py/cg04_HelloCube.py               |
 | ch06_ColorCube                     | exercises/cg/cpp/cg06_ColorCube                 |
 | ch07_DiffuseCube                   | exercises/cg/cpp/cg07_DiffuseCube               |
 | ch07_DiffuseSphere                 | exercises/cg/cpp/cg07_DiffuseSphere             |
 | ch08_BlinnPhongLighting            | exercises/cg/cpp/cg08_BlinnPhongLighting        |
 | ch09_TextureMapping                | exercises/cg/cpp/cg09_TextureMapping            |
+| ch09_TextureMapping_Net            | exercises/cg/py/cg09_TextureMapping.py (Python port) |
 | ch09_TextureMapping_Python         | exercises/cg/py/cg09_TextureMapping.py          |
 | cv01_ChangeBrightnessAndContrast   | exercises/cv/cpp/ip05_BrightnessAndContrast     |
 | cv02_ClarendonFilter               | exercises/cv/cpp/ip05_ClarendonFilter           |
@@ -31,6 +33,6 @@ named after the chapters of the CPVR scripts:
 The shaders ch06_ColorCube, ch07_DiffuseLighting, ch08_BlinnPhongLighting and
 ch09_TextureMapping moved to exercises/data/shaders (with the prefix cg).
 
-The examples that remain here (ch00_new_cpp_features, the Java, .NET, Vulkan
-and WebGL variants, Geom and ParticleGenerator) are not part of the exercises
+The examples that remain here (ch00_new_cpp_features, the Java, Vulkan and
+WebGL variants, Geom and ParticleGenerator) are not part of the exercises
 repository.
